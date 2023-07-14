@@ -1,0 +1,9 @@
+/CAT-web/bin
+/CAT-web/obj
+/CAT-web/.vs/CAT-web/FileContentIndex/*.vsidx
+/CAT-web/.vs/CAT-web/FileContentIndex/*.lock
+/CAT-web/wwwroot/lib/bootstrap/dist/css/*.map
+/CAT-web/wwwroot/lib/bootstrap/dist/js/*.map
+/CAT-web/wwwroot/lib/jquery/dist/*.map
+/CAT-web/.vs/CAT-web/DesignTimeBuild/*.v2
+/CAT-web/wwwroot/lib/jquery-validation/*.md
