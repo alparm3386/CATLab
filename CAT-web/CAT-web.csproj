@@ -7,4 +7,8 @@
     <RootNamespace>CAT_web</RootNamespace>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Folder Include="online-editor-ui\src\bootstrap\" />
+  </ItemGroup>
+
 </Project>
