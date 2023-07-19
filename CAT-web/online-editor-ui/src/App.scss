@@ -1,0 +1,36 @@
+.app {
+    display: flex;
+    flex-direction: column;
+    height: 100vh; // make App take up full viewport height
+
+    .Navbar {
+        height: 56px; // adjust as necessary
+    }
+
+}
+
+.content-area {
+    display: flex;
+    flex-direction: row;
+    height: calc(100% - 56px); // adjust as necessary
+    overflow: auto; // add scrollbars if content exceeds this height
+}
+
+
+.grid-area {
+    flex: 3;
+    background-color: #f8f9fa;
+    // Additional styles for the grid area
+}
+
+.toolbox-area {
+    flex: 1;
+    background-color: #e9ecef;
+    overflow: auto;
+    transition: flex 1.5s ease; // Optional transition effect
+    max-width: 0;
+
+    &.expanded {
+        max-width: 25%; // Adjust as needed
+    }
+}
