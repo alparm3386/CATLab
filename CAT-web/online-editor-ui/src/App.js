@@ -4,28 +4,37 @@ import './App.scss';
 import ContentArea from './components/ContentArea';
 import Navbar from './components/Navbar';
 import StatusBar from './components/StatusBar';
-import { Provider } from 'react-redux';
+import { useDispatch, Provider } from 'react-redux';
 import store from './store/store';
-import { loadEditorData } from './api/apiService';
+import { loadJobData } from './api/apiService';
+import { setJobData } from './store/editorDataSlice';
 
-function App() {
+function AppInit() {
+    const dispatch = useDispatch();
     let ignore = false;
+
     useEffect(() => {
         if (!ignore) {
             console.log("App start ...")
             //load the data and store it in the global store
-            let editorData = loadEditorData();
+            let jobData = loadJobData();
+            dispatch(setJobData(jobData));
         }
 
         return () => { ignore = true; }
     }, []);
 
+    return null; // this component doesn't need to render anything
+}
+
+function App() {
     return (
         <Provider store={store}>
             <div className="app">
                 <Navbar />
                 <ContentArea className="ContentArea" />
                 <StatusBar />
+                <AppInit />
             </div>
         </Provider>
     );
