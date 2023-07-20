@@ -4,21 +4,20 @@ import './App.scss';
 import ContentArea from './components/ContentArea';
 import Navbar from './components/Navbar';
 import StatusBar from './components/StatusBar';
-import { StatusBarMessageContext, SetStatusBarMessageContext } from './contexts/StatusBarContext';
+import { Provider } from 'react-redux';
+import store from './store/store';
 
 function App() {
     const [message, setMessage] = useState('');
 
     return (
-        <SetStatusBarMessageContext.Provider value={{ setMessage }}>
+        <Provider store={store}>
             <div className="app">
                 <Navbar />
                 <ContentArea className="ContentArea" />
-                <StatusBarMessageContext.Provider value={message}>
-                    <StatusBar />
-                </StatusBarMessageContext.Provider>
+                <StatusBar />
             </div>
-        </SetStatusBarMessageContext.Provider>
+        </Provider>
     );
 }
 

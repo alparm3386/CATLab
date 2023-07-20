@@ -1,11 +1,10 @@
-﻿import React, { useContext } from 'react';
-import { StatusBarMessageContext } from '../contexts/StatusBarContext';
+﻿import React from 'react';
+import { useSelector } from 'react-redux';
 
 const StatusBar = ({ onClick }) => {
-    const { message } = useContext(StatusBarMessageContext);
-
+    const message = useSelector((state) => state.statusBar.message);
     return <div onClick={onClick}>
-        <span>Click on the translation to edit text...</span>  {message}
+        <span>Click on the translation to edit text...</span>  { message }
     </div>;
 };
 
