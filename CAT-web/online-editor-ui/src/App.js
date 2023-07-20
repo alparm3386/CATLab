@@ -8,8 +8,6 @@ import { Provider } from 'react-redux';
 import store from './store/store';
 
 function App() {
-    const [message, setMessage] = useState('');
-
     return (
         <Provider store={store}>
             <div className="app">

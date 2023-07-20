@@ -1,7 +1,7 @@
 ﻿// Toolbox.js
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { setMessage } from './../store/statusBarSlice';
+import { setMessage, setDate } from './../store/statusBarSlice';
 
 var renderCntr = 0;
 const Toolbox = ({ expanded }) => {
@@ -12,8 +12,11 @@ const Toolbox = ({ expanded }) => {
 
     return <div className={`toolbox-area${expanded ? ' expanded' : ''}`}>
         <div>tool box</div>
-        <button onClick={() => { dispatch(setMessage(`New message from SomeOtherComponent ${counter}`)); setCounter(counter + 1) }}>
+        <button onClick={() => { dispatch(setMessage(`New message from toolbox ${counter}`)); setCounter(counter + 1) }}>
             Click me to update the message
+        </button>
+        <button onClick={() => { dispatch(setDate(`New date from toolbox ${counter}`)); setCounter(counter + 1) }}>
+            Click me to update the date
         </button>
     </div>;
 };
