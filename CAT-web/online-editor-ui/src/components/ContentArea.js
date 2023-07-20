@@ -1,24 +1,18 @@
 ﻿import React, { useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.css'; // If you haven't linked Bootstrap in your HTML
 import EditorGrid from './EditorGrid';
-import StatusBar from './StatusBar';
 import Toolbox from './Toolbox';
 
-const ContentArea = () => {
-    const [isToolboxExpanded, setToolboxExpanded] = useState(true);
+var renderCntr = 0;
 
-    const toggleToolbox = () => {
-        setToolboxExpanded(!isToolboxExpanded);
-    };
+const ContentArea = ({ settings }) => {
 
+    console.log("ContentArea rendered: " + renderCntr++);
     return (
-        <>
-            <div className="content-area">
-                <EditorGrid />
-                <Toolbox expanded={isToolboxExpanded} />
-            </div>
-            <StatusBar onClick={toggleToolbox} />
-        </>
+        <div className="content-area">
+            <EditorGrid />
+            <Toolbox expanded="true" />
+        </div>
     );
 }
 
