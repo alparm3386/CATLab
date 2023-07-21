@@ -1,1 +1,37 @@
-﻿
+﻿.tm-matches {
+    background-color: white;
+    border: 1px solid;
+}
+
+.tmm-row {
+    display: flex;
+    flex-direction: row;
+    border: solid #c9c9c9;
+    margin: 3px;
+
+    .tmm-row-num {
+        flex: 1;
+        background-color: #b6def7;
+    }
+
+    .tmm-row-content {
+        flex: 12;
+        background-color: #ddebf3;
+        font-size: 0.8em;
+
+        .tmm-source {
+            color: #416d41;
+            margin: 5px;
+        }
+
+        .tmm-target {
+            color: #4e4ea7;
+            margin: 5px;
+        }
+
+        .tmm-quality {
+            color: #272727;
+            margin: 5px;
+        }
+    }
+}

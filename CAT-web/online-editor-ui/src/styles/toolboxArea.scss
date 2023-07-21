@@ -1,9 +1,12 @@
 ﻿.toolbox-area {
+    display: flex;
+    flex-direction: column;
     flex: 1;
     background-color: #e9ecef;
     overflow: auto;
     transition: flex 1.5s ease; // Optional transition effect
     max-width: 0;
+    margin: 5px 5px 5px 0px;
 
     &.expanded {
         max-width: 25%; // Adjust as needed
