@@ -1,6 +1,8 @@
 ﻿import './../styles/editorGrid.scss';
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faCoffee } from '@fortawesome/free-solid-svg-icons'
 
 var renderCntr = 0;
 const EditorGrid = React.memo(function EditorGrid() {
@@ -15,7 +17,7 @@ const EditorGrid = React.memo(function EditorGrid() {
                         <div className="row-num">{ index + 1 }</div>
                         <div className="source">{tu.source}</div>
                         <div className="target" contentEditable="true">{tu.target}</div>
-                        <div className="status"><i className="fas fa-tint"></i></div>
+                        <div className="status"><FontAwesomeIcon icon={faCoffee} /></div>
                     </div>
                 ))
             }
