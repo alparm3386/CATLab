@@ -15,7 +15,7 @@ const EditorGrid = React.memo(function EditorGrid() {
                         <div className="row-num">{ index + 1 }</div>
                         <div className="source">{ unit.source }</div>
                         <div className="target">{ unit.target }</div>
-                        <div className="startus"><i class="fas fa-tint"></i></div>
+                        <div className="status"><i className="fas fa-tint"></i></div>
                     </div>
                 ))
             }
