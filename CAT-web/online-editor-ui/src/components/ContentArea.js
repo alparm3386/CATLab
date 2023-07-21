@@ -1,5 +1,6 @@
 ﻿import React, { useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.css'; // If you haven't linked Bootstrap in your HTML
+import './../styles/contentArea.scss';
 import EditorGrid from './EditorGrid';
 import Toolbox from './Toolbox';
 

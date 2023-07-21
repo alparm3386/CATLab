@@ -8,22 +8,3 @@
     }
 
 }
-
-.content-area {
-    display: flex;
-    flex-direction: row;
-    height: calc(100% - 56px); // adjust as necessary
-    overflow: auto; // add scrollbars if content exceeds this height
-}
-
-.toolbox-area {
-    flex: 1;
-    background-color: #e9ecef;
-    overflow: auto;
-    transition: flex 1.5s ease; // Optional transition effect
-    max-width: 0;
-
-    &.expanded {
-        max-width: 25%; // Adjust as needed
-    }
-}
