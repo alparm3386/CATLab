@@ -11,9 +11,11 @@ const EditorGrid = React.memo(function EditorGrid() {
             {
                 jobData.translationUnits &&
                 jobData.translationUnits.map((unit, index) => (
-                    <div key={index}>
-                        <div>Source: {unit.source}</div>
-                        <div>Target: {unit.target}</div>
+                    <div key={index} className="tuRow">
+                        <div className="row-num">{ index + 1 }</div>
+                        <div className="source">{ unit.source }</div>
+                        <div className="target">{ unit.target }</div>
+                        <div className="startus"><i class="fas fa-tint"></i></div>
                     </div>
                 ))
             }
