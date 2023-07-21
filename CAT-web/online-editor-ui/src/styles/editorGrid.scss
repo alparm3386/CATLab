@@ -1,0 +1,32 @@
+﻿.grid-area {
+    flex: 3;
+    background-color: #f8f9fa;
+    overflow: auto;
+
+    .tu-row {
+        display: flex;
+        flex-direction: row;
+        border-bottom: 1px dotted #000;
+        min-height: 60px;
+
+        .row-num {
+            flex: 1;
+            width: 40px;
+        }
+
+        .source {
+            flex: 10;
+        }
+
+        .target {
+            flex: 10;
+        }
+
+        .status {
+            flex: 1;
+            min-width: 30px;
+            max-width: 30px;
+            color: orange;
+        }
+    }
+}

@@ -1,0 +1,11 @@
+﻿.toolbox-area {
+    flex: 1;
+    background-color: #e9ecef;
+    overflow: auto;
+    transition: flex 1.5s ease; // Optional transition effect
+    max-width: 0;
+
+    &.expanded {
+        max-width: 25%; // Adjust as needed
+    }
+}

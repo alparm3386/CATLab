@@ -1,0 +1,6 @@
+﻿.content-area {
+    display: flex;
+    flex-direction: row;
+    height: calc(100% - 56px); // adjust as necessary
+    overflow: auto; // add scrollbars if content exceeds this height
+}
