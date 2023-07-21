@@ -1,6 +1,8 @@
 ﻿.tm-matches {
     background-color: white;
     border: 1px solid;
+    max-height: 50%;
+    overflow: auto;
 }
 
 .tmm-row {

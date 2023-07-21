@@ -16,8 +16,7 @@ const TMMatches = ({ expanded, currentIdx }) => {
         };
     }, [currentIdx]);
 
-    return <div className="tm-matches m-2">
-        <div>
+    return <div className="tm-matches mb-2">
             {tmMatches && tmMatches.map((tmMatch, index) => (
                 <div key={index} className="tmm-row">
                     <div className="tmm-row-num">{index + 1}</div>
@@ -28,7 +27,6 @@ const TMMatches = ({ expanded, currentIdx }) => {
                     </div>
                 </div>
             ))}
-        </div>
     </div>;
 };
 
