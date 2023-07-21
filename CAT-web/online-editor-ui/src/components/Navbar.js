@@ -1,4 +1,5 @@
-﻿import React from 'react';
+﻿import './../styles/navbar.scss';
+import React from 'react';
 
 const TopMenu = () => {
     return (
