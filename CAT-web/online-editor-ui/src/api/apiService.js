@@ -1,5 +1,9 @@
 ﻿// apiService.js
-export const loadJobData = () => {
+import axios from 'axios';
+
+export const loadJobData = async () => {
+    let promise = new Promise(resolve => setTimeout(resolve, 2000));
+    await promise;
     let loadJobData = {
         translationUnits: [
             { source: "Celestial Print Velour Sleepsuit and Hat Set", target: "Lot de combinaison et chapeau en velours à imprimé céleste" },
@@ -22,7 +26,9 @@ export const loadJobData = () => {
     return loadJobData;
 };
 
-export const getTMMatches = (currentIdx) => {
+export const getTMMatches = async (currentIdx) => {
+    let promise = new Promise(resolve => setTimeout(resolve, 2000));
+    await promise;
     let getTMMatches = [
         { source: "Celestial Print Velour Sleepsuit and Hat Set", target: "Lot de combinaison et chapeau en velours à imprimé céleste", quality: 101, origin: "TM" },
         { source: "This velour set may be the star of their cosy collection!", target: "Cet ensemble en velours est peut-être la star de leur collection cosy !", quality: 85, origin: "TM" },
@@ -32,3 +38,28 @@ export const getTMMatches = (currentIdx) => {
 
     return getTMMatches;
 };
+
+const apiClient = axios.create({
+    baseURL: 'http://api.yourserver.com',
+    // You can put any default headers here, e.g. for authorization
+});
+
+export const fetchJobData = async () => {
+    try {
+        const response = await apiClient.get('/jobData');
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};
+
+export const postJobData = async (jobData) => {
+    try {
+        const response = await apiClient.post('/jobData', jobData);
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};
+
+// Add other API functions as needed...

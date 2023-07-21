@@ -10,8 +10,7 @@ const TMMatches = ({ expanded, currentIdx }) => {
     console.log("TMMatches rendered: " + renderCntr++);
 
     useEffect(() => {
-        const tmMatches = getTMMatches(currentIdx);
-        setTmMatches(tmMatches);
+        getTMMatches(currentIdx).then(tmMatches => setTmMatches(tmMatches));
         return () => {
         };
     }, [currentIdx]);

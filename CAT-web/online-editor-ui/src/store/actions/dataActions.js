@@ -1,5 +1,5 @@
 ﻿// src/store/actions/dataActions.js
-import { loadJobData } from '../../services/apiService';
+/*import { loadJobData } from '../../services/apiService';
 
 export const fetchJobData = () => async (dispatch, getState) => {
     try {
@@ -8,4 +8,4 @@ export const fetchJobData = () => async (dispatch, getState) => {
     } catch (error) {
         console.error("Failed to load data", error);
     }
-};
+};*/
