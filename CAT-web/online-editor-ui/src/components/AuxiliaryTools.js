@@ -1,38 +1,32 @@
 ﻿// AuxiliaryTools.js
-import React, { useState } from 'react';
+import React from 'react';
 import './../styles/auxiliaryTools.scss';
+import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
+import 'react-tabs/style/react-tabs.css';
 
 var renderCntr = 0;
 const AuxiliaryTools = () => {
-    const [selectedTab, setSelectedTab] = useState('context');
     console.log("AuxiliaryTools rendered: " + renderCntr++);
 
     return (
         <div className="auxiliary-tools">
-            <div className="tabs">
-                <button
-                    className={selectedTab === 'context' ? 'active' : ''}
-                    onClick={() => setSelectedTab('context')}
-                >
-                    Context
-                </button>
-                <button
-                    className={selectedTab === 'preview' ? 'active' : ''}
-                    onClick={() => setSelectedTab('preview')}
-                >
-                    Preview
-                </button>
-                <button
-                    className={selectedTab === 'concordance' ? 'active' : ''}
-                    onClick={() => setSelectedTab('concordance')}
-                >
-                    Concordance
-                </button>
-            </div>
+            <Tabs>
+                <TabList>
+                    <Tab>Context</Tab>
+                    <Tab>Preview</Tab>
+                    <Tab>Concordance</Tab>
+                </TabList>
 
-            {selectedTab === 'context' && <div>Context content ...</div>}
-            {selectedTab === 'preview' && <div>Preview content ...</div>}
-            {selectedTab === 'concordance' && <div>Concordance content ...</div>}
+                <TabPanel>
+                    <h2>Context content</h2>
+                </TabPanel>
+                <TabPanel>
+                    <h2>Preview content</h2>
+                </TabPanel>
+                <TabPanel>
+                    <h2>Concordance content</h2>
+                </TabPanel>
+            </Tabs>
         </div>
     );
 };
