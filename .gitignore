@@ -1,0 +1,5 @@
+/CAT-web/wwwroot/lib/bootstrap/dist/css/*.map
+*.vsidx
+*.props
+bin
+obj

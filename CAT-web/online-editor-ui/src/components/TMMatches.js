@@ -1,19 +1,19 @@
 ﻿// TMMatches.js
 import './../styles/tmMatches.scss';
 import React, { useState, useEffect } from 'react';
-import { getTMMatches } from './../api/apiService';
+import { getTMMatches } from '../api/editorApi';
 
 var renderCntr = 0;
-const TMMatches = ({ expanded, currentIdx }) => {
+const TMMatches = ({ expanded, tuid }) => {
     const [tmMatches, setTmMatches] = useState([]);
 
     console.log("TMMatches rendered: " + renderCntr++);
 
     useEffect(() => {
-        getTMMatches(currentIdx).then(tmMatches => setTmMatches(tmMatches));
+        getTMMatches(tuid).then(tmMatches => setTmMatches(tmMatches));
         return () => {
         };
-    }, [currentIdx]);
+    }, [tuid]);
 
     return <div className="tm-matches mb-2">
             {tmMatches && tmMatches.map((tmMatch, index) => (
