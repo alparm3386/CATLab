@@ -3,7 +3,8 @@ import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
     jobData: {},
-    statusBar: { message: '' }
+    statusBar: { message: '' },
+    urlParams: ''
 };
 
 export const editorDataSlice = createSlice({
@@ -15,10 +16,13 @@ export const editorDataSlice = createSlice({
         },
         setStatusBarMessage: (state, action) => {
             state.statusBar.message = action.payload;
+        },
+        setUrlParams: (state, action) => {
+            state.urlParams = action.payload;
         }
     }
 });
 
-export const { setJobData, setStatusBarMessage } = editorDataSlice.actions;
+export const { setJobData, setStatusBarMessage, setUrlParams } = editorDataSlice.actions;
 
 export default editorDataSlice.reducer;

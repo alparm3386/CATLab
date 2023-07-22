@@ -7,7 +7,7 @@ import StatusBar from './components/StatusBar';
 import { useDispatch, Provider } from 'react-redux';
 import store from './store/store';
 import { getJobData } from './api/editorApi';
-import { setJobData } from './store/editorDataSlice';
+import { setJobData, setUrlParams } from './store/editorDataSlice';
 
 function AppInit() {
     const dispatch = useDispatch();
@@ -18,7 +18,9 @@ function AppInit() {
             console.log("App start ...")
             //load the data and store it in the global store
             //dispatch(setJobData(loadJobData()));
-            getJobData().then(jobData => dispatch(setJobData(jobData)));
+            const urlParams = window.location.search.substring(1);
+            dispatch(setUrlParams(urlParams));
+            getJobData(urlParams).then(jobData => dispatch(setJobData(jobData)));
         }
 
         return () => { ignore = true; }
