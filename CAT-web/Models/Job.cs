@@ -12,10 +12,16 @@ namespace CAT_web.Models
         [Display(Name = "File name")]
         public string? FileName { get; set; }
 
+        [Required(ErrorMessage = "Please enter the source language.")]
+        public string SourceLang { get; set; }
+
+        [Required(ErrorMessage = "Please enter the target language.")]
+        public string TargetLang { get; set; }
+
         [Display(Name = "Date created")]
         [DataType(DataType.Date)]
         public DateTime DateCreated { get; set; }
         public string? Analysis { get; set; }
-        public decimal Price { get; set; }
+        public decimal Fee { get; set; }
     }
 }
