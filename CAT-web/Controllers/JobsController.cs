@@ -56,10 +56,26 @@ namespace CAT_web.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,OriginalFileName,FileName,DateCreated,Analysis,Price")] Job job)
+        public async Task<IActionResult> Create([Bind("Id,FileName,DateCreated,Analysis,Price")] Job job, IFormFile file)
         {
             if (ModelState.IsValid)
             {
+                if (file != null && file.Length > 0)
+                {
+                    // Process the uploaded file
+                    // For example, you can save the file to a location on the server
+                    // and store the file path in the job object.
+
+                    // Example:
+                    // var filePath = Path.Combine(_env.WebRootPath, "uploads", file.FileName);
+                    // using (var stream = new FileStream(filePath, FileMode.Create))
+                    // {
+                    //     await file.CopyToAsync(stream);
+                    // }
+                    // job.OriginalFileName = file.FileName;
+
+                    // Save the job object to the database
+                }
                 _context.Add(job);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
