@@ -1,10 +1,24 @@
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using CAT_web.Data;
+using CAT_web.Models;
+
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddDbContext<CAT_webContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("CAT_webContext") ?? throw new InvalidOperationException("Connection string 'CAT_webContext' not found.")));
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 //builder.Services.AddControllers();
 
 var app = builder.Build();
+
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+
+    SeedData.Initialize(services);
+}
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
