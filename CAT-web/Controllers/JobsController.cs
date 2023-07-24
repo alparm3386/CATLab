@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using CAT_web.Data;
 using CAT_web.Models;
+using CAT_web.Helpers;
+using System.IO;
 
 namespace CAT_web.Controllers
 {
@@ -24,9 +26,9 @@ namespace CAT_web.Controllers
         // GET: Jobs
         public async Task<IActionResult> Index()
         {
-              return _context.Job != null ? 
-                          View(await _context.Job.ToListAsync()) :
-                          Problem("Entity set 'CAT_webContext.Job'  is null.");
+            return _context.Job != null ?
+                        View(await _context.Job.ToListAsync()) :
+                        Problem("Entity set 'CAT_webContext.Job'  is null.");
         }
 
         // GET: Jobs/Details/5
@@ -58,30 +60,67 @@ namespace CAT_web.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(IFormFile file, string sourceLang, string targetLang)
+        public async Task<IActionResult> Create(IFormFile file, IFormFile fileFilter, string sourceLang, string targetLang)
         {
-            if (ModelState.IsValid)
+            try
             {
                 if (file != null && file.Length > 0)
                 {
-                    string contentsFolderPath = _configuration["Contents"];
-                    // Example:
-                    // var filePath = Path.Combine(_env.WebRootPath, "uploads", file.FileName);
-                    // using (var stream = new FileStream(filePath, FileMode.Create))
-                    // {
-                    //     await file.CopyToAsync(stream);
-                    // }
-                    // job.OriginalFileName = file.FileName;
+                    //save the file
+                    var sourceFilesFolderPath = Path.Combine(_configuration["SourceFilesFolder"]);
+                    // Generate a unique file name based on the original file name
+                    string fileName = FileHelper.GetUniqueFileName(file.FileName);
+
+                    // Combine the unique file name with the server's path to create the full path
+                    string filePath = Path.Combine(sourceFilesFolderPath, fileName);
+
+                    // Save the file to the server
+                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await file.CopyToAsync(stream);
+                    }
+
+                    var filterName = "";
+                    if (fileFilter != null && fileFilter.Length > 0)
+                    {
+                        var fileFiltersFolderPath = Path.Combine(_configuration["FileFiltersFolder"]);
+                        // Generate a unique file name based on the original file name
+                        filterName = FileHelper.GetUniqueFileName(fileFilter.FileName);
+
+                        // Combine the unique file name with the server's path to create the full path
+                        string filterPath = Path.Combine(sourceFilesFolderPath, filterName);
+                        using (var stream = new FileStream(filterPath, FileMode.Create))
+                        {
+                            await fileFilter.CopyToAsync(stream);
+                        }
+                    }
+
+                    var job = new Job()
+                    {
+                        OriginalFileName = file.FileName,
+                        FileName = fileName,
+                        FilterName = filterName,
+                        SourceLang = sourceLang,
+                        TargetLang = targetLang,
+                        DateCreated = DateTime.Now,
+                        Analysis = "",
+                        Fee = 10
+                    };
 
                     // Save the job object to the database
+                    _context.Add(job);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
                 }
-
-                //_context.Add(job);
-                //await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                else
+                    throw new Exception("File is empty.");
             }
-            
-            return Problem("Unable to create job");
+            catch (Exception ex)
+            {
+                ViewData["ErrorMessage"] = $"An error occurred: {ex.Message}";
+                return View();
+                //return Problem($"An error occurred: {ex.Message}", statusCode: 500);
+            }
         }
 
         // GET: Jobs/Edit/5
@@ -167,14 +206,14 @@ namespace CAT_web.Controllers
             {
                 _context.Job.Remove(job);
             }
-            
+
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool JobExists(int id)
         {
-          return (_context.Job?.Any(e => e.Id == id)).GetValueOrDefault();
+            return (_context.Job?.Any(e => e.Id == id)).GetValueOrDefault();
         }
     }
 }

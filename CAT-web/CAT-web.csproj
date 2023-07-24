@@ -8,6 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Folder Include="Migrations\" />
     <Folder Include="online-editor-ui\src\bootstrap\" />
     <Folder Include="online-editor-ui\src\contexts\" />
     <Folder Include="online-editor-ui\src\hooks\" />

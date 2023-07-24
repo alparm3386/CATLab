@@ -12,6 +12,8 @@ namespace CAT_web.Models
         [Display(Name = "File name")]
         public string? FileName { get; set; }
 
+        public string? FilterName { get; set; }
+
         [Required(ErrorMessage = "Please enter the source language.")]
         public string SourceLang { get; set; }
 
