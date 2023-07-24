@@ -9,6 +9,7 @@
 
   <ItemGroup>
     <Folder Include="Migrations\" />
+    <Folder Include="Models\ViewModels\" />
     <Folder Include="online-editor-ui\src\bootstrap\" />
     <Folder Include="online-editor-ui\src\contexts\" />
     <Folder Include="online-editor-ui\src\hooks\" />

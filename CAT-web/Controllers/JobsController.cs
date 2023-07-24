@@ -26,6 +26,16 @@ namespace CAT_web.Controllers
         // GET: Jobs
         public async Task<IActionResult> Index()
         {
+            // Check if TempData contains the ErrorMessage
+            if (TempData.ContainsKey("ErrorMessage"))
+            {
+                // Retrieve the error message from TempData and store it in a ViewBag
+                ViewBag.ErrorMessage = TempData["ErrorMessage"] as string;
+
+                // Clear the TempData entry to prevent the message from persisting across additional requests
+                TempData.Remove("ErrorMessage");
+            }
+
             return _context.Job != null ?
                         View(await _context.Job.ToListAsync()) :
                         Problem("Entity set 'CAT_webContext.Job'  is null.");
@@ -214,6 +224,40 @@ namespace CAT_web.Controllers
         private bool JobExists(int id)
         {
             return (_context.Job?.Any(e => e.Id == id)).GetValueOrDefault();
+        }
+
+
+        // GET: Jobs/Open/5
+        public IActionResult OpenInOnlineEditor(int? id)
+        {
+            try
+            {
+                if (id == null)
+                {
+                    // Handle the case when the ID is not provided or invalid
+                    // For example, return a 404 Not Found page or show an error message
+                    return NotFound();
+                }
+
+                // Generate the URL based on the ID (Replace "YourBaseUrl" with the actual URL of your online editor)
+                string onlineEditorUrl = "http://www.index.hu";// $"YourBaseUrl/{id}";
+
+                var bException = false;
+                if (bException)
+                    throw new Exception("Custom error...");
+
+                // Redirect the request to the new URL in a new tab
+                return Redirect(onlineEditorUrl);
+            }
+            catch (Exception ex)
+            {
+                // Store the error message in TempData
+                TempData["ErrorMessage"] = $"An error occurred: {ex.Message}";
+                
+                // Redirect back to the Index page
+                return RedirectToAction(nameof(Index));
+            }
+
         }
     }
 }
