@@ -12,7 +12,7 @@ builder.Services.AddDbContext<CAT_webContext>(options =>
 builder.Services.AddControllersWithViews();
 //builder.Services.AddControllers();
 
-builder.Services.AddSingleton<CATClientService>();
+builder.Services.AddScoped<CATClientService>();
 
 var app = builder.Build();
 

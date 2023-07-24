@@ -1,4 +1,5 @@
 ﻿using CAT_web.Data;
+using CAT_web.Services.CAT;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -14,11 +15,13 @@ namespace CAT_web.Controllers.ApiControllers
     {
         private readonly CAT_webContext _context;
         private readonly IConfiguration _configuration;
+        private readonly CATClientService _catClientService;
 
-        public EditorApiController(CAT_webContext context, IConfiguration configuration)
+        public EditorApiController(CAT_webContext context, IConfiguration configuration, CATClientService catClientService)
         {
             _context = context;
             _configuration = configuration;
+            _catClientService = catClientService;
         }
 
         [HttpGet("GetEditorData")]
@@ -31,10 +34,16 @@ namespace CAT_web.Controllers.ApiControllers
                 //load the job
                 var idJob = int.Parse(queryParams["idJob"]);
                 var job = await _context.Job.FindAsync(idJob);
-                if (job == null)
-                {
-                    return NotFound();
-                }
+
+                var sourceFilesFolder = Path.Combine(_configuration["SourceFilesFolder"]);
+                var fileFiltersFolder = Path.Combine(_configuration["FileFiltersFolder"]);
+
+                var filePath = Path.Combine(sourceFilesFolder, job!.FileName!);
+                string filterPath = null;
+                if (!String.IsNullOrEmpty(job.FilterName))
+                    filterPath = Path.Combine(fileFiltersFolder, job.FilterName);
+
+                var stats = _catClientService.GetStatisticsForDocument(filePath, filterPath, job.SourceLang, new string[] { job.TargetLang });
 
                 var editorData = new
                 {

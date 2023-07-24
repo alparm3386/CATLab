@@ -3,3 +3,8 @@
 *.props
 bin
 obj
+/CAT-web/wwwroot/lib
+/CAT-web/.vs/CAT-web/DesignTimeBuild/*.v2
+*.lock
+/CAT-web/.vs/CAT-web/v17/*.v2
+/CAT-web/.vs/CAT-web/v17/.suo

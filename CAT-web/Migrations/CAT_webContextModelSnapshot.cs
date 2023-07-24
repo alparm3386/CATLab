@@ -60,6 +60,46 @@ namespace CAT_web.Migrations
 
                     b.ToTable("Jobs");
                 });
+
+            modelBuilder.Entity("CAT_web.Models.TranslationUnit", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("context")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("dateUpdated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("idJob")
+                        .HasColumnType("int");
+
+                    b.Property<int>("locks")
+                        .HasColumnType("int");
+
+                    b.Property<string>("sourceText")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("status")
+                        .HasColumnType("int");
+
+                    b.Property<string>("targetText")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("tuid")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("idJob");
+
+                    b.ToTable("TranslationUnits");
+                });
 #pragma warning restore 612, 618
         }
     }

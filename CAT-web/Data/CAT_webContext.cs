@@ -15,5 +15,6 @@ namespace CAT_web.Data
         }
 
         public DbSet<CAT_web.Models.Job> Job { get; set; } = default!;
+        public DbSet<CAT_web.Models.TranslationUnit> TranslationUnit { get; set; } = default!;
     }
 }
