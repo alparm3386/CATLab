@@ -6,4 +6,10 @@
         Linguist,
         Client
     }
+
+    public enum DocumentType
+    {
+        original,
+        translated
+    }
 }

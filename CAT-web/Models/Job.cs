@@ -24,8 +24,13 @@ namespace CAT_web.Models
 
         [Display(Name = "Date created")]
         [DataType(DataType.Date)]
+
         public DateTime DateCreated { get; set; }
+        
         public string? Analysis { get; set; }
+        
         public decimal Fee { get; set; }
+
+        public DateTime? DateProcessed { get; set; }
     }
 }

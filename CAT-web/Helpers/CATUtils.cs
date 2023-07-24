@@ -1,4 +1,5 @@
 ﻿using BU;
+using CAT_web.Enums;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -31,7 +32,7 @@ namespace CAT_web.Helpers
 
         public static String ExtractMQXlz(String sFilePath)
         {
-            String sOutDir = ConfigurationSettings.AppSettings["TempFolder"];
+            String sOutDir = System.Configuration.ConfigurationManager.AppSettings["TempFolder"]!;
             String sNewXlfPath = Path.Combine(sOutDir, Guid.NewGuid().ToString() + ".xlf");
             try
             {
@@ -65,6 +66,146 @@ namespace CAT_web.Helpers
             {
                 throw ex;
             }
+        }
+
+        public static String GetJobDataFolder(int idJob)
+        {
+            var jobDataBaseFolder = System.Configuration.ConfigurationManager.AppSettings["jobDataBaseFolder"]!;
+
+            var jobDataFolder = Path.Combine(jobDataBaseFolder, idJob.ToString());
+
+            //create the folder if it doesn't exists
+            if (!Directory.Exists(jobDataFolder))
+                Directory.CreateDirectory(jobDataFolder);
+
+            return jobDataFolder;
+        }
+
+        public static String CreateXlfFilePath(int idJob, DocumentType documentType)
+        {
+            var jobDataFolder = GetJobDataFolder(idJob);
+            var xliffPath = Path.Combine(jobDataFolder, documentType.ToString() + ".xliff");
+            if (File.Exists(xliffPath))
+            {
+                //do a backup
+                File.Copy(xliffPath, Path.Combine(jobDataFolder, Path.GetFileNameWithoutExtension(xliffPath) + "_" +
+                    DateTime.Now.ToString("yyyy-MM-dd HH-mm-ss") + ".xlf"));
+            }
+
+            return xliffPath; 
+        }
+
+        public static bool IsSegmentEmptyOrWhiteSpaceOnly(String sXml)
+        {
+            XmlDocument xmlDoc = new XmlDocument();
+            xmlDoc.PreserveWhitespace = true;
+            if (!sXml.StartsWith("<seg>"))
+                sXml = "<seg>" + sXml + "</seg>";
+            xmlDoc.LoadXml(sXml);
+            XmlNodeList nodeList = xmlDoc.ChildNodes[0].ChildNodes;
+
+            try
+            {
+                var sbTextContent = new StringBuilder();
+                foreach (XmlNode node in nodeList)
+                {
+                    if (node.NodeType == XmlNodeType.Text || node.NodeType == XmlNodeType.Whitespace)
+                        sbTextContent.Append(node.InnerText);
+                }
+
+                if (sbTextContent.Length == 0)
+                    return true;
+
+                var matces = Regex.Match(sbTextContent.ToString(), @"\A\s*\z");
+                return matces.Length > 0;
+            }
+            catch (Exception ex)
+            {
+            }
+
+            return false;
+        }
+
+        public static String XliffTags2TMXTags(String sXliffContent)
+        {
+            String sConverted = sXliffContent;
+            sConverted = Regex.Replace(sConverted, "<x id=['\"].*?['\"].*?/>", "<ph type='fmt'>{}</ph>"); //no x element in TMX 
+            sConverted = Regex.Replace(sConverted, "(?<=<[^>]*?)(id)", "i"); //regex seems to be faster than xslt
+            sConverted = Regex.Replace(sConverted, "(?<=<[^>]*?)(ctype)", "type");
+            sConverted = Regex.Replace(sConverted, "(?<=<[^>]*?)(type=\"underlined\")", "type=\"ulined\"");
+            sConverted = sConverted.Replace(" xmlns=\"urn:oasis:names:tc:xliff:document:1.2\"", ""); //is there better solution?
+
+            return sConverted;
+        }
+
+        public enum TagType { Xliff, Tmx };
+
+        public static String XmlTags2GoogleTags(String sXml, TagType tagType)
+        {
+            //collect the ids to skip
+            StringBuilder sRet = new StringBuilder();
+            MatchCollection matches = Regex.Matches(sXml, @"{\s*(?<id>\d+)\s*}|{\s*/\s*(?<id>\d+)\s*}|{\s*(?<id>\d+)\s*/\s*}");
+            HashSet<String> idsToSkip = new HashSet<String>();
+            foreach (Match match in matches)
+                idsToSkip.Add(match.Groups["id"].Value);
+
+            String sIdAttr = "id";
+            if (tagType == TagType.Tmx)
+                sIdAttr = "i";
+
+            XmlDocument xmlDoc = new XmlDocument();
+            xmlDoc.PreserveWhitespace = true;
+            if (!sXml.StartsWith("<seg>"))
+                sXml = "<seg>" + sXml + "</seg>";
+            xmlDoc.LoadXml(sXml);
+            XmlNodeList nodeList = xmlDoc.ChildNodes[0].ChildNodes;
+            var openTags = new Dictionary<String, String>();
+            int id = 1;
+            String outerXml = "";
+            try
+            {
+                foreach (XmlNode node in nodeList)
+                {
+                    outerXml = node.OuterXml;
+                    while (idsToSkip.Contains(id.ToString()))
+                        id++;
+                    if (node.NodeType == XmlNodeType.Text || node.NodeType == XmlNodeType.Whitespace)
+                        sRet.Append(node.InnerText);
+                    else if (node.NodeType == XmlNodeType.Element)
+                    {
+                        switch (node.Name)
+                        {
+                            case "ph":
+                            case "x":
+                                sRet.Append("{" + id + "/}");
+                                id++;
+                                break;
+                            case "bpt":
+                                sRet.Append("{" + id + "}");
+                                openTags.Add(node.Attributes[sIdAttr].Value, id.ToString());
+                                id++;
+                                break;
+                            case "ept":
+                                sRet.Append("{/" + openTags[node.Attributes[sIdAttr].Value] + "}");
+                                break;
+                            case "it":
+                                sRet.Append("{" + id + "/}");
+                                id++;
+                                cLogManager.DEBUG_LOG("tagErrors.log", "XmlTags2GoogleTags " + sXml);
+                                break;
+                            default:
+                                cLogManager.DEBUG_LOG("tagErrors.log", "XmlTags2GoogleTags " + sXml);
+                                break;
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("id=" + id);
+            }
+
+            return sRet.ToString();
         }
     }
 }
