@@ -9,6 +9,7 @@ using CAT_web.Data;
 using CAT_web.Models;
 using CAT_web.Helpers;
 using System.IO;
+using CAT_web.Enums;
 
 namespace CAT_web.Controllers
 {
@@ -228,23 +229,21 @@ namespace CAT_web.Controllers
 
 
         // GET: Jobs/Open/5
-        public IActionResult OpenInOnlineEditor(int? id)
+        public IActionResult OpenInOnlineEditor(int? idJob)
         {
             try
             {
-                if (id == null)
+                if (idJob == null)
                 {
                     // Handle the case when the ID is not provided or invalid
                     // For example, return a 404 Not Found page or show an error message
                     return NotFound();
                 }
 
-                // Generate the URL based on the ID (Replace "YourBaseUrl" with the actual URL of your online editor)
-                string onlineEditorUrl = "http://www.index.hu";// $"YourBaseUrl/{id}";
+                // Generate the URL
+                //string onlineEditorUrl = "/online-editor?" + UrlHelper.CreateOnlineEditorUrl((int)idJob, OEMode.Admin);
+                string onlineEditorUrl = "http://localhost:3000/?" + UrlHelper.CreateOnlineEditorUrl((int)idJob, OEMode.Admin);
 
-                var bException = false;
-                if (bException)
-                    throw new Exception("Custom error...");
 
                 // Redirect the request to the new URL in a new tab
                 return Redirect(onlineEditorUrl);
