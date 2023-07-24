@@ -12,6 +12,7 @@ namespace CAT_web.Controllers
         {
             try
             {
+                var editorDarams = EncryptionHelper.DecryptString(urlParams).Split('&');
                 var editorData = new
                 {
                     translationUnits = new[]

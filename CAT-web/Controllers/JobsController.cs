@@ -242,7 +242,7 @@ namespace CAT_web.Controllers
 
                 // Generate the URL
                 //string onlineEditorUrl = "/online-editor?" + UrlHelper.CreateOnlineEditorUrl((int)idJob, OEMode.Admin);
-                string onlineEditorUrl = "http://localhost:3000/?" + UrlHelper.CreateOnlineEditorUrl((int)idJob, OEMode.Admin);
+                string onlineEditorUrl = UrlHelper.CreateOnlineEditorUrl((int)idJob, OEMode.Admin);
 
 
                 // Redirect the request to the new URL in a new tab
