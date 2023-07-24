@@ -6,6 +6,8 @@ namespace CAT_web.Models
     [Table("Jobs")]
     public class Job
     {
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
         [Display(Name = "Original file name")]
         public string? OriginalFileName { get; set; }
