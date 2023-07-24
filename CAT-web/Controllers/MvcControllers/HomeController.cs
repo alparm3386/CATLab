@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
-namespace CAT_web.Controllers
+namespace CAT_web.Controllers.MvcControllers
 {
     public class HomeController : Controller
     {

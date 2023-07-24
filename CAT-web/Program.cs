@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using CAT_web.Data;
 using CAT_web.Models;
+using CAT_web.Services.CAT;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<CAT_webContext>(options =>
@@ -10,6 +11,8 @@ builder.Services.AddDbContext<CAT_webContext>(options =>
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 //builder.Services.AddControllers();
+
+builder.Services.AddSingleton<CATClientService>();
 
 var app = builder.Build();
 

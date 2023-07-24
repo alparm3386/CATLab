@@ -1,18 +1,41 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using CAT_web.Data;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json.Linq;
+using System.Collections.Specialized;
+using System.Web;
 
-namespace CAT_web.Controllers
+namespace CAT_web.Controllers.ApiControllers
 {
     [ApiController]
     [Route("[controller]")]
     public class EditorApiController : ControllerBase
     {
+        private readonly CAT_webContext _context;
+        private readonly IConfiguration _configuration;
+
+        public EditorApiController(CAT_webContext context, IConfiguration configuration)
+        {
+            _context = context;
+            _configuration = configuration;
+        }
+
         [HttpGet("GetEditorData")]
-        public IActionResult GetEditorData(String urlParams)
+        public async Task<IActionResult> GetEditorData(string urlParams)
         {
             try
             {
-                var editorDarams = EncryptionHelper.DecryptString(urlParams).Split('&');
+                var decryptedDarams = EncryptionHelper.DecryptString(urlParams);
+                NameValueCollection queryParams = HttpUtility.ParseQueryString(decryptedDarams);
+                //load the job
+                var idJob = int.Parse(queryParams["idJob"]);
+                var job = await _context.Job.FindAsync(idJob);
+                if (job == null)
+                {
+                    return NotFound();
+                }
+
                 var editorData = new
                 {
                     translationUnits = new[]

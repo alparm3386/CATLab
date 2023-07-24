@@ -11,7 +11,7 @@ using CAT_web.Helpers;
 using System.IO;
 using CAT_web.Enums;
 
-namespace CAT_web.Controllers
+namespace CAT_web.Controllers.MvcControllers
 {
     public class JobsController : Controller
     {
@@ -78,12 +78,12 @@ namespace CAT_web.Controllers
                 if (file != null && file.Length > 0)
                 {
                     //save the file
-                    var sourceFilesFolderPath = Path.Combine(_configuration["SourceFilesFolder"]);
+                    var sourceFilesFolder = Path.Combine(_configuration["SourceFilesFolder"]);
                     // Generate a unique file name based on the original file name
                     string fileName = FileHelper.GetUniqueFileName(file.FileName);
 
                     // Combine the unique file name with the server's path to create the full path
-                    string filePath = Path.Combine(sourceFilesFolderPath, fileName);
+                    string filePath = Path.Combine(sourceFilesFolder, fileName);
 
                     // Save the file to the server
                     using (var stream = new FileStream(filePath, FileMode.Create))
@@ -94,12 +94,12 @@ namespace CAT_web.Controllers
                     var filterName = "";
                     if (fileFilter != null && fileFilter.Length > 0)
                     {
-                        var fileFiltersFolderPath = Path.Combine(_configuration["FileFiltersFolder"]);
+                        var fileFiltersFolder = Path.Combine(_configuration["FileFiltersFolder"]);
                         // Generate a unique file name based on the original file name
                         filterName = FileHelper.GetUniqueFileName(fileFilter.FileName);
 
                         // Combine the unique file name with the server's path to create the full path
-                        string filterPath = Path.Combine(sourceFilesFolderPath, filterName);
+                        string filterPath = Path.Combine(fileFiltersFolder, filterName);
                         using (var stream = new FileStream(filterPath, FileMode.Create))
                         {
                             await fileFilter.CopyToAsync(stream);
@@ -252,7 +252,7 @@ namespace CAT_web.Controllers
             {
                 // Store the error message in TempData
                 TempData["ErrorMessage"] = $"An error occurred: {ex.Message}";
-                
+
                 // Redirect back to the Index page
                 return RedirectToAction(nameof(Index));
             }
