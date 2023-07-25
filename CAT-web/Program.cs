@@ -11,14 +11,20 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.AspNetCore.Identity;
+using CATWeb.Areas.Identity.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<CATWebContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("CATWebContext") ?? throw new InvalidOperationException("Connection string 'CATWebContext' not found.")));
 
+builder.Services.AddDbContext<IdentityDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("IdentityDbContext") ?? throw new InvalidOperationException("Connection string 'IdentityDbContext' not found.")));
+
 // Add services to the container.
 builder.Services.AddControllersWithViews();
-//builder.Services.AddControllers();
+
+// Add Razor Pages (needed for Identity)
+builder.Services.AddRazorPages();
 
 builder.Services.AddScoped<CATClientService>();
 builder.Services.TryAddEnumerable(new[]
@@ -29,7 +35,7 @@ builder.Services.TryAddEnumerable(new[]
     });
 
 builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
-    .AddEntityFrameworkStores<CATWebContext>();
+    .AddEntityFrameworkStores<IdentityDbContext>();
 
 //builder.Services.AddDbContext<CATWebContext>(options =>
 //    options.UseSqlServer(builder.Configuration.GetConnectionString("CATWebContext"))
@@ -102,5 +108,8 @@ app.UseDefaultFiles();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+
+// Add endpoint routing for Razor pages
+app.MapRazorPages();
 
 app.Run();

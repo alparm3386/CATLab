@@ -1,11 +1,13 @@
-﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using CATWeb.Models;
 
 namespace CATWeb.Data
 {
-    public class CATWebContext : IdentityDbContext<IdentityUser>
+    public class CATWebContext : DbContext
     {
         public CATWebContext(DbContextOptions<CATWebContext> options)
             : base(options)
@@ -14,6 +16,5 @@ namespace CATWeb.Data
 
         public DbSet<Job> Job { get; set; } = default!;
         public DbSet<TranslationUnit> TranslationUnit { get; set; } = default!;
-        // IdentityUser and IdentityRole are included in IdentityDbContext
     }
 }
