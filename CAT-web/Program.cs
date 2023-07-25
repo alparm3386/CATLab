@@ -13,6 +13,7 @@ using System.Text;
 using Microsoft.AspNetCore.Identity;
 using CATWeb.Areas.Identity.Data;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<CATWebContext>(options =>
@@ -51,26 +52,40 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.Requ
 builder.Services.AddSession();
 builder.Services.AddMemoryCache();
 
-// Add Authentication
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddJwtBearer(options =>
+// Configure JWT Authentication
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
     {
-        options.TokenValidationParameters = new TokenValidationParameters
-        {
-            ValidateIssuer = true,
-            ValidateAudience = true,
-            ValidateLifetime = true,
-            ValidateIssuerSigningKey = true,
-            ValidIssuer = builder.Configuration["Jwt:Issuer"],
-            ValidAudience = builder.Configuration["Jwt:Audience"],
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
-        };
-    });
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        ValidIssuer = builder.Configuration["Jwt:Issuer"],
+        ValidAudience = builder.Configuration["Jwt:Audience"],
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
+    };
+});
+
+// Add the cookie authentication scheme
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
+    {
+        options.AccessDeniedPath = "/Identity/Account/AccessDenied";
+        options.Cookie.Name = "YourAppCookieName";
+        options.Cookie.HttpOnly = true;
+        options.ExpireTimeSpan = TimeSpan.FromMinutes(60);
+        options.LoginPath = "/Identity/Account/Login"; // This is the path to your login page
+        options.ReturnUrlParameter = CookieAuthenticationDefaults.ReturnUrlParameter;
+        options.SlidingExpiration = true;
+    }); 
 
 var app = builder.Build();
-
-// Use Authentication
-app.UseAuthentication();
 
 app.UseSession();
 
@@ -100,7 +115,11 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+// Use Authentication
+app.UseAuthentication();
 app.UseAuthorization();
+
+
 
 app.UseStaticFiles();
 app.UseDefaultFiles();

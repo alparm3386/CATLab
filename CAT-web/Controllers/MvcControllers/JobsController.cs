@@ -10,9 +10,12 @@ using CATWeb.Models;
 using CATWeb.Helpers;
 using System.IO;
 using CATWeb.Enums;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 namespace CATWeb.Controllers.MvcControllers
 {
+    [Authorize(AuthenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme)]
     public class JobsController : Controller
     {
         private readonly CATWebContext _context;
