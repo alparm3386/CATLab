@@ -10,6 +10,7 @@ using Microsoft.Extensions.Caching.Memory;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using Microsoft.AspNetCore.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<CATWebContext>(options =>
@@ -26,6 +27,9 @@ builder.Services.TryAddEnumerable(new[]
         ServiceDescriptor.Singleton<IMachineTranslator, MMT>(),
         //ServiceDescriptor.Singleton<IMachineTranslator, MachineTranslator2>(),
     });
+
+builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+    .AddEntityFrameworkStores<CATWebContext>();
 
 //builder.Services.AddDbContext<CATWebContext>(options =>
 //    options.UseSqlServer(builder.Configuration.GetConnectionString("CATWebContext"))
