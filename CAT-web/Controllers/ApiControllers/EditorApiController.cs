@@ -12,7 +12,7 @@ using System.Web;
 
 namespace CATWeb.Controllers.ApiControllers
 {
-    [Authorize]
+    //[Authorize]
     [ApiController]
     [Route("[controller]")]
     public class EditorApiController : ControllerBase

@@ -119,7 +119,7 @@ namespace CATWeb.Controllers.MvcControllers
                     };
 
                     // Save the job object to the database
-                    _context.Add(job);
+                    _context.Job.Add(job);
                     await _context.SaveChangesAsync();
                     return RedirectToAction(nameof(Index));
                 }
