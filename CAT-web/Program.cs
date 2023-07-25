@@ -6,6 +6,7 @@ using CATWeb.Services.CAT;
 using CATWeb.Services.MT;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using System.Configuration;
+using Microsoft.Extensions.Caching.Memory;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<CATWebContext>(options =>
@@ -33,13 +34,23 @@ builder.Services.TryAddEnumerable(new[]
 //        .AddInterceptors(new CATDbCommandInterceptor()) // Add your interceptor here
 //);
 
+builder.Services.AddSession();
+builder.Services.AddMemoryCache();
+
 var app = builder.Build();
+
+app.UseSession();
+
 
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
 
     SeedData.Initialize(services);
+
+    //var memoryCache = services.GetRequiredService<IMemoryCache>();
+    //var someObject = new Object(); // your object
+    //memoryCache.Set("Sessions", new Dictionary<String, Object>());
 }
 
 // Configure the HTTP request pipeline.

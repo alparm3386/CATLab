@@ -4,6 +4,7 @@ using CATWeb.Services.CAT;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 using Newtonsoft.Json.Linq;
 using System.Collections.Specialized;
 using System.Web;
@@ -17,12 +18,14 @@ namespace CATWeb.Controllers.ApiControllers
         private readonly CATWebContext _context;
         private readonly IConfiguration _configuration;
         private readonly CATClientService _catClientService;
+        private readonly IMemoryCache _cache;
 
-        public EditorApiController(CATWebContext context, IConfiguration configuration, CATClientService catClientService)
+        public EditorApiController(CATWebContext context, IConfiguration configuration, CATClientService catClientService, IMemoryCache cache)
         {
             _context = context;
             _configuration = configuration;
             _catClientService = catClientService;
+            _cache = cache;
         }
 
         [HttpGet("GetEditorData")]
@@ -74,10 +77,18 @@ namespace CATWeb.Controllers.ApiControllers
                 if (!String.IsNullOrEmpty(job.FilterName))
                     filterPath = Path.Combine(fileFiltersFolder, job.FilterName);
 
-                var editorData = new
+                dynamic jobData = new
                 {
                     translationUnits = translationUnits.Select(tu => new { source = CATUtils.XmlTags2GoogleTags(tu.sourceText, CATUtils.TagType.Tmx), 
                         target = tu.targetText })
+                };
+
+                //store the jobData in the user session
+                HttpContext.Session.Set<dynamic>("jobData", (object)jobData);
+
+                var editorData = new
+                {
+                    translationUnits = jobData.translationUnits
                 };
 
                 return Ok(editorData);
