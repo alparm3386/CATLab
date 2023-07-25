@@ -1,0 +1,75 @@
+﻿@page
+@model CATWeb.Pages.TestingPageModel
+
+@{
+    ViewData["Title"] = "TestingPage";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>TestingPage</h1>
+
+<h4>Job</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Job.OriginalFileName" class="control-label">Original File Name</label>
+                <input asp-for="Job.OriginalFileName" class="form-control" />
+                <span asp-validation-for="Job.OriginalFileName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Job.FileName" class="control-label"></label>
+                <input asp-for="Job.FileName" class="form-control" />
+                <span asp-validation-for="Job.FileName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Job.FilterName" class="control-label"></label>
+                <input asp-for="Job.FilterName" class="form-control" />
+                <span asp-validation-for="Job.FilterName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Job.SourceLang" class="control-label"></label>
+                <input asp-for="Job.SourceLang" class="form-control" />
+                <span asp-validation-for="Job.SourceLang" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Job.TargetLang" class="control-label"></label>
+                <input asp-for="Job.TargetLang" class="form-control" />
+                <span asp-validation-for="Job.TargetLang" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Job.DateCreated" class="control-label"></label>
+                <input asp-for="Job.DateCreated" class="form-control" />
+                <span asp-validation-for="Job.DateCreated" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Job.Analysis" class="control-label"></label>
+                <input asp-for="Job.Analysis" class="form-control" />
+                <span asp-validation-for="Job.Analysis" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Job.Fee" class="control-label"></label>
+                <input asp-for="Job.Fee" class="form-control" />
+                <span asp-validation-for="Job.Fee" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Job.DateProcessed" class="control-label"></label>
+                <input asp-for="Job.DateProcessed" class="form-control" />
+                <span asp-validation-for="Job.DateProcessed" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-page="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
