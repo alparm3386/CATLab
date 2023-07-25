@@ -35,6 +35,36 @@ namespace CAT_web.Controllers.ApiControllers
                 var idJob = int.Parse(queryParams["idJob"]);
                 var job = await _context.Job.FindAsync(idJob);
 
+                using (var transaction = _context.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        //check if the job was processed
+                        if (job?.DateProcessed == null)
+                        {
+                            //parse the document
+                            _catClientService.ParseDoc(idJob);
+                            job!.DateProcessed = DateTime.Now;
+
+                            // Save changes in the database
+                            await _context.SaveChangesAsync();
+
+                            transaction.Commit();
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        // An error occurred, roll back the transaction
+                        transaction.Rollback();
+                        throw;
+                    }
+                }
+
+                //load the translation units
+                var translationUnits = await _context.TranslationUnit
+                                 .Where(tu => tu.idJob == idJob)
+                                 .ToListAsync();
+
                 var sourceFilesFolder = Path.Combine(_configuration["SourceFilesFolder"]);
                 var fileFiltersFolder = Path.Combine(_configuration["FileFiltersFolder"]);
 
@@ -43,29 +73,9 @@ namespace CAT_web.Controllers.ApiControllers
                 if (!String.IsNullOrEmpty(job.FilterName))
                     filterPath = Path.Combine(fileFiltersFolder, job.FilterName);
 
-                var stats = _catClientService.GetStatisticsForDocument(filePath, filterPath, job.SourceLang, new string[] { job.TargetLang });
-
                 var editorData = new
                 {
-                    translationUnits = new[]
-                    {
-                        new { source = "Celestial Print Velour Sleepsuit and Hat Set", target = "Lot de combinaison et chapeau en velours à imprimé céleste" },
-                        new { source = "This velour set may be the star of their cosy collection!", target = "Cet ensemble en velours est peut-être la star de leur collection cosy !" },
-                        new { source = "Harry Potter™ Gryffindor Phone Case", target = "Coque de téléphone Harry Potter™ Gryffondor" },
-                        new { source = "Put your house pride on full display with this case", target = "Mettez la fierté de votre maison à l'honneur avec cet étui" },
-                        new { source = "Disney’s Minnie Mouse Rain Jacket", target = "Veste de pluie Disney Minnie Mouse" },
-                        new { source = "Their rainy day adventures just got a lot more exciting with this hooded Disney raincoat!", target = "Their rainy day adventures just got a lot more exciting with this hooded Disney raincoat!" },
-                        new { source = "Coats & Jackets", target = "Coats & Jackets" },
-                        new { source = "Mickey, Minnie & Friends", target = "Mickey, Minnie & Friends" },
-                        new { source = "SHELL-100% Polyester with Polyurethane Coating, LINING-100% Polyester", target = "EXTÉRIEUR : 100 % polyester enduit de polyuréthane, DOUBLURE : 100 % polyester" },
-                        new { source = "Disney’s Mickey Mouse and Minnie Mouse Tweezer Set", target = "Disney’s Mickey Mouse and Minnie Mouse Tweezer Set" },
-                        new { source = "Mickey Mouse, Minnie Mouse", target = "Mickey Mouse, Minnie Mouse" },
-                        new { source = "A baby tee that makes a statement!", target = "A baby tee that makes a statement!" },
-                        new { source = "Harry Potter, Ron Weasley, Hermione Granger", target = "Harry Potter, Ron Weasley, Hermione Granger" },
-                        new { source = "80% Polyester, 17% Viscose, 3% Elastane", target = "80% Polyester, 17% Viscose, 3% Elastane" },
-                        new { source = "Disney's Winnie The Pooh Phone Case", target = "Étui pour téléphone Winnie l'ourson de Disney" },
-                        new { source = "Wrap your device in whimsy with this case", target = "Enveloppez votre appareil de fantaisie avec cet étui" }
-                    }
+                    translationUnits = translationUnits.Select(tu => new { source = tu.sourceText, target = tu.targetText })
                 };
 
                 return Ok(editorData);

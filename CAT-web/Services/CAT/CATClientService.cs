@@ -159,7 +159,7 @@ namespace CAT_web.Services.CAT
 
                 if (CATUtils.IsCompressedMemoQXliff(sFilePath))
                 {
-                    sFilePath = CATUtils.ExtractMQXlz(sFilePath);
+                    sFilePath = CATUtils.ExtractMQXlz(sFilePath, _configuration["TempFolder"]);
                     lstFilesToDelete.Add(sFilePath);
                 }
 
@@ -290,7 +290,7 @@ namespace CAT_web.Services.CAT
                     var job = _context.Job.Find(idJob);
 
                     //check if it is parsed already
-                    if (job?.DateProcessed is null)
+                    if (job?.DateProcessed != null)
                         throw new Exception("Already processed.");
 
                     //Get the document
@@ -300,14 +300,14 @@ namespace CAT_web.Services.CAT
 
                     //get the filter
                     string filterPath = "";
-                    if (job.FilterName != null)
+                    if (!String.IsNullOrEmpty(job.FilterName))
                         filterPath = Path.Combine(sourceFilesFolder, job.FilterName);
 
-                    var jobDataFolder = CATUtils.GetJobDataFolder(idJob);
+                    var jobDataFolder = CATUtils.GetJobDataFolder(idJob, _configuration["JobDataBaseFolder"]);
 
                     //var aContentForMT = new List<MTContent>();
 
-                    String sXlifFilePath = CATUtils.CreateXlfFilePath(idJob, DocumentType.original); //we do a backup of the original xliff
+                    String sXlifFilePath = CATUtils.CreateXlfFilePath(idJob, DocumentType.original, _configuration["JobDataBaseFolder"]); //we do a backup of the original xliff
 
                     //pre-process the document
                     String tmpFilePath = null;// DocumentProcessor.PreProcessDocument(sFilePath, idFilter, idFrom, idTo);
@@ -319,7 +319,7 @@ namespace CAT_web.Services.CAT
 
                     if (CATUtils.IsCompressedMemoQXliff(filePath))
                     {
-                        filePath = CATUtils.ExtractMQXlz(filePath);
+                        filePath = CATUtils.ExtractMQXlz(filePath, _configuration["TempFolder"]);
                         filesToDelete.Add(filePath);
                     }
 
@@ -340,8 +340,6 @@ namespace CAT_web.Services.CAT
                     var lstTus = new List<TranslationUnit>();
                     foreach (XmlNode tu in tus)
                     {
-                        var translationUnit = new TranslationUnit();
-                        translationUnit.tuid = nIdx;
                         var tuId = tu.Attributes["id"].Value;
                         var targetNode = tu["target"];
                         XmlNodeList sourceSegments = null;
@@ -354,6 +352,10 @@ namespace CAT_web.Services.CAT
 
                         foreach (XmlNode sourceSegment in sourceSegments)
                         {
+                            var translationUnit = new TranslationUnit();
+                            translationUnit.tuid = nIdx;
+                            translationUnit.idJob = idJob;
+
                             if (CATUtils.IsSegmentEmptyOrWhiteSpaceOnly(sourceSegment.InnerXml.Trim()))
                                 continue;
 
@@ -421,7 +423,8 @@ namespace CAT_web.Services.CAT
                     {
                         if (translatableDictionary.TryGetValue(tu.tuid, out var translatable))
                         {
-                            tu.targetText = translatable.target;
+                            String targetWithGoogleTags = CATUtils.XmlTags2GoogleTags(translatable.target, CATUtils.TagType.Tmx); //we store the target text with google tags
+                            tu.targetText = targetWithGoogleTags;
                         }
                     });
 

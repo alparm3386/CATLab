@@ -5,6 +5,7 @@ using CAT_web.Models;
 using CAT_web.Services.CAT;
 using CAT_web.Services.MT;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using System.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<CAT_webContext>(options =>
@@ -21,6 +22,16 @@ builder.Services.TryAddEnumerable(new[]
         ServiceDescriptor.Singleton<IMachineTranslator, MMT>(),
         //ServiceDescriptor.Singleton<IMachineTranslator, MachineTranslator2>(),
     });
+
+//builder.Services.AddDbContext<CAT_webContext>(options =>
+//    options.UseSqlServer(builder.Configuration.GetConnectionString("CAT_webContext"))
+//    .LogTo(Console.WriteLine, LogLevel.Information) // <-- Add this line
+//);
+
+//builder.Services.AddDbContext<CAT_webContext>(options =>
+//    options.UseSqlServer(builder.Configuration.GetConnectionString("CAT_webContext"))
+//        .AddInterceptors(new CATDbCommandInterceptor()) // Add your interceptor here
+//);
 
 var app = builder.Build();
 

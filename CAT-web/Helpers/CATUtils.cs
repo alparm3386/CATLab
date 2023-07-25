@@ -30,17 +30,16 @@ namespace CAT_web.Helpers
             return false;
         }
 
-        public static String ExtractMQXlz(String sFilePath)
+        public static String ExtractMQXlz(String sFilePath, String tempFolder)
         {
-            String sOutDir = System.Configuration.ConfigurationManager.AppSettings["TempFolder"]!;
-            String sNewXlfPath = Path.Combine(sOutDir, Guid.NewGuid().ToString() + ".xlf");
+            String sNewXlfPath = Path.Combine(tempFolder, Guid.NewGuid().ToString() + ".xlf");
             try
             {
                 String sExt = Path.GetExtension(sFilePath).ToLower();
                 //unzip the file if it is zipped
                 if (sExt == ".xlz" || sExt == ".mqxlz")
                 {
-                    String sTmpDir = Path.Combine(sOutDir, Guid.NewGuid().ToString());
+                    String sTmpDir = Path.Combine(tempFolder, Guid.NewGuid().ToString());
                     ZipHelper.UnZipFiles(sFilePath, sTmpDir, null);
                     //copy the file into the out dir
                     if (sExt == ".xlz")
@@ -68,10 +67,8 @@ namespace CAT_web.Helpers
             }
         }
 
-        public static String GetJobDataFolder(int idJob)
+        public static String GetJobDataFolder(int idJob, String jobDataBaseFolder)
         {
-            var jobDataBaseFolder = System.Configuration.ConfigurationManager.AppSettings["jobDataBaseFolder"]!;
-
             var jobDataFolder = Path.Combine(jobDataBaseFolder, idJob.ToString());
 
             //create the folder if it doesn't exists
@@ -81,9 +78,9 @@ namespace CAT_web.Helpers
             return jobDataFolder;
         }
 
-        public static String CreateXlfFilePath(int idJob, DocumentType documentType)
+        public static String CreateXlfFilePath(int idJob, DocumentType documentType, String jobDataBaseFolder)
         {
-            var jobDataFolder = GetJobDataFolder(idJob);
+            var jobDataFolder = GetJobDataFolder(idJob, jobDataBaseFolder);
             var xliffPath = Path.Combine(jobDataFolder, documentType.ToString() + ".xliff");
             if (File.Exists(xliffPath))
             {
