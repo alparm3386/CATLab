@@ -191,10 +191,8 @@ namespace CAT_web.Helpers
                             case "it":
                                 sRet.Append("{" + id + "/}");
                                 id++;
-                                cLogManager.DEBUG_LOG("tagErrors.log", "XmlTags2GoogleTags " + sXml);
                                 break;
                             default:
-                                cLogManager.DEBUG_LOG("tagErrors.log", "XmlTags2GoogleTags " + sXml);
                                 break;
                         }
                     }

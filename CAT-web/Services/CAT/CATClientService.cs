@@ -15,6 +15,8 @@ using System.Transactions;
 using static ICSharpCode.SharpZipLib.Zip.ZipEntryFactory;
 using System.Xml;
 using CAT_web.Enums;
+using CAT_web.Services.MT;
+using Microsoft.Extensions.Options;
 
 namespace CAT_web.Services.CAT
 {
@@ -22,14 +24,16 @@ namespace CAT_web.Services.CAT
     {
         private readonly CAT_webContext _context;
         private readonly IConfiguration _configuration;
+        private readonly IEnumerable<IMachineTranslator> _machineTranslators;
 
         /// <summary>
         /// CATClientService
         /// </summary>
-        public CATClientService(CAT_webContext context, IConfiguration configuration)
+        public CATClientService(CAT_webContext context, IConfiguration configuration, IEnumerable<IMachineTranslator> machineTranslators)
         {
             _context = context;
             _configuration = configuration;
+            _machineTranslators = machineTranslators;
         }
 
         private EndpointAddress GetCATServiceEndpoint()
@@ -392,59 +396,42 @@ namespace CAT_web.Services.CAT
                                 String sTarget = CATUtils.XmlTags2GoogleTags(targetSegment.InnerXml, CATUtils.TagType.Xliff); //we store the target text with google tags
                                 translationUnit.targetText = sTarget;
                             }
+                            lstTus.Add(translationUnit);
                             nIdx++;
                         }
                     }
 
                     //machine translation
-                    var mTranslator = MTranslator.Create(MTProvider);
-                    var translations = mTranslator.Translate(aContentForMT, sLangFrom639_1, sLangTo639_1, null);
-                    //var risks = new Dictionary
+                    var mmt = _machineTranslators.OfType<MMT>().First();
 
-                    cDocumentsManager oDMgr = new cDocumentsManager(oTMgr);
-                    //start a new transaction for the MT
-                    TUTransaction = new TransactionScope(TransactionScopeOption.Required, transactionOptions);
-                    var MTLookup = new HashSet<String>();
-                    using (TUTransaction)
+                    //create translatables
+                    var translatables = lstTus.Select(tu => new Translatable
                     {
-                        foreach (var oTranslation in translations)
+                        id = tu.tuid,
+                        source = tu.sourceText,
+                        target = tu.targetText!
+                    }).ToList();
+
+                    //do the machine translation
+                    mmt.Translate(translatables, job.SourceLang, job.TargetLang, null);
+
+                    //populate the translation units with the machine translation
+                    Dictionary<int, Translatable> translatableDictionary = translatables.ToDictionary(t => t.id);
+                    lstTus.ForEach(tu =>
+                    {
+                        if (translatableDictionary.TryGetValue(tu.tuid, out var translatable))
                         {
-                            if (bPreTranslateWithMT)
-                                oDMgr.DBfactory.InsertTranslatedSection(oTranslation.idSourceContent, oTranslation.target, false, 0);
-
-                            var tmpIds = oTranslation.idXliff.Split('@');
-                            XmlNode tuNode = Xliff.SelectSingleNode("//x:trans-unit[@id='" + tmpIds[0] + "']", xmlnsManager);
-                            var sourceSegment = !String.IsNullOrEmpty(tmpIds[1]) ? tuNode.SelectSingleNode("x:seg-source/x:mrk[@mid=" + tmpIds[1] + "]", xmlnsManager) : null;
-                            if (sourceSegment == null)
-                                sourceSegment = tuNode.SelectSingleNode("x:source", xmlnsManager);
-                            var status = sourceSegment.Attributes["status"];
-                            if (status == null)
-                            {
-                                status = Xliff.CreateAttribute("status");
-                                sourceSegment.Attributes.Append(status);
-                            }
-
-                            status.Value = "tmMachineTranslated";
-                            var tagsMap = CATUtils.GetTagsMap(sourceSegment.InnerXml, CATUtils.TagType.Xliff);
-                            var targetSegment = !String.IsNullOrEmpty(tmpIds[1]) ? tuNode.SelectSingleNode("x:target/x:mrk[@mid=" + tmpIds[1] + "]", xmlnsManager) : null;
-                            if (targetSegment == null)
-                                targetSegment = tuNode.SelectSingleNode("x:target", xmlnsManager);
-                            targetSegment.InnerXml = CATUtils.GoogleTags2XmlTags(oTranslation.target, tagsMap);
-
-                            if (!MTLookup.Contains(oTranslation.source))
-                            {
-                                var hash = Utils.GenerateHash(oTranslation.source);
-                                oDMgr.DBfactory.InsertMT(idTranslation, (int)MTProvider, oTranslation.target, hash,
-                                    oTranslation.source, sLangFrom639_1 + sLangTo639_1, oTranslation.risk);
-                            }
-                            else
-                                MTLookup.Add(oTranslation.source);
+                            tu.targetText = translatable.target;
                         }
+                    });
 
-                        //save the machine translation into the original xliff
-                        Xliff.Save(sXlifFilePath);
+                    //save the machine translation into the original xliff
+                    Xliff.Save(sXlifFilePath);
 
-                    }
+                    // Add the array of TranslationUnit objects to the DbSet
+                    _context.TranslationUnit.AddRange(lstTus);
+                    // Save changes in the context to the database
+                    _context.SaveChanges();
                 }
             }
             catch (Exception ex)

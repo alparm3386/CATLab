@@ -3,6 +3,8 @@ using Microsoft.Extensions.DependencyInjection;
 using CAT_web.Data;
 using CAT_web.Models;
 using CAT_web.Services.CAT;
+using CAT_web.Services.MT;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<CAT_webContext>(options =>
@@ -13,6 +15,12 @@ builder.Services.AddControllersWithViews();
 //builder.Services.AddControllers();
 
 builder.Services.AddScoped<CATClientService>();
+builder.Services.TryAddEnumerable(new[]
+    {
+        // Type-based services
+        ServiceDescriptor.Singleton<IMachineTranslator, MMT>(),
+        //ServiceDescriptor.Singleton<IMachineTranslator, MachineTranslator2>(),
+    });
 
 var app = builder.Build();
 
