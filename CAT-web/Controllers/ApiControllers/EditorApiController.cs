@@ -1,6 +1,7 @@
 ﻿using CATWeb.Data;
 using CATWeb.Helpers;
 using CATWeb.Services.CAT;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -11,6 +12,7 @@ using System.Web;
 
 namespace CATWeb.Controllers.ApiControllers
 {
+    [Authorize]
     [ApiController]
     [Route("[controller]")]
     public class EditorApiController : ControllerBase

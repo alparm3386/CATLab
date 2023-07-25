@@ -7,6 +7,9 @@ using CATWeb.Services.MT;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using System.Configuration;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<CATWebContext>(options =>
@@ -33,6 +36,7 @@ builder.Services.TryAddEnumerable(new[]
 //    options.UseSqlServer(builder.Configuration.GetConnectionString("CATWebContext"))
 //        .AddInterceptors(new CATDbCommandInterceptor()) // Add your interceptor here
 //);
+
 
 builder.Services.AddSession();
 builder.Services.AddMemoryCache();
