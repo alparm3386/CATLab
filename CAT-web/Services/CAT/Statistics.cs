@@ -1,4 +1,4 @@
-﻿namespace CAT_web.Services.CAT
+﻿namespace CATWeb.Services.CAT
 {
     /// <summary>
     /// Statistics

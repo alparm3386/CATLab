@@ -1,8 +1,8 @@
-﻿using CAT_web.Models;
+﻿using CATWeb.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
-namespace CAT_web.Controllers.MvcControllers
+namespace CATWeb.Controllers.MvcControllers
 {
     public class HomeController : Controller
     {

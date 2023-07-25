@@ -1,15 +1,15 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using CAT_web.Data;
-using CAT_web.Models;
-using CAT_web.Services.CAT;
-using CAT_web.Services.MT;
+using CATWeb.Data;
+using CATWeb.Models;
+using CATWeb.Services.CAT;
+using CATWeb.Services.MT;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using System.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.Services.AddDbContext<CAT_webContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("CAT_webContext") ?? throw new InvalidOperationException("Connection string 'CAT_webContext' not found.")));
+builder.Services.AddDbContext<CATWebContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("CATWebContext") ?? throw new InvalidOperationException("Connection string 'CATWebContext' not found.")));
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
@@ -23,13 +23,13 @@ builder.Services.TryAddEnumerable(new[]
         //ServiceDescriptor.Singleton<IMachineTranslator, MachineTranslator2>(),
     });
 
-//builder.Services.AddDbContext<CAT_webContext>(options =>
-//    options.UseSqlServer(builder.Configuration.GetConnectionString("CAT_webContext"))
+//builder.Services.AddDbContext<CATWebContext>(options =>
+//    options.UseSqlServer(builder.Configuration.GetConnectionString("CATWebContext"))
 //    .LogTo(Console.WriteLine, LogLevel.Information) // <-- Add this line
 //);
 
-//builder.Services.AddDbContext<CAT_webContext>(options =>
-//    options.UseSqlServer(builder.Configuration.GetConnectionString("CAT_webContext"))
+//builder.Services.AddDbContext<CATWebContext>(options =>
+//    options.UseSqlServer(builder.Configuration.GetConnectionString("CATWebContext"))
 //        .AddInterceptors(new CATDbCommandInterceptor()) // Add your interceptor here
 //);
 

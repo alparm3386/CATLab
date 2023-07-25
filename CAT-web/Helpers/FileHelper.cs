@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 
-namespace CAT_web.Helpers
+namespace CATWeb.Helpers
 {
     public class FileHelper
     {

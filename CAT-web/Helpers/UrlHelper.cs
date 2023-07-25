@@ -1,7 +1,7 @@
-﻿using CAT_web.Enums;
+﻿using CATWeb.Enums;
 using NuGet.Packaging.Signing;
 
-namespace CAT_web.Helpers
+namespace CATWeb.Helpers
 {
     public static class UrlHelper
     {

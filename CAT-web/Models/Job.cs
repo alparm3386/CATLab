@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace CAT_web.Models
+namespace CATWeb.Models
 {
     [Table("Jobs")]
     public class Job

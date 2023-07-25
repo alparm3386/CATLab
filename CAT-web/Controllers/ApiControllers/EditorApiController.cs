@@ -1,5 +1,6 @@
-﻿using CAT_web.Data;
-using CAT_web.Services.CAT;
+﻿using CATWeb.Data;
+using CATWeb.Helpers;
+using CATWeb.Services.CAT;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -7,17 +8,17 @@ using Newtonsoft.Json.Linq;
 using System.Collections.Specialized;
 using System.Web;
 
-namespace CAT_web.Controllers.ApiControllers
+namespace CATWeb.Controllers.ApiControllers
 {
     [ApiController]
     [Route("[controller]")]
     public class EditorApiController : ControllerBase
     {
-        private readonly CAT_webContext _context;
+        private readonly CATWebContext _context;
         private readonly IConfiguration _configuration;
         private readonly CATClientService _catClientService;
 
-        public EditorApiController(CAT_webContext context, IConfiguration configuration, CATClientService catClientService)
+        public EditorApiController(CATWebContext context, IConfiguration configuration, CATClientService catClientService)
         {
             _context = context;
             _configuration = configuration;
@@ -75,7 +76,8 @@ namespace CAT_web.Controllers.ApiControllers
 
                 var editorData = new
                 {
-                    translationUnits = translationUnits.Select(tu => new { source = tu.sourceText, target = tu.targetText })
+                    translationUnits = translationUnits.Select(tu => new { source = CATUtils.XmlTags2GoogleTags(tu.sourceText, CATUtils.TagType.Tmx), 
+                        target = tu.targetText })
                 };
 
                 return Ok(editorData);

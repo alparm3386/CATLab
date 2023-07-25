@@ -11,7 +11,7 @@ using System.Web;
 using System.Xml;
 using System.Security;
 
-namespace CAT_web.Services.MT
+namespace CATWeb.Services.MT
 {
     public class MMT : IMachineTranslator
     {

@@ -1,4 +1,4 @@
-﻿namespace CAT_web.Services.MT
+﻿namespace CATWeb.Services.MT
 {
     public class Translatable
     {

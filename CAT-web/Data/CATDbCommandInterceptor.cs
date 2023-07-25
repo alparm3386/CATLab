@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore.Diagnostics;
 using System.Data.Common;
 
-namespace CAT_web.Data
+namespace CATWeb.Data
 {
     public class CATDbCommandInterceptor : DbCommandInterceptor
     {

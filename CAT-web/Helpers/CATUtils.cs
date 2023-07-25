@@ -1,5 +1,5 @@
 ﻿using BU;
-using CAT_web.Enums;
+using CATWeb.Enums;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -12,7 +12,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Xml;
 
-namespace CAT_web.Helpers
+namespace CATWeb.Helpers
 {
     public class CATUtils
     {

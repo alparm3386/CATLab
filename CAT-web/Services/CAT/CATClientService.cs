@@ -1,6 +1,6 @@
-﻿using CAT_web.Data;
-using CAT_web.Helpers;
-using CAT_web.Models;
+﻿using CATWeb.Data;
+using CATWeb.Helpers;
+using CATWeb.Models;
 using CATService;
 using Microsoft.AspNetCore.Identity;
 using System.ComponentModel.DataAnnotations;
@@ -14,22 +14,22 @@ using System.Text.RegularExpressions;
 using System.Transactions;
 using static ICSharpCode.SharpZipLib.Zip.ZipEntryFactory;
 using System.Xml;
-using CAT_web.Enums;
-using CAT_web.Services.MT;
+using CATWeb.Enums;
+using CATWeb.Services.MT;
 using Microsoft.Extensions.Options;
 
-namespace CAT_web.Services.CAT
+namespace CATWeb.Services.CAT
 {
     public class CATClientService
     {
-        private readonly CAT_webContext _context;
+        private readonly CATWebContext _context;
         private readonly IConfiguration _configuration;
         private readonly IEnumerable<IMachineTranslator> _machineTranslators;
 
         /// <summary>
         /// CATClientService
         /// </summary>
-        public CATClientService(CAT_webContext context, IConfiguration configuration, IEnumerable<IMachineTranslator> machineTranslators)
+        public CATClientService(CATWebContext context, IConfiguration configuration, IEnumerable<IMachineTranslator> machineTranslators)
         {
             _context = context;
             _configuration = configuration;

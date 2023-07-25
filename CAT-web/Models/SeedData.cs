@@ -1,15 +1,15 @@
-﻿using CAT_web.Data;
+﻿using CATWeb.Data;
 using Microsoft.EntityFrameworkCore;
 
-namespace CAT_web.Models
+namespace CATWeb.Models
 {
     public class SeedData
     {
         public static void Initialize(IServiceProvider serviceProvider)
         {
-            using (var context = new CAT_webContext(
+            using (var context = new CATWebContext(
                 serviceProvider.GetRequiredService<
-                    DbContextOptions<CAT_webContext>>()))
+                    DbContextOptions<CATWebContext>>()))
             {
                 // Look for any movies.
                 if (context.Job.Any())

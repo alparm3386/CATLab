@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace CAT_web.Migrations
+namespace CATWeb.Migrations
 {
     public partial class addDateProcessed : Migration
     {

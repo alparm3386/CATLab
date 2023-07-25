@@ -5,20 +5,20 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using CAT_web.Data;
-using CAT_web.Models;
-using CAT_web.Helpers;
+using CATWeb.Data;
+using CATWeb.Models;
+using CATWeb.Helpers;
 using System.IO;
-using CAT_web.Enums;
+using CATWeb.Enums;
 
-namespace CAT_web.Controllers.MvcControllers
+namespace CATWeb.Controllers.MvcControllers
 {
     public class JobsController : Controller
     {
-        private readonly CAT_webContext _context;
+        private readonly CATWebContext _context;
         private readonly IConfiguration _configuration;
 
-        public JobsController(CAT_webContext context, IConfiguration configuration)
+        public JobsController(CATWebContext context, IConfiguration configuration)
         {
             _context = context;
             _configuration = configuration;
@@ -39,7 +39,7 @@ namespace CAT_web.Controllers.MvcControllers
 
             return _context.Job != null ?
                         View(await _context.Job.ToListAsync()) :
-                        Problem("Entity set 'CAT_webContext.Job'  is null.");
+                        Problem("Entity set 'CATWebContext.Job'  is null.");
         }
 
         // GET: Jobs/Details/5
@@ -210,7 +210,7 @@ namespace CAT_web.Controllers.MvcControllers
         {
             if (_context.Job == null)
             {
-                return Problem("Entity set 'CAT_webContext.Job'  is null.");
+                return Problem("Entity set 'CATWebContext.Job'  is null.");
             }
             var job = await _context.Job.FindAsync(id);
             if (job != null)

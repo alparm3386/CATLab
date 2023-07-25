@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Security.Policy;
 
-namespace CAT_web.Models
+namespace CATWeb.Models
 {
     [Index(nameof(idJob))]
     [Table("TranslationUnits")]

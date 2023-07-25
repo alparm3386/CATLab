@@ -4,11 +4,10 @@
     <TargetFramework>net6.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <RootNamespace>CAT_web</RootNamespace>
+    <RootNamespace>CATWeb</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Migrations\" />
     <Folder Include="Models\ViewModels\" />
     <Folder Include="online-editor-ui\src\bootstrap\" />
     <Folder Include="online-editor-ui\src\contexts\" />

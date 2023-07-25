@@ -1,4 +1,4 @@
-namespace CAT_web.Models
+namespace CATWeb.Models
 {
     public class ErrorViewModel
     {
