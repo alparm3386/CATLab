@@ -1,7 +1,7 @@
 ﻿// editorDataSlice.js
 import { createSlice } from '@reduxjs/toolkit';
 
-const initialState = {
+const editorInitialState = {
     jobData: {},
     statusBar: { message: '' },
     urlParams: '',
@@ -10,7 +10,7 @@ const initialState = {
 
 export const editorDataSlice = createSlice({
     name: 'editorData',
-    initialState,
+    editorInitialState,
     reducers: {
         setJobData: (state, action) => {
             state.jobData = action.payload;
@@ -22,15 +22,12 @@ export const editorDataSlice = createSlice({
             state.urlParams = action.payload;
         },
         // Add these two reducers to handle showing/hiding the login modal
-        showLoginModal: (state) => {
-            state.isLoginModalOpen = true;
-        },
-        hideLoginModal: (state) => {
-            state.isLoginModalOpen = false;
+        showLoginModal: (state, action) => {
+            state.isLoginModalOpen = action.payload;
         }
     }
 });
 
-export const { setJobData, setStatusBarMessage, setUrlParams, showLoginModal, hideLoginModal } = editorDataSlice.actions;
+export const { setJobData, setStatusBarMessage, setUrlParams, showLoginModal } = editorDataSlice.actions;
 
 export default editorDataSlice.reducer;

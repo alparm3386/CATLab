@@ -8,7 +8,7 @@ import LoginForm from 'components/modals/LoginForm';
 import { useDispatch, useSelector, Provider } from 'react-redux';
 import store from 'store/store';
 import { getJobData } from 'api/editorApi';
-import { setJobData, setUrlParams, showLoginModal, hideLoginModal } from 'store/editorDataSlice';
+import { setJobData, setUrlParams, showLoginModal } from 'store/editorDataSlice';
 import Modal from 'react-bootstrap/Modal';
 
 function AppInit() {
@@ -22,21 +22,19 @@ function AppInit() {
             //dispatch(setJobData(loadJobData()));
             const urlParams = window.location.search.substring(1);
             dispatch(setUrlParams(urlParams));
-
             // Async function inside your useEffect.
             const fetchData = async () => {
                 const urlParams = window.location.search.substring(1);
                 dispatch(setUrlParams(urlParams));
                 try {
-                    const { data, status } = await getJobData(urlParams);
-                    if (status === 401) {
-                        dispatch(showLoginModal());
-                    } else {
-                        dispatch(setJobData(data));
-                    }
+                    const result = await getJobData(urlParams);
+                    dispatch(setJobData(result.data));
                 } catch (error) {
                     // Handle error
-                    console.error(error);
+                    if (error?.response?.status === 401) //unauthorized
+                        dispatch(showLoginModal(true));
+                    else
+                        console.log(error);
                 }
             };
 

@@ -5,7 +5,7 @@ import { useSelector } from 'react-redux';
 export const LoginForm = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
-    const isLoginModalOpen = useSelector((state) => state.isLoginModalOpen);
+    const isLoginModalOpen = useSelector((state) => state.editorData.isLoginModalOpen);
 
     const handleLogin = () => {
         //onLogin(username, password);
@@ -14,7 +14,7 @@ export const LoginForm = () => {
     };
 
     return (
-        <Modal show="isLoginModalOpen">
+        <Modal show={ isLoginModalOpen }>
             <Modal.Header>
                 <Modal.Title>Login</Modal.Title>
             </Modal.Header>

@@ -6,13 +6,8 @@ const apiClient = axios.create({
     // You can put any default headers here, e.g. for authorization
 });
 
-export const getJobData = async (urlParams) => {
-    try {
-        const response = await apiClient.get('/GetEditorData?urlParams=' + urlParams );
-        return { data: response.data, status: response.status };
-    } catch (error) {
-        throw error;
-    }
+export const getJobData = (urlParams) => {
+        return apiClient.get('/GetEditorData?urlParams=' + urlParams );
 };
 
 export const getTMMatches = async (urlParams, tuid) => {
