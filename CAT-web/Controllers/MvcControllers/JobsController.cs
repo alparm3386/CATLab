@@ -15,7 +15,6 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 
 namespace CATWeb.Controllers.MvcControllers
 {
-    [Authorize(AuthenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme)]
     public class JobsController : Controller
     {
         private readonly CATWebContext _context;

@@ -39,16 +39,6 @@ builder.Services.TryAddEnumerable(new[]
 builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddEntityFrameworkStores<IdentityDbContext>();
 
-//builder.Services.AddDbContext<CATWebContext>(options =>
-//    options.UseSqlServer(builder.Configuration.GetConnectionString("CATWebContext"))
-//    .LogTo(Console.WriteLine, LogLevel.Information) // <-- Add this line
-//);
-
-//builder.Services.AddDbContext<CATWebContext>(options =>
-//    options.UseSqlServer(builder.Configuration.GetConnectionString("CATWebContext"))
-//        .AddInterceptors(new CATDbCommandInterceptor()) // Add your interceptor here
-//);
-
 builder.Services.AddSession();
 builder.Services.AddMemoryCache();
 
@@ -72,32 +62,13 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
-// Add the cookie authentication scheme
-builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-    .AddCookie(options =>
-    {
-        options.AccessDeniedPath = "/Identity/Account/AccessDenied";
-        options.Cookie.Name = "YourAppCookieName";
-        options.Cookie.HttpOnly = true;
-        options.ExpireTimeSpan = TimeSpan.FromMinutes(60);
-        options.LoginPath = "/Identity/Account/Login"; // This is the path to your login page
-        options.ReturnUrlParameter = CookieAuthenticationDefaults.ReturnUrlParameter;
-        options.SlidingExpiration = true;
-    }); 
-
 var app = builder.Build();
-
-app.UseSession();
 
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
 
     SeedData.Initialize(services);
-
-    //var memoryCache = services.GetRequiredService<IMemoryCache>();
-    //var someObject = new Object(); // your object
-    //memoryCache.Set("Sessions", new Dictionary<String, Object>());
 }
 
 // Configure the HTTP request pipeline.
@@ -119,6 +90,7 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
+app.UseSession();
 
 
 app.UseStaticFiles();
