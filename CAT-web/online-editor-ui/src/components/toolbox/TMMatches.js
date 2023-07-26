@@ -14,7 +14,7 @@ const TMMatches = ({ expanded, tuid }) => {
     console.log("TMMatches rendered: " + renderCntr++);
 
     useEffect(() => {
-        getTMMatches(urlParams, tuid || 0).then(tmMatches => setTmMatches(tmMatches)).catch(error => {
+        getTMMatches(urlParams, tuid || 0).then(response => setTmMatches(response.data)).catch(error => {
             dispatch(setStatusBarMessage('Error:' + error.toString()));
         });
         return () => {

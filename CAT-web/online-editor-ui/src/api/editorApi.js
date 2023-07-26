@@ -9,7 +9,7 @@ const apiClient = axios.create({
 export const getJobData = async (urlParams) => {
     try {
         const response = await apiClient.get('/GetEditorData?urlParams=' + urlParams );
-        return response.data;
+        return { data: response.data, status: response.status };
     } catch (error) {
         throw error;
     }
@@ -22,7 +22,7 @@ export const getTMMatches = async (urlParams, tuid) => {
             console.log("401 error ...");
         }
 
-        return response.data;
+        return { data: response.data, status: response.status };
     } catch (error) {
         throw error;
     }

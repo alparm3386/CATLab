@@ -4,7 +4,8 @@ import { createSlice } from '@reduxjs/toolkit';
 const initialState = {
     jobData: {},
     statusBar: { message: '' },
-    urlParams: ''
+    urlParams: '',
+    isLoginModalOpen: false, // add this to handle login modal state
 };
 
 export const editorDataSlice = createSlice({
@@ -19,10 +20,17 @@ export const editorDataSlice = createSlice({
         },
         setUrlParams: (state, action) => {
             state.urlParams = action.payload;
+        },
+        // Add these two reducers to handle showing/hiding the login modal
+        showLoginModal: (state) => {
+            state.isLoginModalOpen = true;
+        },
+        hideLoginModal: (state) => {
+            state.isLoginModalOpen = false;
         }
     }
 });
 
-export const { setJobData, setStatusBarMessage, setUrlParams } = editorDataSlice.actions;
+export const { setJobData, setStatusBarMessage, setUrlParams, showLoginModal, hideLoginModal } = editorDataSlice.actions;
 
 export default editorDataSlice.reducer;
