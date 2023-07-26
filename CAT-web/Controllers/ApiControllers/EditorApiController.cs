@@ -14,7 +14,7 @@ namespace CATWeb.Controllers.ApiControllers
 {
     //[Authorize]
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     public class EditorApiController : ControllerBase
     {
         private readonly CATWebContext _context;

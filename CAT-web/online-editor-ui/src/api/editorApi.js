@@ -2,7 +2,7 @@
 import axios from 'axios';
 
 const apiClient = axios.create({
-    baseURL: 'http://localhost:3000/EditorApi',
+    baseURL: 'http://localhost:3000/api/EditorApi',
     // You can put any default headers here, e.g. for authorization
 });
 

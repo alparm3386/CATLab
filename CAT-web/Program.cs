@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Identity;
 using CATWeb.Areas.Identity.Data;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using CATWeb.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<CATWebContext>(options =>
@@ -24,6 +25,7 @@ builder.Services.AddDbContext<IdentityDbContext>(options =>
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.Services.AddScoped<JwtService>();
 
 // Add Razor Pages (needed for Identity)
 builder.Services.AddRazorPages();

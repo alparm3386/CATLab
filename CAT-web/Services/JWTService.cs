@@ -11,8 +11,8 @@ namespace CATWeb.Services
     public class JwtService
     {
         private readonly IConfiguration _configuration;
-        private readonly ILogger _logger;
-        public JwtService(IConfiguration configuration, ILogger logger)
+        private readonly ILogger<JwtService> _logger;
+        public JwtService(IConfiguration configuration, ILogger<JwtService> logger)
         {
             _configuration = configuration;
             _logger = logger;
