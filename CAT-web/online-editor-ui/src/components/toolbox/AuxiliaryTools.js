@@ -1,6 +1,6 @@
 ﻿// AuxiliaryTools.js
 import React from 'react';
-import './../styles/auxiliaryTools.scss';
+import 'styles/auxiliaryTools.scss';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import 'react-tabs/style/react-tabs.css';
 

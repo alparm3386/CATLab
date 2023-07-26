@@ -18,6 +18,10 @@ export const getJobData = async (urlParams) => {
 export const getTMMatches = async (urlParams, tuid) => {
     try {
         const response = await apiClient.post('/FetchTMMatches', { urlParams, tuid });
+        if (response.status === 401) {
+            console.log("401 error ...");
+        }
+
         return response.data;
     } catch (error) {
         throw error;

@@ -1,4 +1,4 @@
-﻿import './../styles/statusBar.scss';
+﻿import 'styles/statusBar.scss';
 import React from 'react';
 import { useSelector } from 'react-redux';
 

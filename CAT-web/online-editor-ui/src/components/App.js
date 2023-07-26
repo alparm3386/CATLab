@@ -1,13 +1,13 @@
 import React, { useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.css'; // If you haven't linked Bootstrap in your HTML
-import './App.scss';
-import ContentArea from './components/ContentArea';
-import Navbar from './components/Navbar';
-import StatusBar from './components/StatusBar';
+import 'styles/App.scss';
+import ContentArea from 'components/ContentArea';
+import Navbar from 'components/navigation/Navbar';
+import StatusBar from 'components/statusBar/StatusBar';
 import { useDispatch, Provider } from 'react-redux';
-import store from './store/store';
-import { getJobData } from './api/editorApi';
-import { setJobData, setUrlParams } from './store/editorDataSlice';
+import store from 'store/store';
+import { getJobData } from 'api/editorApi';
+import { setJobData, setUrlParams } from 'store/editorDataSlice';
 
 function AppInit() {
     const dispatch = useDispatch();

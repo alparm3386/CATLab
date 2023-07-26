@@ -1,8 +1,8 @@
 ﻿// Toolbox.js
-import './../styles/toolboxArea.scss';
+import 'styles/toolboxArea.scss';
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { setStatusBarMessage } from '../store/editorDataSlice';
+import { setStatusBarMessage } from '../../store/editorDataSlice';
 import TMMatches from './TMMatches';
 import AuxiliaryTools from './AuxiliaryTools';
 
