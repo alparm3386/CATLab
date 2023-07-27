@@ -1,13 +1,27 @@
 ﻿// editorApi.js
 import axios from 'axios';
+import store from 'store/store';
+import { showLoginModal } from 'store/appUiSlice';
 
 const apiClient = axios.create({
     baseURL: 'http://localhost:3000',
     // You can put any default headers here, e.g. for authorization
 });
 
-export const login = (urlParams) => {
-    return apiClient.get('/api/auth/login');
+apiClient.interceptors.response.use(
+    response => response,
+    error => {
+        if (error?.response?.status === 401) {
+            //dispatch showLoginModal action when status is 401
+            store.dispatch(showLoginModal(true));
+        }
+        // If you want to pass the error on (maybe there's additional, specific error handling), 
+        // you should return a rejected Promise here
+        return Promise.reject(error);
+    }
+);
+export const login = (username, password) => {
+    return apiClient.post('/api/auth/login', { Email: username, Password: password });
 };
 
 export const getJobData = (urlParams) => {

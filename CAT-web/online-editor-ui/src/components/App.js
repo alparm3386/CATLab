@@ -4,12 +4,11 @@ import 'styles/App.scss';
 import ContentArea from 'components/ContentArea';
 import Navbar from 'components/navigation/Navbar';
 import StatusBar from 'components/statusBar/StatusBar';
-import LoginForm from 'components/modals/LoginForm';
-import { useDispatch, useSelector, Provider } from 'react-redux';
+import { useDispatch, Provider } from 'react-redux';
 import store from 'store/store';
 import { getJobData } from 'api/editorApi';
-import { setJobData, setUrlParams, showLoginModal } from 'store/editorDataSlice';
-import Modal from 'react-bootstrap/Modal';
+import { setJobData, setUrlParams } from 'store/editorDataSlice';
+import ModalContainer from './modals/ModalContainer';
 
 function AppInit() {
     const dispatch = useDispatch();
@@ -23,23 +22,19 @@ function AppInit() {
             const urlParams = window.location.search.substring(1);
             dispatch(setUrlParams(urlParams));
             // Async function inside your useEffect.
-            const fetchData = async () => {
+            const fetchjobData = async () => {
                 const urlParams = window.location.search.substring(1);
                 dispatch(setUrlParams(urlParams));
                 try {
                     const result = await getJobData(urlParams);
                     dispatch(setJobData(result.data));
                 } catch (error) {
-                    // Handle error
-                    if (error?.response?.status === 401) //unauthorized
-                        dispatch(showLoginModal(true));
-                    else
-                        console.log(error);
+                    console.log(error);
                 }
             };
 
             // Call the async function
-            fetchData();
+            fetchjobData();
         }
 
         return () => { ignore = true; }
@@ -57,14 +52,12 @@ function App() {
                 <Navbar />
                 <ContentArea className="ContentArea" />
                 <StatusBar />
+
+                {/*Init the app*/}
                 <AppInit />
 
-                <LoginForm />
-            {/*    {isLoginModalOpen && (*/}
-            {/*        <Modal onClose={() => dispatch(hideLoginModal())}>*/}
-            {/*            <LoginForm />*/}
-            {/*        </Modal>*/}
-            {/*    )}*/}
+                {/*The modals*/}
+                <ModalContainer/>
             </div>
         </Provider>
     );

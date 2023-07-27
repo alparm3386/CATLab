@@ -5,7 +5,7 @@ const editorInitialState = {
     jobData: {},
     statusBar: { message: '' },
     urlParams: '',
-    isLoginModalOpen: false, // add this to handle login modal state
+    jwt: ''
 };
 
 export const editorDataSlice = createSlice({
@@ -21,13 +21,12 @@ export const editorDataSlice = createSlice({
         setUrlParams: (state, action) => {
             state.urlParams = action.payload;
         },
-        // Add these two reducers to handle showing/hiding the login modal
-        showLoginModal: (state, action) => {
-            state.isLoginModalOpen = action.payload;
+        setJWT: (state, action) => {
+            state.jwt = action.payload;
         }
     }
 });
 
-export const { setJobData, setStatusBarMessage, setUrlParams, showLoginModal } = editorDataSlice.actions;
+export const { setJobData, setStatusBarMessage, setUrlParams, showLoginModal, setJWT } = editorDataSlice.actions;
 
 export default editorDataSlice.reducer;
