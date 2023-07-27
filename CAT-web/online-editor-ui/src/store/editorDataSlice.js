@@ -10,7 +10,7 @@ const editorInitialState = {
 
 export const editorDataSlice = createSlice({
     name: 'editorData',
-    editorInitialState,
+    initialState: editorInitialState,
     reducers: {
         setJobData: (state, action) => {
             state.jobData = action.payload;
