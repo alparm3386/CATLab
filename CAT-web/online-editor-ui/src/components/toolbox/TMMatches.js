@@ -6,7 +6,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { setStatusBarMessage } from 'store/editorDataSlice';
 
 var renderCntr = 0;
-const TMMatches = ({ expanded, tuid }) => {
+const TMMatches = ({ tuid }) => {
     const [tmMatches, setTmMatches] = useState([]);
     const urlParams = useSelector((state) => state.editorData.urlParams);
     const dispatch = useDispatch();
@@ -14,12 +14,12 @@ const TMMatches = ({ expanded, tuid }) => {
     console.log("TMMatches rendered: " + renderCntr++);
 
     useEffect(() => {
-        editorApi.getTMMatches(urlParams, tuid || 0).then(response => setTmMatches(response.data)).catch(error => {
+        editorApi.getTMMatches(tuid || 0).then(response => setTmMatches(response.data)).catch(error => {
             dispatch(setStatusBarMessage('Error:' + error.toString()));
         });
         return () => {
         };
-    }, [tuid, urlParams]);
+    }, [tuid, urlParams, dispatch]);
 
     return <div className="tm-matches mb-2">
         {tmMatches && tmMatches.map((tmMatch, index) => (

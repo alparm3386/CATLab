@@ -1,35 +1,42 @@
-import React, { useEffect } from 'react';
+//css
 import 'bootstrap/dist/css/bootstrap.css'; // If you haven't linked Bootstrap in your HTML
 import 'styles/App.scss';
-import ContentArea from 'components/ContentArea';
-import Navbar from 'components/navigation/Navbar';
-import StatusBar from 'components/statusBar/StatusBar';
+
+//react
+import React, { useEffect } from 'react';
 import { Provider, useDispatch, useSelector } from 'react-redux';
 import store from 'store/store';
 import editorApi from 'services/editorApi';
 import errorHandler from 'services/errorHandler';
-import { setJobData, setUrlParams } from 'store/editorDataSlice';
+import { setJobData } from 'store/editorDataSlice';
+
+//components
+import ContentArea from 'components/ContentArea';
+import Navbar from 'components/navigation/Navbar';
+import StatusBar from 'components/statusBar/StatusBar';
 import ModalContainer from './modals/ModalContainer';
+
+//misc.
+import cookieHelper from 'utils/cookieHelper';
 
 function AppInit() {
     const dispatch = useDispatch();
-    const jwt = useSelector(state => state.editorData.jwt);
     let ignore = false;
 
     useEffect(() => {
         if (!ignore) {
             console.log("App start ...")
             //initialize the api service
-            editorApi.initializeApiClient(errorHandler);
-
-            //load the data and store it in the global store
-            //dispatch(setJobData(loadJobData()));
+            //jwt
+            const jwt = cookieHelper.getToken();
+            //the url params
             const urlParams = window.location.search.substring(1);
-            dispatch(setUrlParams(urlParams));
-            // Async function inside your useEffect.
+            editorApi.initializeApiClient(urlParams, jwt, errorHandler);
+
+            //load the data and store it in the global store. Async function inside useEffect.
             const fetchjobData = async () => {
                 try {
-                    const result = await editorApi.getJobData(urlParams, jwt);
+                    const result = await editorApi.getJobData();
                     dispatch(setJobData(result.data));
                 } catch (error) {
                     console.log(error);

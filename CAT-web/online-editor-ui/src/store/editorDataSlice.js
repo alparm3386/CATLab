@@ -17,16 +17,10 @@ export const editorDataSlice = createSlice({
         },
         setStatusBarMessage: (state, action) => {
             state.statusBar.message = action.payload;
-        },
-        setUrlParams: (state, action) => {
-            state.urlParams = action.payload;
-        },
-        setJWT: (state, action) => {
-            state.jwt = action.payload;
         }
     }
 });
 
-export const { setJobData, setStatusBarMessage, setUrlParams, showLoginModal, setJWT } = editorDataSlice.actions;
+export const { setJobData, setStatusBarMessage, showLoginModal } = editorDataSlice.actions;
 
 export default editorDataSlice.reducer;

@@ -2,7 +2,6 @@
 import { Modal, Button, Form, Alert } from 'react-bootstrap';
 import { useSelector, useDispatch } from 'react-redux';
 import editorApi from 'services/editorApi';
-import { setJWT } from 'store/editorDataSlice';
 
 export const LoginForm = () => {
     const [username, setUsername] = useState('');
@@ -20,10 +19,9 @@ export const LoginForm = () => {
 
         try {
             const result = await editorApi.login(username, password);
-            dispatch(setJWT(result.data));
+            editorApi.setJWT(result.data);
             try {
-                const urlParams = window.location.search.substring(1);
-                const res = await editorApi.getJobData(urlParams, result.data);
+                const res = await editorApi.getJobData();
             } catch (error) {
                 console.log(error);
             }
