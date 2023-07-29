@@ -9,12 +9,15 @@ import store from 'store/store';
 import editorApi from 'services/editorApi';
 import errorHandler from 'services/errorHandler';
 import { setJobData } from 'store/editorDataSlice';
+import { showLoading } from 'store/appUiSlice';
+
 
 //components
 import ContentArea from 'components/ContentArea';
 import Navbar from 'components/navigation/Navbar';
 import StatusBar from 'components/statusBar/StatusBar';
-import ModalContainer from './modals/ModalContainer';
+import ModalContainer from 'components/modals/ModalContainer';
+import Spinner from 'components/common/Spinner';
 
 //misc.
 import cookieHelper from 'utils/cookieHelper';
@@ -26,6 +29,7 @@ function AppInit() {
     useEffect(() => {
         if (!ignore) {
             console.log("App start ...")
+            dispatch(showLoading(true));
             //initialize the api service
             //jwt
             const jwt = cookieHelper.getToken();
@@ -40,6 +44,8 @@ function AppInit() {
                     dispatch(setJobData(result.data));
                 } catch (error) {
                     console.log(error);
+                } finally {
+                    dispatch(showLoading(false));
                 }
             };
 
@@ -54,8 +60,6 @@ function AppInit() {
 }
 
 function App() {
-    //const dispatch = useDispatch();
-    //const isLoginModalOpen = useSelector(state => state.isLoginModalOpen);
     return (
         <Provider store={store}>
             <div className="app">
@@ -67,7 +71,10 @@ function App() {
                 <AppInit />
 
                 {/*The modals*/}
-                <ModalContainer/>
+                <ModalContainer />
+
+                {/* the main spinner */}
+                <Spinner fullScreen={true} />
             </div>
         </Provider>
     );

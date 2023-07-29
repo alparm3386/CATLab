@@ -4,7 +4,7 @@ import axios from 'axios';
 const editorApi = (function () {
     let _apiClient = null;
     let _jwt = '';
-    let _urlParams = ''
+    let _urlParams = '';
 
     return {
         initializeApiClient: (urlParams, jwt, errorHandler) => {
