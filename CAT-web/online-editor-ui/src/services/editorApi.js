@@ -27,12 +27,8 @@ export const login = (username, password) => {
     return apiClient.post('/api/auth/login', { Email: username, Password: password });
 };
 
-export const getJobData = (urlParams, jwt) => {
-    return apiClient.get('/api/EditorApi/GetEditorData?urlParams=' + urlParams, {
-        headers: {
-            'Authorization': `Bearer ${jwt}`
-        }
-    });
+export const getJobData = (urlParams) => {
+    return apiClient.get('/api/EditorApi/GetEditorData?urlParams=' + urlParams);
 };
 
 export const getTMMatches = async (urlParams, tuid) => {

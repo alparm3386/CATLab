@@ -8,3 +8,5 @@ obj
 *.lock
 /CAT-web/.vs/CAT-web/v17/*.v2
 /CAT-web/.vs/CAT-web/v17/.suo
+/CAT-web/.vs/ProjectEvaluation/*.bin
+/CAT-web/.vs/CAT-web/config

@@ -32,7 +32,20 @@ namespace CATWeb.Controllers.ApiControllers
             var user = await _signInManager.UserManager.FindByEmailAsync(model.Email);
             var token = _jwtService.GenerateJWT(user);
 
-            return Ok(new { Token = token });
+            // create the cookie
+            var cookieOptions = new CookieOptions
+            {
+                HttpOnly = true, // make the cookie inaccessible to javascript
+                Expires = DateTime.UtcNow.AddHours(1), // set cookie expiration date
+                Secure = true, // transmit the cookie only over HTTPS
+                SameSite = SameSiteMode.Strict, // prevents the browser from sending the cookie along with cross-site requests
+            };
+
+            // set the cookie
+            Response.Cookies.Append("jwt", token, cookieOptions);
+
+            // redirect to home or return a success message
+            return Ok(new { Message = "Successfully logged in" });
         }
     }
 }
