@@ -4,29 +4,32 @@ import 'styles/App.scss';
 import ContentArea from 'components/ContentArea';
 import Navbar from 'components/navigation/Navbar';
 import StatusBar from 'components/statusBar/StatusBar';
-import { useDispatch, Provider } from 'react-redux';
+import { Provider, useDispatch, useSelector } from 'react-redux';
 import store from 'store/store';
-import { getJobData } from 'api/editorApi';
+import { initializeApiClient, getJobData } from 'services/editorApi';
+import errorHandler from 'services/errorHandler';
 import { setJobData, setUrlParams } from 'store/editorDataSlice';
 import ModalContainer from './modals/ModalContainer';
 
 function AppInit() {
     const dispatch = useDispatch();
+    const jwt = useSelector(state => state.editorData.jwt);
     let ignore = false;
 
     useEffect(() => {
         if (!ignore) {
             console.log("App start ...")
+            //initialize the api service
+            initializeApiClient(errorHandler);
+
             //load the data and store it in the global store
             //dispatch(setJobData(loadJobData()));
             const urlParams = window.location.search.substring(1);
             dispatch(setUrlParams(urlParams));
             // Async function inside your useEffect.
             const fetchjobData = async () => {
-                const urlParams = window.location.search.substring(1);
-                dispatch(setUrlParams(urlParams));
                 try {
-                    const result = await getJobData(urlParams);
+                    const result = await getJobData(urlParams, jwt);
                     dispatch(setJobData(result.data));
                 } catch (error) {
                     console.log(error);
