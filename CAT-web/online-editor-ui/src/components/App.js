@@ -6,7 +6,7 @@ import Navbar from 'components/navigation/Navbar';
 import StatusBar from 'components/statusBar/StatusBar';
 import { Provider, useDispatch, useSelector } from 'react-redux';
 import store from 'store/store';
-import { initializeApiClient, getJobData } from 'services/editorApi';
+import editorApi from 'services/editorApi';
 import errorHandler from 'services/errorHandler';
 import { setJobData, setUrlParams } from 'store/editorDataSlice';
 import ModalContainer from './modals/ModalContainer';
@@ -20,7 +20,7 @@ function AppInit() {
         if (!ignore) {
             console.log("App start ...")
             //initialize the api service
-            initializeApiClient(errorHandler);
+            editorApi.initializeApiClient(errorHandler);
 
             //load the data and store it in the global store
             //dispatch(setJobData(loadJobData()));
@@ -29,7 +29,7 @@ function AppInit() {
             // Async function inside your useEffect.
             const fetchjobData = async () => {
                 try {
-                    const result = await getJobData(urlParams, jwt);
+                    const result = await editorApi.getJobData(urlParams, jwt);
                     dispatch(setJobData(result.data));
                 } catch (error) {
                     console.log(error);

@@ -1,7 +1,7 @@
 ﻿// TMMatches.js
 import 'styles/tmMatches.scss';
 import React, { useState, useEffect } from 'react';
-import { getTMMatches } from 'services/editorApi';
+import editorApi from 'services/editorApi';
 import { useSelector, useDispatch } from 'react-redux';
 import { setStatusBarMessage } from 'store/editorDataSlice';
 
@@ -14,7 +14,7 @@ const TMMatches = ({ expanded, tuid }) => {
     console.log("TMMatches rendered: " + renderCntr++);
 
     useEffect(() => {
-        getTMMatches(urlParams, tuid || 0).then(response => setTmMatches(response.data)).catch(error => {
+        editorApi.getTMMatches(urlParams, tuid || 0).then(response => setTmMatches(response.data)).catch(error => {
             dispatch(setStatusBarMessage('Error:' + error.toString()));
         });
         return () => {

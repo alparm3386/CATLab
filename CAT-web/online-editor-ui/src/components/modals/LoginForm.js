@@ -1,7 +1,7 @@
 ﻿import React, { useState } from 'react';
 import { Modal, Button, Form, Alert } from 'react-bootstrap';
 import { useSelector, useDispatch } from 'react-redux';
-import { login } from 'services/editorApi';
+import editorApi from 'services/editorApi';
 import { setJWT } from 'store/editorDataSlice';
 
 export const LoginForm = () => {
@@ -19,8 +19,14 @@ export const LoginForm = () => {
         event.preventDefault(); // To prevent form submission
 
         try {
-            const result = await login(username, password);
+            const result = await editorApi.login(username, password);
             dispatch(setJWT(result.data));
+            try {
+                const urlParams = window.location.search.substring(1);
+                const res = await editorApi.getJobData(urlParams, result.data);
+            } catch (error) {
+                console.log(error);
+            }
 
             setUsername('');
             setPassword('');
