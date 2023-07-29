@@ -2,6 +2,12 @@
 import { Modal, Button, Form, Alert } from 'react-bootstrap';
 import { useSelector, useDispatch } from 'react-redux';
 import editorApi from 'services/editorApi';
+import { setJobData } from 'store/editorDataSlice';
+import { showLoginModal } from 'store/appUiSlice';
+
+//misc.
+import cookieHelper from 'utils/cookieHelper';
+
 
 export const LoginForm = () => {
     const [username, setUsername] = useState('');
@@ -19,9 +25,12 @@ export const LoginForm = () => {
 
         try {
             const result = await editorApi.login(username, password);
-            editorApi.setJWT(result.data);
+            editorApi.setJWT(result.data.token);
+            cookieHelper.setToken(result.data.token);
             try {
-                const res = await editorApi.getJobData();
+                const result = await editorApi.getJobData();
+                dispatch(setJobData(result.data));
+                dispatch(showLoginModal(false));
             } catch (error) {
                 console.log(error);
             }

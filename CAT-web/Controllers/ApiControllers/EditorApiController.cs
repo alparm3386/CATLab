@@ -6,13 +6,18 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json.Linq;
+using NuGet.Configuration;
 using System.Collections.Specialized;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 using System.Web;
 
 namespace CATWeb.Controllers.ApiControllers
 {
-    //[Authorize]
+    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class EditorApiController : ControllerBase
@@ -30,11 +35,58 @@ namespace CATWeb.Controllers.ApiControllers
             _cache = cache;
         }
 
+        //FIXME: This is a workaround for teh faulty [Authirize] attribute
+        private ActionResult Authorize()
+        {
+            try
+            {
+                var jwtSecretKey = _configuration["Jwt:Key"]; // Replace with your actual secret key
+                var jwtIssuer = _configuration["Jwt:Issuer"]; // Replace with your actual issuer
+                var jwtAudience = _configuration["Jwt:Audience"]; // Replace with your actual audience
+
+                var authorizationHeader = HttpContext.Request.Headers["Authorization"];
+                if (string.IsNullOrEmpty(authorizationHeader) || !authorizationHeader.ToString().StartsWith("Bearer "))
+                {
+                    // No token or invalid authorization header
+                    return Unauthorized();
+                }
+
+                var token = authorizationHeader.ToString().Substring("Bearer ".Length);
+
+                var tokenHandler = new JwtSecurityTokenHandler();
+                var validationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateIssuerSigningKey = true,
+                    ValidIssuer = jwtIssuer,
+                    ValidAudience = jwtAudience,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSecretKey))
+                };
+
+                SecurityToken validatedToken;
+                var principal = tokenHandler.ValidateToken(token, validationParameters, out validatedToken);
+
+                // Access user details from the principal (claims)
+                var userRole = principal.FindFirst(ClaimTypes.Role)?.Value;
+
+                return Ok("Success.");
+            }
+            catch (Exception ex)
+            {
+                return Unauthorized();
+            }
+        }
+
         [HttpGet("GetEditorData")]
         public async Task<IActionResult> GetEditorData(string urlParams)
         {
             try
             {
+                //var authorizationResult = Authorize();
+                //if (authorizationResult is not OkResult)
+                //    return authorizationResult;
+
                 var decryptedDarams = EncryptionHelper.DecryptString(urlParams);
                 NameValueCollection queryParams = HttpUtility.ParseQueryString(decryptedDarams);
                 //load the job

@@ -31,7 +31,7 @@ const editorApi = (function () {
         },
 
         setJWT: (jwt) => {
-            this.jwt = jwt;
+            _jwt = jwt;
         },
 
         login: (username, password) => {
@@ -39,6 +39,7 @@ const editorApi = (function () {
         },
 
         getJobData: () => {
+            // Ensure _jwt is a string (or handle other cases as needed)
             return _apiClient.get('/api/EditorApi/GetEditorData?urlParams=' + _urlParams, {
                 headers: {
                     'Authorization': `Bearer ${_jwt}`
@@ -48,7 +49,11 @@ const editorApi = (function () {
 
         getTMMatches: async (tuid) => {
             try {
-                const response = await _apiClient.post('/api/EditorApi/FetchTMMatches', { urlParams: _urlParams, tuid });
+                const response = await _apiClient.post('/api/EditorApi/FetchTMMatches', { urlParams: _urlParams, tuid }, {
+                    headers: {
+                        'Authorization': `Bearer ${_jwt}`
+                    }
+                });
                 if (response.status === 401) {
                     console.log("401 error ...");
                 }
