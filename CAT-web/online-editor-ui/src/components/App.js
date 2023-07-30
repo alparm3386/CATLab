@@ -8,9 +8,7 @@ import { Provider, useDispatch, useSelector } from 'react-redux';
 import store from 'store/store';
 import editorApi from 'services/editorApi';
 import errorHandler from 'services/errorHandler';
-import { setJobData } from 'store/editorDataSlice';
-import { showLoading } from 'store/appUiSlice';
-
+import appService from 'services/appService';
 
 //components
 import ContentArea from 'components/ContentArea';
@@ -25,11 +23,10 @@ import cookieHelper from 'utils/cookieHelper';
 function AppInit() {
     const dispatch = useDispatch();
     let ignore = false;
+    console.log("App init ...");
 
     useEffect(() => {
         if (!ignore) {
-            console.log("App start ...")
-            dispatch(showLoading(true));
             //initialize the api service
             //jwt
             const jwt = cookieHelper.getToken();
@@ -37,20 +34,8 @@ function AppInit() {
             const urlParams = window.location.search.substring(1);
             editorApi.initializeApiClient(urlParams, jwt, errorHandler);
 
-            //load the data and store it in the global store. Async function inside useEffect.
-            const fetchjobData = async () => {
-                try {
-                    const result = await editorApi.getJobData();
-                    dispatch(setJobData(result.data));
-                } catch (error) {
-                    console.log(error);
-                } finally {
-                    dispatch(showLoading(false));
-                }
-            };
-
-            // Call the async function
-            fetchjobData();
+            //load the job data
+            appService.loadJobData(dispatch);
         }
 
         return () => { ignore = true; }
@@ -60,6 +45,8 @@ function AppInit() {
 }
 
 function App() {
+    console.log("App ...");
+
     return (
         <Provider store={store}>
             <div className="app">

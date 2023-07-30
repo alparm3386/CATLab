@@ -7,6 +7,7 @@ import { showLoginModal } from 'store/appUiSlice';
 
 //misc.
 import cookieHelper from 'utils/cookieHelper';
+import appService from 'services/appService';
 
 
 export const LoginForm = () => {
@@ -15,6 +16,8 @@ export const LoginForm = () => {
     const [error, setError] = useState(null);
     const isLoginModalOpen = useSelector((state) => state.appUi.login.isOpen);
     const dispatch = useDispatch();
+    //const fetchJobData = useFetchJobData();
+    console.log("LoginForm ...")
 
     // Get stored credentials from localStorage
     React.useEffect(() => {
@@ -24,20 +27,24 @@ export const LoginForm = () => {
         event.preventDefault(); // To prevent form submission
 
         try {
+            //get the jwt
             const result = await editorApi.login(username, password);
             editorApi.setJWT(result.data.token);
             cookieHelper.setToken(result.data.token);
-            try {
-                const result = await editorApi.getJobData();
-                dispatch(setJobData(result.data));
-                dispatch(showLoginModal(false));
-            } catch (error) {
-                console.log(error);
-            }
 
+            //load the job data
+            appService.loadJobData(dispatch);
+
+
+            //close the login modal
+            dispatch(showLoginModal(false));
+
+            //reset the input fields
             setUsername('');
             setPassword('');
-            setError(null); // Clear the error state if login was successful
+
+            // Clear the error state if login was successful
+            setError(null);
 
         } catch (error) {
             setError("Authentication Failed. Please try again."); // Set the error state if authentication fails

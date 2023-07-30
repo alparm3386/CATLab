@@ -4,8 +4,8 @@ import { createSlice } from '@reduxjs/toolkit';
 const editorInitialState = {
     jobData: {},
     statusBar: { message: '' },
-    urlParams: '',
-    jwt: ''
+    jwt: '',
+    isJobLoad: false
 };
 
 export const editorDataSlice = createSlice({
@@ -17,7 +17,10 @@ export const editorDataSlice = createSlice({
         },
         setStatusBarMessage: (state, action) => {
             state.statusBar.message = action.payload;
-        }
+        },
+        onJobLoad: (state, action) => {
+            state.isJobLoad = action.payload;
+        },
     }
 });
 

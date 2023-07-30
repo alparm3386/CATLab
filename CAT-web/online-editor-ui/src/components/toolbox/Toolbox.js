@@ -17,9 +17,6 @@ const Toolbox = ({ expanded, currentIdx }) => {
     return <div className={`toolbox-area${expanded ? ' expanded' : ''}`}>
         <TMMatches />
         <AuxiliaryTools/>
-        <button onClick={() => { dispatch(setStatusBarMessage(`New message from toolbox ${counter}`)); setCounter(counter + 1) }}>
-            Click me to update the message
-        </button>
     </div>;
 };
 
