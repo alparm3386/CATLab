@@ -49,13 +49,12 @@ function App() {
 
     return (
         <Provider store={store}>
+            {/*Init the app*/}
+            <AppInit />
             <div className="app">
                 <Navbar />
                 <ContentArea className="ContentArea" />
                 <StatusBar />
-
-                {/*Init the app*/}
-                <AppInit />
 
                 {/*The modals*/}
                 <ModalContainer />
