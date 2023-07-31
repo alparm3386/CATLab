@@ -17,6 +17,12 @@ using System.Xml;
 using CATWeb.Enums;
 using CATWeb.Services.MT;
 using Microsoft.Extensions.Options;
+using CATWeb.Models.CAT;
+using Statistics = CATWeb.Models.CAT.Statistics;
+using TMMatch = CATWeb.Models.CAT.TMMatch;
+using TMAssignment = CATWeb.Models.CAT.TMAssignment;
+using AutoMapper;
+using System.Security.AccessControl;
 
 namespace CATWeb.Services.CAT
 {
@@ -25,15 +31,20 @@ namespace CATWeb.Services.CAT
         private readonly CATWebContext _context;
         private readonly IConfiguration _configuration;
         private readonly IEnumerable<IMachineTranslator> _machineTranslators;
+        private readonly IMapper _mapper;
+
+        private static int MATCH_THRESHOLD = 50;
 
         /// <summary>
         /// CATClientService
         /// </summary>
-        public CATClientService(CATWebContext context, IConfiguration configuration, IEnumerable<IMachineTranslator> machineTranslators)
+        public CATClientService(CATWebContext context, IConfiguration configuration, IEnumerable<IMachineTranslator> machineTranslators,
+            IMapper mapper)
         {
             _context = context;
             _configuration = configuration;
             _machineTranslators = machineTranslators;
+            _mapper = mapper;
         }
 
         private EndpointAddress GetCATServiceEndpoint()
@@ -106,8 +117,7 @@ namespace CATWeb.Services.CAT
                || sExt == ".htm" || sExt == ".html" || sExt == ".txt" || sExt == ".rtf" || sExt == ".xml" || sExt == ".xlf"
                || sExt == ".xliff" || sExt == ".mqxliff" || sExt == ".sdlxliff" || sExt == ".mqxlz" || sExt == ".xlz" /*|| sExt == ".pdf"*/ || sExt == ".mdd"
                || sExt == ".resx" || sExt == ".strings" || sExt == ".csv" || sExt == ".wsxz"
-               || sExt == ".json" || sExt == ".idml" || sExt == ".sdlppx"
-               || (ConfigurationSettings.AppSettings["PdfSupport"] == "true" && sExt == ".pdf"))
+               || sExt == ".json" || sExt == ".idml" || sExt == ".sdlppx")
                 return true;
 
             return false;
@@ -138,7 +148,7 @@ namespace CATWeb.Services.CAT
             return sFilterPath;
         }
 
-        public Statistics[] GetStatisticsForDocument(string sFilePath, string sFilterPath, String sourceLang,
+        public Models.CAT.Statistics[] GetStatisticsForDocument(string sFilePath, string sFilterPath, String sourceLang,
             string[] aTargetLangs)
         {
             List<String> lstFilesToDelete = new List<String>();
@@ -170,7 +180,7 @@ namespace CATWeb.Services.CAT
                 byte[] filterContent = null;
                 if (File.Exists(sFilterPath))
                     filterContent = File.ReadAllBytes(sFilterPath);
-                TMAssignment[] aTMs = new TMAssignment[] { new TMAssignment() { tmPath = "29610/__35462_en_fr" } };
+                var aTMs = new CATService.TMAssignment[] { new CATService.TMAssignment() { tmPath = "29610/__35462_en_fr" } };
 
                 //the target language array
                 var lstTargetLangs = new List<String>();
@@ -234,7 +244,7 @@ namespace CATWeb.Services.CAT
 
                 String sFiltername = File.Exists(sFilterPath) ? Path.GetFileName(sFilterPath) : null;
                 byte[] filterContent = sFiltername != null ? File.ReadAllBytes(sFilterPath) : null;
-                TMAssignment[] aTMs = new TMAssignment[] { new TMAssignment() { tmPath = "29610/__35462_en_fr" } };
+                var aTMs = new CATService.TMAssignment[] { new CATService.TMAssignment() { tmPath = "29610/__35462_en_fr" } };
                 String sXliffContent = client.CreateXliff(sFilename, fileContent, sFiltername, filterContent, sourceLang, targetLang, aTMs);
 
                 var sOutXliffPath = Path.Combine(sTranslationDir, sOutFileName);
@@ -448,6 +458,20 @@ namespace CATWeb.Services.CAT
                     File.Delete(tmpFileName);
             }
         }
+
+        public TMMatch[] GetTMMatches(TMAssignment[] aTMAssignments, string sSourceXml, string sPrevXml, string sNextXml, string sContextID)
+        {
+            //we can't send over null value
+            var client = GetCATService();
+            var atms = _mapper.Map<CATService.TMAssignment[]>(aTMAssignments);
+
+            var matches = client.GetTMMatches(atms, sSourceXml, sPrevXml, sNextXml, (byte)MATCH_THRESHOLD, 10);
+
+            var atmms = _mapper.Map<Models.CAT.TMMatch[]>(matches);
+
+            return atmms;
+        }
+
 
     }
 }

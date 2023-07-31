@@ -59,7 +59,7 @@ namespace CATWeb.Services.MT
             }
         }
 
-        public static String CalculateContextVector(String sFrom, String sTo, String sText, String sHints)
+        public static String CalculateContextVector(String sFrom, String sTo, String sText, String? sHints)
         {
             try
             {

@@ -18,7 +18,7 @@ namespace BU
 		{
 			return ZipFiles(FilenamesToPack, null, sZipName, bKeepDirectoryStructure);
 		}
-		public bool ZipFiles(string[] FilenamesToPack, System.Collections.Specialized.StringCollection asNamesInThePack, string sZipName,
+		public bool ZipFiles(string[] FilenamesToPack, System.Collections.Specialized.StringCollection? asNamesInThePack, string sZipName,
 			bool bKeepDirectoryStructure)
 		{
 			//string[] filenames = Directory.GetFiles(args[0]);
@@ -155,7 +155,7 @@ namespace BU
             }
         }
 
-        public static void UnZipFiles(string zipPathAndFile, string outputFolder, string password/*, bool deleteZipFile*/)
+        public static void UnZipFiles(string zipPathAndFile, string outputFolder, string? password/*, bool deleteZipFile*/)
         {
             ZipInputStream s = new ZipInputStream(File.OpenRead(zipPathAndFile));
             if (password != null && password != String.Empty)

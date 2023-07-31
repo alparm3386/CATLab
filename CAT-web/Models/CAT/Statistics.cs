@@ -1,4 +1,4 @@
-﻿namespace CATWeb.Services.CAT
+﻿namespace CATWeb.Models.CAT
 {
     /// <summary>
     /// Statistics
@@ -22,14 +22,14 @@
 
         public void Add(Statistics stats)
         {
-            this.repetitions += stats.repetitions;
-            this.match_100 += stats.match_100;
-            this.match_101 += stats.match_101;
-            this.match_50_74 += stats.match_50_74;
-            this.match_75_84 += stats.match_75_84;
-            this.match_85_94 += stats.match_85_94;
-            this.match_95_99 += stats.match_95_99;
-            this.no_match += stats.no_match;
+            repetitions += stats.repetitions;
+            match_100 += stats.match_100;
+            match_101 += stats.match_101;
+            match_50_74 += stats.match_50_74;
+            match_75_84 += stats.match_75_84;
+            match_85_94 += stats.match_85_94;
+            match_95_99 += stats.match_95_99;
+            no_match += stats.no_match;
         }
 
         public bool ExactMatchesOnly()
