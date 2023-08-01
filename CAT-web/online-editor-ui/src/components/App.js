@@ -31,7 +31,7 @@ function AppInit() {
             //jwt
             const jwt = cookieHelper.getToken();
             //the url params
-            const urlParams = window.location.search.substring(1);
+            const urlParams = decodeURIComponent(window.location.search.substring(1));
             editorApi.initializeApiClient(urlParams, jwt, errorHandler);
 
             //load the job data

@@ -40,7 +40,7 @@ const editorApi = (function () {
 
         getJobData: () => {
             // Ensure _jwt is a string (or handle other cases as needed)
-            return _apiClient.get('/api/EditorApi/GetEditorData?urlParams=' + _urlParams, {
+            return _apiClient.get('/api/EditorApi/GetEditorData?urlParams=' + encodeURIComponent(_urlParams), {
                 headers: {
                     'Authorization': `Bearer ${_jwt}`
                 }
