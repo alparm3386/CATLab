@@ -86,12 +86,27 @@ namespace CATWeb.Controllers.ApiControllers
 
                 dynamic jobData = new
                 {
+                    idJob,
                     translationUnits = translationUnits.Select(tu => new { source = CATUtils.XmlTags2GoogleTags(tu.sourceText, CATUtils.TagType.Tmx), 
                         target = tu.targetText })
                 };
 
                 //store the jobData in the user session
-                HttpContext.Session.Set<dynamic>("jobData", (object)jobData);
+                var OEJobs = HttpContext.Session.Get<List<dynamic>>("OEJobs");
+                if (OEJobs == null)
+                {
+                    OEJobs = new List<dynamic>();
+                    OEJobs.Add(jobData);
+                    HttpContext.Session.Set<dynamic>("jobData", (object)OEJobs);
+                }
+                else
+                {
+                    int idx = OEJobs.FindIndex(o => o.idJob == jobData.idJob);
+                    if (idx >= 0)
+                        OEJobs[idx] = jobData; //the job is reloaded
+                    else
+                        OEJobs.Add(jobData);
+                }
 
                 var editorData = new
                 {
@@ -115,6 +130,8 @@ namespace CATWeb.Controllers.ApiControllers
             {
                 string urlParams = model.GetProperty("urlParams").GetString();
                 int tuid = model.GetProperty("tuid").GetInt32();
+
+                //_catClientService.GetTMMatches();
 
                 var tmMatches = new[]
                 {
