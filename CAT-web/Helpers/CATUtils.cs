@@ -10,6 +10,7 @@ using System.Security;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Web;
 using System.Xml;
 
 namespace CATWeb.Helpers
@@ -202,5 +203,190 @@ namespace CATWeb.Helpers
 
             return sRet.ToString();
         }
+
+        public static readonly int MARKER_OPENING = 0xE101;
+        public static readonly int MARKER_CLOSING = 0xE102;
+        public static readonly int MARKER_ISOLATED = 0xE103;
+        public static readonly int CHARBASE = 0xE110;
+
+        //regex for all TextFragment markers
+        public static readonly String MARKERS_REGEX = "[\uE101\uE102\uE103\uE104].";
+
+        public static string XliffSegmentToCodedText(String sXliffSegment)
+        {
+            try
+            {
+                if (sXliffSegment == null)
+                    sXliffSegment = "";
+
+                // remove the outer tag
+                StringBuilder sbOut = new StringBuilder();
+
+                // matcher for the tmx tags
+                var matches = Regex.Matches(sXliffSegment, "<[^>]*>[^>]*>");
+                int id = 1;
+                int prevEnd = 0;
+                var idStack = new Stack<int>();
+                String sText = "";
+                foreach (Match match in matches)
+                {
+                    String sTag = match.Value.ToLower();
+                    sText = sXliffSegment.Substring(prevEnd, match.Index - prevEnd);
+                    sText = HttpUtility.HtmlDecode(sText); //xml decode
+                    prevEnd = match.Index + match.Length;
+                    sbOut.Append(sText);
+                    if (sTag.StartsWith("<bpt"))
+                    {
+                        sbOut.Append("" + ((char)MARKER_OPENING) + (char)(CHARBASE + id));
+                        idStack.Push(id);
+                        id++;
+                    }
+                    else if (sTag.StartsWith("<ept"))
+                    {
+                        sbOut.Append("" + ((char)MARKER_CLOSING) + (char)(CHARBASE + idStack.Pop()));
+                    }
+                    else if (sTag.StartsWith("<ph") || sTag.StartsWith("<x"))
+                    {
+                        sbOut.Append("" + ((char)MARKER_ISOLATED) + (char)(CHARBASE + id));
+                        id++;
+                    }
+                }
+
+                sText = sXliffSegment.Substring(prevEnd, sXliffSegment.Length - prevEnd);
+                sText = HttpUtility.HtmlDecode(sText); //xml decode
+                sbOut.Append(sText);
+
+                return sbOut.ToString();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("XliffSegmentToTextFragmentSimple: " + ex.Message);
+            }
+            finally
+            {
+            }
+        }
+
+        public static string CodedTextToXliff(string codedText)
+        {
+            //create simple codes
+            StringBuilder tmp = new StringBuilder();
+            for (int i = 0; i < codedText.Length; i++)
+            {
+                var charCode = codedText[i];
+                if (charCode == MARKER_OPENING)
+                    tmp.Append("<bpt id=\"" + ((int)codedText[++i] - CHARBASE).ToString() + "\">{}</bpt>");
+                else if (charCode == MARKER_CLOSING)
+                    tmp.Append("<ept id=\"" + ((int)codedText[++i] - CHARBASE).ToString() + "\">{}</ept>");
+                else if (charCode == MARKER_ISOLATED)
+                    tmp.Append("<ph id=\"" + ((int)codedText[++i] - CHARBASE).ToString() + "\">{}</ph>");
+                else
+                {
+                    //xml escape 
+                    switch (charCode)
+                    {
+                        case '>': tmp.Append("&gt;"); break;
+                        case '<': tmp.Append("&lt;"); break;
+                        case '\r': tmp.Append("&#13;"); break; // Not a line-break in the XML context, but a literal
+                        case '&': tmp.Append("&amp;"); break;
+                        //case '"': tmp.Append("&quot;";
+                        //case '\'': tmp.Append("&apos;"; //"&#39;"
+                        default:
+                            tmp.Append(charCode); break;
+                    }
+                }
+            }
+
+            return tmp.ToString();
+        }
+
+        public static String CodedTextToTmx(string codedText)
+        {
+            //create simple codes
+            StringBuilder tmp = new StringBuilder();
+            for (int i = 0; i < codedText.Length; i++)
+            {
+                var charCode = codedText[i];
+                if (charCode == MARKER_OPENING)
+                    tmp.Append("<bpt i=\"" + ((int)codedText[++i] - CHARBASE).ToString() + "\">{}</bpt>");
+                else if (charCode == MARKER_CLOSING)
+                    tmp.Append("<ept i=\"" + ((int)codedText[++i] - CHARBASE).ToString() + "\">{}</ept>");
+                else if (charCode == MARKER_ISOLATED)
+                    tmp.Append("<ph i=\"" + ((int)codedText[++i] - CHARBASE).ToString() + "\">{}</ph>");
+                else
+                {
+                    //xml escape 
+                    switch (charCode)
+                    {
+                        case '>': tmp.Append("&gt;"); break;
+                        case '<': tmp.Append("&lt;"); break;
+                        case '\r': tmp.Append("&#13;"); break; // Not a line-break in the XML context, but a literal
+                        case '&': tmp.Append("&amp;"); break;
+                        //case '"': tmp.Append("&quot;";
+                        //case '\'': tmp.Append("&apos;"; //"&#39;"
+                        default:
+                            tmp.Append(charCode); break;
+                    }
+                }
+            }
+
+            return tmp.ToString();
+        }
+
+        public static string TmxSegmentToCodedText(String sTmxSeg)
+        {
+            try
+            {
+                if (String.IsNullOrEmpty(sTmxSeg))
+                    return "";
+
+                // remove the outer tag
+                StringBuilder sbOut = new StringBuilder();
+
+                // matcher for the tmx tags
+                var matches = Regex.Matches(sTmxSeg, "<[^>]*>[^>]*>");
+                int id = 1;
+                int prevEnd = 0;
+                var idStack = new Stack<int>();
+                String sText = "";
+                foreach (Match match in matches)
+                {
+                    String sTag = match.Value.ToLower();
+                    sText = sTmxSeg.Substring(prevEnd, match.Index - prevEnd);
+                    sText = HttpUtility.HtmlDecode(sText); //xml decode
+                    prevEnd = match.Index + match.Length;
+                    sbOut.Append(sText);
+                    if (sTag.StartsWith("<bpt"))
+                    {
+                        sbOut.Append("" + ((char)MARKER_OPENING) + (char)(CHARBASE + id));
+                        idStack.Push(id);
+                        id++;
+                    }
+                    else if (sTag.StartsWith("<ept"))
+                    {
+                        sbOut.Append("" + ((char)MARKER_CLOSING) + (char)(CHARBASE + idStack.Pop()));
+                    }
+                    else if (sTag.StartsWith("<ph") || sTag.StartsWith("<x") || sTag.StartsWith("<it"))
+                    {
+                        sbOut.Append("" + ((char)MARKER_ISOLATED) + (char)(CHARBASE + id));
+                        id++;
+                    }
+                }
+
+                sText = sTmxSeg.Substring(prevEnd, sTmxSeg.Length - prevEnd);
+                sText = HttpUtility.HtmlDecode(sText); //xml decode
+                sbOut.Append(sText);
+
+                return sbOut.ToString();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("TmxSegmentToCodedText: " + ex.Message);
+            }
+            finally
+            {
+            }
+        }
+
     }
 }

@@ -374,7 +374,7 @@ namespace CATWeb.Services.CAT
                             var mid = "-1";
                             if (sourceSegment.Name == "mrk")
                                 mid = sourceSegment.Attributes["mid"].Value;
-                            var source = CATUtils.XliffTags2TMXTags(sourceSegment.InnerXml.Trim());
+                            var source = sourceSegment.InnerXml.Trim();
 
                             int matchQuality = 0;
                             bool bEdited = false;
@@ -398,16 +398,16 @@ namespace CATWeb.Services.CAT
                             if (sourceSegment.Attributes["translate"] != null && sourceSegment.Attributes["translate"].Value == "no")
                                 bLockForTranslators = bLockForRevisers = true;*/
 
-                            translationUnit.sourceText = source;
+                            translationUnit.sourceText = CATUtils.XliffSegmentToCodedText(source);
 
-                            XmlNode targetSegment = null;
+                            XmlNode? targetSegment = null;
                             if (sourceSegment.Name == "mrk")
                                 targetSegment = targetNode.SelectSingleNode("x:mrk[@mid=" + mid + "]", xmlnsManager);
                             else
                                 targetSegment = targetNode;
                             if (matchQuality >= 100 || bEdited)
                             {
-                                String sTarget = CATUtils.XmlTags2GoogleTags(targetSegment.InnerXml, CATUtils.TagType.Xliff); //we store the target text with google tags
+                                String sTarget = CATUtils.XmlTags2GoogleTags(targetSegment!.InnerXml, CATUtils.TagType.Xliff); //we store the target text with google tags
                                 translationUnit.targetText = sTarget;
                             }
                             lstTus.Add(translationUnit);
@@ -422,7 +422,7 @@ namespace CATWeb.Services.CAT
                     var translatables = lstTus.Select(tu => new Translatable
                     {
                         id = tu.tuid,
-                        source = tu.sourceText,
+                        source = CATUtils.CodedTextToTmx(tu.sourceText),
                         target = tu.targetText!
                     }).ToList();
 

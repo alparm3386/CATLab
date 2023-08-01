@@ -9,6 +9,9 @@ namespace CATWeb.Models
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
+
+        public int IdClient { get; set; }
+
         [Display(Name = "Original file name")]
         public string? OriginalFileName { get; set; }
         [Display(Name = "File name")]

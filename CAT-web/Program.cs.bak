@@ -25,9 +25,6 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<CATWebContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("CATWebContext") ?? throw new InvalidOperationException("Connection string 'CATWebContext' not found.")));
 
-builder.Services.AddDbContext<IdentityDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("IdentityDbContext") ?? throw new InvalidOperationException("Connection string 'IdentityDbContext' not found.")));
-
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<JwtService>();

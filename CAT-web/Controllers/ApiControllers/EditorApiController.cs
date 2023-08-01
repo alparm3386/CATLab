@@ -112,23 +112,23 @@ namespace CATWeb.Controllers.ApiControllers
                 var jobData = GetJobDataFromSession(idJob);
 
                 //Convert google tags to xliff tags
-                TranslationUnit tu = jobData.translationUnits[tuid];
-                String sSource = tu.sourceText;
-                String sourceXml = CATUtils.GoogleTags2XmlTags(tu.source, tu.tags);
-                String precedingXml = null;
-                if (idSegment > 0)
-                {
-                    tu = editorData.translationUnits[idSegment - 1];
-                    precedingXml = CATUtils.GoogleTags2XmlTags(tu.source, tu.tags);
-                }
-                String followingXml = null;
-                if (idSegment < editorData.translationUnits.Length - 1)
-                {
-                    tu = editorData.translationUnits[idSegment + 1];
-                    followingXml = CATUtils.GoogleTags2XmlTags(tu.source, tu.tags);
-                }
+                //TranslationUnit tu = jobData.translationUnits[tuid];
+                //String sSource = tu.sourceText;
+                //String sourceXml = CATUtils.GoogleTags2XmlTags(tu.source, tu.tags);
+                //String precedingXml = null;
+                //if (idSegment > 0)
+                //{
+                //    tu = editorData.translationUnits[idSegment - 1];
+                //    precedingXml = CATUtils.GoogleTags2XmlTags(tu.source, tu.tags);
+                //}
+                //String followingXml = null;
+                //if (idSegment < editorData.translationUnits.Length - 1)
+                //{
+                //    tu = editorData.translationUnits[idSegment + 1];
+                //    followingXml = CATUtils.GoogleTags2XmlTags(tu.source, tu.tags);
+                //}
 
-                _catClientService.GetTMMatches(jobData.tmAssignments, );
+                //_catClientService.GetTMMatches(jobData.tmAssignments, );
 
                 var tmMatches = new[]
                 {
