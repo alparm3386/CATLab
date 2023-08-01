@@ -84,7 +84,7 @@ namespace CATWeb.Controllers.ApiControllers
                 var editorData = new
                 {
                     translationUnits = jobData!.translationUnits!.Select(tu => new {
-                        source = CATUtils.XmlTags2GoogleTags(tu.sourceText, CATUtils.TagType.Tmx),
+                        source = CATUtils.CodedTextToGoogleTags(tu.sourceText),
                         target = tu.targetText
                     }).ToList<object>()
                 };

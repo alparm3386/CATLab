@@ -90,7 +90,7 @@ namespace CATWeb.Helpers
                     DateTime.Now.ToString("yyyy-MM-dd HH-mm-ss") + ".xlf"));
             }
 
-            return xliffPath; 
+            return xliffPath;
         }
 
         public static bool IsSegmentEmptyOrWhiteSpaceOnly(String sXml)
@@ -388,5 +388,25 @@ namespace CATWeb.Helpers
             }
         }
 
-    }
+        public static String CodedTextToGoogleTags(string codedText)
+        {
+            //create simple codes
+            StringBuilder tmp = new StringBuilder();
+            for (int i = 0; i < codedText.Length; i++)
+            {
+                var charCode = codedText[i];
+                if (charCode == MARKER_OPENING)
+                    tmp.Append("{" + ((int)codedText[++i] - CHARBASE).ToString() + "}");
+                else if (charCode == MARKER_CLOSING)
+                    tmp.Append("{\\" + ((int)codedText[++i] - CHARBASE).ToString() + "}");
+                else if (charCode == MARKER_ISOLATED)
+                    tmp.Append("{" + ((int)codedText[++i] - CHARBASE).ToString() + "/}");
+                else
+                    tmp.Append(charCode);
+            }
+
+            return tmp.ToString();
+        }
+
+}
 }
