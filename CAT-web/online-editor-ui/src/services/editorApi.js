@@ -49,7 +49,24 @@ const editorApi = (function () {
 
         getTMMatches: async (tuid) => {
             try {
-                const response = await _apiClient.post('/api/EditorApi/FetchTMMatches', { urlParams: _urlParams, tuid }, {
+                const response = await _apiClient.post('/api/EditorApi/getTMMatches', { urlParams: _urlParams, tuid }, {
+                    headers: {
+                        'Authorization': `Bearer ${_jwt}`
+                    }
+                });
+                if (response.status === 401) {
+                    console.log("401 error ...");
+                }
+
+                return { data: response.data, status: response.status };
+            } catch (error) {
+                throw error;
+            }
+        },
+
+        getConcordance: async (tuid) => {
+            try {
+                const response = await _apiClient.post('/api/EditorApi/getConcordance', { urlParams: _urlParams, tuid }, {
                     headers: {
                         'Authorization': `Bearer ${_jwt}`
                     }

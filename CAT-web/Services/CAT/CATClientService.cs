@@ -23,6 +23,7 @@ using TMMatch = CATWeb.Models.CAT.TMMatch;
 using TMAssignment = CATWeb.Models.CAT.TMAssignment;
 using AutoMapper;
 using System.Security.AccessControl;
+using TBEntry = CATWeb.Models.CAT.TBEntry;
 
 namespace CATWeb.Services.CAT
 {
@@ -149,7 +150,7 @@ namespace CATWeb.Services.CAT
         }
 
         public Models.CAT.Statistics[] GetStatisticsForDocument(string sFilePath, string sFilterPath, String sourceLang,
-            string[] aTargetLangs)
+            string[] aTargetLangs, TMAssignment[] aTMAssignments)
         {
             List<String> lstFilesToDelete = new List<String>();
             try
@@ -180,7 +181,8 @@ namespace CATWeb.Services.CAT
                 byte[] filterContent = null;
                 if (File.Exists(sFilterPath))
                     filterContent = File.ReadAllBytes(sFilterPath);
-                var aTMs = new CATService.TMAssignment[] { new CATService.TMAssignment() { tmPath = "29610/__35462_en_fr" } };
+
+                var aTMs = _mapper.Map<CATService.TMAssignment[]>(aTMAssignments);
 
                 //the target language array
                 var lstTargetLangs = new List<String>();
@@ -472,6 +474,27 @@ namespace CATWeb.Services.CAT
             return atmms;
         }
 
+        public TBEntry[] ListTBEntries(TBAssignment tBAssignment, String[] languages)
+        {
+            var client = GetCATService();
+            //get the TB id from guid
+            var tbEntries = client.ListTBEntries(tBAssignment.idTermbase, languages);
+
+            //convert the list
+            var lstRet = new List<TBEntry>();
+            foreach (var tbEntry in tbEntries)
+            {
+                lstRet.Add(new TBEntry()
+                {
+                    id = tbEntry.id,
+                    terms = tbEntry.terms,
+                    comment = tbEntry.comment,
+                    metadata = tbEntry.metadata
+                });
+            }
+
+            return lstRet.ToArray();
+        }
 
     }
 }

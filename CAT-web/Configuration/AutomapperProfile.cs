@@ -8,6 +8,7 @@ namespace CATWeb.Configuration
         {
             //CAT service
             CreateMap<CATService.TMMatch, Models.CAT.TMMatch>().ReverseMap();
+            CreateMap<CATService.TBEntry, Models.CAT.TBEntry>().ReverseMap();
             CreateMap<CATService.TMAssignment, Models.CAT.TMAssignment>().ReverseMap();
         }
     }
