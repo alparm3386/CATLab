@@ -8,6 +8,11 @@ var renderCntr = 0;
 const EditorGrid = React.memo(function EditorGrid() {
     const jobData = useSelector((state) => state.editorData.jobData);
     console.log("EditorGrid rendered: " + renderCntr++);
+
+    function onTargetClick(index) {
+        alert("segment " + index + " clicked.");
+    }
+
     return (
         <div className="grid-area">
             {
@@ -16,7 +21,7 @@ const EditorGrid = React.memo(function EditorGrid() {
                     <div key={index} className="tu-row">
                         <div className="row-num">{ index + 1 }</div>
                         <div className="source">{tu.source}</div>
-                        <div className="target" contentEditable="true">{tu.target}</div>
+                        <div className="target" contentEditable="true" onClick={ () => onTargetClick(index) }>{tu.target}</div>
                         <div className="status"><FontAwesomeIcon icon={faCoffee} /></div>
                     </div>
                 ))

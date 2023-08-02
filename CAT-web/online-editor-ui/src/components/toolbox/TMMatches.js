@@ -14,7 +14,10 @@ const TMMatches = ({ tuid }) => {
     console.log("TMMatches rendered: " + renderCntr++);
 
     useEffect(() => {
-        editorApi.getTMMatches(tuid || 0).then(response => setTmMatches(response.data)).catch(error => {
+        editorApi.getTMMatches(tuid || 0).then(response => {
+            var a = 0;
+            setTmMatches(response.data);
+        }).catch(error => {
             dispatch(setStatusBarMessage('Error:' + error.toString()));
         });
         return () => {

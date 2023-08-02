@@ -1,4 +1,5 @@
-﻿using CATWeb.Controllers.ApiControllers;
+﻿using AutoMapper;
+using CATWeb.Controllers.ApiControllers;
 using CATWeb.Data;
 using CATWeb.Models;
 using Microsoft.EntityFrameworkCore;
@@ -12,16 +13,19 @@ namespace CATWeb.Services.CAT
         private readonly IConfiguration _configuration;
         private readonly CATClientService _catClientService;
         private readonly IMemoryCache _cache;
+        private readonly IMapper _mapper;
         private readonly ILogger _logger;
 
+
         public JobService(CATWebContext context, IConfiguration configuration,
-            CATClientService catClientService, IMemoryCache cache, ILogger<EditorApiController> logger)
+            CATClientService catClientService, IMemoryCache cache, IMapper mapper, ILogger<EditorApiController> logger)
         {
             _context = context;
             _configuration = configuration;
             _catClientService = catClientService;
             _cache = cache;
             _logger = logger;
+            _mapper = mapper;
         }
 
         public async Task<JobData> GetJobData(int idJob)
@@ -62,7 +66,7 @@ namespace CATWeb.Services.CAT
             var fileFiltersFolder = Path.Combine(_configuration["FileFiltersFolder"]);
 
             var filePath = Path.Combine(sourceFilesFolder, job!.FileName!);
-            string filterPath = null;
+            string? filterPath = null;
             if (!String.IsNullOrEmpty(job.FilterName))
                 filterPath = Path.Combine(fileFiltersFolder, job.FilterName);
 

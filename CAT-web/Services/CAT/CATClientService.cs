@@ -469,9 +469,15 @@ namespace CATWeb.Services.CAT
 
             var matches = client.GetTMMatches(atms, sSourceXml, sPrevXml, sNextXml, (byte)MATCH_THRESHOLD, 10);
 
-            var atmms = _mapper.Map<Models.CAT.TMMatch[]>(matches);
+            var tmMatches = _mapper.Map<TMMatch[]>(matches);
+            tmMatches = Array.ConvertAll(tmMatches, tmMatch =>
+            {
+                tmMatch.source = CATUtils.XmlTags2GoogleTags(tmMatch.source!, CATUtils.TagType.Tmx);
+                tmMatch.target = CATUtils.XmlTags2GoogleTags(tmMatch.target!, CATUtils.TagType.Tmx);
+                return tmMatch;
+            });
 
-            return atmms;
+            return tmMatches;
         }
 
         public TBEntry[] ListTBEntries(TBAssignment tBAssignment, String[] languages)

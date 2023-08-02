@@ -17,6 +17,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using System.Web;
+using AutoMapper;
 
 namespace CATWeb.Controllers.ApiControllers
 {
@@ -29,14 +30,16 @@ namespace CATWeb.Controllers.ApiControllers
         private readonly IMemoryCache _cache;
         private readonly ILogger _logger;
         private readonly JobService _jobService;
+        private readonly IMapper _mapper;
 
-        public EditorApiController(CATClientService catClientService, IMemoryCache cache, JobService jobService, 
-            ILogger<EditorApiController> logger)
+        public EditorApiController(CATClientService catClientService, IMemoryCache cache, JobService jobService,
+            IMapper mapper, ILogger<EditorApiController> logger)
         {
             _catClientService = catClientService;
             _cache = cache;
-            _logger = logger;
             _jobService = jobService;
+            _mapper = mapper;
+            _logger = logger;
         }
 
         private void SaveJobDataToSession(JobData jobData)
@@ -112,31 +115,31 @@ namespace CATWeb.Controllers.ApiControllers
                 var jobData = GetJobDataFromSession(idJob);
 
                 //Convert google tags to xliff tags
-                //TranslationUnit tu = jobData.translationUnits[tuid];
-                //String sSource = tu.sourceText;
-                //String sourceXml = CATUtils.GoogleTags2XmlTags(tu.source, tu.tags);
-                //String precedingXml = null;
-                //if (idSegment > 0)
-                //{
-                //    tu = editorData.translationUnits[idSegment - 1];
-                //    precedingXml = CATUtils.GoogleTags2XmlTags(tu.source, tu.tags);
-                //}
-                //String followingXml = null;
-                //if (idSegment < editorData.translationUnits.Length - 1)
-                //{
-                //    tu = editorData.translationUnits[idSegment + 1];
-                //    followingXml = CATUtils.GoogleTags2XmlTags(tu.source, tu.tags);
-                //}
-
-                //_catClientService.GetTMMatches(jobData.tmAssignments, );
-
-                var tmMatches = new[]
+                TranslationUnit tu = jobData.translationUnits![tuid];
+                String sSource = tu.sourceText;
+                String sourceXml = CATUtils.CodedTextToTmx(tu.sourceText);
+                String? precedingXml = null;
+                if (tuid > 0)
                 {
-                    new { source = "Celestial Print Velour Sleepsuit and Hat Set", target = "Lot de combinaison et chapeau en velours à imprimé céleste", quality = 101, origin = "TM" },
-                    new { source = "This velour set may be the star of their cosy collection!", target = "Cet ensemble en velours est peut-être la star de leur collection cosy !", quality = 85, origin = "TM" },
-                    new { source = "Harry Potter™ Gryffindor Phone Case", target = "Coque de téléphone Harry Potter™ Gryffondor", quality = 75, origin = "TM" },
-                    new { source = "Put your house pride on full display with this case", target = "Mettez la fierté de votre maison à l'honneur avec cet étui", quality = 50, origin = "TM" },
-                };
+                    tu = jobData.translationUnits[tuid - 1];
+                    precedingXml = CATUtils.CodedTextToTmx(tu.sourceText);
+                }
+                String? followingXml = null;
+                if (tuid < jobData.translationUnits.Count - 1)
+                {
+                    tu = jobData.translationUnits[tuid + 1];
+                    followingXml = CATUtils.CodedTextToTmx(tu.sourceText);
+                }
+
+                var tmMatches = _catClientService.GetTMMatches(jobData.tmAssignments!.ToArray(), sourceXml, precedingXml!, followingXml!, null!);
+
+                //var tmMatches = new[]
+                //{
+                //    new { source = "Celestial Print Velour Sleepsuit and Hat Set", target = "Lot de combinaison et chapeau en velours à imprimé céleste", quality = 101, origin = "TM" },
+                //    new { source = "This velour set may be the star of their cosy collection!", target = "Cet ensemble en velours est peut-être la star de leur collection cosy !", quality = 85, origin = "TM" },
+                //    new { source = "Harry Potter™ Gryffindor Phone Case", target = "Coque de téléphone Harry Potter™ Gryffondor", quality = 75, origin = "TM" },
+                //    new { source = "Put your house pride on full display with this case", target = "Mettez la fierté de votre maison à l'honneur avec cet étui", quality = 50, origin = "TM" },
+                //};
 
                 return Ok(tmMatches);
             }
