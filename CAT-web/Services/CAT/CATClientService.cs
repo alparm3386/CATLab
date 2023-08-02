@@ -24,6 +24,8 @@ using TMAssignment = CATWeb.Models.CAT.TMAssignment;
 using AutoMapper;
 using System.Security.AccessControl;
 using TBEntry = CATWeb.Models.CAT.TBEntry;
+using Microsoft.CodeAnalysis.Differencing;
+using ICSharpCode.SharpZipLib.Tar;
 
 namespace CATWeb.Services.CAT
 {
@@ -470,14 +472,22 @@ namespace CATWeb.Services.CAT
             var matches = client.GetTMMatches(atms, sSourceXml, sPrevXml, sNextXml, (byte)MATCH_THRESHOLD, 10);
 
             var tmMatches = _mapper.Map<TMMatch[]>(matches);
-            tmMatches = Array.ConvertAll(tmMatches, tmMatch =>
-            {
-                tmMatch.source = CATUtils.XmlTags2GoogleTags(tmMatch.source!, CATUtils.TagType.Tmx);
-                tmMatch.target = CATUtils.XmlTags2GoogleTags(tmMatch.target!, CATUtils.TagType.Tmx);
-                return tmMatch;
-            });
 
-            return tmMatches;
+            //convert and remove duplicates
+            var finalTMMatches = new Dictionary<String, TMMatch>();
+            foreach (var tmMatch in tmMatches)
+            {
+                String key = tmMatch.source + tmMatch.target;
+                if (finalTMMatches.ContainsKey(key))
+                    continue;
+
+                tmMatch.source = CATUtils.XmlTags2GoogleTags(tmMatch.source, CATUtils.TagType.Tmx);
+                tmMatch.target = CATUtils.XmlTags2GoogleTags(tmMatch.target, CATUtils.TagType.Tmx);
+
+                finalTMMatches.Add(key, tmMatch);
+            }
+
+            return finalTMMatches.Values.ToArray();
         }
 
         public TMMatch[] GetConcordance(TMAssignment[] aTMAssignments, string sSearchText, bool bCaseSensitive, bool bSearchInTarget)
@@ -493,17 +503,28 @@ namespace CATWeb.Services.CAT
                 target = sSearchText;
 
             var maxHits = 10;
-            var matches = client.Concordance(tmPaths, source, target, bCaseSensitive, maxHits);
+            var tmEntries = client.Concordance(tmPaths, source, target, bCaseSensitive, maxHits);
 
-            var tmMatches = _mapper.Map<TMMatch[]>(matches);
-            tmMatches = Array.ConvertAll(tmMatches, tmMatch =>
+            //convert and remove duplicates
+            var finalTMMatches = new Dictionary<String, TMMatch>();
+            foreach (var tmEntry in tmEntries)
             {
-                tmMatch.source = CATUtils.XmlTags2GoogleTags(tmMatch.source!, CATUtils.TagType.Tmx);
-                tmMatch.target = CATUtils.XmlTags2GoogleTags(tmMatch.target!, CATUtils.TagType.Tmx);
-                return tmMatch;
-            });
+                String key = tmEntry.source + tmEntry.target;
+                if (finalTMMatches.ContainsKey(key))
+                    continue;
 
-            return tmMatches;
+                var tmMatch = new TMMatch()
+                {
+                    id = tmEntry.id,
+                    source = CATUtils.XmlTags2GoogleTags(tmEntry.source, CATUtils.TagType.Tmx),
+                    target = CATUtils.XmlTags2GoogleTags(tmEntry.target, CATUtils.TagType.Tmx),
+                    metadata = tmEntry.metadata
+                };
+
+                finalTMMatches.Add(key, tmMatch);
+            }
+
+            return finalTMMatches.Values.ToArray();
         }
 
         public TBEntry[] ListTBEntries(TBAssignment tBAssignment, String[] languages)

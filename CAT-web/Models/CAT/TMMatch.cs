@@ -2,7 +2,7 @@
 {
     public class TMMatch
     {
-        public string? id { get; set; }
+        public int id { get; set; }
         public string? source { get; set; }
         public string? target { get; set; }
         public string? origin { get; set; }

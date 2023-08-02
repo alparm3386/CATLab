@@ -64,9 +64,9 @@ const editorApi = (function () {
             }
         },
 
-        getConcordance: async (tuid) => {
+        getConcordance: async (searchText, caseSensitive, searchInTarget) => {
             try {
-                const response = await _apiClient.post('/api/EditorApi/getConcordance', { urlParams: _urlParams, tuid }, {
+                const response = await _apiClient.post('/api/EditorApi/getConcordance', { urlParams: _urlParams, searchText, caseSensitive, searchInTarget }, {
                     headers: {
                         'Authorization': `Bearer ${_jwt}`
                     }

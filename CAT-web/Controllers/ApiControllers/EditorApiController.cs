@@ -159,20 +159,10 @@ namespace CATWeb.Controllers.ApiControllers
                 bool searchInTarget = model.GetProperty("searchInTarget").GetBoolean();
 
                 //get corpus entries
-                var tmMatches = _catClientService.GetConcordance(jobData.tmAssignments!.ToArray(), searchText, caseSensitive, searchInTarget).ToList();
+                var tmMatches = _catClientService.GetConcordance(jobData.tmAssignments!.ToArray(), searchText, 
+                    caseSensitive, searchInTarget);
 
-                //remove duplicates
-                var finalTMMatches = new Dictionary<String, TMMatch>();
-                foreach (TMMatch tmMatch in tmMatches)
-                {
-                    tmMatch.source = CATUtils.XmlTags2GoogleTags(tmMatch.source, CATUtils.TagType.Tmx);
-                    tmMatch.target = CATUtils.XmlTags2GoogleTags(tmMatch.target, CATUtils.TagType.Tmx);
-                    String key = tmMatch.source + tmMatch.target;// +match.quality.ToString();
-                    if (!finalTMMatches.ContainsKey(key))
-                        finalTMMatches.Add(key, tmMatch);
-                }
-
-                return Ok(finalTMMatches.Values.ToArray());
+                return Ok(tmMatches);
             }
             catch (Exception ex)
             {
