@@ -110,6 +110,8 @@ namespace CATWeb.Controllers.ApiControllers
             {
                 string urlParams = model.GetProperty("urlParams").GetString();
                 int tuid = model.GetProperty("tuid").GetInt32();
+                if (tuid < 0)
+                    return Problem("Invalid tuid.");
                 
                 //the job data
                 var idJob = QueryHelper.GetQuerystringIntParameter(urlParams, "idJob");

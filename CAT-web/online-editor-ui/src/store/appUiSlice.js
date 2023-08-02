@@ -4,7 +4,11 @@ import { createSlice } from '@reduxjs/toolkit';
 export const appUiSlice = createSlice({
     name: 'appUi',
     initialState: {
-        currentSegment: -1,
+        currentTuid: -1,
+        targetEditbBox: {
+            tuid: -1,
+            content: ''
+        },
         login: { isOpen: false },
         alert: { title: "Alert", message: "" },
         isLoading: false
@@ -21,10 +25,16 @@ export const appUiSlice = createSlice({
         },
         setCurrentSegment: (state, action) => {
             state.currentSegment = action.payload
+        },
+        setTargetEditbBoxTuid: (state, action) => {
+            state.targetEditbBox.tuid = action.payload
+        },
+        setTargetEditbBoxContent: (state, action) => {
+            state.targetEditbBox.content = action.payload
         }
     }
 });
 
-export const { showAlert, showLoginModal, showLoading, setCurrentSegment } = appUiSlice.actions;
+export const { showAlert, showLoginModal, showLoading, setCurrentSegment, setTargetEditbBoxTuid, setTargetEditbBoxContent } = appUiSlice.actions;
 
 export default appUiSlice.reducer;

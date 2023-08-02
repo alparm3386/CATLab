@@ -4,7 +4,7 @@ import 'styles/app.scss';
 
 //react
 import React, { useEffect } from 'react';
-import { Provider, useDispatch, useSelector } from 'react-redux';
+import { Provider, useDispatch } from 'react-redux';
 import store from 'store/store';
 import editorApi from 'services/editorApi';
 import errorHandler from 'services/errorHandler';

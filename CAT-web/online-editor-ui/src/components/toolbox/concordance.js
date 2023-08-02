@@ -1,6 +1,6 @@
 ﻿import 'styles/concordance.scss';
 import 'styles/spinner-small.css';
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import editorApi from 'services/editorApi';
 import { useSelector, useDispatch } from 'react-redux';
 import { setStatusBarMessage } from 'store/jobDataSlice';
