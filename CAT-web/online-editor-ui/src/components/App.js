@@ -1,6 +1,6 @@
 //css
 import 'bootstrap/dist/css/bootstrap.css'; // If you haven't linked Bootstrap in your HTML
-import 'styles/App.scss';
+import 'styles/app.scss';
 
 //react
 import React, { useEffect } from 'react';

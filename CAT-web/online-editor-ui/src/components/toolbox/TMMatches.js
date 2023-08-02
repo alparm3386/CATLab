@@ -8,6 +8,7 @@ import { setStatusBarMessage } from 'store/jobDataSlice';
 var renderCntr = 0;
 const TMMatches = () => {
     const [tmMatches, setTmMatches] = useState([]);
+    const [isLoading, setIsLoading] = useState(false);
     const urlParams = useSelector((state) => state.jobData.urlParams);
     const tuid = useSelector((state) => state.appUi.currentSegment);
     const dispatch = useDispatch();
@@ -15,16 +16,22 @@ const TMMatches = () => {
     console.log("TMMatches rendered: " + renderCntr++);
 
     useEffect(() => {
+        setIsLoading(true);
         editorApi.getTMMatches(tuid || 0).then(response => {
             setTmMatches(response.data);
         }).catch(error => {
             dispatch(setStatusBarMessage('Error:' + error.toString()));
-        });
+        }).finally(() => setIsLoading(false));
         return () => {
         };
     }, [tuid, urlParams, dispatch]);
 
     return <div className="tm-matches mb-2">
+        {isLoading && (
+            <div className="tmm-loading-overlay">
+                <div className="tmm-spinner"></div>
+            </div>
+        )}
         {tmMatches && tmMatches.map((tmMatch, index) => (
             <div key={index} className="tmm-row">
                 <div className="tmm-row-num">{index + 1}</div>
