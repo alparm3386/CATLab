@@ -17,6 +17,7 @@ const TMMatches = () => {
 
     useEffect(() => {
         setIsLoading(true);
+        //setTmMatches([]);
         editorApi.getTMMatches(tuid || 0).then(response => {
             setTmMatches(response.data);
         }).catch(error => {
@@ -32,7 +33,7 @@ const TMMatches = () => {
                 <div className="tmm-spinner"></div>
             </div>
         )}
-        {tmMatches && tmMatches.map((tmMatch, index) => (
+        {tmMatches ? tmMatches.map((tmMatch, index) => (
             <div key={index} className="tmm-row">
                 <div className="tmm-row-num">{index + 1}</div>
                 <div className="tmm-row-content">
@@ -41,7 +42,7 @@ const TMMatches = () => {
                     <div className="tmm-quality">quality: {tmMatch.quality}%</div>
                 </div>
             </div>
-        ))}
+        )) : (<div className="tmm-row"><div className="tmm-row-content">No matches.</div></div>)}
     </div>;
 };
 

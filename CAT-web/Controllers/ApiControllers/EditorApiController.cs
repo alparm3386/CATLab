@@ -18,6 +18,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Web;
 using AutoMapper;
+using CATService;
 
 namespace CATWeb.Controllers.ApiControllers
 {
@@ -133,14 +134,6 @@ namespace CATWeb.Controllers.ApiControllers
 
                 var tmMatches = _catClientService.GetTMMatches(jobData.tmAssignments!.ToArray(), sourceXml, precedingXml!, followingXml!, null!);
 
-                //var tmMatches = new[]
-                //{
-                //    new { source = "Celestial Print Velour Sleepsuit and Hat Set", target = "Lot de combinaison et chapeau en velours à imprimé céleste", quality = 101, origin = "TM" },
-                //    new { source = "This velour set may be the star of their cosy collection!", target = "Cet ensemble en velours est peut-être la star de leur collection cosy !", quality = 85, origin = "TM" },
-                //    new { source = "Harry Potter™ Gryffindor Phone Case", target = "Coque de téléphone Harry Potter™ Gryffondor", quality = 75, origin = "TM" },
-                //    new { source = "Put your house pride on full display with this case", target = "Mettez la fierté de votre maison à l'honneur avec cet étui", quality = 50, origin = "TM" },
-                //};
-
                 return Ok(tmMatches);
             }
             catch (Exception ex)
@@ -156,22 +149,30 @@ namespace CATWeb.Controllers.ApiControllers
         {
             try
             {
+                //the job data
                 string urlParams = model.GetProperty("urlParams").GetString();
-                int tuid = model.GetProperty("tuid").GetInt32();
-
                 var idJob = QueryHelper.GetQuerystringIntParameter(urlParams, "idJob");
                 var jobData = GetJobDataFromSession(idJob);
-                //_catClientService.GetTMMatches();
 
-                var tmMatches = new[]
+                var searchText = model.GetProperty("searchText").GetString();
+                bool caseSensitive = model.GetProperty("caseSensitive").GetBoolean();
+                bool searchInTarget = model.GetProperty("searchInTarget").GetBoolean();
+
+                //get corpus entries
+                var tmMatches = _catClientService.GetConcordance(jobData.tmAssignments!.ToArray(), searchText, caseSensitive, searchInTarget).ToList();
+
+                //remove duplicates
+                var finalTMMatches = new Dictionary<String, TMMatch>();
+                foreach (TMMatch tmMatch in tmMatches)
                 {
-                    new { source = "Celestial Print Velour Sleepsuit and Hat Set", target = "Lot de combinaison et chapeau en velours à imprimé céleste", quality = 101, origin = "TM" },
-                    new { source = "This velour set may be the star of their cosy collection!", target = "Cet ensemble en velours est peut-être la star de leur collection cosy !", quality = 85, origin = "TM" },
-                    new { source = "Harry Potter™ Gryffindor Phone Case", target = "Coque de téléphone Harry Potter™ Gryffondor", quality = 75, origin = "TM" },
-                    new { source = "Put your house pride on full display with this case", target = "Mettez la fierté de votre maison à l'honneur avec cet étui", quality = 50, origin = "TM" },
-                };
+                    tmMatch.source = CATUtils.XmlTags2GoogleTags(tmMatch.source, CATUtils.TagType.Tmx);
+                    tmMatch.target = CATUtils.XmlTags2GoogleTags(tmMatch.target, CATUtils.TagType.Tmx);
+                    String key = tmMatch.source + tmMatch.target;// +match.quality.ToString();
+                    if (!finalTMMatches.ContainsKey(key))
+                        finalTMMatches.Add(key, tmMatch);
+                }
 
-                return Ok(tmMatches);
+                return Ok(finalTMMatches.Values.ToArray());
             }
             catch (Exception ex)
             {

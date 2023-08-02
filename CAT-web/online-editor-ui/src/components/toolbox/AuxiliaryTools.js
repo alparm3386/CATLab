@@ -12,19 +12,23 @@ const AuxiliaryTools = () => {
         <div className="auxiliary-tools">
             <Tabs>
                 <TabList>
-                    <Tab>Context</Tab>
-                    <Tab>Preview</Tab>
                     <Tab>Concordance</Tab>
+                    <Tab>Glossary</Tab>
+                    {/*<Tab>Context</Tab>*/}
+                    {/*<Tab>Preview</Tab>*/}
                 </TabList>
 
+                <TabPanel>
+                    <h2>Concordance content</h2>
+                </TabPanel>
+                <TabPanel>
+                    <h2>Glossary</h2>
+                </TabPanel>
                 <TabPanel>
                     <h2>Context content</h2>
                 </TabPanel>
                 <TabPanel>
                     <h2>Preview content</h2>
-                </TabPanel>
-                <TabPanel>
-                    <h2>Concordance content</h2>
                 </TabPanel>
             </Tabs>
         </div>

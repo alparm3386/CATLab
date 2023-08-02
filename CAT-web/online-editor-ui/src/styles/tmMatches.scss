@@ -1,6 +1,7 @@
 ﻿/* tmMatches.scss */
 
 .tm-matches {
+    position: relative; /* Add this line */
     background-color: white;
     border: 1px solid;
     max-height: 50%;
@@ -46,7 +47,7 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0,0,0,0.5);
+    background: rgba(0,0,0,0.1);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -54,12 +55,12 @@
 }
 
 .tmm-spinner {
-    border: 16px solid #f3f3f3; /* Light grey */
-    border-top: 16px solid #3498db; /* Blue */
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #3498db;
     border-radius: 50%;
-    width: 120px;
-    height: 120px;
-    animation: spin 2s linear infinite;
+    width: 30px;
+    height: 30px;
+    animation: spin 1s linear infinite;
 }
 
 @keyframes spin {
@@ -71,4 +72,3 @@
         transform: rotate(360deg);
     }
 }
-

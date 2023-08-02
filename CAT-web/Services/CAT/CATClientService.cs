@@ -480,6 +480,32 @@ namespace CATWeb.Services.CAT
             return tmMatches;
         }
 
+        public TMMatch[] GetConcordance(TMAssignment[] aTMAssignments, string sSearchText, bool bCaseSensitive, bool bSearchInTarget)
+        {
+            //we can't send over null value
+            var client = GetCATService();
+            var tmPaths = Array.ConvertAll(aTMAssignments, tma => tma.tmPath);
+            string? source = null;
+            string? target = null;
+            if (bSearchInTarget)
+                source = sSearchText;
+            else
+                target = sSearchText;
+
+            var maxHits = 10;
+            var matches = client.Concordance(tmPaths, source, target, bCaseSensitive, maxHits);
+
+            var tmMatches = _mapper.Map<TMMatch[]>(matches);
+            tmMatches = Array.ConvertAll(tmMatches, tmMatch =>
+            {
+                tmMatch.source = CATUtils.XmlTags2GoogleTags(tmMatch.source!, CATUtils.TagType.Tmx);
+                tmMatch.target = CATUtils.XmlTags2GoogleTags(tmMatch.target!, CATUtils.TagType.Tmx);
+                return tmMatch;
+            });
+
+            return tmMatches;
+        }
+
         public TBEntry[] ListTBEntries(TBAssignment tBAssignment, String[] languages)
         {
             var client = GetCATService();
