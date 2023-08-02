@@ -13,7 +13,7 @@ const TMMatches = () => {
     const tuid = useSelector((state) => state.appUi.currentSegment);
     const dispatch = useDispatch();
 
-    console.log("TMMatches rendered: " + renderCntr++);
+    //console.log("TMMatches rendered: " + renderCntr++);
 
     useEffect(() => {
         setIsLoading(true);

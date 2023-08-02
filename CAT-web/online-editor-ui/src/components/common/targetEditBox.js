@@ -1,23 +1,36 @@
 ﻿import React from 'react';
 import sanitizeHtml from "sanitize-html"
 import { useSelector, useDispatch } from 'react-redux';
-import { setTargetEditbBoxTuid, setTargetEditbBoxContent } from 'store/appUiSlice';
+import { setTargetEditbBoxContent } from 'store/appDataSlice';
 
 let cntr = 0;
 const TargetEditbBox = ({ className, tuid }) => {
     const editRef = React.useRef(null); 
     const dispatch = useDispatch();
-    const targetEditbBox = useSelector((state) => state.appUi.targetEditbBox);
-    const jobData = useSelector((state) => state.jobData.jobData);
+    const content = useSelector((state) => state.appData.targetEditbBoxContent);
+    //const jobData = useSelector((state) => state.jobData.jobData);
+
+    console.log("TargetEditbBox rendered: " + cntr++);
+
 
     React.useEffect(() => {
-        editRef.current && editRef.current.focus();
-        dispatch(setTargetEditbBoxTuid(tuid));
-        dispatch(setTargetEditbBoxContent(jobData.translationUnits[tuid].target));
-    }, [dispatch, tuid, jobData]);
+        // After the component mounts, move the cursor to the end of the contenteditable div
+        const editboxNode = editRef.current;
+        if (editboxNode) {
+            const textLength = editboxNode.textContent.length;
+            console.log("text length: " + textLength);
+            const range = document.createRange();
+            range.selectNodeContents(editboxNode);
+            range.collapse(false); // Set cursor to the end (false: collapse to the end)
+            const selection = window.getSelection();
+            selection.removeAllRanges();
+            selection.addRange(range);
+            editboxNode.focus();
+        }
+    }, []);
 
     const onContentBlur = React.useCallback(evt => {
-        console.log("onContentBlur: " + cntr++);
+        //console.log("onContentBlur: " + cntr++);
         const sanitizeConf = {
             allowedTags: ["span"],
             allowedAttributes: {}
@@ -31,7 +44,7 @@ const TargetEditbBox = ({ className, tuid }) => {
             ref={editRef}
             contentEditable
             onBlur={onContentBlur}
-            dangerouslySetInnerHTML={{ __html: targetEditbBox.content }} />
+            dangerouslySetInnerHTML={{ __html: content }} />
     )
 };
 
