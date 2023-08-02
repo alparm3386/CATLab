@@ -27,6 +27,7 @@ const Concordance = () => {
     }, [dispatch]);
 
     return <div className="concordance-results mb-2">
+
         {isLoading && (
             <div className="spinner-small-loading-overlay">
                 <div className="spinner-small"></div>
