@@ -1,0 +1,38 @@
+﻿/* concordance.scss */
+
+.concordance-results {
+    position: relative; /* Add this line */
+    background-color: white;
+    border: 1px solid;
+    max-height: 50%;
+    overflow: auto;
+
+    .result-row {
+        display: flex;
+        flex-direction: row;
+        border: solid #c9c9c9;
+        margin: 3px;
+
+        .tmm-row-num {
+            flex: 1;
+            background-color: #b6def7;
+        }
+
+        .tmm-row-content {
+            flex: 12;
+            background-color: #ddebf3;
+            font-size: 0.8em;
+    
+            .tmm-source {
+                color: #416d41;
+                margin: 5px;
+            }
+
+            .tmm-target {
+                color: #4e4ea7;
+                margin: 5px;
+            }
+        }
+    }
+}
+

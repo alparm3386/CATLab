@@ -178,7 +178,7 @@ namespace CATWeb.Services.CAT
                 String sFilename = Path.GetFileName(sFilePath);
                 byte[] fileContent = File.ReadAllBytes(sFilePath);
                 String sFiltername = Path.GetFileName(sFilterPath);
-                byte[] filterContent = null;
+                byte[]? filterContent = null;
                 if (File.Exists(sFilterPath))
                     filterContent = File.ReadAllBytes(sFilterPath);
 
@@ -244,8 +244,8 @@ namespace CATWeb.Services.CAT
                 String sFilename = Path.GetFileName(sFilePath);
                 byte[] fileContent = File.ReadAllBytes(sFilePath);
 
-                String sFiltername = File.Exists(sFilterPath) ? Path.GetFileName(sFilterPath) : null;
-                byte[] filterContent = sFiltername != null ? File.ReadAllBytes(sFilterPath) : null;
+                String? sFiltername = File.Exists(sFilterPath) ? Path.GetFileName(sFilterPath) : null;
+                byte[]? filterContent = sFiltername != null ? File.ReadAllBytes(sFilterPath) : null;
                 var aTMs = new CATService.TMAssignment[] { new CATService.TMAssignment() { tmPath = "29610/__35462_en_fr" } };
                 String sXliffContent = client.CreateXliff(sFilename, fileContent, sFiltername, filterContent, sourceLang, targetLang, aTMs);
 
@@ -354,7 +354,7 @@ namespace CATWeb.Services.CAT
                     {
                         var tuId = tu.Attributes["id"].Value;
                         var targetNode = tu["target"];
-                        XmlNodeList sourceSegments = null;
+                        XmlNodeList? sourceSegments = null;
                         var ssNode = tu["seg-source"];
 
                         if (ssNode == null)
@@ -362,7 +362,7 @@ namespace CATWeb.Services.CAT
                         else
                             sourceSegments = ssNode.SelectNodes("x:mrk", xmlnsManager);
 
-                        foreach (XmlNode sourceSegment in sourceSegments)
+                        foreach (XmlNode sourceSegment in sourceSegments!)
                         {
                             var translationUnit = new TranslationUnit();
                             translationUnit.tuid = nIdx;
