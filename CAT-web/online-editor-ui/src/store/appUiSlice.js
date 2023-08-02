@@ -4,6 +4,7 @@ import { createSlice } from '@reduxjs/toolkit';
 export const appUiSlice = createSlice({
     name: 'appUi',
     initialState: {
+        currentSegment: -1,
         login: { isOpen: false },
         alert: { title: "Alert", message: "" },
         isLoading: false
@@ -17,10 +18,13 @@ export const appUiSlice = createSlice({
         },
         showLoading: (state, action) => {
             state.isLoading = action.payload
+        },
+        setCurrentSegment: (state, action) => {
+            state.currentSegment = action.payload
         }
     }
 });
 
-export const { showAlert, showLoginModal, showLoading } = appUiSlice.actions;
+export const { showAlert, showLoginModal, showLoading, setCurrentSegment } = appUiSlice.actions;
 
 export default appUiSlice.reducer;

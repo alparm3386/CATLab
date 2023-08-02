@@ -1,11 +1,11 @@
 ﻿// store.js
 import { configureStore } from '@reduxjs/toolkit';
-import editorDataReducer from './editorDataSlice';
-import appUiReducer from './appUiSlice';
+import jobDataReducer from 'store/jobDataSlice';
+import appUiReducer from 'store/appUiSlice';
 
 export default configureStore({
     reducer: {
-        editorData: editorDataReducer,
+        jobData: jobDataReducer,
         appUi: appUiReducer
     }
 });

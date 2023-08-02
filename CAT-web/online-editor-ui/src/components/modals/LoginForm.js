@@ -2,7 +2,6 @@
 import { Modal, Button, Form, Alert } from 'react-bootstrap';
 import { useSelector, useDispatch } from 'react-redux';
 import editorApi from 'services/editorApi';
-import { setJobData } from 'store/editorDataSlice';
 import { showLoginModal } from 'store/appUiSlice';
 
 //misc.

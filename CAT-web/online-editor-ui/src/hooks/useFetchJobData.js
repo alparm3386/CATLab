@@ -2,7 +2,7 @@
 import { useEffect, useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import editorApi from 'services/editorApi';
-import { setJobData } from 'store/editorDataSlice';
+import { setJobData } from 'store/jobDataSlice';
 import { showLoading } from 'store/appUiSlice';
 
 const useFetchJobData = () => {

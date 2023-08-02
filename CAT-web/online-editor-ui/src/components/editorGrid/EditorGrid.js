@@ -1,16 +1,18 @@
 ﻿import 'styles/editorGrid.scss';
 import React, { useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCoffee } from '@fortawesome/free-solid-svg-icons'
+import { setCurrentSegment } from 'store/appUiSlice';
 
 var renderCntr = 0;
 const EditorGrid = React.memo(function EditorGrid() {
-    const jobData = useSelector((state) => state.editorData.jobData);
+    const dispatch = useDispatch();
+    const jobData = useSelector((state) => state.jobData.jobData);
     console.log("EditorGrid rendered: " + renderCntr++);
 
     function onTargetClick(index) {
-        alert("segment " + index + " clicked.");
+        dispatch(setCurrentSegment(index));
     }
 
     return (

@@ -1,16 +1,16 @@
-﻿// editorDataSlice.js
+﻿// jobDataSlice.js
 import { createSlice } from '@reduxjs/toolkit';
 
-const editorInitialState = {
+const jobInitialState = {
     jobData: {},
     statusBar: { message: '' },
     jwt: '',
     isJobLoad: false
 };
 
-export const editorDataSlice = createSlice({
-    name: 'editorData',
-    initialState: editorInitialState,
+export const jobDataSlice = createSlice({
+    name: 'jobData',
+    initialState: jobInitialState,
     reducers: {
         setJobData: (state, action) => {
             state.jobData = action.payload;
@@ -24,6 +24,6 @@ export const editorDataSlice = createSlice({
     }
 });
 
-export const { setJobData, setStatusBarMessage, showLoginModal } = editorDataSlice.actions;
+export const { setJobData, setStatusBarMessage, showLoginModal } = jobDataSlice.actions;
 
-export default editorDataSlice.reducer;
+export default jobDataSlice.reducer;

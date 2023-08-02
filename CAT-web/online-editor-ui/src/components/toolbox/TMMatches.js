@@ -3,19 +3,19 @@ import 'styles/tmMatches.scss';
 import React, { useState, useEffect } from 'react';
 import editorApi from 'services/editorApi';
 import { useSelector, useDispatch } from 'react-redux';
-import { setStatusBarMessage } from 'store/editorDataSlice';
+import { setStatusBarMessage } from 'store/jobDataSlice';
 
 var renderCntr = 0;
-const TMMatches = ({ tuid }) => {
+const TMMatches = () => {
     const [tmMatches, setTmMatches] = useState([]);
-    const urlParams = useSelector((state) => state.editorData.urlParams);
+    const urlParams = useSelector((state) => state.jobData.urlParams);
+    const tuid = useSelector((state) => state.appUi.currentSegment);
     const dispatch = useDispatch();
 
     console.log("TMMatches rendered: " + renderCntr++);
 
     useEffect(() => {
         editorApi.getTMMatches(tuid || 0).then(response => {
-            var a = 0;
             setTmMatches(response.data);
         }).catch(error => {
             dispatch(setStatusBarMessage('Error:' + error.toString()));
