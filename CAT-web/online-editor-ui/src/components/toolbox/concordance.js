@@ -23,6 +23,7 @@ const Concordance = () => {
     };
 
     const getConcordance = () => {
+        setTmMatches([]);
         setIsLoading(true);
         editorApi.getConcordance(searchText, caseSensitive, searchInTarget)
             .then(response => {
