@@ -12,9 +12,9 @@ export const appDataSlice = createSlice({
         setCurrentTuid: (state, action) => {
             state.currentTuid = action.payload
         },
-        setTargetEditbBoxContent: (state, action) => {
-            state.targetEditbBoxContent = action.payload
-        },
+        //setTargetEditbBoxContent: (state, action) => {
+        //    state.targetEditbBoxContent = action.payload
+        //},
         setTranslationUnits: (state, action) => {
             state.translationUnits = action.payload
         },
@@ -25,6 +25,6 @@ export const appDataSlice = createSlice({
     }
 });
 
-export const { setCurrentTuid, setTargetEditbBoxContent, setTranslationUnits, updateTranslationUnitTarget } = appDataSlice.actions;
+export const { setCurrentTuid, /*setTargetEditbBoxContent,*/ setTranslationUnits, updateTranslationUnitTarget } = appDataSlice.actions;
 
 export default appDataSlice.reducer;

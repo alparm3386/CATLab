@@ -29,7 +29,7 @@ const EditorGrid = //React.memo(
                         <div key={index} className="tu-row">
                             <div className="row-num">{index + 1}</div>
                             <div className="source">{tu.source}</div>
-                            {currentTuid === index + 1 ? <TargetEditbBox key={`target_${index}`} className="target" tuid={index + 1} /> :
+                            {currentTuid === index + 1 ? <TargetEditbBox key={`target_${index}`} className="target" /> :
                                 <div className="target" onClick={() => onTargetClick(index + 1)}>{tu.target}</div>}
                             <div className="status"><FontAwesomeIcon icon={faCoffee} /></div>
                         </div>
