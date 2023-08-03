@@ -6,7 +6,9 @@ export const appUiSlice = createSlice({
     initialState: {
         login: { isOpen: false },
         alert: { title: "Alert", message: "" },
-        isLoading: false
+        isLoading: false,
+        statusBar: { message: '' },
+
     },
     reducers: {
         showAlert: (state, action) => {
@@ -17,10 +19,13 @@ export const appUiSlice = createSlice({
         },
         showLoading: (state, action) => {
             state.isLoading = action.payload
+        },
+        setStatusBarMessage: (state, action) => {
+            state.statusBar.message = action.payload;
         }
     }
 });
 
-export const { showAlert, showLoginModal, showLoading } = appUiSlice.actions;
+export const { showAlert, showLoginModal, showLoading, setStatusBarMessage } = appUiSlice.actions;
 
 export default appUiSlice.reducer;

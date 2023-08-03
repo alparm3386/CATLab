@@ -3,7 +3,7 @@ import 'styles/spinner-small.css';
 import React, { useState } from 'react';
 import editorApi from 'services/editorApi';
 import { useSelector, useDispatch } from 'react-redux';
-import { setStatusBarMessage } from 'store/jobDataSlice';
+import { setStatusBarMessage } from 'store/appUiSlice';
 
 var renderCntr = 0;
 const Concordance = () => {

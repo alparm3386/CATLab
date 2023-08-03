@@ -3,7 +3,7 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 
 const StatusBar = ({ onClick }) => {
-    const message = useSelector((state) => state.jobData.statusBar.message);
+    const message = useSelector((state) => state.appUi.statusBar.message);
     return <div className="status-bar" onClick={onClick}>
         <span>Click on the translation to edit text...</span>  {message}
     </div>;

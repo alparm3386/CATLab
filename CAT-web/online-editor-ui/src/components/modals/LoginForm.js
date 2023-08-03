@@ -6,7 +6,7 @@ import { showLoginModal } from 'store/appUiSlice';
 
 //misc.
 import cookieHelper from 'utils/cookieHelper';
-import appService from 'services/appService';
+import appDataService from 'services/appDataService';
 
 
 export const LoginForm = () => {
@@ -32,7 +32,7 @@ export const LoginForm = () => {
             cookieHelper.setToken(result.data.token);
 
             //load the job data
-            appService.loadJobData(dispatch);
+            appDataService.loadJobData(dispatch);
 
 
             //close the login modal

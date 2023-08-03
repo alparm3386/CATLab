@@ -8,7 +8,7 @@ import { Provider, useDispatch } from 'react-redux';
 import store from 'store/store';
 import editorApi from 'services/editorApi';
 import errorHandler from 'services/errorHandler';
-import appService from 'services/appService';
+import appDataService from 'services/appDataService';
 
 //components
 import ContentArea from 'components/ContentArea';
@@ -35,7 +35,7 @@ function AppInit() {
             editorApi.initializeApiClient(urlParams, jwt, errorHandler);
 
             //load the job data
-            appService.loadJobData(dispatch);
+            appDataService.loadJobData(dispatch);
         }
 
         return () => { ignore = true; }

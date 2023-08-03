@@ -2,13 +2,15 @@
 import sanitizeHtml from "sanitize-html"
 import { useSelector, useDispatch } from 'react-redux';
 import { setTargetEditbBoxContent } from 'store/appDataSlice';
+import utils from 'utils/utils';
 
 let cntr = 0;
 const TargetEditbBox = ({ className, tuid }) => {
     const editRef = React.useRef(null); 
     const dispatch = useDispatch();
     const content = useSelector((state) => state.appData.targetEditbBoxContent);
-    //const jobData = useSelector((state) => state.jobData.jobData);
+    const currentTuid = useSelector((state) => state.appData.currentTuid);
+    const jobData = useSelector((state) => state.jobData.jobData);
 
     console.log("TargetEditbBox rendered: " + cntr++);
 
@@ -36,8 +38,13 @@ const TargetEditbBox = ({ className, tuid }) => {
             allowedAttributes: {}
         };
 
-        dispatch(setTargetEditbBoxContent(sanitizeHtml(evt.currentTarget.innerHTML, sanitizeConf)));
-    }, [dispatch]);
+        //update the stored content
+        const sHtml = sanitizeHtml(evt.currentTarget.innerHTML);
+        dispatch(setTargetEditbBoxContent(sHtml, sanitizeConf));
+        //update the job data
+        jobData.translationUnits[currentTuid - 1].target = utils.extractTextFromHTML(sHtml);
+
+    }, [dispatch, currentTuid, jobData]);
 
     return (
         <div className={className}
