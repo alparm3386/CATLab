@@ -3,7 +3,7 @@ import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCoffee } from '@fortawesome/free-solid-svg-icons'
-import { setCurrentTuid, setTargetEditbBoxContent } from 'store/appDataSlice';
+import { setCurrentTuid } from 'store/appDataSlice';
 import TargetEditbBox from 'components/common/targetEditBox';
 import appDataService from 'services/appDataService';
 
@@ -11,21 +11,21 @@ var renderCntr = 0;
 const EditorGrid = //React.memo(
     function EditorGrid() {
         const dispatch = useDispatch();
-        const jobData = appDataService.jobData;
+        const translationUnits = useSelector((state) => state.appData.translationUnits);
+        //const jobData = appDataService.jobData;
         const currentTuid = useSelector((state) => state.appData.currentTuid);
 
         console.log("EditorGrid rendered: " + renderCntr++);
 
         function onTargetClick(tuid) {
             dispatch(setCurrentTuid(tuid));
-            dispatch(setTargetEditbBoxContent(jobData.translationUnits[tuid - 1].target));
         }
 
         return (
             <div className="grid-area">
                 {
-                    jobData.translationUnits &&
-                    jobData.translationUnits.map((tu, index) => (
+                    translationUnits &&
+                    translationUnits.map((tu, index) => (
                         <div key={index} className="tu-row">
                             <div className="row-num">{index + 1}</div>
                             <div className="source">{tu.source}</div>

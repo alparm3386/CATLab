@@ -1,7 +1,7 @@
 ﻿import React from 'react';
 import sanitizeHtml from "sanitize-html"
 import { useSelector, useDispatch } from 'react-redux';
-import { setTargetEditbBoxContent } from 'store/appDataSlice';
+import { setTargetEditbBoxContent, updateTranslationUnitTarget } from 'store/appDataSlice';
 import utils from 'utils/utils';
 
 let cntr = 0;
@@ -10,7 +10,7 @@ const TargetEditbBox = ({ className, tuid }) => {
     const dispatch = useDispatch();
     const content = useSelector((state) => state.appData.targetEditbBoxContent);
     const currentTuid = useSelector((state) => state.appData.currentTuid);
-    const jobData = useSelector((state) => state.jobData.jobData);
+    const translationUnits = useSelector((state) => state.appData.translationUnits);
 
     console.log("TargetEditbBox rendered: " + cntr++);
 
@@ -41,10 +41,10 @@ const TargetEditbBox = ({ className, tuid }) => {
         //update the stored content
         const sHtml = sanitizeHtml(evt.currentTarget.innerHTML);
         dispatch(setTargetEditbBoxContent(sHtml, sanitizeConf));
-        //update the job data
-        jobData.translationUnits[currentTuid - 1].target = utils.extractTextFromHTML(sHtml);
+        //update the translationUnits
+        dispatch(updateTranslationUnitTarget({ index: currentTuid - 1, target: utils.extractTextFromHTML(sHtml) }));
 
-    }, [dispatch, currentTuid, jobData]);
+    }, [dispatch, currentTuid]);
 
     return (
         <div className={className}
