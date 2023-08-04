@@ -1,16 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Security.Policy;
-
-namespace CATWeb.Models
+﻿namespace CATWeb.Models
 {
-    [Index(nameof(idJob))]
-    [Table("TranslationUnits")]
-    public class TranslationUnit
+    public class TranslationUnitDTO
     {
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)] 
         public int Id { get; set; }
 
         public int idJob { get; set; }
@@ -28,5 +19,7 @@ namespace CATWeb.Models
         public DateTime dateUpdated { get; set; }
 
         public int status { get; set; }
+
+        public bool isEditAllowed { get; set; }
     }
 }

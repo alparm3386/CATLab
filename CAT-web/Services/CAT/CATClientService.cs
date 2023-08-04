@@ -400,7 +400,7 @@ namespace CATWeb.Services.CAT
                             if (sourceSegment.Attributes["translate"] != null && sourceSegment.Attributes["translate"].Value == "no")
                                 bLockForTranslators = bLockForRevisers = true;*/
 
-                            translationUnit.sourceText = CATUtils.XliffSegmentToCodedText(source);
+                            translationUnit.source = CATUtils.XliffSegmentToCodedText(source);
 
                             XmlNode? targetSegment = null;
                             if (sourceSegment.Name == "mrk")
@@ -410,7 +410,7 @@ namespace CATWeb.Services.CAT
                             if (matchQuality >= 100 || bEdited)
                             {
                                 String sTarget = CATUtils.XmlTags2GoogleTags(targetSegment!.InnerXml, CATUtils.TagType.Xliff); //we store the target text with google tags
-                                translationUnit.targetText = sTarget;
+                                translationUnit.target = sTarget;
                             }
                             lstTus.Add(translationUnit);
                             nIdx++;
@@ -424,8 +424,8 @@ namespace CATWeb.Services.CAT
                     var translatables = lstTus.Select(tu => new Translatable
                     {
                         id = tu.tuid,
-                        source = CATUtils.CodedTextToTmx(tu.sourceText),
-                        target = tu.targetText!
+                        source = CATUtils.CodedTextToTmx(tu.source),
+                        target = tu.target!
                     }).ToList();
 
                     //do the machine translation
@@ -438,7 +438,7 @@ namespace CATWeb.Services.CAT
                         if (translatableDictionary.TryGetValue(tu.tuid, out var translatable))
                         {
                             String targetWithGoogleTags = CATUtils.XmlTags2GoogleTags(translatable.target, CATUtils.TagType.Tmx); //we store the target text with google tags
-                            tu.targetText = targetWithGoogleTags;
+                            tu.target = targetWithGoogleTags;
                         }
                     });
 

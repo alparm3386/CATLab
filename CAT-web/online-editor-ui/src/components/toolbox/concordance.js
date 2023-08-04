@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import editorApi from 'services/editorApi';
 import { useSelector, useDispatch } from 'react-redux';
 import { setStatusBarMessage } from 'store/appUiSlice';
+import appDataService from 'services/appDataService';
 
 var renderCntr = 0;
 const Concordance = () => {
@@ -35,59 +36,53 @@ const Concordance = () => {
             .finally(() => setIsLoading(false));
     };
 
+    const onTestButtonClick = () => {
+        //const jobData = appDataService.jobData;
+        //jobData.translationUnits[0].target = jobData.translationUnits[0].target + "_";
+    }
+
     //useEffect(() => {
-    //    getConcordance();
     //    return () => {
     //        // Clean up if needed
     //    };
-    //}, [caseSensitive, searchInTarget]); // Run the effect whenever caseSensitive or searchInTarget changes
+    //}, []);
 
     return (
         <>
             <div className="form-group m-2">
                 <div className="input-group mb-2">
-                    <input
-                        type="text"
-                        className="form-control"
-                        placeholder="Search Text"
-                        value={searchText}
-                        onChange={(e) => setSearchText(e.target.value)}
-                        onKeyDown={handleEnterKeyPress}
+                    <input type="text" className="form-control" placeholder="Search Text" value={searchText}
+                        onChange={(e) => setSearchText(e.target.value)} onKeyDown={handleEnterKeyPress}
                     />
                     <div className="input-group-append">
                         <button
-                            className="btn btn-primary"
-                            type="button"
-                            onClick={getConcordance}
-                        >
+                            className="btn btn-primary" type="button" onClick={getConcordance}>
                             Search
                         </button>
                     </div>
                 </div>
 
                 <div className="form-check form-check-inline mb-2">
-                    <input
-                        type="checkbox"
-                        className="form-check-input"
-                        id="caseSensitiveCheckbox"
-                        checked={caseSensitive}
-                        onChange={() => setCaseSensitive(!caseSensitive)}
+                    <input type="checkbox" className="form-check-input" id="caseSensitiveCheckbox"
+                        checked={caseSensitive} onChange={() => setCaseSensitive(!caseSensitive)}
                     />
                     <label className="form-check-label" htmlFor="caseSensitiveCheckbox">
                         Case Sensitive
                     </label>
                 </div>
                 <div className="form-check form-check-inline mb-2">
-                    <input
-                        type="checkbox"
-                        className="form-check-input"
-                        id="searchInTargetCheckbox"
-                        checked={searchInTarget}
-                        onChange={() => setSearchInTarget(!searchInTarget)}
+                    <input type="checkbox" className="form-check-input" id="searchInTargetCheckbox"
+                        checked={searchInTarget} onChange={() => setSearchInTarget(!searchInTarget)}
                     />
                     <label className="form-check-label" htmlFor="searchInTargetCheckbox">
                         Search in Target
                     </label>
+                </div>
+                <div className="form-check form-check-inline mb-2">
+                <button
+                    className="btn btn-primary" type="button" onClick={onTestButtonClick}>
+                    Test button
+                    </button>
                 </div>
             </div>
 

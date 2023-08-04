@@ -3,6 +3,7 @@ import sanitizeHtml from "sanitize-html"
 import { useSelector, useDispatch } from 'react-redux';
 import { updateTranslationUnitTarget } from 'store/appDataSlice';
 import utils from 'utils/utils';
+import { setCurrentTuid } from 'store/appDataSlice';
 
 let cntr = 0;
 const TargetEditbBox = ({ className }) => {
@@ -48,12 +49,20 @@ const TargetEditbBox = ({ className }) => {
 
     }, [dispatch, currentTuid]);
 
+    const handleKeyDown = React.useCallback((event) => {
+        if (event.ctrlKey && event.key === 'Enter') {
+            // Your logic for handling Ctrl+Enter shortcut here
+            // For example, you might want to save the current translation unit to the server
+            console.log('Ctrl+Enter pressed');
+            dispatch(setCurrentTuid(currentTuid + 1));
+
+            //dispatch(actionToSaveTranslationUnitToServer());
+        }
+    }, [dispatch, currentTuid]);
+
     return (
-        <div className={className}
-            ref={editRef}
-            contentEditable
-            onBlur={onContentBlur}
-            dangerouslySetInnerHTML={{ __html: content }} />
+        <div className={className} ref={editRef} contentEditable onBlur={onContentBlur} dangerouslySetInnerHTML={{ __html: content }}
+            onKeyDown={handleKeyDown}/>
     )
 };
 
