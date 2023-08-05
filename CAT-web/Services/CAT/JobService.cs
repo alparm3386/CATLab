@@ -193,7 +193,7 @@ namespace CATWeb.Services.CAT
 
             //Add the translation to the TMs
             if (bConfirmed)
-                AddTMItem(jobData, ix, sTarget);
+                AddTMItem(jobData, tuid, sTarget);
 
             sw.Stop();
             if (sw.ElapsedMilliseconds > 1000)

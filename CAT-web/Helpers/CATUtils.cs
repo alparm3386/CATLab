@@ -391,39 +391,28 @@ namespace CATWeb.Helpers
 
         public static String CodedTextToGoogleTags(string codedText)
         {
-            MatchCollection matches = Regex.Matches(codedText, @"{\s*(?<id>\d+)\s*}|{\s*/\s*(?<id>\d+)\s*}|{\s*(?<id>\d+)\s*/\s*}");
-            HashSet<String> idsToSkip = new HashSet<String>();
-            foreach (Match match in matches)
-                idsToSkip.Add(match.Groups["id"].Value);
+            var tagsMap = GetTagsMap(codedText);
+            var reversedTagsMap = tagsMap.ToDictionary(x => x.Value, x => x.Key);
 
-            var id = 1;
             //create simple codes
             StringBuilder tmp = new StringBuilder();
             for (int i = 0; i < codedText.Length; i++)
             {
-                while (idsToSkip.Contains(id.ToString()))
-                    id++;
-
                 var charCode = codedText[i];
                 if (charCode == MARKER_OPENING)
                 {
-                    tmp.Append("{" + id.ToString() + "}");
-                    i++;
+                    tmp.Append("{" + reversedTagsMap[codedText[++i] - CHARBASE] + "}");
                 }
                 else if (charCode == MARKER_CLOSING)
                 {
-                    tmp.Append("{\\" + id.ToString() + "}");
-                    i++;
+                    tmp.Append("{/" + reversedTagsMap[codedText[++i] - CHARBASE] + "}");
                 }
                 else if (charCode == MARKER_ISOLATED)
                 {
-                    tmp.Append("{" + id.ToString() + "/}");
-                    i++;
+                    tmp.Append("{" + reversedTagsMap[codedText[++i] - CHARBASE] + "/}");
                 }
                 else
                     tmp.Append(charCode);
-
-                id++;
             }
 
             return tmp.ToString();
@@ -446,9 +435,11 @@ namespace CATWeb.Helpers
                     id++;
 
                 var charCode = codedText[i];
-                if (charCode == MARKER_OPENING || charCode == MARKER_CLOSING || charCode == MARKER_ISOLATED)
-                    tagsMap.Add(id, codedText[++i]);
-                id++;
+                if (charCode == MARKER_OPENING || charCode == MARKER_ISOLATED)
+                {
+                    tagsMap.Add(id, codedText[++i] - CHARBASE);
+                    id++;
+                }
             }
 
             return tagsMap;
