@@ -10,7 +10,7 @@ var renderCntr = 0;
 const TMMatches = () => {
     const [tmMatches, setTmMatches] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
-    const tuid = useSelector((state) => state.appUi.currentSegment);
+    const tuid = useSelector((state) => state.appData.currentTuid);
     const dispatch = useDispatch();
 
     //console.log("TMMatches rendered: " + renderCntr++);

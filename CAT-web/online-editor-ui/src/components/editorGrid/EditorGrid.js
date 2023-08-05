@@ -4,7 +4,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCoffee } from '@fortawesome/free-solid-svg-icons'
 import { setCurrentTuid } from 'store/appDataSlice';
-import TargetEditbBox from 'components/common/targetEditBox';
+import TargetEditbBox from 'components/editorGrid/targetEditBox';
 import appDataService from 'services/appDataService';
 
 var renderCntr = 0;
