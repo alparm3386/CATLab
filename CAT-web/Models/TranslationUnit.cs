@@ -27,6 +27,6 @@ namespace CATWeb.Models
 
         public DateTime dateUpdated { get; set; }
 
-        public int status { get; set; }
+        public long status { get; set; }
     }
 }

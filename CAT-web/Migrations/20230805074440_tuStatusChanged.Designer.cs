@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CATWeb.Migrations
 {
     [DbContext(typeof(CATWebContext))]
-    [Migration("20230723192626_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20230805074440_tuStatusChanged")]
+    partial class tuStatusChanged
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -38,6 +38,9 @@ namespace CATWeb.Migrations
                     b.Property<DateTime>("DateCreated")
                         .HasColumnType("datetime2");
 
+                    b.Property<DateTime?>("DateProcessed")
+                        .HasColumnType("datetime2");
+
                     b.Property<decimal>("Fee")
                         .HasColumnType("decimal(18,2)");
 
@@ -46,6 +49,9 @@ namespace CATWeb.Migrations
 
                     b.Property<string>("FilterName")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("IdClient")
+                        .HasColumnType("int");
 
                     b.Property<string>("OriginalFileName")
                         .HasColumnType("nvarchar(max)");
@@ -61,6 +67,45 @@ namespace CATWeb.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Jobs");
+                });
+
+            modelBuilder.Entity("CATWeb.Models.TranslationUnit", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("context")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("dateUpdated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("idJob")
+                        .HasColumnType("int");
+
+                    b.Property<int>("locks")
+                        .HasColumnType("int");
+
+                    b.Property<string>("source")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<long>("status")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("target")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("tuid")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("idJob");
+
+                    b.ToTable("TranslationUnits");
                 });
 #pragma warning restore 612, 618
         }

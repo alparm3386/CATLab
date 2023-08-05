@@ -26,6 +26,7 @@ using System.Security.AccessControl;
 using TBEntry = CATWeb.Models.CAT.TBEntry;
 using Microsoft.CodeAnalysis.Differencing;
 using ICSharpCode.SharpZipLib.Tar;
+using Newtonsoft.Json;
 
 namespace CATWeb.Services.CAT
 {
@@ -35,19 +36,21 @@ namespace CATWeb.Services.CAT
         private readonly IConfiguration _configuration;
         private readonly IEnumerable<IMachineTranslator> _machineTranslators;
         private readonly IMapper _mapper;
+        private readonly ILogger _logger;
 
         private static int MATCH_THRESHOLD = 50;
 
         /// <summary>
         /// CATClientService
         /// </summary>
-        public CATClientService(CATWebContext context, IConfiguration configuration, IEnumerable<IMachineTranslator> machineTranslators,
-            IMapper mapper)
+        public CATClientService(CATWebContext context, IConfiguration configuration, 
+            IEnumerable<IMachineTranslator> machineTranslators, IMapper mapper, ILogger<CATClientService> logger)
         {
             _context = context;
             _configuration = configuration;
             _machineTranslators = machineTranslators;
             _mapper = mapper;
+            _logger = logger;
         }
 
         private EndpointAddress GetCATServiceEndpoint()
@@ -481,8 +484,8 @@ namespace CATWeb.Services.CAT
                 if (finalTMMatches.ContainsKey(key))
                     continue;
 
-                tmMatch.source = CATUtils.XmlTags2GoogleTags(tmMatch.source, CATUtils.TagType.Tmx);
-                tmMatch.target = CATUtils.XmlTags2GoogleTags(tmMatch.target, CATUtils.TagType.Tmx);
+                tmMatch.source = CATUtils.XmlTags2GoogleTags(tmMatch.source!, CATUtils.TagType.Tmx);
+                tmMatch.target = CATUtils.XmlTags2GoogleTags(tmMatch.target!, CATUtils.TagType.Tmx);
 
                 finalTMMatches.Add(key, tmMatch);
             }
@@ -549,5 +552,33 @@ namespace CATWeb.Services.CAT
             return lstRet.ToArray();
         }
 
+        public void AddTMEntry(TMAssignment tmAssignment, String sSourceXml, String sTargetXml, String sPrevXml, String sNextXml,
+            Dictionary<String, String> metadata)
+        {
+            try
+            {
+                var client = GetCATService();
+                //the metadata
+                if (metadata == null)
+                    metadata = new Dictionary<String, String>();
+                if (!String.IsNullOrEmpty(sPrevXml))
+                    metadata.Add("prevSegment", sPrevXml);
+                if (!String.IsNullOrEmpty(sNextXml))
+                    metadata.Add("nextSegment", sNextXml);
+
+                TMEntry newEntry = new TMEntry()
+                {
+                    source = sSourceXml,
+                    target = sTargetXml,
+                    metadata = JsonConvert.SerializeObject(metadata)
+                };
+
+                client.AddTMEntries(tmAssignment.tmPath, new TMEntry[] { newEntry });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogInformation("TM name: " + tmAssignment.tmPath + " AddTMEntry Error: " + ex.ToString());
+            }
+        }
     }
 }

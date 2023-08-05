@@ -87,14 +87,13 @@ namespace CATWeb.Migrations
                     b.Property<int>("locks")
                         .HasColumnType("int");
 
-                    b.Property<string>("sourceText")
-                        .IsRequired()
+                    b.Property<string>("source")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("status")
-                        .HasColumnType("int");
+                    b.Property<long>("status")
+                        .HasColumnType("bigint");
 
-                    b.Property<string>("targetText")
+                    b.Property<string>("target")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("tuid")

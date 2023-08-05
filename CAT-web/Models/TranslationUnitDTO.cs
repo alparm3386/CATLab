@@ -18,7 +18,7 @@
 
         public DateTime dateUpdated { get; set; }
 
-        public int status { get; set; }
+        public long status { get; set; }
 
         public bool isEditAllowed { get; set; }
     }

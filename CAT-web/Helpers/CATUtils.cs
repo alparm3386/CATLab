@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Security;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -390,23 +391,78 @@ namespace CATWeb.Helpers
 
         public static String CodedTextToGoogleTags(string codedText)
         {
+            MatchCollection matches = Regex.Matches(codedText, @"{\s*(?<id>\d+)\s*}|{\s*/\s*(?<id>\d+)\s*}|{\s*(?<id>\d+)\s*/\s*}");
+            HashSet<String> idsToSkip = new HashSet<String>();
+            foreach (Match match in matches)
+                idsToSkip.Add(match.Groups["id"].Value);
+
+            var id = 1;
             //create simple codes
             StringBuilder tmp = new StringBuilder();
             for (int i = 0; i < codedText.Length; i++)
             {
+                while (idsToSkip.Contains(id.ToString()))
+                    id++;
+
                 var charCode = codedText[i];
                 if (charCode == MARKER_OPENING)
-                    tmp.Append("{" + ((int)codedText[++i] - CHARBASE).ToString() + "}");
+                    tmp.Append("{" + id.ToString() + "}");
                 else if (charCode == MARKER_CLOSING)
-                    tmp.Append("{\\" + ((int)codedText[++i] - CHARBASE).ToString() + "}");
+                    tmp.Append("{\\" + id.ToString() + "}");
                 else if (charCode == MARKER_ISOLATED)
-                    tmp.Append("{" + ((int)codedText[++i] - CHARBASE).ToString() + "/}");
+                    tmp.Append("{" + id.ToString() + "/}");
                 else
                     tmp.Append(charCode);
+
+                id++;
             }
 
             return tmp.ToString();
         }
 
-}
+        public static Dictionary<int, int> GetTagsMap(String codedText)
+        {
+            var tagsMap = new Dictionary<int, int>();
+            MatchCollection matches = Regex.Matches(codedText, @"{\s*(?<id>\d+)\s*}|{\s*/\s*(?<id>\d+)\s*}|{\s*(?<id>\d+)\s*/\s*}");
+            HashSet<String> idsToSkip = new HashSet<String>();
+            foreach (Match match in matches)
+                idsToSkip.Add(match.Groups["id"].Value);
+
+            var id = 1;
+            //create simple codes
+            StringBuilder tmp = new StringBuilder();
+            for (int i = 0; i < codedText.Length; i++)
+            {
+                while (idsToSkip.Contains(id.ToString()))
+                    id++;
+
+                var charCode = codedText[i];
+                if (charCode == MARKER_OPENING || charCode == MARKER_CLOSING || charCode == MARKER_ISOLATED)
+                    tagsMap.Add(id, codedText[++i]);
+                id++;
+            }
+
+            return tagsMap;
+        }
+
+        public static String GoogleTagsToTmx(string googleText, Dictionary<int, int> tagsMap)
+        {
+            //create simple codes
+            String sTmx = googleText;
+            MatchCollection matches = Regex.Matches(googleText, @"{\s*(?<id>\d+)\s*}|{\s*/\s*(?<id>\d+)\s*}|{\s*(?<id>\d+)\s*/\s*}");
+            foreach (Match match in matches)
+            {
+                int id = int.Parse(match.Groups["id"].Value);
+
+                if (match.Value.Contains("\\")) //closing tag
+                    sTmx = sTmx.Replace(match.Value, "<ept i=\"" + tagsMap[id].ToString() + "\">{}</ept>");
+                else if (match.Value.Contains("/")) //isolated tag
+                    sTmx = sTmx.Replace(match.Value, "<ph i=\"" + tagsMap[id].ToString() + "\">{}</ph>");
+                else //opening tag
+                    sTmx = sTmx.Replace(match.Value, "<bpt i=\"" + tagsMap[id].ToString() + "\">{}</bpt>");
+            }
+
+            return sTmx;
+        }
+    }
 }

@@ -1,11 +1,14 @@
 ﻿using AutoMapper;
+using CATService;
 using CATWeb.Controllers.ApiControllers;
 using CATWeb.Data;
 using CATWeb.Enums;
+using CATWeb.Helpers;
 using CATWeb.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 using System.Diagnostics;
+using static ICSharpCode.SharpZipLib.Zip.ZipEntryFactory;
 
 namespace CATWeb.Services.CAT
 {
@@ -20,7 +23,7 @@ namespace CATWeb.Services.CAT
 
 
         public JobService(CATWebContext context, IConfiguration configuration,
-            CATClientService catClientService, IMemoryCache cache, IMapper mapper, ILogger<EditorApiController> logger)
+            CATClientService catClientService, IMemoryCache cache, IMapper mapper, ILogger<JobService> logger)
         {
             _context = context;
             _configuration = configuration;
@@ -87,63 +90,159 @@ namespace CATWeb.Services.CAT
             return jobData;
         }
 
-        public async Task<int[]> SaveSegment(JobData jobData, int ix, String sTarget, bool bConfirmed, int propagate)
+        private static long GetMaskForTask(JobData jobDataData)
+        {
+            //var task = jobDataData.task;
+            ////if the user is admin then we need the latest task done by the linguists or the client reviewer
+            //if (editorData.userType == userType.administrator)
+            //{
+            //    if (editorData.task == Task.Delivery || editorData.task == Task.CreditTranslators
+            //        || editorData.task == Task.Payment || editorData.task == Task.End || editorData.task == Task.SpecialReview
+            //        || editorData.task == Task.SpecialReview2 || editorData.task == Task.CheckAfterReview)
+            //    {
+            //        if (editorData.withClientReview)
+            //            task = Task.SpecialReview;
+            //        else if (editorData.withRevision)
+            //            task = Task.Proofread;
+            //        else
+            //            task = Task.Translate;
+            //    }
+            //    else if (editorData.task == Task.Proofread || editorData.task == Task.ReceiveCompletedJob
+            //        || editorData.task == Task.Completed)
+            //    {
+            //        if (editorData.withRevision)
+            //            task = Task.Proofread;
+            //        else
+            //            task = Task.Translate;
+            //    }
+            //    else if (editorData.task == Task.Translate || editorData.task == Task.ProofreaderJB)
+            //        task = Task.Translate;
+            //}
+            //var mask = 0x0;
+
+            //switch (task)
+            //{
+            //    case Task.Translate:
+            //    case Task.Transcreation:
+            //    case Task.MTRevise:
+            //        mask = 1; break;
+            //    case Task.Proofread:
+            //    case Task.TranscreationRevision:
+            //    case Task.RevisionOfCopyRevision:
+            //        mask = 2; break;
+            //    case Task.SpecialReview:
+            //    case Task.SpecialReview2:
+            //        mask = 4; break;
+            //    case Task.Reworking:
+            //        mask = 8; break;
+            //}
+
+            //return mask;
+            return 0xfL;
+        }
+
+        public async Task<int[]> SaveSegment(JobData jobData, int tuid, String sTarget, bool bConfirmed, int propagate)
         {
             Stopwatch sw = new Stopwatch();
             sw.Start();
 
+            var ix = tuid - 1;
             //get the translation unit
-            var tu = jobData.translationUnits![ix];
-            /*            if (jobData.OEMode != OEMode.Contest && !tu.isEditAllowed)
-                            throw new Exception("Not allowed to edit the segment.");
+            var tuDto = jobData.translationUnits![ix];
+            if (!tuDto.isEditAllowed)
+                throw new Exception("Not allowed to edit the segment.");
 
-                        //set the status
-                        int mask = GetMaskForTask(editorData);
-                        tu.status = bConfirmed ? tu.status | mask : tu.status & ~mask;
+            //set the status
+            var mask = GetMaskForTask(jobData);
+            tuDto.status = bConfirmed ? tuDto.status | mask : tuDto.status & ~mask;
 
-                        tu.target = sTarget;
-                        List<int> aRet = new List<int>();
-                        //save the translated segment
-                        DBFactory.InsertTranslatedSection(tu.idSource, sTarget, bConfirmed, tu.status, editorData.version);
-                        aRet.Add(ix);
+            tuDto.target = sTarget;
+            List<int> aRet = new List<int>();
+            //save the translated segment
+            using (var dbContext = _context)
+            {
+                var tu = _mapper.Map<TranslationUnit>(tuDto);
+                _context.TranslationUnit.Update(tu);
 
-                        //temporary measurement of the OE version
-                        DBFactory.InsertOEVersion(tu.idSource, (int)editorData.task, editorData.version, "");
+                //do the auto-propagation
+                if (propagate > 0 && propagate < 3 && bConfirmed)
+                {
+                    int from = propagate == 1 ? ix : 0;
+                    for (int i = from; i < jobData.translationUnits.Count; i++)
+                    {
+                        var tmpTuDto = jobData.translationUnits[i];
+                        if (i == ix || tmpTuDto.source != tu.source)
+                            continue;
 
-                        //do the auto-propagation
-                        if (propagate > 0 && propagate < 3 && bConfirmed)
-                        {
-                            int from = propagate == 1 ? ix : 0;
-                            for (int i = from; i < editorData.translationUnits.Length; i++)
-                            {
-                                TranslationUnit tmpTu = editorData.translationUnits[i];
-                                if (i == ix || tmpTu.source != tu.source)
-                                    continue;
+                        var tmpTu = _mapper.Map<TranslationUnit>(tu);
+                        //update the segment
+                        tmpTu.status = bConfirmed ? tu.status | mask : tu.status & ~mask;
+                        _context.TranslationUnit.Update(tmpTu);
+                    }
+                }
+            }
 
-                                //update the segment
-                                tmpTu.status = bConfirmed ? tu.status | mask : tu.status & ~mask;
-                                DBFactory.InsertTranslatedSection(tmpTu.idSource, sTarget, bConfirmed, tmpTu.status, editorData.version);
-                                //temporary measurement of the OE version
-                                DBFactory.InsertOEVersion(tmpTu.idSource, (int)editorData.task, editorData.version, "");
-                                aRet.Add(i);
-                            }
-                        }
+            //update the progress
+            // UpdateJobProgress(jobData);
 
-                        //update the progress
-                        UpdateJobProgress(editorData);
+            //Add the translation to the TMs
+            if (bConfirmed)
+                AddTMItem(jobData, ix, sTarget);
 
-                        //Add the translation to the TMs
-                        if (bConfirmed)
-                            AddTMItem(editorData, ix, sTarget);
+            sw.Stop();
+            if (sw.ElapsedMilliseconds > 1000)
+            {
+                _logger.LogInformation("SaveSegment completed in " + sw.ElapsedMilliseconds +
+                    " idJob: " + jobData.idJob.ToString());
+            }
 
-                        sw.Stop();
-                        if (sw.ElapsedMilliseconds > 1000)
-                            Logging.DEBUG_LOG("SavingTime.log", "SaveSegment completed in " + sw.ElapsedMilliseconds +
-                                " idTranslation: " + editorData.idTranslation.ToString());
-
-                        return aRet.ToArray();*/
-
-            return null;
+            return aRet.ToArray();
         }
+
+        public void AddTMItem(JobData jobData, int tuid, String sTarget)
+        {
+            //check the TMs
+            if (jobData.tmAssignments?.Count == 0)
+                return;
+            //update the TMs in a separate thread
+            ThreadPool.QueueUserWorkItem(o =>
+            {
+                var ix = tuid - 1;
+                var tu = jobData.translationUnits![ix];
+
+                //Convert google tags to xliff tags
+                String sourceXml = CATUtils.CodedTextToTmx(tu.source!);
+                var tagsMap = CATUtils.GetTagsMap(tu.source!);
+                String targetXml = CATUtils.GoogleTagsToTmx(sTarget, tagsMap);
+                String? precedingXml = null;
+                if (ix > 0)
+                {
+                    tu = jobData.translationUnits[ix - 1];
+                    tagsMap = CATUtils.GetTagsMap(tu.source!);
+                    precedingXml = CATUtils.GoogleTagsToTmx(tu.source, tagsMap);
+                }
+                String followingXml = null;
+                if (ix < jobData.translationUnits.Count - 1)
+                {
+                    tu = jobData.translationUnits[ix + 1];
+                    tagsMap = CATUtils.GetTagsMap(tu.source!);
+                    followingXml = CATUtils.GoogleTagsToTmx(tu.source, tagsMap);
+                }
+
+                //var catConnector = CATConnectorFactory.CreateCATConnector(editorData.iServer);
+                foreach (var tmAssignment in jobData.tmAssignments!)
+                {
+                    if (!tmAssignment.isReadonly && !tmAssignment.isGlobal)
+                    {
+                        var user = "0_2104";
+                        var idSpeciality = 14;
+                        var metadata = new Dictionary<String, String>() { { "user", user },
+                            { "idTranslation", jobData.idJob.ToString() }, { "speciality", idSpeciality.ToString() } };
+                        _catClientService.AddTMEntry(tmAssignment, sourceXml, targetXml, precedingXml, followingXml, metadata);
+                    }
+                }
+            });
+        }
+
     }
 }
