@@ -20,12 +20,12 @@ export const appUiSlice = createSlice({
         showLoading: (state, action) => {
             state.isLoading = action.payload
         },
-        setStatusBarMessage: (state, action) => {
+        showStatusBarMessage: (state, action) => {
             state.statusBar.message = action.payload;
         }
     }
 });
 
-export const { showAlert, showLoginModal, showLoading, setStatusBarMessage } = appUiSlice.actions;
+export const { showAlert, showLoginModal, showLoading, showStatusBarMessage } = appUiSlice.actions;
 
 export default appUiSlice.reducer;

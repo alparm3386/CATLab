@@ -81,10 +81,18 @@ const editorApi = (function () {
             }
         },
 
-        postJobData: async (jobData) => {
+        saveSegment: async (tuid, target, confirmed, propagate) => {
             try {
-                const response = await _apiClient.post('/api/EditorApi/jobData', jobData);
-                return response.data;
+                const response = await _apiClient.post('/api/EditorApi/saveSegment', { urlParams: _urlParams, tuid, target, confirmed, propagate }, {
+                    headers: {
+                        'Authorization': `Bearer ${_jwt}`
+                    }
+                });
+                if (response.status === 401) {
+                    console.log("401 error ...");
+                }
+
+                return { data: response.data, status: response.status };
             } catch (error) {
                 throw error;
             }

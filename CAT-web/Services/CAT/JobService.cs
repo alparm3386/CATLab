@@ -68,6 +68,10 @@ namespace CATWeb.Services.CAT
                              .ToListAsync();
 
             var translationUnitDTOs = _mapper.Map<TranslationUnitDTO[]>(translationUnits);
+            foreach (var tu in translationUnitDTOs)
+            {
+                tu.isEditAllowed = true;
+            }
 
             var sourceFilesFolder = Path.Combine(_configuration["SourceFilesFolder"]);
             var fileFiltersFolder = Path.Combine(_configuration["FileFiltersFolder"]);
@@ -141,7 +145,7 @@ namespace CATWeb.Services.CAT
             return 0xfL;
         }
 
-        public async Task<int[]> SaveSegment(JobData jobData, int tuid, String sTarget, bool bConfirmed, int propagate)
+        public int[] SaveSegment(JobData jobData, int tuid, String sTarget, bool bConfirmed, int propagate)
         {
             Stopwatch sw = new Stopwatch();
             sw.Start();
@@ -180,6 +184,8 @@ namespace CATWeb.Services.CAT
                         _context.TranslationUnit.Update(tmpTu);
                     }
                 }
+
+                _context.SaveChanges();
             }
 
             //update the progress
@@ -207,39 +213,46 @@ namespace CATWeb.Services.CAT
             //update the TMs in a separate thread
             ThreadPool.QueueUserWorkItem(o =>
             {
-                var ix = tuid - 1;
-                var tu = jobData.translationUnits![ix];
+                try
+                {
+                    var ix = tuid - 1;
+                    var tu = jobData.translationUnits![ix];
 
-                //Convert google tags to xliff tags
-                String sourceXml = CATUtils.CodedTextToTmx(tu.source!);
-                var tagsMap = CATUtils.GetTagsMap(tu.source!);
-                String targetXml = CATUtils.GoogleTagsToTmx(sTarget, tagsMap);
-                String? precedingXml = null;
-                if (ix > 0)
-                {
-                    tu = jobData.translationUnits[ix - 1];
-                    tagsMap = CATUtils.GetTagsMap(tu.source!);
-                    precedingXml = CATUtils.GoogleTagsToTmx(tu.source, tagsMap);
-                }
-                String followingXml = null;
-                if (ix < jobData.translationUnits.Count - 1)
-                {
-                    tu = jobData.translationUnits[ix + 1];
-                    tagsMap = CATUtils.GetTagsMap(tu.source!);
-                    followingXml = CATUtils.GoogleTagsToTmx(tu.source, tagsMap);
-                }
-
-                //var catConnector = CATConnectorFactory.CreateCATConnector(editorData.iServer);
-                foreach (var tmAssignment in jobData.tmAssignments!)
-                {
-                    if (!tmAssignment.isReadonly && !tmAssignment.isGlobal)
+                    //Convert google tags to xliff tags
+                    String sourceXml = CATUtils.CodedTextToTmx(tu.source!);
+                    var tagsMap = CATUtils.GetTagsMap(tu.source!);
+                    String targetXml = CATUtils.GoogleTagsToTmx(sTarget, tagsMap);
+                    String? precedingXml = null;
+                    if (ix > 0)
                     {
-                        var user = "0_2104";
-                        var idSpeciality = 14;
-                        var metadata = new Dictionary<String, String>() { { "user", user },
-                            { "idTranslation", jobData.idJob.ToString() }, { "speciality", idSpeciality.ToString() } };
-                        _catClientService.AddTMEntry(tmAssignment, sourceXml, targetXml, precedingXml, followingXml, metadata);
+                        tu = jobData.translationUnits[ix - 1];
+                        tagsMap = CATUtils.GetTagsMap(tu.source!);
+                        precedingXml = CATUtils.GoogleTagsToTmx(tu.source, tagsMap);
                     }
+                    String followingXml = null;
+                    if (ix < jobData.translationUnits.Count - 1)
+                    {
+                        tu = jobData.translationUnits[ix + 1];
+                        tagsMap = CATUtils.GetTagsMap(tu.source!);
+                        followingXml = CATUtils.GoogleTagsToTmx(tu.source, tagsMap);
+                    }
+
+                    //var catConnector = CATConnectorFactory.CreateCATConnector(editorData.iServer);
+                    foreach (var tmAssignment in jobData.tmAssignments!)
+                    {
+                        if (!tmAssignment.isReadonly && !tmAssignment.isGlobal)
+                        {
+                            var user = "0_2104";
+                            var idSpeciality = 14;
+                            var metadata = new Dictionary<String, String>() { { "user", user },
+                            { "idTranslation", jobData.idJob.ToString() }, { "speciality", idSpeciality.ToString() } };
+                            _catClientService.AddTMEntry(tmAssignment, sourceXml, targetXml, precedingXml, followingXml, metadata);
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError("idJob: " + jobData.idJob + " " + ex.ToString());
                 }
             });
         }

@@ -11,7 +11,7 @@ namespace CATWeb.Configuration
             CreateMap<CATService.TMMatch, Models.CAT.TMMatch>().ReverseMap();
             CreateMap<CATService.TBEntry, Models.CAT.TBEntry>().ReverseMap();
             CreateMap<CATService.TMAssignment, Models.CAT.TMAssignment>().ReverseMap();
-            CreateMap<TranslationUnit, TranslationUnitDTO>();
+            CreateMap<TranslationUnit, TranslationUnitDTO>().ReverseMap();
         }
     }
 

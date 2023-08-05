@@ -406,11 +406,20 @@ namespace CATWeb.Helpers
 
                 var charCode = codedText[i];
                 if (charCode == MARKER_OPENING)
+                {
                     tmp.Append("{" + id.ToString() + "}");
+                    i++;
+                }
                 else if (charCode == MARKER_CLOSING)
+                {
                     tmp.Append("{\\" + id.ToString() + "}");
+                    i++;
+                }
                 else if (charCode == MARKER_ISOLATED)
+                {
                     tmp.Append("{" + id.ToString() + "/}");
+                    i++;
+                }
                 else
                     tmp.Append(charCode);
 

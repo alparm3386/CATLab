@@ -113,7 +113,7 @@ namespace CATWeb.Controllers.ApiControllers
                 if (tuid < 0)
                     return Problem("Invalid tuid.");
 
-                var target = model.GetProperty("target").GetInt32();
+                var target = model.GetProperty("target").GetString();
                 var confirmed = model.GetProperty("confirmed").GetBoolean();
                 var propagate = model.GetProperty("propagate").GetInt32();
 
@@ -121,7 +121,7 @@ namespace CATWeb.Controllers.ApiControllers
                 var idJob = QueryHelper.GetQuerystringIntParameter(urlParams, "idJob");
                 var jobData = GetJobDataFromSession(idJob);
 
-
+                _jobService.SaveSegment(jobData, tuid, target, confirmed, propagate);
                 return Ok("Saved");
             }
             catch (Exception ex)

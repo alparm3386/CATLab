@@ -3,7 +3,7 @@ import 'styles/spinner-small.css';
 import React, { useState } from 'react';
 import editorApi from 'services/editorApi';
 import { useSelector, useDispatch } from 'react-redux';
-import { setStatusBarMessage } from 'store/appUiSlice';
+import { showStatusBarMessage } from 'store/appUiSlice';
 import appDataService from 'services/appDataService';
 
 var renderCntr = 0;
@@ -31,7 +31,7 @@ const Concordance = () => {
                 setTmMatches(response.data);
             })
             .catch(error => {
-                dispatch(setStatusBarMessage('Error:' + error.toString()));
+                dispatch(showStatusBarMessage('Error:' + error.toString()));
             })
             .finally(() => setIsLoading(false));
     };

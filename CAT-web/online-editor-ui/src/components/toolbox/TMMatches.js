@@ -4,7 +4,7 @@ import 'styles/spinner-small.css';
 import React, { useState, useEffect } from 'react';
 import editorApi from 'services/editorApi';
 import { useSelector, useDispatch } from 'react-redux';
-import { setStatusBarMessage } from 'store/appUiSlice';
+import { showStatusBarMessage } from 'store/appUiSlice';
 
 var renderCntr = 0;
 const TMMatches = () => {
@@ -21,7 +21,7 @@ const TMMatches = () => {
         editorApi.getTMMatches(tuid || 0).then(response => {
             setTmMatches(response.data);
         }).catch(error => {
-            dispatch(setStatusBarMessage('Error:' + error.toString()));
+            dispatch(showStatusBarMessage('Error:' + error.toString()));
         }).finally(() => setIsLoading(false));
         return () => {
         };
