@@ -8,6 +8,10 @@ import TargetEditbBox from 'components/editorGrid/targetEditBox';
 import appDataService from 'services/appDataService';
 
 var renderCntr = 0;
+function highLightTags(text) {
+    return text.replace(/({\/*\d*\/*})/g, '<span class="text-danger">$1</span>');
+}
+
 const EditorGrid = //React.memo(
     function EditorGrid() {
         const dispatch = useDispatch();
@@ -28,9 +32,9 @@ const EditorGrid = //React.memo(
                     translationUnits.map((tu, index) => (
                         <div key={index} className="tu-row">
                             <div className="row-num">{index + 1}</div>
-                            <div className="source">{tu.source}</div>
+                            <div className="source" dangerouslySetInnerHTML={{ __html: highLightTags(tu.source) }}/>
                             {currentTuid === index + 1 ? <TargetEditbBox key={`target_${index}`} className="target" /> :
-                                <div className="target" onClick={() => onTargetClick(index + 1)}>{tu.target}</div>}
+                                <div className="target" onClick={() => onTargetClick(index + 1)} dangerouslySetInnerHTML={{ __html: highLightTags(tu.target) }} /> }
                             <div className="status"><FontAwesomeIcon icon={faCoffee} /></div>
                         </div>
                     ))
