@@ -140,27 +140,28 @@ namespace CATWeb.Controllers.ApiControllers
             {
                 string urlParams = model.GetProperty("urlParams").GetString();
                 int tuid = model.GetProperty("tuid").GetInt32();
-                if (tuid < 0)
+                if (tuid <= 0)
                     return Problem("Invalid tuid.");
-                
+
+                var ix = tuid - 1;
                 //the job data
                 var idJob = QueryHelper.GetQuerystringIntParameter(urlParams, "idJob");
                 var jobData = GetJobDataFromSession(idJob);
 
                 //Convert google tags to xliff tags
-                var tu = jobData.translationUnits![tuid];
+                var tu = jobData.translationUnits![ix];
                 String sSource = tu.source!;
                 String sourceXml = CATUtils.CodedTextToTmx(tu.source!);
                 String? precedingXml = null;
-                if (tuid > 0)
+                if (ix > 0)
                 {
-                    tu = jobData.translationUnits[tuid - 1];
+                    tu = jobData.translationUnits[ix - 1];
                     precedingXml = CATUtils.CodedTextToTmx(tu.source);
                 }
                 String? followingXml = null;
-                if (tuid < jobData.translationUnits.Count - 1)
+                if (ix < jobData.translationUnits.Count - 1)
                 {
-                    tu = jobData.translationUnits[tuid + 1];
+                    tu = jobData.translationUnits[ix + 1];
                     followingXml = CATUtils.CodedTextToTmx(tu.source);
                 }
 

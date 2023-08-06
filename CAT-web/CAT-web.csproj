@@ -8,6 +8,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="online-editor-ui\build\**" />
+    <Content Remove="online-editor-ui\build\**" />
+    <EmbeddedResource Remove="online-editor-ui\build\**" />
+    <None Remove="online-editor-ui\build\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Folder Include="Models\ViewModels\" />
     <Folder Include="online-editor-ui\src\bootstrap\" />
     <Folder Include="online-editor-ui\src\contexts\" />

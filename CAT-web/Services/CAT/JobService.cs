@@ -227,14 +227,14 @@ namespace CATWeb.Services.CAT
                     {
                         tu = jobData.translationUnits[ix - 1];
                         tagsMap = CATUtils.GetTagsMap(tu.source!);
-                        precedingXml = CATUtils.GoogleTagsToTmx(tu.source, tagsMap);
+                        precedingXml = CATUtils.CodedTextToTmx(tu.source!);
                     }
                     String followingXml = null;
                     if (ix < jobData.translationUnits.Count - 1)
                     {
                         tu = jobData.translationUnits[ix + 1];
                         tagsMap = CATUtils.GetTagsMap(tu.source!);
-                        followingXml = CATUtils.GoogleTagsToTmx(tu.source, tagsMap);
+                        followingXml = CATUtils.CodedTextToTmx(tu.source!);
                     }
 
                     //var catConnector = CATConnectorFactory.CreateCATConnector(editorData.iServer);
