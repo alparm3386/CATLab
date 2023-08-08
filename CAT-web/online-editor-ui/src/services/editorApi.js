@@ -96,7 +96,16 @@ const editorApi = (function () {
             } catch (error) {
                 throw error;
             }
-        }
+        },
+
+        downloadJob: () => {
+            // Ensure _jwt is a string (or handle other cases as needed)
+            return _apiClient.get('/api/EditorApi/DownloadJob?urlParams=' + encodeURIComponent(_urlParams), {
+                headers: {
+                    'Authorization': `Bearer ${_jwt}`
+                }
+            });
+        },
     }
 })();
 

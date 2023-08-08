@@ -1,28 +1,36 @@
-﻿import 'styles/navbar.scss';
+﻿//TopMenu.js
+import 'styles/navbar.scss';
 import React from 'react';
 import { Navbar, Nav, NavDropdown } from 'react-bootstrap';
 import { showAlert } from 'store/appUiSlice';
 import { useDispatch } from 'react-redux';
+import editorApi from 'services/editorApi';
+import utils from 'utils/utils';
 
 const TopMenu = () => {
     const dispatch = useDispatch();
 
     const handleDownloadJob = async () => {
         try {
-            const response = await fetch('/api/file/downloadJob');
-            if (!response.ok) {
+            const response = await editorApi.downloadJob();
+
+            if (response.status !== 200) {
                 throw new Error('Network response was not ok');
             }
 
-            const blob = await response.blob();
+            const contentDisposition = response.headers['content-disposition'];
+            const filename = utils.extractFilenameFromContentDisposition(contentDisposition) || 'default_name.txt'; // Use a default name if not found
+
+            const blob = new Blob([response.data], { type: 'application/octet-stream' });
             const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.style.display = 'none';
-            a.href = url;
-            // the filename you want
-            a.download = 'FileName.txt';  // replace with your desired download file name
-            document.body.appendChild(a);
-            a.click();
+
+            const downloadAnchor = document.createElement('a');
+            downloadAnchor.style.display = 'none';
+            downloadAnchor.href = url;
+            downloadAnchor.download = filename;
+            document.body.appendChild(downloadAnchor);
+            downloadAnchor.click();
+            document.body.removeChild(downloadAnchor);
             window.URL.revokeObjectURL(url);
         } catch (error) {
             dispatch(showAlert({ title: 'Error', message: error.message }));
