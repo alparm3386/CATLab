@@ -204,5 +204,21 @@ namespace CATWeb.Controllers.ApiControllers
                 return Problem("An error occurred while processing your request.", null, 500);
             }
         }
+
+        [HttpGet("downloadJob")]
+        public IActionResult DownloadJob(string urlParams)
+        {
+            var pathToFile = @"C:/Alpar/test.xliff";  // replace with your file's path
+            var mimeType = "application/octet-stream";  // replace with your file's MIME type
+
+            if (!System.IO.File.Exists(pathToFile))
+                return NotFound();
+
+            var fileStream = new FileStream(pathToFile, FileMode.Open);
+            return new FileStreamResult(fileStream, mimeType)
+            {
+                FileDownloadName = "Test.xliff"  // replace with your desired download file name
+            };
+        }
     }
 }
