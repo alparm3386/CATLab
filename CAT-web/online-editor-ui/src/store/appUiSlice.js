@@ -5,14 +5,15 @@ export const appUiSlice = createSlice({
     name: 'appUi',
     initialState: {
         login: { isOpen: false },
-        alert: { title: "Alert", message: "" },
+        alert: { title: 'Alert', message: '', show: false },
         isLoading: false,
         statusBar: { message: '' },
 
     },
     reducers: {
         showAlert: (state, action) => {
-            state = action.payload;
+            state.alert = action.payload;
+            state.alert.show = 'show' in action.payload ? action.payload.show : true;
         },
         showLoginModal: (state, action) => {
             state.login.isOpen = action.payload;

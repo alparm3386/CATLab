@@ -1,19 +1,15 @@
 ﻿import React, { } from 'react';
 import { Modal, Alert } from 'react-bootstrap'
 import LoginForm from 'components/modals/LoginForm';
+import AppAlert from 'components/modals/AppAlert';
 
 export const ModalContainer = () => {
+    //const message = useSelector((state) => state.appUi.statusBar.message);
+
     return (
         <>
             <LoginForm />
-            <Modal show={false} centered>
-                <Modal.Header closeButton>
-                    <Modal.Title>Alert</Modal.Title>
-                </Modal.Header>
-                <Alert variant="success">
-                    This is a message
-                </Alert>
-            </Modal>
+            <AppAlert />
         </>
     );
 };

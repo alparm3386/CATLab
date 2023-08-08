@@ -12,7 +12,7 @@ import appDataService from 'services/appDataService';
 
 //components
 import ContentArea from 'components/ContentArea';
-import Navbar from 'components/navigation/Navbar';
+import TopMenu from 'components/navigation/TopMenu';
 import StatusBar from 'components/statusBar/StatusBar';
 import ModalContainer from 'components/modals/ModalContainer';
 import Spinner from 'components/common/Spinner';
@@ -52,7 +52,7 @@ function App() {
             {/*Init the app*/}
             <AppInit />
             <div className="app">
-                <Navbar />
+                <TopMenu />
                 <ContentArea className="ContentArea" />
                 <StatusBar />
 
