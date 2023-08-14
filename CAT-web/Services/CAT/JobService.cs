@@ -5,6 +5,7 @@ using CATWeb.Data;
 using CATWeb.Enums;
 using CATWeb.Helpers;
 using CATWeb.Models;
+using CATWeb.Models.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 using System.Diagnostics;

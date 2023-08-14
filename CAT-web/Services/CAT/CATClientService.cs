@@ -1,6 +1,5 @@
 ﻿using CATWeb.Data;
 using CATWeb.Helpers;
-using CATWeb.Models;
 using CATService;
 using Microsoft.AspNetCore.Identity;
 using System.ComponentModel.DataAnnotations;
@@ -27,6 +26,7 @@ using TBEntry = CATWeb.Models.CAT.TBEntry;
 using Microsoft.CodeAnalysis.Differencing;
 using ICSharpCode.SharpZipLib.Tar;
 using Newtonsoft.Json;
+using CATWeb.Models.Entities;
 
 namespace CATWeb.Services.CAT
 {

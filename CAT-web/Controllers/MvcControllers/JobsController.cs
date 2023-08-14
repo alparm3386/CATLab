@@ -6,12 +6,12 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using CATWeb.Data;
-using CATWeb.Models;
 using CATWeb.Helpers;
 using System.IO;
 using CATWeb.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using CATWeb.Models.Entities;
 
 namespace CATWeb.Controllers.MvcControllers
 {

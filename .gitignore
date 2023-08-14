@@ -10,3 +10,5 @@ obj
 /CAT-web/.vs/CAT-web/v17/.suo
 /CAT-web/.vs/ProjectEvaluation/*.bin
 /CAT-web/.vs/CAT-web/config
+/CAT-web/.vs/CAT-web/v16/*.suo
+*.map

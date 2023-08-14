@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using CATWeb.Models;
+using CATWeb.Models.Entities;
 
 namespace CATWeb.Data
 {

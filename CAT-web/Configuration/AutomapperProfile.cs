@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using CATWeb.Models;
+using CATWeb.Models.Entities;
 
 namespace CATWeb.Configuration
 {

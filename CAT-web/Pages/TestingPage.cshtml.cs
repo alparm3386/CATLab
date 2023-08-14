@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using CATWeb.Data;
-using CATWeb.Models;
+using CATWeb.Models.Entities;
 
 namespace CATWeb.Pages
 {
