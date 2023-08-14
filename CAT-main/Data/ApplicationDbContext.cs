@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
-namespace CAT_main.Data
+namespace CAT.Data
 {
     public class ApplicationDbContext : IdentityDbContext
     {

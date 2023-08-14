@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace CAT_main.Pages
+namespace CAT.Pages
 {
     public class PrivacyModel : PageModel
     {

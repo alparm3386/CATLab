@@ -1,4 +1,4 @@
-using CAT_main.Data;
+using CAT.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -13,6 +13,9 @@ builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddEntityFrameworkStores<ApplicationDbContext>();
 builder.Services.AddRazorPages();
+
+//the logger
+builder.Logging.AddProvider(new Log4NetLoggerProvider("log4net.config"));
 
 var app = builder.Build();
 

@@ -12,3 +12,4 @@ obj
 /CAT-web/.vs/CAT-web/config
 /CAT-web/.vs/CAT-web/v16/*.suo
 *.map
+/Contents
