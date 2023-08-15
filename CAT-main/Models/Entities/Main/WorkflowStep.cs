@@ -1,8 +1,7 @@
-﻿using CAT.Models.Entities;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace CATWeb.Models.Entities
+namespace CAT.Models.Entities.Main
 {
     [Table("WorkflowSteps")]
     public class WorkflowStep

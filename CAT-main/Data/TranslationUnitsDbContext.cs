@@ -4,6 +4,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using CAT.Models.Entities;
+using CAT.Models.Entities.Main;
+using CAT.Models.Entities.TranslationUnits;
 
 namespace CAT.Data
 {
