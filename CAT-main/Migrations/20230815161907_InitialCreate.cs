@@ -12,6 +12,23 @@ namespace CAT.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
+                name: "Documents",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    DocumentType = table.Column<int>(type: "int", nullable: false),
+                    OriginalFileName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    FileName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    FilterId = table.Column<int>(type: "int", nullable: false),
+                    AnalisysId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Documents", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Orders",
                 columns: table => new
                 {
@@ -40,26 +57,6 @@ namespace CAT.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Quotes", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "TranslationUnits",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    idJob = table.Column<int>(type: "int", nullable: false),
-                    tuid = table.Column<int>(type: "int", nullable: false),
-                    source = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    context = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    locks = table.Column<int>(type: "int", nullable: false),
-                    target = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    dateUpdated = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    status = table.Column<long>(type: "bigint", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_TranslationUnits", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -120,11 +117,6 @@ namespace CAT.Migrations
                 column: "QuoteId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_TranslationUnits_idJob",
-                table: "TranslationUnits",
-                column: "idJob");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_WorkflowSteps_JobId",
                 table: "WorkflowSteps",
                 column: "JobId");
@@ -134,7 +126,7 @@ namespace CAT.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "TranslationUnits");
+                name: "Documents");
 
             migrationBuilder.DropTable(
                 name: "WorkflowSteps");

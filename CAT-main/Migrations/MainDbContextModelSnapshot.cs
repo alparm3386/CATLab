@@ -22,6 +22,34 @@ namespace CAT.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("CAT.Models.Entities.Main.Document", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("AnalisysId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("DocumentType")
+                        .HasColumnType("int");
+
+                    b.Property<string>("FileName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("FilterId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("OriginalFileName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Documents");
+                });
+
             modelBuilder.Entity("CAT.Models.Entities.Main.Job", b =>
                 {
                     b.Property<int>("Id")
@@ -114,45 +142,6 @@ namespace CAT.Migrations
                     b.HasIndex("JobId");
 
                     b.ToTable("WorkflowSteps");
-                });
-
-            modelBuilder.Entity("CAT.Models.Entities.TranslationUnits.TranslationUnit", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("context")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("dateUpdated")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("idJob")
-                        .HasColumnType("int");
-
-                    b.Property<int>("locks")
-                        .HasColumnType("int");
-
-                    b.Property<string>("source")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<long>("status")
-                        .HasColumnType("bigint");
-
-                    b.Property<string>("target")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("tuid")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("idJob");
-
-                    b.ToTable("TranslationUnits");
                 });
 
             modelBuilder.Entity("CAT.Models.Entities.Main.Job", b =>

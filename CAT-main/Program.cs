@@ -1,5 +1,8 @@
+using AutoMapper;
 using CAT.Areas.Identity.Data;
+using CAT.Configuration;
 using CAT.Data;
+using CAT.Services;
 using CATWeb.Infrastructure.Logging;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -18,6 +21,13 @@ builder.Services.AddDbContext<TranslationUnitsDbContext>(options =>
     options.UseSqlServer(translationUnitsConnectionString));
 
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
+
+// Add services to the container.
+builder.Services.AddControllersWithViews();
+builder.Services.AddScoped<JwtService>();
+builder.Services.AddScoped<JobService>();
+builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
+
 
 builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddEntityFrameworkStores<IdentityDbContext>();
