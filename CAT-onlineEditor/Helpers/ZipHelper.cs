@@ -3,7 +3,7 @@ using ICSharpCode.SharpZipLib.Zip;
 using System;
 using System.IO;
 
-namespace BU
+namespace CAT.Helpers
 {
 	/// <summary>
 	/// Summary description for cZipHelper.
