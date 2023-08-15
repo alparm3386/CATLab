@@ -12,10 +12,10 @@ builder.Services.AddDbContext<IdentityDbContext>(options =>
     options.UseSqlServer(identityConnectionString));
 var mainConnectionString = builder.Configuration.GetConnectionString("MainDbConnection") ?? throw new InvalidOperationException("Connection string 'MainDbConnection' not found.");
 builder.Services.AddDbContext<MainDbContext>(options =>
-    options.UseSqlServer(identityConnectionString));
+    options.UseSqlServer(mainConnectionString));
 var translationUnitsConnectionString = builder.Configuration.GetConnectionString("TranslationUnitsDbConnection") ?? throw new InvalidOperationException("Connection string 'TranslationUnitsDbConnection' not found.");
 builder.Services.AddDbContext<TranslationUnitsDbContext>(options =>
-    options.UseSqlServer(identityConnectionString));
+    options.UseSqlServer(translationUnitsConnectionString));
 
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 

@@ -13,18 +13,19 @@ namespace CAT.Models.Entities.Main
         public int OrderId { get; set; }
 
         [System.Diagnostics.CodeAnalysis.MaybeNull]
-        public Order Order { get; set; }
+        public virtual Order Order { get; set; }
 
         public int QuoteId { get; set; }
 
         [System.Diagnostics.CodeAnalysis.MaybeNull]
-        public Quote Quote { get; set; }
+        public virtual Quote Quote { get; set; }
 
-        public int DocumentId { get; set; }
+        public int SourceDocumentId { get; set; }
+
+        public int FinalDocumentId { get; set; }
+
 
         [System.Diagnostics.CodeAnalysis.MaybeNull]
-        public Document Document { get; set; }
-
         public ICollection<WorkflowStep> WorkflowSteps { get; set; }
     }
 }

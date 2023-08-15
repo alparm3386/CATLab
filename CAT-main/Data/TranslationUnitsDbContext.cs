@@ -16,7 +16,6 @@ namespace CAT.Data
         {
         }
 
-        public DbSet<Job> Job { get; set; } = default!;
         public DbSet<TranslationUnit> TranslationUnit { get; set; } = default!;
     }
 }

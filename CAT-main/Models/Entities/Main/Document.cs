@@ -10,6 +10,8 @@ namespace CAT.Models.Entities.Main
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
+        public int DocumentType { get; set; }
+
         [System.Diagnostics.CodeAnalysis.MaybeNull]
         public string OriginalFileName { get; set; }
 

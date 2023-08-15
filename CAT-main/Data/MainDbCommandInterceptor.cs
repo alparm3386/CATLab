@@ -1,9 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore.Diagnostics;
 using System.Data.Common;
 
-namespace CATWeb.Data
+namespace CAT.Data
 {
-    public class CATDbCommandInterceptor : DbCommandInterceptor
+    public class MainDbCommandInterceptor : DbCommandInterceptor
     {
         public override InterceptionResult<DbDataReader> ReaderExecuting(
             DbCommand command,
