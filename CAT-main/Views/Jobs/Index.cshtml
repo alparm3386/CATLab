@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Job>
+﻿@model IEnumerable<JobViewModel>
 
 @{
     ViewData["Title"] = "Jobs";
@@ -21,9 +21,6 @@
                 @Html.DisplayNameFor(model => model.OriginalFileName)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.FileName)
-            </th>
-            <th>
                 @Html.DisplayNameFor(model => model.DateCreated)
             </th>
             <th>
@@ -41,9 +38,6 @@
             <tr>
                 <td>
                     @Html.DisplayFor(modelItem => item.OriginalFileName)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.FileName)
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.DateCreated)

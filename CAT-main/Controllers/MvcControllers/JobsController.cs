@@ -13,6 +13,7 @@ using CAT.Areas.Identity.Data;
 using CAT.Helpers;
 using CAT.Models.Entities.Main;
 using CAT.Enums;
+using CAT.Models.ViewModels;
 
 namespace CAT.Controllers.MvcControllers
 {
@@ -45,8 +46,11 @@ namespace CAT.Controllers.MvcControllers
                 TempData.Remove("ErrorMessage");
             }
 
+            var jobs = await _mainDbContext.Jobs.Include(j => j.Quote).Include(j => j.Order).ToListAsync();
+
+            var jobsViewModels = new List<JobsViewModel>();
             return _mainDbContext.Jobs != null ?
-                        View(await _mainDbContext.Jobs.ToListAsync()) :
+                        View(jobsViewModels) :
                         Problem("Entity set 'CATWebContext.Job'  is null.");
         }
 
