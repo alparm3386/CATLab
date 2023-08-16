@@ -1,8 +1,8 @@
-﻿using CATWeb.Data;
-using CATWeb.Helpers;
-using CATWeb.Models;
-using CATWeb.Services;
-using CATWeb.Services.CAT;
+﻿using CAT.Data;
+using CAT.Helpers;
+using CAT.Models;
+using CAT.Services;
+using CAT.Services.CAT;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -20,7 +20,7 @@ using System.Web;
 using AutoMapper;
 using CATService;
 
-namespace CATWeb.Controllers.ApiControllers
+namespace CAT.Controllers.ApiControllers
 {
     [Authorize]
     [ApiController]

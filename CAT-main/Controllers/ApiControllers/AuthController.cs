@@ -1,8 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
-using CATWeb.Services;
+using CAT.Services;
+using CAT.Areas.Identity.Pages.Account;
 
-namespace CATWeb.Controllers.ApiControllers
+namespace CAT.Controllers.ApiControllers
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -22,14 +23,14 @@ namespace CATWeb.Controllers.ApiControllers
         [HttpPost("login")]
         public async Task<IActionResult> Login(LoginModel model)
         {
-            var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, false, false);
+            var result = await _signInManager.PasswordSignInAsync(model.Input.Email, model.Input.Password, false, false);
 
             if (!result.Succeeded)
             {
                 return Unauthorized(); // or however you want to handle failed login attempts
             }
 
-            var user = await _signInManager.UserManager.FindByEmailAsync(model.Email);
+            var user = await _signInManager.UserManager.FindByEmailAsync(model.Input.Email);
             var token = _jwtService.GenerateJWT(user);
 
             return Ok(new { Token = token });

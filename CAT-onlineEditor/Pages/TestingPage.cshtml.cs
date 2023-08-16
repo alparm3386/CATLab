@@ -5,16 +5,16 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using CATWeb.Data;
-using CATWeb.Models.Entities;
+using CAT.Data;
+using CAT.Models.Entities;
 
-namespace CATWeb.Pages
+namespace CAT.Pages
 {
     public class TestingPageModel : PageModel
     {
-        private readonly CATWeb.Data.CATWebContext _context;
+        private readonly CAT.Data.CATWebContext _context;
 
-        public TestingPageModel(CATWeb.Data.CATWebContext context)
+        public TestingPageModel(CAT.Data.CATWebContext context)
         {
             _context = context;
         }

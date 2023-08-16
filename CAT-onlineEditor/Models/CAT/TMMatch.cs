@@ -1,4 +1,4 @@
-﻿namespace CATWeb.Models.CAT
+﻿namespace CAT.Models.CAT
 {
     public class TMMatch
     {

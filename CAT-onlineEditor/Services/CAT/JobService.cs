@@ -1,17 +1,17 @@
 ﻿using AutoMapper;
 using CATService;
-using CATWeb.Controllers.ApiControllers;
-using CATWeb.Data;
-using CATWeb.Enums;
-using CATWeb.Helpers;
-using CATWeb.Models;
-using CATWeb.Models.Entities;
+using CAT.Controllers.ApiControllers;
+using CAT.Data;
+using CAT.Enums;
+using CAT.Helpers;
+using CAT.Models;
+using CAT.Models.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 using System.Diagnostics;
 using static ICSharpCode.SharpZipLib.Zip.ZipEntryFactory;
 
-namespace CATWeb.Services.CAT
+namespace CAT.Services.CAT
 {
     public class JobService
     {

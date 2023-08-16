@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
-using CATWeb.Models;
-using CATWeb.Models.Entities;
+using CAT.Models;
+using CAT.Models.Entities;
 
-namespace CATWeb.Configuration
+namespace CAT.Configuration
 {
     public class AutoMapperProfile : Profile
     {

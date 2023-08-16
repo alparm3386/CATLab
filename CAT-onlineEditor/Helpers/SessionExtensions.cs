@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace CATWeb.Helpers
+namespace CAT.Helpers
 {
     public static class SessionExtensions
     {

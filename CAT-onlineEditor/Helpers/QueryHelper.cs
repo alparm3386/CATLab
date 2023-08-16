@@ -1,6 +1,6 @@
 ﻿using System.Web;
 
-namespace CATWeb.Helpers
+namespace CAT.Helpers
 {
     public class QueryHelper
     {

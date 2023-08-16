@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
-namespace CATWeb.Areas.Identity.Data;
+namespace CAT.Areas.Identity.Data;
 
 public class IdentityDbContext : IdentityDbContext<IdentityUser>
 {

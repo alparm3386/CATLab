@@ -2,7 +2,7 @@
 using log4net.Core;
 using ILogger = Microsoft.Extensions.Logging.ILogger;
 
-namespace CATWeb.Infrastructure.Logging
+namespace CAT.Infrastructure.Logging
 {
     public class Log4NetLogger : ILogger
     {

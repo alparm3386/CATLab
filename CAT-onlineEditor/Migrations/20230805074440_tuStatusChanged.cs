@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace CATWeb.Migrations
+namespace CAT.Migrations
 {
     public partial class tuStatusChanged : Migration
     {

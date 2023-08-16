@@ -5,15 +5,15 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using CATWeb.Data;
-using CATWeb.Helpers;
+using CAT.Data;
+using CAT.Helpers;
 using System.IO;
-using CATWeb.Enums;
+using CAT.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using CATWeb.Models.Entities;
+using CAT.Models.Entities;
 
-namespace CATWeb.Controllers.MvcControllers
+namespace CAT.Controllers.MvcControllers
 {
     public class JobsController : Controller
     {

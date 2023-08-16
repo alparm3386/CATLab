@@ -1,5 +1,5 @@
-﻿using CATWeb.Data;
-using CATWeb.Helpers;
+﻿using CAT.Data;
+using CAT.Helpers;
 using CATService;
 using Microsoft.AspNetCore.Identity;
 using System.ComponentModel.DataAnnotations;
@@ -13,22 +13,22 @@ using System.Text.RegularExpressions;
 using System.Transactions;
 using static ICSharpCode.SharpZipLib.Zip.ZipEntryFactory;
 using System.Xml;
-using CATWeb.Enums;
-using CATWeb.Services.MT;
+using CAT.Enums;
+using CAT.Services.MT;
 using Microsoft.Extensions.Options;
-using CATWeb.Models.CAT;
-using Statistics = CATWeb.Models.CAT.Statistics;
-using TMMatch = CATWeb.Models.CAT.TMMatch;
-using TMAssignment = CATWeb.Models.CAT.TMAssignment;
+using CAT.Models.CAT;
+using Statistics = CAT.Models.CAT.Statistics;
+using TMMatch = CAT.Models.CAT.TMMatch;
+using TMAssignment = CAT.Models.CAT.TMAssignment;
 using AutoMapper;
 using System.Security.AccessControl;
-using TBEntry = CATWeb.Models.CAT.TBEntry;
+using TBEntry = CAT.Models.CAT.TBEntry;
 using Microsoft.CodeAnalysis.Differencing;
 using ICSharpCode.SharpZipLib.Tar;
 using Newtonsoft.Json;
-using CATWeb.Models.Entities;
+using CAT.Models.Entities;
 
-namespace CATWeb.Services.CAT
+namespace CAT.Services.CAT
 {
     public class CATClientService
     {

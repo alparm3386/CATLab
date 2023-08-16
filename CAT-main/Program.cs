@@ -3,9 +3,10 @@ using CAT.Areas.Identity.Data;
 using CAT.Configuration;
 using CAT.Data;
 using CAT.Services;
-using CATWeb.Infrastructure.Logging;
+using CAT.Infrastructure.Logging;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using CAT.Services.CAT;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -26,6 +27,7 @@ builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<JwtService>();
 builder.Services.AddScoped<JobService>();
+builder.Services.AddScoped<CATConnector>();
 builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
 
 

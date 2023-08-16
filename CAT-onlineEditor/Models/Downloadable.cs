@@ -1,4 +1,4 @@
-﻿namespace CATWeb.Models
+﻿namespace CAT.Models
 {
     public class Downloadable
     {

@@ -14,7 +14,7 @@ using CAT.Helpers;
 using CAT.Models.Entities.Main;
 using CAT.Enums;
 
-namespace CATWeb.Controllers.MvcControllers
+namespace CAT.Controllers.MvcControllers
 {
     public class JobsController : Controller
     {

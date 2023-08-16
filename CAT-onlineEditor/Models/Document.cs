@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace CATWeb.Models
+namespace CAT.Models
 {
     [Table("Documents")]
     public class Document

@@ -1,9 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using CATWeb.Data;
-using CATWeb.Models;
-using CATWeb.Services.CAT;
-using CATWeb.Services.MT;
+using CAT.Data;
+using CAT.Models;
+using CAT.Services.CAT;
+using CAT.Services.MT;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using System.Configuration;
 using Microsoft.Extensions.Caching.Memory;
@@ -11,15 +11,15 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.AspNetCore.Identity;
-using CATWeb.Areas.Identity.Data;
+using CAT.Areas.Identity.Data;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using CATWeb.Services;
-using CATWeb.Configuration;
+using CAT.Services;
+using CAT.Configuration;
 using AutoMapper;
 using log4net;
 using System.Reflection;
-using CATWeb.Infrastructure.Logging;
+using CAT.Infrastructure.Logging;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<CATWebContext>(options =>
@@ -32,12 +32,12 @@ builder.Services.AddDbContext<IdentityDbContext>(options =>
 builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<JwtService>();
 builder.Services.AddScoped<JobService>();
+builder.Services.AddScoped<CATClientService>();
 builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
 
 // Add Razor Pages (needed for Identity)
 builder.Services.AddRazorPages();
 
-builder.Services.AddScoped<CATClientService>();
 builder.Services.TryAddEnumerable(new[]
     {
         // Type-based services

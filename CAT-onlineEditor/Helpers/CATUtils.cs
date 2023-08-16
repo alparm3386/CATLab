@@ -1,5 +1,5 @@
-﻿using BU;
-using CATWeb.Enums;
+﻿using CAT.Helpers;
+using CAT.Enums;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Xml;
 
-namespace CATWeb.Helpers
+namespace CAT.Helpers
 {
     public class CATUtils
     {

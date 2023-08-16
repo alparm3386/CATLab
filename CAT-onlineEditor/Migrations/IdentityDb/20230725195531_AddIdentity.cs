@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace CATWeb.Migrations.IdentityDb
+namespace CAT.Migrations.IdentityDb
 {
     public partial class AddIdentity : Migration
     {

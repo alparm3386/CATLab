@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
-using CATWeb.Services;
+using CAT.Services;
 
-namespace CATWeb.Controllers.ApiControllers
+namespace CAT.Controllers.ApiControllers
 {
     [Route("api/[controller]")]
     [ApiController]

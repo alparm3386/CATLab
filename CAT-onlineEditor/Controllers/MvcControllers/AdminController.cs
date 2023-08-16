@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace CATWeb.Controllers.MvcControllers
+namespace CAT.Controllers.MvcControllers
 {
     public class AdminController : Controller
     {

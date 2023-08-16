@@ -13,9 +13,9 @@ using System.Xml;
 using CAT.Enums;
 using CAT.Services.MT;
 using Microsoft.Extensions.Options;
-using CATWeb.Models.CAT;
-using Statistics = CATWeb.Models.CAT.Statistics;
-using TMAssignment = CATWeb.Models.CAT.TMAssignment;
+using CAT.Models.CAT;
+using Statistics = CAT.Models.CAT.Statistics;
+using TMAssignment = CAT.Models.CAT.TMAssignment;
 using AutoMapper;
 using System.Security.AccessControl;
 using Microsoft.CodeAnalysis.Differencing;
@@ -28,7 +28,7 @@ using CAT.Helpers;
 using Microsoft.EntityFrameworkCore;
 using CAT.Models.Entities.TranslationUnits;
 
-namespace CATWeb.Services.CAT
+namespace CAT.Services.CAT
 {
     public class CATConnector
     {

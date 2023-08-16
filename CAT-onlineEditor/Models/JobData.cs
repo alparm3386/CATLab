@@ -1,6 +1,6 @@
-﻿using CATWeb.Models.CAT;
+﻿using CAT.Models.CAT;
 
-namespace CATWeb.Models
+namespace CAT.Models
 {
     public class JobData
     {

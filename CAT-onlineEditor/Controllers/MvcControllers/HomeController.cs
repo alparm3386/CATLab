@@ -1,9 +1,9 @@
-﻿using CATWeb.Models;
-using CATWeb.Models.ViewModels;
+﻿using CAT.Models;
+using CAT.Models.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
-namespace CATWeb.Controllers.MvcControllers
+namespace CAT.Controllers.MvcControllers
 {
     public class HomeController : Controller
     {

@@ -2,14 +2,14 @@
 using CAT.Areas.Identity.Data;
 using CAT.Data;
 using CATService;
-using CATWeb.Controllers.ApiControllers;
-using CATWeb.Models;
+using CAT.Controllers.ApiControllers;
+using CAT.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 using System.Diagnostics;
 using static ICSharpCode.SharpZipLib.Zip.ZipEntryFactory;
 
-namespace CATWeb.Services.CAT
+namespace CAT.Services.CAT
 {
     public class JobService
     {

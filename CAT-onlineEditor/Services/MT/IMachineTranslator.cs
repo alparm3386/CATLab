@@ -1,4 +1,4 @@
-﻿namespace CATWeb.Services.MT
+﻿namespace CAT.Services.MT
 {
     public interface IMachineTranslator
     {

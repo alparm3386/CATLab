@@ -6,7 +6,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 
-namespace CATWeb.Services
+namespace CAT.Services
 {
     public class JwtService
     {

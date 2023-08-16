@@ -1,4 +1,4 @@
-﻿namespace CATWeb.Enums
+﻿namespace CAT.Enums
 {
     public enum OEMode
     {

@@ -5,7 +5,7 @@ using System.Reflection;
 using log4net;
 using log4net.Repository;
 
-namespace CATWeb.Infrastructure.Logging
+namespace CAT.Infrastructure.Logging
 {
     public class Log4NetLoggerProvider : ILoggerProvider
     {

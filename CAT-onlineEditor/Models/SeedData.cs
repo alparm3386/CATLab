@@ -1,7 +1,7 @@
-﻿using CATWeb.Data;
+﻿using CAT.Data;
 using Microsoft.EntityFrameworkCore;
 
-namespace CATWeb.Models
+namespace CAT.Models
 {
     public class SeedData
     {
