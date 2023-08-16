@@ -48,7 +48,7 @@ namespace CAT.Controllers.MvcControllers
 
             var jobs = await _mainDbContext.Jobs.Include(j => j.Quote).Include(j => j.Order).ToListAsync();
 
-            var jobsViewModels = new List<JobsViewModel>();
+            var jobsViewModels = new List<JobViewModel>();
             return _mainDbContext.Jobs != null ?
                         View(jobsViewModels) :
                         Problem("Entity set 'CATWebContext.Job'  is null.");

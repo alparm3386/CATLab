@@ -1,4 +1,4 @@
-﻿@model Job
+﻿@model JobViewModel
 
 @{
     ViewData["Title"] = "Edit";
@@ -17,11 +17,6 @@
                 <label asp-for="OriginalFileName" class="control-label"></label>
                 <input asp-for="OriginalFileName" class="form-control" />
                 <span asp-validation-for="OriginalFileName" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="FileName" class="control-label"></label>
-                <input asp-for="FileName" class="form-control" />
-                <span asp-validation-for="FileName" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="DateCreated" class="control-label"></label>
