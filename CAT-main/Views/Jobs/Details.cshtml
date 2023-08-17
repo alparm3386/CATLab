@@ -4,6 +4,36 @@
     ViewData["Title"] = "Details";
 }
 
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $("#processJobBtn").click(function () {
+                var jobId = $(this).data("job-id");
+                var token = $('meta[name="XSRF-TOKEN"]').attr('content');
+
+                $.ajax({
+                    url: '/Jobs/ProcessJob',
+                    type: 'POST',
+                    headers: {
+                        "XSRF-TOKEN": token
+                    },
+                    data: { id: jobId },
+                    success: function (response) {
+                        if (response.success) {
+                            alert(response.message);  // Show a success message.
+                        } else {
+                            alert(response.message);  // Show an error message.
+                        }
+                    },
+                    error: function () {
+                        alert('An error occurred while processing the job.');
+                    }
+                });
+            });
+        });
+    </script>
+}
+
 <h1>Details</h1>
 
 <div>
@@ -35,6 +65,11 @@
             @Html.DisplayFor(model => model.Fee)
         </dd>
     </dl>
+
+    <div class="form-group">
+        <button id="processJobBtn" class="btn btn-primary" data-job-id="@Model?.Id">Process Job</button>
+    </div>
+
 </div>
 <div>
     <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |

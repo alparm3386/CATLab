@@ -36,22 +36,36 @@ namespace CAT.Controllers.MvcControllers
         // GET: Jobs
         public async Task<IActionResult> Index()
         {
-            // Check if TempData contains the ErrorMessage
-            if (TempData.ContainsKey("ErrorMessage"))
+            try
             {
-                // Retrieve the error message from TempData and store it in a ViewBag
-                ViewBag.ErrorMessage = TempData["ErrorMessage"] as string;
+                // Check if TempData contains the ErrorMessage
+                if (TempData.ContainsKey("ErrorMessage"))
+                {
+                    // Retrieve the error message from TempData and store it in a ViewBag
+                    ViewBag.ErrorMessage = TempData["ErrorMessage"] as string;
 
-                // Clear the TempData entry to prevent the message from persisting across additional requests
-                TempData.Remove("ErrorMessage");
+                    // Clear the TempData entry to prevent the message from persisting across additional requests
+                    TempData.Remove("ErrorMessage");
+                }
+
+                var jobsViewModels = (from job in _mainDbContext.Jobs
+                                         join document in _mainDbContext.Documents on job.SourceDocumentId equals document.Id
+                                         select new JobViewModel
+                                         {
+                                            Id = job.Id,
+                                            Analysis = "",
+                                            DateCreated = job.Order.DateCreated,
+                                            DateProcessed = job.DateProcessed,
+                                            Fee = job.Quote.Fee,
+                                            OriginalFileName = document.OriginalFileName
+                                         }).ToList();
+
+                return View(jobsViewModels);
             }
-
-            var jobs = await _mainDbContext.Jobs.Include(j => j.Quote).Include(j => j.Order).ToListAsync();
-
-            var jobsViewModels = new List<JobViewModel>();
-            return _mainDbContext.Jobs != null ?
-                        View(jobsViewModels) :
-                        Problem("Entity set 'CATWebContext.Job'  is null.");
+            catch (Exception ex)
+            {
+                return Problem(ex.Message);
+            }
         }
 
         // GET: Jobs/Details/5
@@ -62,14 +76,25 @@ namespace CAT.Controllers.MvcControllers
                 return NotFound();
             }
 
-            var job = await _mainDbContext.Jobs
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (job == null)
+            var jobsViewModels = (from job in _mainDbContext.Jobs
+                                  join document in _mainDbContext.Documents on job.SourceDocumentId equals document.Id
+                                  where job.Id == id
+                                  select new JobViewModel
+                                  {
+                                      Id = job.Id,
+                                      Analysis = "",
+                                      DateCreated = job.Order.DateCreated,
+                                      DateProcessed = job.DateProcessed,
+                                      Fee = job.Quote.Fee,
+                                      OriginalFileName = document.OriginalFileName
+                                  }).FirstOrDefault();
+
+            if (jobsViewModels == null)
             {
                 return NotFound();
             }
 
-            return View(job);
+            return View(jobsViewModels);
         }
 
         // GET: Jobs/Create
@@ -300,5 +325,29 @@ namespace CAT.Controllers.MvcControllers
             }
 
         }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ProcessJob(int? id)
+        {
+            if (id == null)
+            {
+                return Json(new { success = false, message = "Invalid job ID." });
+            }
+
+            // Your job processing logic goes here. This is just a placeholder.
+            // For example:
+            var job = await _mainDbContext.Jobs.FindAsync(id);
+            if (job == null)
+            {
+                return Json(new { success = false, message = "Job not found." });
+            }
+
+            // Do some processing with the job...
+            // ...
+
+            return Json(new { success = true, message = "Job processed successfully." });
+        }
+
     }
 }

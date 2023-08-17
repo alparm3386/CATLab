@@ -11,12 +11,15 @@ namespace CAT.Models.ViewModels
         public string? OriginalFileName { get; set; }
 
         [DisplayName("Date Created")]
-        public DateTime DateCreated { get; set; }
+        public DateTime? DateCreated { get; set; }
+
+        [DisplayName("Date Processed")]
+        public DateTime? DateProcessed { get; set; }
 
         [DisplayName("Analysis")]
         public string? Analysis { get; set; }
 
-        [DisplayName("Fee ($)")]
+        [DisplayName("Fee (£)")]
         public double Fee { get; set; }
     }
 }
