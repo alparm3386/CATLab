@@ -457,6 +457,9 @@ namespace CAT.Services.CAT
                     _translationUnitsDbContext.TranslationUnit.AddRange(lstTus);
                     // Save changes in the context to the database
                     _translationUnitsDbContext.SaveChanges();
+
+                    job.DateProcessed = DateTime.Now;
+                    _mainDbContext.SaveChanges();
                 }
             }
             catch (Exception ex)

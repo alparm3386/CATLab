@@ -14,6 +14,7 @@ using CAT.Helpers;
 using CAT.Models.Entities.Main;
 using CAT.Enums;
 using CAT.Models.ViewModels;
+using CAT.Services.CAT;
 
 namespace CAT.Controllers.MvcControllers
 {
@@ -23,14 +24,16 @@ namespace CAT.Controllers.MvcControllers
         private readonly MainDbContext _mainDbContext;
         private readonly TranslationUnitsDbContext _translationUnitsDbContext;
         private readonly IConfiguration _configuration;
+        private readonly JobService _jobService;
 
         public JobsController(IdentityDbContext identityDBContext, MainDbContext mainDbContext, TranslationUnitsDbContext translationUnitsDbContext,
-            IConfiguration configuration)
+            IConfiguration configuration, JobService jobService)
         {
             _identityDBContext = identityDBContext;
             _mainDbContext = mainDbContext;
             _translationUnitsDbContext = translationUnitsDbContext;
             _configuration = configuration;
+            _jobService = jobService;
         }
 
         // GET: Jobs
@@ -328,23 +331,23 @@ namespace CAT.Controllers.MvcControllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Route("Jobs/ProcessJob")] // explicit routing
         public async Task<IActionResult> ProcessJob(int? id)
         {
             if (id == null)
-            {
-                return Json(new { success = false, message = "Invalid job ID." });
-            }
+                return Problem("Invalid job ID.");
 
-            // Your job processing logic goes here. This is just a placeholder.
-            // For example:
-            var job = await _mainDbContext.Jobs.FindAsync(id);
-            if (job == null)
+            try
             {
-                return Json(new { success = false, message = "Job not found." });
+                await Task.Run(() =>
+                {
+                    _jobService.ProcessJob((int)id);
+                });
             }
-
-            // Do some processing with the job...
-            // ...
+            catch (Exception ex)
+            {
+                return Problem(title: "An error occurred while processing the job.");
+            }
 
             return Json(new { success = true, message = "Job processed successfully." });
         }

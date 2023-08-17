@@ -9,7 +9,9 @@
         $(document).ready(function () {
             $("#processJobBtn").click(function () {
                 var jobId = $(this).data("job-id");
-                var token = $('meta[name="XSRF-TOKEN"]').attr('content');
+                //var token = $('meta[name="XSRF-TOKEN"]').attr('content');
+                var token = $('input[name="__RequestVerificationToken"]').val();
+
 
                 $.ajax({
                     url: '/Jobs/ProcessJob',

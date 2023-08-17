@@ -7,6 +7,8 @@ using CAT.Infrastructure.Logging;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using CAT.Services.CAT;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+using CAT.Services.MT;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -30,6 +32,14 @@ builder.Services.AddScoped<JobService>();
 builder.Services.AddScoped<CATConnector>();
 builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
 
+builder.Services.AddAntiforgery(options => options.HeaderName = "XSRF-TOKEN");
+
+builder.Services.TryAddEnumerable(new[]
+    {
+        // Type-based services
+        ServiceDescriptor.Singleton<IMachineTranslator, MMT>(),
+        //ServiceDescriptor.Singleton<IMachineTranslator, MachineTranslator2>(),
+    });
 
 builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddEntityFrameworkStores<IdentityDbContext>();
