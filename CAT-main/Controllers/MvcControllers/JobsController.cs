@@ -118,6 +118,20 @@ namespace CAT.Controllers.MvcControllers
                         }
                     }
 
+                    //create doc
+                    var document = new Document()
+                    {
+                        OriginalFileName = file.FileName,
+                        FileName = fileName,
+                        FilterId = -1,
+                        DocumentType = 0,
+                        AnalisysId = -1
+                    };
+
+                    // Save the job
+                    _mainDbContext.Documents.Add(document);
+                    await _mainDbContext.SaveChangesAsync();
+
                     var quote = new Quote()
                     {
                         SourceLanguage = "en",
@@ -127,21 +141,26 @@ namespace CAT.Controllers.MvcControllers
                         Specility = 0
                     };
 
-                    var job = new Job()
-                    {
-                        Quote = quote
-                    };
-
                     var order = new Order()
                     {
                         DateCreated = DateTime.Now,
                         ClientId = 0,
                     };
 
-                    order.Jobs.Add(job);
+                    var job = new Job()
+                    {
+                        Quote = quote,
+                        Order = order,
+                        SourceDocumentId = document.Id
+                    };
 
+                    //Save the order
+                    _mainDbContext.Orders.Add(order);
 
-                    // Save the job object to the database
+                    //Save the quote
+                    _mainDbContext.Quotes.Add(quote);
+
+                    // Save the job
                     _mainDbContext.Jobs.Add(job);
                     await _mainDbContext.SaveChangesAsync();
                     return RedirectToAction(nameof(Index));

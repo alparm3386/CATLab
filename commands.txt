@@ -1,0 +1,2 @@
+dotnet ef migrations add modelUpdate --context MainDbContext
+dotnet ef database update --context MainDbContext
