@@ -19,12 +19,18 @@ using AutoMapper;
 using log4net;
 using System.Reflection;
 using CAT.Infrastructure.Logging;
+using CAT.Areas.Identity.Data;
+using Microsoft.Extensions.Hosting;
 
 var builder = WebApplication.CreateBuilder(args);
+
+
+builder.Services.AddDbContext<IdentityDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("IdentityDbConnection") ?? throw new InvalidOperationException("Connection string 'IdentityDbConnection' not found.")));
 builder.Services.AddDbContext<MainDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("MainDbConnection") ?? throw new InvalidOperationException("Connection string 'CATWebContext' not found.")));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("MainDbConnection") ?? throw new InvalidOperationException("Connection string 'MainDbConnection' not found.")));
 builder.Services.AddDbContext<TranslationUnitsDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("TranslationUnitsDbConnection") ?? throw new InvalidOperationException("Connection string 'CATWebContext' not found.")));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("TranslationUnitsDbConnection") ?? throw new InvalidOperationException("Connection string 'TranslationUnitsDbConnection' not found.")));
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
@@ -33,6 +39,8 @@ builder.Services.AddScoped<JobService>();
 builder.Services.AddScoped<CATConnector>();
 builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
 
+builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+    .AddEntityFrameworkStores<IdentityDbContext>();
 // Add Razor Pages (needed for Identity)
 builder.Services.AddRazorPages();
 
@@ -70,6 +78,7 @@ builder.Services.AddAuthentication(options =>
 builder.Logging.AddProvider(new Log4NetLoggerProvider("log4net.config"));
 
 var app = builder.Build();
+var logger = app.Services.GetRequiredService<ILogger<Program>>();
 
 using (var scope = app.Services.CreateScope())
 {
@@ -110,5 +119,16 @@ app.MapControllerRoute(
 
 // Add endpoint routing for Razor pages
 app.MapRazorPages();
+
+app.Use(async (context, next) =>
+{
+    logger.LogInformation($"Incoming request: {context.Request.Method} {context.Request.Path}");
+
+    // Continue processing
+    await next.Invoke();
+
+    // After the response
+    logger.LogInformation($"Response: {context.Response.StatusCode}");
+});
 
 app.Run();
