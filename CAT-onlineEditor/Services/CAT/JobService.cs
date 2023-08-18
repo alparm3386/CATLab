@@ -15,7 +15,8 @@ namespace CAT.Services.CAT
 {
     public class JobService
     {
-        private readonly CATWebContext _context;
+        private readonly MainDbContext _mainDbContext;
+        private readonly TranslationUnitsDbContext _translationUnitsDbContext;
         private readonly IConfiguration _configuration;
         private readonly CATClientService _catClientService;
         private readonly IMemoryCache _cache;
@@ -23,10 +24,11 @@ namespace CAT.Services.CAT
         private readonly ILogger _logger;
 
 
-        public JobService(CATWebContext context, IConfiguration configuration,
+        public JobService(MainDbContext mainDbContext, TranslationUnitsDbContext translationUnitsDbContext, IConfiguration configuration,
             CATClientService catClientService, IMemoryCache cache, IMapper mapper, ILogger<JobService> logger)
         {
-            _context = context;
+            _mainDbContext = mainDbContext;
+            _translationUnitsDbContext = translationUnitsDbContext;
             _configuration = configuration;
             _catClientService = catClientService;
             _cache = cache;
@@ -36,9 +38,9 @@ namespace CAT.Services.CAT
 
         public async Task<JobData> GetJobData(int idJob)
         {
-            var job = await _context.Job.FindAsync(idJob);
+            var job = await _mainDbContext.Jobs.FindAsync(idJob);
 
-            using (var transaction = _context.Database.BeginTransaction())
+            using (var transaction = _mainDbContext.Database.BeginTransaction())
             {
                 try
                 {
@@ -50,7 +52,7 @@ namespace CAT.Services.CAT
                         job!.DateProcessed = DateTime.Now;
 
                         // Save changes in the database
-                        await _context.SaveChangesAsync();
+                        await _mainDbContext.SaveChangesAsync();
 
                         transaction.Commit();
                     }
@@ -64,9 +66,8 @@ namespace CAT.Services.CAT
             }
 
             //load the translation units
-            var translationUnits = await _context.TranslationUnit
-                             .Where(tu => tu.idJob == idJob)
-                             .ToListAsync();
+            var translationUnits = await _translationUnitsDbContext.TranslationUnit
+                             .Where(tu => tu.idJob == idJob).OrderBy(tu => tu.tuid).ToListAsync();
 
             var translationUnitDTOs = _mapper.Map<TranslationUnitDTO[]>(translationUnits);
             foreach (var tu in translationUnitDTOs)
@@ -164,10 +165,10 @@ namespace CAT.Services.CAT
             tuDto.target = sTarget;
             List<int> aRet = new List<int>();
             //save the translated segment
-            using (var dbContext = _context)
+            using (var dbContext = _translationUnitsDbContext)
             {
                 var tu = _mapper.Map<TranslationUnit>(tuDto);
-                _context.TranslationUnit.Update(tu);
+                _translationUnitsDbContext.TranslationUnit.Update(tu);
 
                 //do the auto-propagation
                 if (propagate > 0 && propagate < 3 && bConfirmed)
@@ -182,11 +183,11 @@ namespace CAT.Services.CAT
                         var tmpTu = _mapper.Map<TranslationUnit>(tu);
                         //update the segment
                         tmpTu.status = bConfirmed ? tu.status | mask : tu.status & ~mask;
-                        _context.TranslationUnit.Update(tmpTu);
+                        _translationUnitsDbContext.TranslationUnit.Update(tmpTu);
                     }
                 }
 
-                _context.SaveChanges();
+                _translationUnitsDbContext.SaveChanges();
             }
 
             //update the progress

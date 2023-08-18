@@ -27,12 +27,15 @@ using Microsoft.CodeAnalysis.Differencing;
 using ICSharpCode.SharpZipLib.Tar;
 using Newtonsoft.Json;
 using CAT.Models.Entities;
+using CAT.Areas.Identity.Data;
 
 namespace CAT.Services.CAT
 {
-    public class CATClientService
+    public class CATConnector
     {
-        private readonly CATWebContext _context;
+        private readonly IdentityDbContext _identityDBContext;
+        private readonly MainDbContext _mainDbContext;
+        private readonly TranslationUnitsDbContext _translationUnitsDbContext;
         private readonly IConfiguration _configuration;
         private readonly IEnumerable<IMachineTranslator> _machineTranslators;
         private readonly IMapper _mapper;
@@ -43,10 +46,12 @@ namespace CAT.Services.CAT
         /// <summary>
         /// CATClientService
         /// </summary>
-        public CATClientService(CATWebContext context, IConfiguration configuration, 
-            IEnumerable<IMachineTranslator> machineTranslators, IMapper mapper, ILogger<CATClientService> logger)
+        public CATConnector(IdentityDbContext identityDBContext, MainDbContext mainDbContext, TranslationUnitsDbContext translationUnitsDbContext,
+            IConfiguration configuration, IEnumerable<IMachineTranslator> machineTranslators, IMapper mapper, ILogger<CATConnector> logger)
         {
-            _context = context;
+            _identityDBContext = identityDBContext;
+            _mainDbContext = mainDbContext;
+            _translationUnitsDbContext = translationUnitsDbContext;
             _configuration = configuration;
             _machineTranslators = machineTranslators;
             _mapper = mapper;
@@ -287,183 +292,6 @@ namespace CAT.Services.CAT
         public static String GetParseDocLockString(int idJob)
         {
             return "ParseDoc_" + idJob.ToString();
-        }
-
-        public void ParseDoc(int idJob)
-        {
-            if (IsLocked(String.Intern(GetParseDocLockString(idJob))))
-                throw new Exception("Translation is locked: " + idJob.ToString());
-
-            int nIdx = 1;
-            List<String> filesToDelete = new List<String>();
-            int iThreshold = 100;
-
-            try
-            {
-                lock (String.Intern(GetParseDocLockString(idJob))) //lock on the job id
-                {
-
-                    //get the translation details
-                    var job = _context.Job.Find(idJob);
-
-                    //check if it is parsed already
-                    if (job?.DateProcessed != null)
-                        throw new Exception("Already processed.");
-
-                    //Get the document
-                    var sourceFilesFolder = Path.Combine(_configuration["SourceFilesFolder"]);
-                    string filePath = Path.Combine(sourceFilesFolder, job.FileName!);
-                    var fileFiltersFolder = Path.Combine(_configuration["FileFiltersFolder"]);
-
-                    //get the filter
-                    string filterPath = "";
-                    if (!String.IsNullOrEmpty(job.FilterName))
-                        filterPath = Path.Combine(sourceFilesFolder, job.FilterName);
-
-                    var jobDataFolder = CATUtils.GetJobDataFolder(idJob, _configuration["JobDataBaseFolder"]);
-
-                    //var aContentForMT = new List<MTContent>();
-
-                    String sXlifFilePath = CATUtils.CreateXlfFilePath(idJob, DocumentType.original, _configuration["JobDataBaseFolder"]); //we do a backup of the original xliff
-
-                    //pre-process the document
-                    String tmpFilePath = null;// DocumentProcessor.PreProcessDocument(sFilePath, idFilter, idFrom, idTo);
-                    if (tmpFilePath != null)
-                    {
-                        filePath = tmpFilePath;
-                        filesToDelete.Add(tmpFilePath);
-                    }
-
-                    if (CATUtils.IsCompressedMemoQXliff(filePath))
-                    {
-                        filePath = CATUtils.ExtractMQXlz(filePath, _configuration["TempFolder"]);
-                        filesToDelete.Add(filePath);
-                    }
-
-                    //get the TMs
-                    //TMSetting[] tmSettings = GetTMSettings(idProfile, idFrom, idTo, sSpeciality, true);
-                    CreateXliffFromDocument(jobDataFolder, Path.GetFileName(sXlifFilePath), filePath, filterPath,
-                        job.SourceLang, job.TargetLang, iThreshold);
-
-                    //parse the xliff file
-                    var Xliff = new XmlDocument();
-                    Xliff.PreserveWhitespace = true;
-                    Xliff.Load(sXlifFilePath);
-                    var xmlnsManager = new XmlNamespaceManager(Xliff.NameTable);
-                    xmlnsManager.AddNamespace("x", Xliff.DocumentElement.NamespaceURI);
-
-                    var tus = Xliff.GetElementsByTagName("trans-unit");
-
-                    var lstTus = new List<TranslationUnit>();
-                    foreach (XmlNode tu in tus)
-                    {
-                        var tuId = tu.Attributes["id"].Value;
-                        var targetNode = tu["target"];
-                        XmlNodeList? sourceSegments = null;
-                        var ssNode = tu["seg-source"];
-
-                        if (ssNode == null)
-                            sourceSegments = tu.SelectNodes("x:source", xmlnsManager);
-                        else
-                            sourceSegments = ssNode.SelectNodes("x:mrk", xmlnsManager);
-
-                        foreach (XmlNode sourceSegment in sourceSegments!)
-                        {
-                            var translationUnit = new TranslationUnit();
-                            translationUnit.tuid = nIdx;
-                            translationUnit.idJob = idJob;
-
-                            if (CATUtils.IsSegmentEmptyOrWhiteSpaceOnly(sourceSegment.InnerXml.Trim()))
-                                continue;
-
-                            var mid = "-1";
-                            if (sourceSegment.Name == "mrk")
-                                mid = sourceSegment.Attributes["mid"].Value;
-                            var source = sourceSegment.InnerXml.Trim();
-
-                            int matchQuality = 0;
-                            bool bEdited = false;
-                            //get the translation
-                            var statusAttr = sourceSegment.Attributes["status"];
-                            if (statusAttr != null && (statusAttr.Value == "tmEdited" ||
-                                statusAttr.Value.StartsWith("tmPreTranslated")))
-                            {
-                                bEdited = true;
-                                if (statusAttr.Value.StartsWith("tmPreTranslated"))
-                                {
-                                    var val = Regex.Match(statusAttr.Value, "\\d+").Value;
-                                    int.TryParse(val, out matchQuality);
-                                }
-                            }
-
-                            /*bool bLockForTranslators = (segmentLock & 0x1) > 0 && matchQuality >= 100 ||
-                                (segmentLock & 0x1000) > 0 && matchQuality >= 101;
-                            bool bLockForRevisers = (segmentLock & 0x10) > 0 && matchQuality >= 101 ||
-                                (segmentLock & 0x100) > 0 && matchQuality >= 100;
-                            if (sourceSegment.Attributes["translate"] != null && sourceSegment.Attributes["translate"].Value == "no")
-                                bLockForTranslators = bLockForRevisers = true;*/
-
-                            translationUnit.source = CATUtils.XliffSegmentToCodedText(source);
-
-                            XmlNode? targetSegment = null;
-                            if (sourceSegment.Name == "mrk")
-                                targetSegment = targetNode.SelectSingleNode("x:mrk[@mid=" + mid + "]", xmlnsManager);
-                            else
-                                targetSegment = targetNode;
-                            if (matchQuality >= 100 || bEdited)
-                            {
-                                String sTarget = CATUtils.XmlTags2GoogleTags(targetSegment!.InnerXml, CATUtils.TagType.Xliff); //we store the target text with google tags
-                                translationUnit.target = sTarget;
-                            }
-                            lstTus.Add(translationUnit);
-                            nIdx++;
-                        }
-                    }
-
-                    //machine translation
-                    var mmt = _machineTranslators.OfType<MMT>().First();
-
-                    //create translatables
-                    var translatables = lstTus.Select(tu => new Translatable
-                    {
-                        id = tu.tuid,
-                        source = CATUtils.CodedTextToTmx(tu.source),
-                        target = tu.target!
-                    }).ToList();
-
-                    //do the machine translation
-                    mmt.Translate(translatables, job.SourceLang, job.TargetLang, null);
-
-                    //populate the translation units with the machine translation
-                    Dictionary<int, Translatable> translatableDictionary = translatables.ToDictionary(t => t.id);
-                    lstTus.ForEach(tu =>
-                    {
-                        if (translatableDictionary.TryGetValue(tu.tuid, out var translatable))
-                        {
-                            String targetWithGoogleTags = CATUtils.XmlTags2GoogleTags(translatable.target, CATUtils.TagType.Tmx); //we store the target text with google tags
-                            tu.target = targetWithGoogleTags;
-                        }
-                    });
-
-                    //save the machine translation into the original xliff
-                    Xliff.Save(sXlifFilePath);
-
-                    // Add the array of TranslationUnit objects to the DbSet
-                    _context.TranslationUnit.AddRange(lstTus);
-                    // Save changes in the context to the database
-                    _context.SaveChanges();
-                }
-            }
-            catch (Exception ex)
-            {
-                throw;
-            }
-            finally
-            {
-                //clean-up
-                foreach (var tmpFileName in filesToDelete)
-                    File.Delete(tmpFileName);
-            }
         }
 
         public TMMatch[] GetTMMatches(TMAssignment[] aTMAssignments, string sSourceXml, string sPrevXml, string sNextXml, string sContextID)

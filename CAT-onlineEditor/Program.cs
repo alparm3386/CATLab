@@ -11,7 +11,6 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.AspNetCore.Identity;
-using CAT.Areas.Identity.Data;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using CAT.Services;
@@ -22,17 +21,16 @@ using System.Reflection;
 using CAT.Infrastructure.Logging;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.Services.AddDbContext<CATWebContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("CATWebContext") ?? throw new InvalidOperationException("Connection string 'CATWebContext' not found.")));
-
-builder.Services.AddDbContext<IdentityDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("IdentityDbContext") ?? throw new InvalidOperationException("Connection string 'IdentityDbContext' not found.")));
+builder.Services.AddDbContext<MainDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("MainDbConnection") ?? throw new InvalidOperationException("Connection string 'CATWebContext' not found.")));
+builder.Services.AddDbContext<TranslationUnitsDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("TranslationUnitsDbConnection") ?? throw new InvalidOperationException("Connection string 'CATWebContext' not found.")));
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<JwtService>();
 builder.Services.AddScoped<JobService>();
-builder.Services.AddScoped<CATClientService>();
+builder.Services.AddScoped<CATConnector>();
 builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
 
 // Add Razor Pages (needed for Identity)
@@ -44,9 +42,6 @@ builder.Services.TryAddEnumerable(new[]
         ServiceDescriptor.Singleton<IMachineTranslator, MMT>(),
         //ServiceDescriptor.Singleton<IMachineTranslator, MachineTranslator2>(),
     });
-
-builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
-    .AddEntityFrameworkStores<IdentityDbContext>();
 
 builder.Services.AddSession();
 builder.Services.AddMemoryCache();

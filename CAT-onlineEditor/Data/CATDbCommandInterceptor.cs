@@ -16,5 +16,4 @@ namespace CAT.Data
             return base.ReaderExecuting(command, eventData, result);
         }
     }
-
 }
