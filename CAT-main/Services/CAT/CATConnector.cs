@@ -178,8 +178,6 @@ namespace CAT.Services.CAT
 
                 var client = GetCATService();
 
-                //var aTMSettings = GetTMSettings(1044, idFromLng, aIdTargetLangs, sSpeciality, false);
-
                 if (CATUtils.IsCompressedMemoQXliff(sFilePath))
                 {
                     sFilePath = CATUtils.ExtractMQXlz(sFilePath, _configuration["TempFolder"]);
@@ -344,28 +342,29 @@ namespace CAT.Services.CAT
 
                     if (CATUtils.IsCompressedMemoQXliff(filePath))
                     {
-                        filePath = CATUtils.ExtractMQXlz(filePath, _configuration["TempFolder"]);
+                        filePath = CATUtils.ExtractMQXlz(filePath, _configuration["TempFolder"]!);
                         filesToDelete.Add(filePath);
                     }
 
                     //get the TMs
-                    //TMSetting[] tmSettings = GetTMSettings(idProfile, idFrom, idTo, sSpeciality, true);
+                    var aTMAssignments = GetTMAssignments(job!.Order!.ClientId, job!.Quote!.SourceLanguage!, job!.Quote!.TargetLanguage!, 
+                        job.Quote.Speciality, true);
                     CreateXliffFromDocument(jobDataFolder, Path.GetFileName(sXlifFilePath), filePath, filterPath,
                         job!.Quote!.SourceLanguage!, job!.Quote!.TargetLanguage!, iThreshold);
 
                     //parse the xliff file
-                    var Xliff = new XmlDocument();
-                    Xliff.PreserveWhitespace = true;
-                    Xliff.Load(sXlifFilePath);
-                    var xmlnsManager = new XmlNamespaceManager(Xliff.NameTable);
-                    xmlnsManager.AddNamespace("x", Xliff.DocumentElement.NamespaceURI);
+                    var xliff = new XmlDocument();
+                    xliff.PreserveWhitespace = true;
+                    xliff.Load(sXlifFilePath);
+                    var xmlnsManager = new XmlNamespaceManager(xliff.NameTable);
+                    xmlnsManager.AddNamespace("x", xliff!.DocumentElement!.NamespaceURI);
 
-                    var tus = Xliff.GetElementsByTagName("trans-unit");
+                    var tus = xliff.GetElementsByTagName("trans-unit");
 
                     var lstTus = new List<TranslationUnit>();
                     foreach (XmlNode tu in tus)
                     {
-                        var tuId = tu.Attributes["id"].Value;
+                        var tuId = tu!.Attributes!["id"]!.Value;
                         var targetNode = tu["target"];
                         XmlNodeList? sourceSegments = null;
                         var ssNode = tu["seg-source"];
@@ -386,13 +385,13 @@ namespace CAT.Services.CAT
 
                             var mid = "-1";
                             if (sourceSegment.Name == "mrk")
-                                mid = sourceSegment.Attributes["mid"].Value;
+                                mid = sourceSegment!.Attributes!["mid"]!.Value;
                             var source = sourceSegment.InnerXml.Trim();
 
                             int matchQuality = 0;
                             bool bEdited = false;
                             //get the translation
-                            var statusAttr = sourceSegment.Attributes["status"];
+                            var statusAttr = sourceSegment!.Attributes!["status"];
                             if (statusAttr != null && (statusAttr.Value == "tmEdited" ||
                                 statusAttr.Value.StartsWith("tmPreTranslated")))
                             {
@@ -415,7 +414,7 @@ namespace CAT.Services.CAT
 
                             XmlNode? targetSegment = null;
                             if (sourceSegment.Name == "mrk")
-                                targetSegment = targetNode.SelectSingleNode("x:mrk[@mid=" + mid + "]", xmlnsManager);
+                                targetSegment = targetNode!.SelectSingleNode("x:mrk[@mid=" + mid + "]", xmlnsManager);
                             else
                                 targetSegment = targetNode;
                             if (matchQuality >= 100 || bEdited)
@@ -454,7 +453,7 @@ namespace CAT.Services.CAT
                     });
 
                     //save the machine translation into the original xliff
-                    Xliff.Save(sXlifFilePath);
+                    xliff.Save(sXlifFilePath);
 
                     // Add the array of TranslationUnit objects to the DbSet
                     _translationUnitsDbContext.TranslationUnit.AddRange(lstTus);
@@ -477,7 +476,7 @@ namespace CAT.Services.CAT
             }
         }
 
-        public byte[] CreateDoc(int idJob)
+        public byte[] CreateDoc(int idJob, int userId, bool updateTM)
         {
             var lstFilesToDelete = new List<String>();
             try
@@ -516,7 +515,7 @@ namespace CAT.Services.CAT
                 {
                     if (CATUtils.IsCompressedMemoQXliff(filePath))
                     {
-                        filePath = CATUtils.ExtractMQXlz(filePath, _configuration["TempFolder"]);
+                        filePath = CATUtils.ExtractMQXlz(filePath, _configuration!["TempFolder"]);
                         lstFilesToDelete.Add(filePath);
                     }
 
@@ -526,6 +525,8 @@ namespace CAT.Services.CAT
                 }
 
                 //get the translated texts
+                var translationUnits = _translationUnitsDbContext.TranslationUnit
+                                 .Where(tu => tu.idJob == idJob).OrderBy(tu => tu.tuid).ToList();
 
                 //fill the xliff file with the translations
                 XmlDocument xlfFile = new XmlDocument();
@@ -535,24 +536,24 @@ namespace CAT.Services.CAT
                 xmlnsManager.AddNamespace("x", xlfFile.DocumentElement!.NamespaceURI);
                 var transUnits = xlfFile.SelectNodes("//x:trans-unit", xmlnsManager);
                 var tmEntries = new List<CATService.TMEntry>();
-                int nIdx = 1;
+                int tuid = 1;
                 foreach (XmlNode tu in transUnits!)
                 {
                     //var tuId = tu.Attributes["id"].Value;
                     var targetNode = tu["target"];
-                    XmlNodeList sourceSegments = null;
+                    XmlNodeList? sourceSegments = null;
                     var ssNode = tu["seg-source"];
                     if (ssNode == null)
                         sourceSegments = tu.SelectNodes("x:source", xmlnsManager);
                     else
                         sourceSegments = ssNode.SelectNodes("x:mrk", xmlnsManager);
-                    foreach (XmlNode sourceSegment in sourceSegments)
+                    foreach (XmlNode sourceSegment in sourceSegments!)
                     {
                         if (sourceSegment.InnerXml.Trim().Length == 0)
                         {
                             if (sourceSegment.Name == "mrk")
                             {
-                                var mid = sourceSegment!.Attributes!["mid"].Value;
+                                var mid = sourceSegment!.Attributes!["mid"]!.Value;
                                 var tmpSegment = targetNode!.SelectSingleNode("x:mrk[@mid=" + mid + "]", xmlnsManager);
                                 tmpSegment!.InnerXml = sourceSegment.InnerXml;
                             }
@@ -561,8 +562,8 @@ namespace CAT.Services.CAT
                             continue;
                         }
 
-                        String sStartingWhiteSpaces = Regex.Match(sourceSegment.InnerXml, @"^\s*").Value;
-                        String sEndingWhiteSpaces = Regex.Match(sourceSegment.InnerXml, @"\s*$").Value;
+                        var sStartingWhiteSpaces = Regex.Match(sourceSegment.InnerXml, @"^\s*").Value;
+                        var sEndingWhiteSpaces = Regex.Match(sourceSegment.InnerXml, @"\s*$").Value;
                         //confirm the segment
                         XmlAttribute attr = sourceSegment!.Attributes!["status"]!;
                         if (attr != null)
@@ -590,11 +591,9 @@ namespace CAT.Services.CAT
                             targetSegment = targetNode;
 
                         //get the translation
-                        DataRow[] dRows = dsTranslatedTexts.Tables[0].Select("sectionIdx=" + nIdx);
-                        if (dRows.Length == 0)
-                            throw new Exception("No translation was found for the specified segment");
+                        var dbTu = translationUnits[tuid - 1];
 
-                        String sTranslatedText = (String)dRows[0]["translatedText"];
+                        var sTranslatedText = dbTu.target;
 
                         //convert the tags
                         Dictionary<String, String> tagsMap = CATUtils.GetTagsMap(sourceSegment.InnerXml, CATUtils.TagType.Xliff);
@@ -608,16 +607,16 @@ namespace CAT.Services.CAT
                         tmEntry.target = CATUtils.XliffTags2TMXTags(sTranslatedText);
 
                         tmEntries.Add(tmEntry);
-                        nIdx++;
+                        tuid++;
                     }
                 }
 
-                if (dsTranslatedTexts.Tables[0].Rows.Count != nIdx - 1)
+                if (translationUnits.Count != tuid - 1)
                     throw new Exception("Segments don't match.");
 
 
                 //update the TMs
-                if (bUpdateTM)
+                if (updateTM)
                 {
                     //prepare the TM entries
                     for (int i = 0; i < tmEntries.Count; i++)
@@ -639,8 +638,8 @@ namespace CAT.Services.CAT
                     }
 
                     //update the TMs
-                    var TMs = GetTMSettings(translation.idProfile, idFrom, new int[] { idTo },
-                        translation.speciality, true);
+                    var TMs = GetTMAssignments(1044, job!.Quote!.SourceLanguage, new string[] { job!.Quote!.TargetLanguage! },
+                        job!.Quote!.Speciality, true);
                     foreach (var tm in TMs)
                     {
                         if (!tm.isReadonly)
@@ -748,24 +747,26 @@ namespace CAT.Services.CAT
                 File.WriteAllBytes(sOutFilePath, aOutFileBytes);
 
                 //post-process document
-                sOutFilePath = DocumentProcessor.PostProcessDocument(idTranslation, sOutFilePath);
+                sOutFilePath = DocumentProcessor.PostProcessDocument(idJob, sOutFilePath);
 
                 return sOutFilePath;
             }
             catch (Exception ex)
             {
-                DATA.cFailureMessages.SendDebugEmail("idTranslation: " + idTranslation +
-                    "\nCreateDoc Error: " + ex.ToString(), "CreateDoc error", "alpar.meszaros@translatemedia.com");
-                throw ex;
+                _logger.LogError("CreateDoc Error -> idJob: " + idJob + " " + ex.Message);
+                throw;
             }
             finally
             {
                 foreach (String sPath in lstFilesToDelete)
                     File.Delete(sPath);
-
-                oTM.CommitTransaction();
             }
+        }
+
+        private TMAssignment[] GetTMAssignments(int idCorporateProfile, string sourceLanguage, string[] targetLanguages, int speciality, bool createTM)
+        {
             return null;
         }
+
     }
 }

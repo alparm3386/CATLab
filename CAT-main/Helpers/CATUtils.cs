@@ -390,7 +390,7 @@ namespace CAT.Helpers
 
         public static String CodedTextToGoogleTags(string codedText)
         {
-            var tagsMap = GetTagsMap(codedText);
+            var tagsMap = GetCodesMap(codedText);
             var reversedTagsMap = tagsMap.ToDictionary(x => x.Value, x => x.Key);
 
             //create simple codes
@@ -417,7 +417,7 @@ namespace CAT.Helpers
             return tmp.ToString();
         }
 
-        public static Dictionary<int, int> GetTagsMap(String codedText)
+        public static Dictionary<int, int> GetCodesMap(String codedText)
         {
             var tagsMap = new Dictionary<int, int>();
             MatchCollection matches = Regex.Matches(codedText, @"{\s*(?<id>\d+)\s*}|{\s*/\s*(?<id>\d+)\s*}|{\s*(?<id>\d+)\s*/\s*}");

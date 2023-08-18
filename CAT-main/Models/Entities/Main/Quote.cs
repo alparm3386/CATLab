@@ -20,6 +20,6 @@ namespace CAT.Models.Entities.Main
         [System.Diagnostics.CodeAnalysis.MaybeNull]
         public string TargetLanguage { get; set; }
 
-        public int Specility { get; set; }
+        public int Speciality { get; set; }
     }
 }
