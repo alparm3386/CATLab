@@ -16,7 +16,7 @@ using CAT.Enums;
 using CAT.Models.ViewModels;
 using CAT.Services.CAT;
 
-namespace CAT.Controllers.MvcControllers
+namespace CAT.Controllers.Mvc
 {
     public class JobsController : Controller
     {

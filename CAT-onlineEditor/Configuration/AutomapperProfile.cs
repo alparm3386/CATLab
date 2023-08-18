@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using CAT.Models;
 using CAT.Models.Entities;
+using CAT.Models.Entities.TranslationUnits;
 
 namespace CAT.Configuration
 {

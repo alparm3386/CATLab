@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using CATService;
-using CAT.Controllers.ApiControllers;
+using CAT.Controllers.Api;
 using CAT.Data;
 using CAT.Enums;
 using CAT.Helpers;
@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 using System.Diagnostics;
 using static ICSharpCode.SharpZipLib.Zip.ZipEntryFactory;
+using CAT.Models.Entities.TranslationUnits;
 
 namespace CAT.Services.CAT
 {
@@ -18,14 +19,14 @@ namespace CAT.Services.CAT
         private readonly MainDbContext _mainDbContext;
         private readonly TranslationUnitsDbContext _translationUnitsDbContext;
         private readonly IConfiguration _configuration;
-        private readonly CATClientService _catClientService;
+        private readonly CATConnector _catClientService;
         private readonly IMemoryCache _cache;
         private readonly IMapper _mapper;
         private readonly ILogger _logger;
 
 
         public JobService(MainDbContext mainDbContext, TranslationUnitsDbContext translationUnitsDbContext, IConfiguration configuration,
-            CATClientService catClientService, IMemoryCache cache, IMapper mapper, ILogger<JobService> logger)
+            CATConnector catClientService, IMemoryCache cache, IMapper mapper, ILogger<JobService> logger)
         {
             _mainDbContext = mainDbContext;
             _translationUnitsDbContext = translationUnitsDbContext;
@@ -40,30 +41,9 @@ namespace CAT.Services.CAT
         {
             var job = await _mainDbContext.Jobs.FindAsync(idJob);
 
-            using (var transaction = _mainDbContext.Database.BeginTransaction())
-            {
-                try
-                {
-                    //check if the job was processed
-                    if (job?.DateProcessed == null)
-                    {
-                        //parse the document
-                        _catClientService.ParseDoc(idJob);
-                        job!.DateProcessed = DateTime.Now;
-
-                        // Save changes in the database
-                        await _mainDbContext.SaveChangesAsync();
-
-                        transaction.Commit();
-                    }
-                }
-                catch (Exception)
-                {
-                    // An error occurred, roll back the transaction
-                    transaction.Rollback();
-                    throw;
-                }
-            }
+            //check if the job was processed
+            if (job?.DateProcessed == null)
+                throw new Exception("The job has not been processed.");
 
             //load the translation units
             var translationUnits = await _translationUnitsDbContext.TranslationUnit
@@ -75,14 +55,8 @@ namespace CAT.Services.CAT
                 tu.isEditAllowed = true;
             }
 
-            var sourceFilesFolder = Path.Combine(_configuration["SourceFilesFolder"]);
-            var fileFiltersFolder = Path.Combine(_configuration["FileFiltersFolder"]);
-
-            var filePath = Path.Combine(sourceFilesFolder, job!.FileName!);
-            string? filterPath = null;
-            if (!String.IsNullOrEmpty(job.FilterName))
-                filterPath = Path.Combine(fileFiltersFolder, job.FilterName);
-
+            var sourceFilesFolder = Path.Combine(_configuration["SourceFilesFolder"]!);
+            var fileFiltersFolder = Path.Combine(_configuration["FileFiltersFolder"]!);
 
             var jobData = new JobData
             {

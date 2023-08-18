@@ -7,16 +7,17 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using CAT.Data;
 using CAT.Models.Entities;
+using CAT.Models.Entities.Main;
 
 namespace CAT.Pages
 {
     public class TestingPageModel : PageModel
     {
-        private readonly CAT.Data.CATWebContext _context;
+        private readonly MainDbContext _mainDbContext;
 
-        public TestingPageModel(CAT.Data.CATWebContext context)
+        public TestingPageModel(MainDbContext mainDbContext)
         {
-            _context = context;
+            _mainDbContext = mainDbContext;
         }
 
         public IActionResult OnGet()
@@ -31,13 +32,13 @@ namespace CAT.Pages
         // To protect from overposting attacks, see https://aka.ms/RazorPagesCRUD
         public async Task<IActionResult> OnPostAsync()
         {
-          if (!ModelState.IsValid || _context.Job == null || Job == null)
+          if (!ModelState.IsValid || _mainDbContext.Jobs == null || Job == null)
             {
                 return Page();
             }
 
-            _context.Job.Add(Job);
-            await _context.SaveChangesAsync();
+            _mainDbContext.Jobs.Add(Job);
+            await _mainDbContext.SaveChangesAsync();
 
             return RedirectToPage("./Index");
         }

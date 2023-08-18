@@ -20,20 +20,20 @@ using System.Web;
 using AutoMapper;
 using CATService;
 
-namespace CAT.Controllers.ApiControllers
+namespace CAT.Controllers.Api
 {
     [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class EditorApiController : ControllerBase
     {
-        private readonly CATClientService _catClientService;
+        private readonly CATConnector _catClientService;
         private readonly IMemoryCache _cache;
         private readonly ILogger _logger;
         private readonly JobService _jobService;
         private readonly IMapper _mapper;
 
-        public EditorApiController(CATClientService catClientService, IMemoryCache cache, JobService jobService,
+        public EditorApiController(CATConnector catClientService, IMemoryCache cache, JobService jobService,
             IMapper mapper, ILogger<EditorApiController> logger)
         {
             _catClientService = catClientService;

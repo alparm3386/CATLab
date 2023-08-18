@@ -3,7 +3,7 @@ using CAT.Models.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
-namespace CAT.Controllers.MvcControllers
+namespace CAT.Controllers.Mvc
 {
     public class HomeController : Controller
     {

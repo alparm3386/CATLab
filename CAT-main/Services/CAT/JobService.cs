@@ -2,7 +2,7 @@
 using CAT.Areas.Identity.Data;
 using CAT.Data;
 using CATService;
-using CAT.Controllers.ApiControllers;
+using CAT.Controllers.Api;
 using CAT.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;

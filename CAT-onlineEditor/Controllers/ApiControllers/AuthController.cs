@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using CAT.Services;
 
-namespace CAT.Controllers.ApiControllers
+namespace CAT.Controllers.Api
 {
     [Route("api/[controller]")]
     [ApiController]
