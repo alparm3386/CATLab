@@ -39,6 +39,7 @@ namespace CAT.Services.CAT
         private readonly IEnumerable<IMachineTranslator> _machineTranslators;
         private readonly IMapper _mapper;
         private readonly ILogger _logger;
+        private readonly DocumentProcessor _documentProcessor;
 
         private static int MATCH_THRESHOLD = 50;
 
@@ -46,7 +47,8 @@ namespace CAT.Services.CAT
         /// CATClientService
         /// </summary>
         public CATConnector(IdentityDbContext identityDBContext, MainDbContext mainDbContext, TranslationUnitsDbContext translationUnitsDbContext, 
-            IConfiguration configuration, IEnumerable<IMachineTranslator> machineTranslators, IMapper mapper, ILogger<CATConnector> logger)
+            IConfiguration configuration, IEnumerable<IMachineTranslator> machineTranslators, IMapper mapper, ILogger<CATConnector> logger, 
+            DocumentProcessor documentProcessor)
         {
             _identityDBContext = identityDBContext;
             _mainDbContext = mainDbContext;
@@ -55,6 +57,7 @@ namespace CAT.Services.CAT
             _machineTranslators = machineTranslators;
             _mapper = mapper;
             _logger = logger;
+            _documentProcessor = documentProcessor;
         }
 
         private EndpointAddress GetCATServiceEndpoint()
@@ -474,9 +477,294 @@ namespace CAT.Services.CAT
             }
         }
 
-        public byte[] CreateDoc(string sFilePath, string sFilterPath, String sourceLang,
-            string[] aTargetLangs, TMAssignment[] aTMAssignments)
+        public byte[] CreateDoc(int idJob)
         {
+            var lstFilesToDelete = new List<String>();
+            try
+            {
+                //get the service
+                var client = GetCATService();
+                var jobDataFolder = CATUtils.GetJobDataFolder(idJob, _configuration["JobDataBaseFolder"]!);
+                int iThreshold = 100;
+
+                //get the job details
+                var job = _mainDbContext.Jobs.Include(j => j.Quote).FirstOrDefault(j => j.Id == idJob);
+
+                //get the document
+                var document = _mainDbContext.Documents.Find(job!.SourceDocumentId);
+                var sourceFilesFolder = Path.Combine(_configuration["SourceFilesFolder"]!);
+                string filePath = Path.Combine(sourceFilesFolder, document!.FileName!);
+
+                //get the filter
+                var fileFiltersFolder = Path.Combine(_configuration["FileFiltersFolder"]!);
+
+                //get the filter
+                string filterPath = "";
+                //if (!String.IsNullOrEmpty(job.FilterName))
+                //    filterPath = Path.Combine(sourceFilesFolder, job.FilterName);
+
+                //pre-process the document
+                String tmpFilePath = _documentProcessor.PreProcessDocument(filePath, filterPath);
+                if (tmpFilePath != null)
+                {
+                    filePath = tmpFilePath;
+                    lstFilesToDelete.Add(tmpFilePath);
+                }
+
+                var xlifFilePath = CATUtils.CreateXlfFilePath(idJob, DocumentType.original, _configuration["JobDataBaseFolder"]!); //we do a backup of the original xliff
+                if (!File.Exists(xlifFilePath))
+                {
+                    if (CATUtils.IsCompressedMemoQXliff(filePath))
+                    {
+                        filePath = CATUtils.ExtractMQXlz(filePath, _configuration["TempFolder"]);
+                        lstFilesToDelete.Add(filePath);
+                    }
+
+                    //create the xliff file
+                    CreateXliffFromDocument(jobDataFolder, Path.GetFileName(xlifFilePath), filePath, filterPath,
+                        job!.Quote!.SourceLanguage!, job!.Quote!.TargetLanguage!, iThreshold);
+                }
+
+                //get the translated texts
+
+                //fill the xliff file with the translations
+                XmlDocument xlfFile = new XmlDocument();
+                xlfFile.PreserveWhitespace = true;
+                xlfFile.Load(xlifFilePath);
+                var xmlnsManager = new XmlNamespaceManager(xlfFile.NameTable);
+                xmlnsManager.AddNamespace("x", xlfFile.DocumentElement!.NamespaceURI);
+                var transUnits = xlfFile.SelectNodes("//x:trans-unit", xmlnsManager);
+                var tmEntries = new List<CATService.TMEntry>();
+                int nIdx = 1;
+                foreach (XmlNode tu in transUnits!)
+                {
+                    //var tuId = tu.Attributes["id"].Value;
+                    var targetNode = tu["target"];
+                    XmlNodeList sourceSegments = null;
+                    var ssNode = tu["seg-source"];
+                    if (ssNode == null)
+                        sourceSegments = tu.SelectNodes("x:source", xmlnsManager);
+                    else
+                        sourceSegments = ssNode.SelectNodes("x:mrk", xmlnsManager);
+                    foreach (XmlNode sourceSegment in sourceSegments)
+                    {
+                        if (sourceSegment.InnerXml.Trim().Length == 0)
+                        {
+                            if (sourceSegment.Name == "mrk")
+                            {
+                                var mid = sourceSegment!.Attributes!["mid"].Value;
+                                var tmpSegment = targetNode!.SelectSingleNode("x:mrk[@mid=" + mid + "]", xmlnsManager);
+                                tmpSegment!.InnerXml = sourceSegment.InnerXml;
+                            }
+                            else
+                                targetNode!.InnerXml = sourceSegment.InnerXml;
+                            continue;
+                        }
+
+                        String sStartingWhiteSpaces = Regex.Match(sourceSegment.InnerXml, @"^\s*").Value;
+                        String sEndingWhiteSpaces = Regex.Match(sourceSegment.InnerXml, @"\s*$").Value;
+                        //confirm the segment
+                        XmlAttribute attr = sourceSegment!.Attributes!["status"]!;
+                        if (attr != null)
+                            attr.Value = "ManuallyConfirmed";
+
+                        XmlNode? targetSegment = null;
+                        if (sourceSegment.Name == "mrk")
+                        {
+                            var mid = sourceSegment!.Attributes["mid"]!.Value!;
+                            targetSegment = targetNode!.SelectSingleNode("x:mrk[@mid=" + mid + "]", xmlnsManager);
+                            if (targetSegment == null)
+                            {
+                                //create new segment
+                                targetSegment = xlfFile.CreateElement("mrk");
+                                var tmpAttr = xlfFile.CreateAttribute("mid");
+                                tmpAttr.Value = mid;
+                                targetSegment!.Attributes!.Append(tmpAttr);
+                                tmpAttr = xlfFile.CreateAttribute("mtype");
+                                tmpAttr.Value = "seg";
+                                targetSegment.Attributes.Append(tmpAttr);
+                                targetNode.AppendChild(targetSegment);
+                            }
+                        }
+                        else
+                            targetSegment = targetNode;
+
+                        //get the translation
+                        DataRow[] dRows = dsTranslatedTexts.Tables[0].Select("sectionIdx=" + nIdx);
+                        if (dRows.Length == 0)
+                            throw new Exception("No translation was found for the specified segment");
+
+                        String sTranslatedText = (String)dRows[0]["translatedText"];
+
+                        //convert the tags
+                        Dictionary<String, String> tagsMap = CATUtils.GetTagsMap(sourceSegment.InnerXml, CATUtils.TagType.Xliff);
+                        //convert google tags to xliff tags
+                        sTranslatedText = CATUtils.GoogleTags2XmlTags(sTranslatedText, tagsMap);
+                        targetSegment.InnerXml = sStartingWhiteSpaces + sTranslatedText + sEndingWhiteSpaces;
+
+                        //create a TMEntry for the segment
+                        var tmEntry = new CATService.TMEntry();
+                        tmEntry.source = CATUtils.XliffTags2TMXTags(sourceSegment.InnerXml);
+                        tmEntry.target = CATUtils.XliffTags2TMXTags(sTranslatedText);
+
+                        tmEntries.Add(tmEntry);
+                        nIdx++;
+                    }
+                }
+
+                if (dsTranslatedTexts.Tables[0].Rows.Count != nIdx - 1)
+                    throw new Exception("Segments don't match.");
+
+
+                //update the TMs
+                if (bUpdateTM)
+                {
+                    //prepare the TM entries
+                    for (int i = 0; i < tmEntries.Count; i++)
+                    {
+                        var metadata = new Dictionary<String, String>();
+                        if (user != null)
+                            metadata.Add("user", (int)user.m_utProfile + "_" + user.m_iUserID.ToString());
+                        metadata.Add("speciality", translation.idSpeciality.ToString());
+                        metadata.Add("idTranslation", idTranslation.ToString());
+
+                        //preceding segment
+                        if (i > 0)
+                            metadata.Add("prevSegment", tmEntries[i - 1].source);
+                        //following segment 
+                        if (i < tmEntries.Count - 1)
+                            metadata.Add("nextSegment", tmEntries[i + 1].source);
+
+                        tmEntries[i].metadata = JsonConvert.SerializeObject(metadata);
+                    }
+
+                    //update the TMs
+                    var TMs = GetTMSettings(translation.idProfile, idFrom, new int[] { idTo },
+                        translation.speciality, true);
+                    foreach (var tm in TMs)
+                    {
+                        if (!tm.isReadonly)
+                            client.AddTMEntries(tm.name, tmEntries.ToArray());
+                    }
+                }
+
+                //save the intermediate xlf file.
+                var docType = DATA.DataTypes.documentType.unspecified;
+                if (intermediateFileType == IntermediateFileType.currentTask)
+                {
+                    //get the current doc type
+                    var task = (DATA.DataTypes.Task)oWM.GetCurrentWorkflowStep().idTask;
+                    docType = DATA.DataTypes.GetDocumentTypeByTask(task);
+                }
+                else if (intermediateFileType == IntermediateFileType.rectified)
+                    docType = DATA.DataTypes.documentType.rectifiedDocument;
+                else if (intermediateFileType == IntermediateFileType.adjudication)
+                    docType = DATA.DataTypes.documentType.adjudicatedDocument;
+                else if (intermediateFileType == IntermediateFileType.reconciliation)
+                    docType = DATA.DataTypes.documentType.reconciledDocument;
+
+                String sXlfFilePath = CATUtils.CreateXlfFilePath(idDocument, sTranslationDir, docType, true);
+                xlfFile.Save(sXlfFilePath);
+
+                //create the document
+                String sFilename = Path.GetFileName(sFilePath);
+                byte[] fileContent = File.ReadAllBytes(sFilePath);
+                String sFiltername = null;
+                byte[] filterContent = null;
+                if (!String.IsNullOrEmpty(sFilterPath))
+                {
+                    sFiltername = Path.GetFileName(sFilterPath);
+                    filterContent = File.ReadAllBytes(sFilterPath);
+                }
+                //create the file
+                var oLM = new cLanguageManager(oTM);
+                var sLangFrom = oLM.GetISO639_1LangCodeByLangID(idFrom);
+                var sLangTo = oLM.GetISO639_1LangCodeByLangID(idTo);
+                byte[] aOutFileBytes = null;
+                if (sFilterPath != null && Path.GetExtension(sFilterPath).ToLower() == ".mqres" || Path.GetExtension(sFilePath).ToLower() == ".sdlxliff")
+                {
+                    var mqXliffPath = Path.Combine(sTranslationDir, "mq.xlf");
+                    if (!File.Exists(mqXliffPath) || !File.Exists(mqXliffPath.Replace(".xlf", ".mqxlz")))
+                    {
+                        //create the mq xliff file
+                        MemoQHelper.CreateXliffFromDocument((int)DATA.DataTypes.CATServer.Pollux, idTranslation.ToString(), sTranslationDir,
+                            Path.GetFileName(mqXliffPath), sFilePath, sFilterPath, null, idFrom, idTo, false, -1);
+                    }
+
+                    fileContent = File.ReadAllBytes(mqXliffPath);
+                    var sTmpFilterPath = GetDefaultFilter(mqXliffPath); //in case if we will have defult filter for xliff
+                    var sTmpFiltername = sTmpFilterPath != null ? Path.GetFileName(sTmpFilterPath) : null;
+                    var tmpFilterContent = sTmpFilterPath != null ? File.ReadAllBytes(sTmpFilterPath) : null;
+                    //assemble the mq xliff file
+                    aOutFileBytes = client.CreateDocumentFromXliff(Path.GetFileName(mqXliffPath), fileContent, sTmpFilterPath,
+                        tmpFilterContent, sLangFrom, sLangTo, xlfFile.OuterXml);
+                    var mqXliffContent = System.Text.Encoding.UTF8.GetString(aOutFileBytes);
+                    mqXliffContent = mqXliffContent.Replace("mq:status=\"NotStarted\"", "mq:status=\"ManuallyConfirmed\"");
+                    //assemble the final document
+                    String sTempDir = ConfigurationSettings.AppSettings["TempFolder"].ToString() + Guid.NewGuid();
+                    cZipHelper.UnZipFiles(mqXliffPath.Replace(".xlf", ".mqxlz"), sTempDir, null);
+                    File.WriteAllText(Path.Combine(sTempDir, "document.mqxliff"), mqXliffContent);
+                    var oZh = new cZipHelper();
+                    String mqxlzFile = Path.Combine(sTranslationDir, "out.mqxlz");
+                    oZh.ZipFiles(new String[] { Path.Combine(sTempDir, "document.mqxliff"), Path.Combine(sTempDir, "skeleton.xml") },
+                        mqxlzFile, null, false);
+                    //create the document               
+                    String sTmpFilePath = MemoQHelper.CreateDocumentFromXliff((int)DATA.DataTypes.CATServer.Cronos, mqxlzFile, idTranslation, idFrom,
+                        idTo, sTranslationDir);
+                    Directory.Delete(sTempDir, true);
+                    File.Delete(mqxlzFile);
+                    aOutFileBytes = File.ReadAllBytes(sTmpFilePath);
+                    File.Delete(sTmpFilePath);
+                }
+                else
+                {
+                    if (sExt == ".mqxlz")
+                    {
+                        String sTempDir = ConfigurationSettings.AppSettings["TempFolder"].ToString() + Guid.NewGuid();
+                        cZipHelper.UnZipFiles(sFilePath, sTempDir, null);
+                        var tmFilePath = Path.Combine(sTempDir, "document.mqxliff");
+                        sFilename = Path.GetFileName(tmFilePath);
+                        fileContent = File.ReadAllBytes(tmFilePath);
+                        aOutFileBytes = client.CreateDocumentFromXliff(sFilename, fileContent, sFiltername,
+                            filterContent, sLangFrom, sLangTo, xlfFile.OuterXml);
+                        var mqXliffContent = System.Text.Encoding.UTF8.GetString(aOutFileBytes);
+                        mqXliffContent = mqXliffContent.Replace("mq:status=\"NotStarted\"", "mq:status=\"ManuallyConfirmed\"");
+                        File.WriteAllText(Path.Combine(sTempDir, "document.mqxliff"), mqXliffContent);
+                        var oZh = new cZipHelper();
+                        String mqxlzFile = Path.Combine(sTranslationDir, "out.mqxlz");
+                        oZh.ZipFiles(new String[] { Path.Combine(sTempDir, "document.mqxliff"), Path.Combine(sTempDir, "skeleton.xml") },
+                            mqxlzFile, null, false);
+                        aOutFileBytes = File.ReadAllBytes(mqxlzFile);
+                        File.Delete(mqxlzFile);
+                        Directory.Delete(sTempDir, true);
+                    }
+                    else
+                        aOutFileBytes = client.CreateDocumentFromXliff(sFilename, fileContent, sFiltername,
+                            filterContent, sLangFrom, sLangTo, xlfFile.OuterXml);
+                }
+
+                String sOutFilePath = System.Configuration.ConfigurationSettings.AppSettings["UploadDirectory"] + sOutFileName;
+                //save the output file
+                File.WriteAllBytes(sOutFilePath, aOutFileBytes);
+
+                //post-process document
+                sOutFilePath = DocumentProcessor.PostProcessDocument(idTranslation, sOutFilePath);
+
+                return sOutFilePath;
+            }
+            catch (Exception ex)
+            {
+                DATA.cFailureMessages.SendDebugEmail("idTranslation: " + idTranslation +
+                    "\nCreateDoc Error: " + ex.ToString(), "CreateDoc error", "alpar.meszaros@translatemedia.com");
+                throw ex;
+            }
+            finally
+            {
+                foreach (String sPath in lstFilesToDelete)
+                    File.Delete(sPath);
+
+                oTM.CommitTransaction();
+            }
             return null;
         }
     }
