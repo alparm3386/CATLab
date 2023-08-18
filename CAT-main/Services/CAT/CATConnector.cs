@@ -473,5 +473,11 @@ namespace CAT.Services.CAT
                     File.Delete(tmpFileName);
             }
         }
+
+        public byte[] CreateDoc(string sFilePath, string sFilterPath, String sourceLang,
+            string[] aTargetLangs, TMAssignment[] aTMAssignments)
+        {
+            return null;
+        }
     }
 }

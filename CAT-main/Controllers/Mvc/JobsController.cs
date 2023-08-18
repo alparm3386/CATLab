@@ -15,6 +15,7 @@ using CAT.Models.Entities.Main;
 using CAT.Enums;
 using CAT.Models.ViewModels;
 using CAT.Services.CAT;
+using AutoMapper;
 
 namespace CAT.Controllers.Mvc
 {
@@ -25,15 +26,19 @@ namespace CAT.Controllers.Mvc
         private readonly TranslationUnitsDbContext _translationUnitsDbContext;
         private readonly IConfiguration _configuration;
         private readonly JobService _jobService;
+        private readonly IMapper _mapper;
+        private readonly ILogger _logger;
 
         public JobsController(IdentityDbContext identityDBContext, MainDbContext mainDbContext, TranslationUnitsDbContext translationUnitsDbContext,
-            IConfiguration configuration, JobService jobService)
+            IConfiguration configuration, JobService jobService, IMapper mapper, ILogger<JobService> logger)
         {
             _identityDBContext = identityDBContext;
             _mainDbContext = mainDbContext;
             _translationUnitsDbContext = translationUnitsDbContext;
             _configuration = configuration;
             _jobService = jobService;
+            _logger = logger;
+            _mapper = mapper;
         }
 
         // GET: Jobs
