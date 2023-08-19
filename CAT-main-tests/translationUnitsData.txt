@@ -1,0 +1,17 @@
+﻿1	Test 1. 	NULL	0	Test{1} 1. {/1}	0001-01-01 00:00:00.0000000	15
+2	Test 2. 	NULL	0	{1}Test {/1}{2}2. {/2}	0001-01-01 00:00:00.0000000	0
+3	Test 3.	NULL	0	{1}Test {/1}{2}3.{/2}	0001-01-01 00:00:00.0000000	0
+4	Biden to nominate Janet Yellen as US treasury secretary ds	NULL	0	{1}Biden doit nommer{/1} {2}Janet Yellen{/2} secrétaire au Trésor des États-Unis ds	0001-01-01 00:00:00.0000000	0
+5	Published	NULL	0	Publié	0001-01-01 00:00:00.0000000	0
+6	1 hour ago	NULL	0	Il y a 1 heure	0001-01-01 00:00:00.0000000	0
+7	Share	NULL	0	Partager	0001-01-01 00:00:00.0000000	0
+8	IMAGE COPYRIGHTREUTERS 3	NULL	0	{1}COPYRIGHTREUTEURS D'IMAGE 3{/1}	0001-01-01 00:00:00.0000000	0
+9	image captionJanet Yellen's appointment needs to be confirmed by the Senate	NULL	0	{1} légende de l'image {/1} La nomination de Janet Yellen doit être confirmée par le Sénat	0001-01-01 00:00:00.0000000	0
+10	US President-elect Joe Biden has named ex-Federal Reserve chair Janet Yellen as his nominee for treasury secretary 44444.	NULL	0	Le président élu des États-Unis, Joe Biden, a nommé l'ancienne présidente de la Réserve fédérale, Janet Yellen, au poste de secrétaire au Trésor 44444.	0001-01-01 00:00:00.0000000	0
+11	If confirmed by the Senate, she would be the first woman ever to hold the post2.	NULL	0	Si elle est confirmée par le Sénat, elle serait la première femme à occuper ce poste2.	0001-01-01 00:00:00.0000000	0
+12	She was among several women chosen for top economic positions2.	NULL	0	Elle faisait partie de plusieurs femmes choisies pour occuper des postes économiques de haut niveau2.	0001-01-01 00:00:00.0000000	0
+13	The Biden transition team said others were set to break racial barriers if confirmed2.	NULL	0	L'équipe de transition de Biden a déclaré que d'autres étaient prêts à briser les barrières raciales si elles étaient confirmées2.	0001-01-01 00:00:00.0000000	0
+14	Mr Biden has pledged to 33 build a diverse administration 333.	NULL	0	M. Biden s'est engagé à 33 construire une administration diversifiée 333.	0001-01-01 00:00:00.0000000	0
+15	He earlier appointed an all 444.	NULL	0	Il a précédemment nommé un All 444.	0001-01-01 00:00:00.0000000	0
+16	She was among several women chosen for top economic positions244.	NULL	0	Elle faisait partie de plusieurs femmes choisies pour occuper des postes économiques de haut niveau244.	0001-01-01 00:00:00.0000000	0
+17	Dummy text.	NULL	0	Texte factice.	0001-01-01 00:00:00.0000000	0

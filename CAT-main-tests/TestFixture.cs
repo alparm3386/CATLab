@@ -1,30 +1,68 @@
 ﻿using CAT.Areas.Identity.Data;
 using CAT.Data;
 using CAT.Models.Entities.Main;
+using CAT.Models.Entities.TranslationUnits;
+using CAT.Services.MT;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Moq;
+using System.Security.Cryptography.Xml;
 
 public class TestFixture
 {
+    //databases
     public IdentityDbContext IdentityDbContext { get; }
     public MainDbContext MainDbContext { get; }
-    // ... other mocks or contexts
+    public TranslationUnitsDbContext TranslationUnitsDbContext { get; }
+
+    //configuration
+    public Mock<IConfiguration> MockConfiguration { get; }
+
+    //machine translators
+    public IEnumerable<IMachineTranslator> MockedMachineTranslators { get; private set; }
+
 
     public TestFixture()
     {
+        //identity
         var identityOptions = new DbContextOptionsBuilder<IdentityDbContext>()
             .UseInMemoryDatabase(databaseName: "IdentityInMemoryDb")
             .Options;
-
         IdentityDbContext = new IdentityDbContext(identityOptions);
 
+        //main
         var mainOptions = new DbContextOptionsBuilder<MainDbContext>()
             .UseInMemoryDatabase(databaseName: "MainInMemoryDb")
             .Options;
-
         MainDbContext = new MainDbContext(mainOptions);
 
+        //translation units
+        var translationUnitsOptions = new DbContextOptionsBuilder<TranslationUnitsDbContext>()
+            .UseInMemoryDatabase(databaseName: "TranslationUnitsInMemoryDb")
+            .Options;
+        TranslationUnitsDbContext = new TranslationUnitsDbContext(translationUnitsOptions);
+
+        //seed the data
         SeedDbContextsWithSampleData();
-        // ... setup other mocks or contexts
+
+        // Set up the mocked IConfiguration
+        MockConfiguration = new Mock<IConfiguration>();
+        MockConfiguration.SetupGet(m => m["SomeKey"]).Returns("SomeValue");
+        // Mocking a section
+        //var databaseSectionMock = new Mock<IConfigurationSection>();
+        //databaseSectionMock.Setup(a => a["ConnectionString"]).Returns("YourConnectionString");
+        //MockConfiguration.Setup(a => a.GetSection("Database")).Returns(databaseSectionMock.Object);
+
+        //machine translators
+        var mockMMT = new Mock<IMachineTranslator>();
+        mockMMT.Setup(t => t.Translate(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<object?>()))
+                      .Returns<string, string, string, object?>((sText, sFrom, sTo, mtParams) => sText + "_translation to" + sTo);
+
+        // Step 2: Create a list and add the mocked instances to it.
+        MockedMachineTranslators = new List<IMachineTranslator>
+        {
+            mockMMT.Object
+        };
     }
 
     // You can also provide methods to setup specific behaviors or seed data
@@ -79,6 +117,21 @@ public class TestFixture
         MainDbContext.SaveChanges();
 
         //the translation units db
+        var tuLines = File.ReadAllLines("../../translationUnitsData.txt");
+        var tus = new List<TranslationUnit>();
+        for (int i = 0; i < tuLines.Length; i++)
+        {
+            var tuLine = tuLines[i]; 
+            var tuFields = tuLine.Split('\t');
+            tus.Add(new TranslationUnit()
+            {
+                idJob = 1,
+                source = tuFields[0],
+                target = tuFields[3],
+                tuid = i + 1
+            });
+        }
+        TranslationUnitsDbContext.TranslationUnit.AddRange(tus);
     }
 
     // ... any other utility methods that might help in seeding data or other configurations
