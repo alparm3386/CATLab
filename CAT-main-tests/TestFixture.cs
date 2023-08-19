@@ -56,7 +56,11 @@ public class TestFixture
 
         // Set up the mocked IConfiguration
         MockConfiguration = new Mock<IConfiguration>();
-        MockConfiguration.SetupGet(m => m["SomeKey"]).Returns("SomeValue");
+        MockConfiguration.SetupGet(m => m["SourceFilesFolder"]).Returns("C:/Development/CATLab/Contents/SourceFiles");
+        MockConfiguration.SetupGet(m => m["FileFiltersFolder"]).Returns("\"C:/Development/CATLab/Contents/Filters");
+        MockConfiguration.SetupGet(m => m["JobDataBaseFolder"]).Returns("C:/Development/CATLab/Contents/JobData");
+        MockConfiguration.SetupGet(m => m["TempFolder"]).Returns("C:/Development/CATLab/Contents/TempFolder");
+
         // Mocking a section
         //var databaseSectionMock = new Mock<IConfigurationSection>();
         //databaseSectionMock.Setup(a => a["ConnectionString"]).Returns("YourConnectionString");
@@ -92,8 +96,8 @@ public class TestFixture
         //the main db
         var document = new Document()
         {
-            OriginalFileName = "testFile.txt",
-            FileName = "testFile_" + DateTime.Now + ".txt",
+            OriginalFileName = "Janet Yellen_small.docx",
+            FileName = "Janet Yellen_small_20230817075647681.docx",
             FilterId = -1,
             DocumentType = 0,
             AnalisysId = -1

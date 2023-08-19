@@ -62,7 +62,7 @@ namespace CAT.Services.CAT
 
         private EndpointAddress GetCATServiceEndpoint()
         {
-            var endPointAddr = "net.tcp://10.0.20.55:8086";
+            var endPointAddr = "net.tcp://10.0.20.240:8086";
 
             //local test
             //endPointAddr = "net.tcp://localhost:8086";
