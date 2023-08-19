@@ -80,11 +80,11 @@ namespace CAT.Helpers
             return jobDataFolder;
         }
 
-        public static String CreateXlfFilePath(int idJob, DocumentType documentType, String jobDataBaseFolder)
+        public static String CreateXlfFilePath(int idJob, DocumentType documentType, String jobDataBaseFolder, bool withBackup)
         {
             var jobDataFolder = GetJobDataFolder(idJob, jobDataBaseFolder);
             var xliffPath = Path.Combine(jobDataFolder, documentType.ToString() + ".xliff");
-            if (File.Exists(xliffPath))
+            if (withBackup && File.Exists(xliffPath))
             {
                 //do a backup
                 File.Copy(xliffPath, Path.Combine(jobDataFolder, Path.GetFileNameWithoutExtension(xliffPath) + "_" +

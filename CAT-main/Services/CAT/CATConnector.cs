@@ -330,7 +330,7 @@ namespace CAT.Services.CAT
 
                     //var aContentForMT = new List<MTContent>();
 
-                    String sXlifFilePath = CATUtils.CreateXlfFilePath(idJob, DocumentType.original, _configuration["JobDataBaseFolder"]!); //we do a backup of the original xliff
+                    String sXlifFilePath = CATUtils.CreateXlfFilePath(idJob, DocumentType.original, _configuration["JobDataBaseFolder"]!, true); //we do a backup of the original xliff
 
                     //pre-process the document
                     String tmpFilePath = null;// DocumentProcessor.PreProcessDocument(sFilePath, idFilter, idFrom, idTo);
@@ -512,7 +512,7 @@ namespace CAT.Services.CAT
 
                 var sourceLanguage = job!.Quote!.SourceLanguage!;
                 var targetLanguage = job!.Quote!.TargetLanguage!;
-                var xlifFilePath = CATUtils.CreateXlfFilePath(idJob, DocumentType.original, _configuration["JobDataBaseFolder"]!); //we do a backup of the original xliff
+                var xlifFilePath = CATUtils.CreateXlfFilePath(idJob, DocumentType.original, _configuration["JobDataBaseFolder"]!, false);
                 if (!File.Exists(xlifFilePath))
                 {
                     if (CATUtils.IsCompressedMemoQXliff(filePath))
@@ -664,7 +664,7 @@ namespace CAT.Services.CAT
                 else if (intermediateFileType == IntermediateFileType.reconciliation)
                     docType = DATA.DataTypes.documentType.reconciledDocument;*/
 
-                String sXlfFilePath = CATUtils.CreateXlfFilePath(idJob, docType, jobDataFolder);
+                String sXlfFilePath = CATUtils.CreateXlfFilePath(idJob, docType, _configuration["JobDataBaseFolder"]!, true);
                 xlfFile.Save(sXlfFilePath);
 
                 //create the document
