@@ -39,7 +39,7 @@ namespace CAT.Services.CAT
         private readonly IEnumerable<IMachineTranslator> _machineTranslators;
         private readonly IMapper _mapper;
         private readonly ILogger _logger;
-        private readonly DocumentProcessor _documentProcessor;
+        private readonly IDocumentProcessor _documentProcessor;
 
         private static int MATCH_THRESHOLD = 50;
 
@@ -48,7 +48,7 @@ namespace CAT.Services.CAT
         /// </summary>
         public CATConnector(IdentityDbContext identityDBContext, MainDbContext mainDbContext, TranslationUnitsDbContext translationUnitsDbContext, 
             IConfiguration configuration, IEnumerable<IMachineTranslator> machineTranslators, IMapper mapper, ILogger<CATConnector> logger, 
-            DocumentProcessor documentProcessor)
+            IDocumentProcessor documentProcessor)
         {
             _identityDBContext = identityDBContext;
             _mainDbContext = mainDbContext;

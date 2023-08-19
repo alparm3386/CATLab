@@ -1,6 +1,6 @@
 ﻿namespace CAT.Services.CAT
 {
-    public class DocumentProcessor
+    public class DocumentProcessor : IDocumentProcessor
     {
         public string PreProcessDocument(string filePath, string filterPath)
         {

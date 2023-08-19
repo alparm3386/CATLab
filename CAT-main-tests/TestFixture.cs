@@ -1,10 +1,13 @@
-﻿using CAT.Areas.Identity.Data;
+﻿using AutoMapper;
+using CAT.Areas.Identity.Data;
 using CAT.Data;
 using CAT.Models.Entities.Main;
 using CAT.Models.Entities.TranslationUnits;
+using CAT.Services.CAT;
 using CAT.Services.MT;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using Moq;
 using System.Security.Cryptography.Xml;
 
@@ -21,6 +24,12 @@ public class TestFixture
     //machine translators
     public IEnumerable<IMachineTranslator> MockedMachineTranslators { get; private set; }
 
+    // ... other mocks
+    public Mock<IMapper> MockMapper { get; }
+
+    public Mock<ILogger<CATConnector>> MockLogger { get; }
+
+    public Mock<IDocumentProcessor> MockDocumentProcessor { get; }
 
     public TestFixture()
     {
@@ -63,6 +72,16 @@ public class TestFixture
         {
             mockMMT.Object
         };
+
+        // Mocking IMapper
+        MockMapper = new Mock<IMapper>();
+        MockMapper.Setup(mapper => mapper.Map<It.IsAnyType>(It.IsAny<object>()))
+                  .Returns(new InvocationFunc(invocation => invocation.Arguments[0]));
+
+        // Mocking DocumentProcessor
+        MockDocumentProcessor = new Mock<IDocumentProcessor>();
+        MockDocumentProcessor.Setup(dp => dp.PreProcessDocument(It.IsAny<string>(), It.IsAny<string>()))
+                                     .Returns((string filePath, string filterPath) => null);
     }
 
     // You can also provide methods to setup specific behaviors or seed data
@@ -117,7 +136,7 @@ public class TestFixture
         MainDbContext.SaveChanges();
 
         //the translation units db
-        var tuLines = File.ReadAllLines("../../translationUnitsData.txt");
+        var tuLines = File.ReadAllLines("translationUnitsData.txt");
         var tus = new List<TranslationUnit>();
         for (int i = 0; i < tuLines.Length; i++)
         {
@@ -132,7 +151,17 @@ public class TestFixture
             });
         }
         TranslationUnitsDbContext.TranslationUnit.AddRange(tus);
+        TranslationUnitsDbContext.SaveChanges();
     }
 
     // ... any other utility methods that might help in seeding data or other configurations
+    public ILogger<T> GetLoggerMockObject<T>()
+    {
+        return CreateLoggerMock<T>().Object;
+    }
+
+    private Mock<ILogger<T>> CreateLoggerMock<T>()
+    {
+        return new Mock<ILogger<T>>();
+    }
 }

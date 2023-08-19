@@ -22,8 +22,11 @@ namespace YourNamespace.Tests
         public void TestYourFunctionality()
         {
             var catConnector = new CATConnector(_testFixture.IdentityDbContext, _testFixture.MainDbContext, _testFixture.TranslationUnitsDbContext,
-                _testFixture.MockConfiguration, )
-            // Your test logic here
+                _testFixture.MockConfiguration.Object, _testFixture.MockedMachineTranslators, _testFixture.MockMapper.Object,
+                _testFixture.GetLoggerMockObject<CATConnector>(), _testFixture.MockDocumentProcessor.Object);
+
+            var outBytes = catConnector.CreateDoc(1, 1, false);
+            File.WriteAllBytes("C:\\Alpar\\out.docx", outBytes);
         }
     }
 }
