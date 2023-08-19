@@ -1,4 +1,5 @@
 ﻿using CAT.Enums;
+using log4net;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -444,6 +445,63 @@ namespace CAT.Helpers
             return tagsMap;
         }
 
+        public static Dictionary<string, string> GetTagsMap(String sXliff, TagType tagType)
+        {
+            //collect the ids to skip
+            var outTagsMap = new Dictionary<string, string>();
+            MatchCollection matches = Regex.Matches(sXliff, @"{\s*(?<id>\d+)\s*}|{\s*/\s*(?<id>\d+)\s*}|{\s*(?<id>\d+)\s*/\s*}");
+            HashSet<string> idsToSkip = new HashSet<string>();
+            foreach (Match match in matches)
+                idsToSkip.Add(match.Groups["id"].Value);
+
+            var idAttr = "id";
+            if (tagType == TagType.Tmx)
+                idAttr = "i";
+
+            XmlDocument xmlDoc = new XmlDocument();
+            xmlDoc.PreserveWhitespace = true;
+            xmlDoc.LoadXml("<root>" + sXliff + "</root>");
+            var openTags = new Dictionary<string, string>();
+            XmlNodeList nodeList = xmlDoc.ChildNodes[0].ChildNodes;
+            int id = 1;
+            foreach (XmlNode node in nodeList)
+            {
+                while (idsToSkip.Contains(id.ToString()))
+                    id++;
+                if (node.NodeType == XmlNodeType.Element)
+                {
+                    switch (node.Name)
+                    {
+                        case "ph":
+                        case "x":
+                            outTagsMap.Add(id + "/", node.OuterXml);
+                            id++;
+                            break;
+                        case "bpt":
+                            var sId = id.ToString();
+                            outTagsMap.Add(sId, node.OuterXml);
+                            openTags.Add(node.Attributes[idAttr].Value, sId);
+                            id++;
+                            break;
+                        case "ept":
+                            outTagsMap.Add("/" + openTags[node.Attributes[idAttr].Value], node.OuterXml);
+                            break;
+                        case "it":
+                            outTagsMap.Add(id + "/", node.OuterXml);
+                            id++;
+                            //cLogManager.DEBUG_LOG("tagErrors.log", "GetXliffTagsMap " + sXliff);
+                            break;
+                        default:
+                            //cLogManager.DEBUG_LOG("tagErrors.log", "GetXliffTagsMap " + sXliff);
+                            break;
+                    }
+                }
+            }
+
+            return outTagsMap;
+        }
+
+
         public static String GoogleTagsToTmx(string googleText, Dictionary<int, int> tagsMap)
         {
             //create simple codes
@@ -462,6 +520,27 @@ namespace CAT.Helpers
             }
 
             return sTmx;
+        }
+
+        public static String GoogleTags2XmlTags(String sGoogleTags, Dictionary<String, String> tagsMap)
+        {
+            String sRet = sGoogleTags;
+            sRet = SecurityElement.Escape(sRet);
+            if (tagsMap == null)
+                return sRet;
+
+            foreach (String sTag in tagsMap.Keys)
+            {
+                int id = int.Parse(Regex.Match(sTag, "\\d+").Value);
+                if (sTag.StartsWith("/")) //close tag
+                    sRet = Regex.Replace(sRet, @"\{\s*/\s*" + id + @"\s*\}", tagsMap[sTag]);
+                else if (sTag.EndsWith("/")) //standalone tag
+                    sRet = Regex.Replace(sRet, @"\{\s*" + id + @"\s*/\s*\}", tagsMap[sTag]);
+                else //opening tag
+                    sRet = Regex.Replace(sRet, @"\{\s*" + id + @"\s*}", tagsMap[sTag]);
+            }
+
+            return sRet;
         }
     }
 }

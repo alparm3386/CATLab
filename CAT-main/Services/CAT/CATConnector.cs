@@ -347,8 +347,8 @@ namespace CAT.Services.CAT
                     }
 
                     //get the TMs
-                    var aTMAssignments = GetTMAssignments(job!.Order!.ClientId, job!.Quote!.SourceLanguage!, job!.Quote!.TargetLanguage!, 
-                        job.Quote.Speciality, true);
+                    var aTMAssignments = GetTMAssignments(job!.Order!.ClientId, job!.Quote!.SourceLanguage!, 
+                        new string[] { job!.Quote!.TargetLanguage! }, job.Quote.Speciality, true);
                     CreateXliffFromDocument(jobDataFolder, Path.GetFileName(sXlifFilePath), filePath, filterPath,
                         job!.Quote!.SourceLanguage!, job!.Quote!.TargetLanguage!, iThreshold);
 
@@ -510,18 +510,20 @@ namespace CAT.Services.CAT
                     lstFilesToDelete.Add(tmpFilePath);
                 }
 
+                var sourceLanguage = job!.Quote!.SourceLanguage!;
+                var targetLanguage = job!.Quote!.TargetLanguage!;
                 var xlifFilePath = CATUtils.CreateXlfFilePath(idJob, DocumentType.original, _configuration["JobDataBaseFolder"]!); //we do a backup of the original xliff
                 if (!File.Exists(xlifFilePath))
                 {
                     if (CATUtils.IsCompressedMemoQXliff(filePath))
                     {
-                        filePath = CATUtils.ExtractMQXlz(filePath, _configuration!["TempFolder"]);
+                        filePath = CATUtils.ExtractMQXlz(filePath, _configuration!["TempFolder"]!);
                         lstFilesToDelete.Add(filePath);
                     }
 
                     //create the xliff file
                     CreateXliffFromDocument(jobDataFolder, Path.GetFileName(xlifFilePath), filePath, filterPath,
-                        job!.Quote!.SourceLanguage!, job!.Quote!.TargetLanguage!, iThreshold);
+                        sourceLanguage, targetLanguage, iThreshold);
                 }
 
                 //get the translated texts
@@ -598,8 +600,8 @@ namespace CAT.Services.CAT
                         //convert the tags
                         Dictionary<String, String> tagsMap = CATUtils.GetTagsMap(sourceSegment.InnerXml, CATUtils.TagType.Xliff);
                         //convert google tags to xliff tags
-                        sTranslatedText = CATUtils.GoogleTags2XmlTags(sTranslatedText, tagsMap);
-                        targetSegment.InnerXml = sStartingWhiteSpaces + sTranslatedText + sEndingWhiteSpaces;
+                        sTranslatedText = CATUtils.GoogleTags2XmlTags(sTranslatedText!, tagsMap);
+                        targetSegment!.InnerXml = sStartingWhiteSpaces + sTranslatedText + sEndingWhiteSpaces;
 
                         //create a TMEntry for the segment
                         var tmEntry = new CATService.TMEntry();
@@ -616,7 +618,7 @@ namespace CAT.Services.CAT
 
 
                 //update the TMs
-                if (updateTM)
+                /*if (updateTM)
                 {
                     //prepare the TM entries
                     for (int i = 0; i < tmEntries.Count; i++)
@@ -645,11 +647,11 @@ namespace CAT.Services.CAT
                         if (!tm.isReadonly)
                             client.AddTMEntries(tm.name, tmEntries.ToArray());
                     }
-                }
+                }*/
 
                 //save the intermediate xlf file.
-                var docType = DATA.DataTypes.documentType.unspecified;
-                if (intermediateFileType == IntermediateFileType.currentTask)
+                var docType = DocumentType.unspecified;
+                /*if (intermediateFileType == IntermediateFileType.currentTask)
                 {
                     //get the current doc type
                     var task = (DATA.DataTypes.Task)oWM.GetCurrentWorkflowStep().idTask;
@@ -660,29 +662,27 @@ namespace CAT.Services.CAT
                 else if (intermediateFileType == IntermediateFileType.adjudication)
                     docType = DATA.DataTypes.documentType.adjudicatedDocument;
                 else if (intermediateFileType == IntermediateFileType.reconciliation)
-                    docType = DATA.DataTypes.documentType.reconciledDocument;
+                    docType = DATA.DataTypes.documentType.reconciledDocument;*/
 
-                String sXlfFilePath = CATUtils.CreateXlfFilePath(idDocument, sTranslationDir, docType, true);
+                String sXlfFilePath = CATUtils.CreateXlfFilePath(idJob, docType, jobDataFolder);
                 xlfFile.Save(sXlfFilePath);
 
                 //create the document
-                String sFilename = Path.GetFileName(sFilePath);
-                byte[] fileContent = File.ReadAllBytes(sFilePath);
+                String sFilename = Path.GetFileName(filePath);
+                byte[] fileContent = File.ReadAllBytes(filePath);
                 String sFiltername = null;
                 byte[] filterContent = null;
-                if (!String.IsNullOrEmpty(sFilterPath))
+                if (!String.IsNullOrEmpty(filterPath))
                 {
-                    sFiltername = Path.GetFileName(sFilterPath);
-                    filterContent = File.ReadAllBytes(sFilterPath);
+                    sFiltername = Path.GetFileName(filterPath);
+                    filterContent = File.ReadAllBytes(filterPath);
                 }
                 //create the file
-                var oLM = new cLanguageManager(oTM);
-                var sLangFrom = oLM.GetISO639_1LangCodeByLangID(idFrom);
-                var sLangTo = oLM.GetISO639_1LangCodeByLangID(idTo);
                 byte[] aOutFileBytes = null;
-                if (sFilterPath != null && Path.GetExtension(sFilterPath).ToLower() == ".mqres" || Path.GetExtension(sFilePath).ToLower() == ".sdlxliff")
+                if (filterPath != null && Path.GetExtension(filterPath).ToLower() == ".mqres" || Path.GetExtension(filePath).ToLower() == ".sdlxliff")
                 {
-                    var mqXliffPath = Path.Combine(sTranslationDir, "mq.xlf");
+                    throw new NotSupportedException("MemoQ is not supported");
+                    /*var mqXliffPath = Path.Combine(jobDataFolder, "mq.xlf");
                     if (!File.Exists(mqXliffPath) || !File.Exists(mqXliffPath.Replace(".xlf", ".mqxlz")))
                     {
                         //create the mq xliff file
@@ -713,43 +713,45 @@ namespace CAT.Services.CAT
                     Directory.Delete(sTempDir, true);
                     File.Delete(mqxlzFile);
                     aOutFileBytes = File.ReadAllBytes(sTmpFilePath);
-                    File.Delete(sTmpFilePath);
+                    File.Delete(sTmpFilePath);*/
                 }
                 else
                 {
-                    if (sExt == ".mqxlz")
+                    var fileExtension = Path.GetFileNameWithoutExtension(filePath).ToLower();
+                    if (fileExtension == ".mqxlz")
                     {
                         String sTempDir = ConfigurationSettings.AppSettings["TempFolder"].ToString() + Guid.NewGuid();
-                        cZipHelper.UnZipFiles(sFilePath, sTempDir, null);
+                        ZipHelper.UnZipFiles(filePath, sTempDir, null);
                         var tmFilePath = Path.Combine(sTempDir, "document.mqxliff");
                         sFilename = Path.GetFileName(tmFilePath);
                         fileContent = File.ReadAllBytes(tmFilePath);
                         aOutFileBytes = client.CreateDocumentFromXliff(sFilename, fileContent, sFiltername,
-                            filterContent, sLangFrom, sLangTo, xlfFile.OuterXml);
+                            filterContent, sourceLanguage, targetLanguage, xlfFile.OuterXml);
                         var mqXliffContent = System.Text.Encoding.UTF8.GetString(aOutFileBytes);
                         mqXliffContent = mqXliffContent.Replace("mq:status=\"NotStarted\"", "mq:status=\"ManuallyConfirmed\"");
                         File.WriteAllText(Path.Combine(sTempDir, "document.mqxliff"), mqXliffContent);
-                        var oZh = new cZipHelper();
-                        String mqxlzFile = Path.Combine(sTranslationDir, "out.mqxlz");
-                        oZh.ZipFiles(new String[] { Path.Combine(sTempDir, "document.mqxliff"), Path.Combine(sTempDir, "skeleton.xml") },
-                            mqxlzFile, null, false);
+                        var zipHelper = new ZipHelper();
+                        String mqxlzFile = Path.Combine(jobDataFolder, "out.mqxlz");
+                        zipHelper.ZipFiles(new String[] { Path.Combine(sTempDir, "document.mqxliff"), Path.Combine(sTempDir, "skeleton.xml") },
+                            mqxlzFile, false);
                         aOutFileBytes = File.ReadAllBytes(mqxlzFile);
                         File.Delete(mqxlzFile);
                         Directory.Delete(sTempDir, true);
                     }
                     else
                         aOutFileBytes = client.CreateDocumentFromXliff(sFilename, fileContent, sFiltername,
-                            filterContent, sLangFrom, sLangTo, xlfFile.OuterXml);
+                            filterContent, sourceLanguage, targetLanguage, xlfFile.OuterXml);
                 }
 
-                String sOutFilePath = System.Configuration.ConfigurationSettings.AppSettings["UploadDirectory"] + sOutFileName;
+                /*tmpFilePath = Path.Combine(_configuration!["TempFolder"]!, Guid.NewGuid().ToString());
                 //save the output file
-                File.WriteAllBytes(sOutFilePath, aOutFileBytes);
+                File.WriteAllBytes(tmpFilePath, aOutFileBytes);
+                lstFilesToDelete.Add(tmpFilePath);
 
                 //post-process document
-                sOutFilePath = DocumentProcessor.PostProcessDocument(idJob, sOutFilePath);
+                sOutFilePath = DocumentProcessor.PostProcessDocument(idJob, tmpFilePath);*/
 
-                return sOutFilePath;
+                return aOutFileBytes;
             }
             catch (Exception ex)
             {

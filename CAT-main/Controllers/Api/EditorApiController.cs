@@ -3,6 +3,7 @@ using CAT.Areas.Identity.Data;
 using CAT.Data;
 using CAT.Services.CAT;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -35,12 +36,13 @@ namespace CAT.Controllers.Api
         [HttpGet("DownloadDocument/{id}")]
         public async Task<IActionResult> DownloadDocument(int id)
         {
-            var document = await _context.Documents.FirstOrDefaultAsync(d => d.Id == id);
+            var document = await _mainDbContext.Documents.FirstOrDefaultAsync(d => d.Id == id);
 
             if (document == null)
                 return NotFound("Document not found.");
 
-            return File(document.Data, "application/octet-stream", document.FileName);  // Change the MIME type if you know the specific type for the file
+            var bytes = new byte[0];
+            return File(bytes, "application/octet-stream", document.FileName);  // Change the MIME type if you know the specific type for the file
         }
     }
 }

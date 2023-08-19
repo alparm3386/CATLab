@@ -9,6 +9,7 @@
 
     public enum DocumentType
     {
+        unspecified = -1,
         original,
         translated
     }

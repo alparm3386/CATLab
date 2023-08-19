@@ -171,7 +171,7 @@ namespace CAT.Controllers.Mvc
                         TargetLanguage = "fr",
                         Fee = 10.0,
                         DateCreated = DateTime.Now,
-                        Specility = 0
+                        Speciality = 0
                     };
 
                     var order = new Order()
