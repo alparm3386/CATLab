@@ -57,7 +57,7 @@ public class TestFixture
         // Set up the mocked IConfiguration
         MockConfiguration = new Mock<IConfiguration>();
         MockConfiguration.SetupGet(m => m["SourceFilesFolder"]).Returns("C:/Development/CATLab/Contents/SourceFiles");
-        MockConfiguration.SetupGet(m => m["FileFiltersFolder"]).Returns("\"C:/Development/CATLab/Contents/Filters");
+        MockConfiguration.SetupGet(m => m["FileFiltersFolder"]).Returns("C:/Development/CATLab/Contents/Filters");
         MockConfiguration.SetupGet(m => m["JobDataBaseFolder"]).Returns("C:/Development/CATLab/Contents/JobData");
         MockConfiguration.SetupGet(m => m["TempFolder"]).Returns("C:/Development/CATLab/Contents/TempFolder");
 
@@ -149,8 +149,8 @@ public class TestFixture
             tus.Add(new TranslationUnit()
             {
                 idJob = 1,
-                source = tuFields[0],
-                target = tuFields[3],
+                source = tuFields[1],
+                target = tuFields[4],
                 tuid = i + 1
             });
         }

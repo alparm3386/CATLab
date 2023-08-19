@@ -62,7 +62,7 @@ namespace CAT.Services.CAT
 
         private EndpointAddress GetCATServiceEndpoint()
         {
-            var endPointAddr = "net.tcp://10.0.20.240:8086";
+            var endPointAddr = "net.tcp://10.0.20.55:8086";
 
             //local test
             //endPointAddr = "net.tcp://localhost:8086";
@@ -672,11 +672,15 @@ namespace CAT.Services.CAT
                 byte[] fileContent = File.ReadAllBytes(filePath);
                 String sFiltername = null;
                 byte[] filterContent = null;
+                if (String.IsNullOrEmpty(filterPath))
+                    filterPath = GetDefaultFilter(filePath);
+
                 if (!String.IsNullOrEmpty(filterPath))
                 {
                     sFiltername = Path.GetFileName(filterPath);
                     filterContent = File.ReadAllBytes(filterPath);
                 }
+
                 //create the file
                 byte[] aOutFileBytes = null;
                 if (filterPath != null && Path.GetExtension(filterPath).ToLower() == ".mqres" || Path.GetExtension(filePath).ToLower() == ".sdlxliff")
@@ -739,8 +743,10 @@ namespace CAT.Services.CAT
                         Directory.Delete(sTempDir, true);
                     }
                     else
+                    {
                         aOutFileBytes = client.CreateDocumentFromXliff(sFilename, fileContent, sFiltername,
                             filterContent, sourceLanguage, targetLanguage, xlfFile.OuterXml);
+                    }
                 }
 
                 /*tmpFilePath = Path.Combine(_configuration!["TempFolder"]!, Guid.NewGuid().ToString());
