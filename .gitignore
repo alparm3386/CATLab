@@ -13,7 +13,4 @@ obj
 /CAT-web/.vs/CAT-web/v16/*.suo
 *.map
 /Contents
-/.vs/CAT/v17/.futdcache.v2
-/.vs/ProjectEvaluation/cat.metadata.v7.bin
-/.vs/ProjectEvaluation/cat.projects.v7.bin
-/.vs/CAT/v17/TestStore/0/000.testlog
+.vs
