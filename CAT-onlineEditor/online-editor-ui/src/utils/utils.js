@@ -1,8 +1,8 @@
 ﻿const utils = {
     extractTextFromHTML: (htmlString) => {
-        const tempElement = document.createElement('div');
-        tempElement.innerHTML = htmlString;
-        return tempElement.textContent;
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(htmlString, 'text/html');
+        return doc.body.textContent || "";
     },
 
     extractFilenameFromContentDisposition: (headerValue) => {

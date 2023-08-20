@@ -5,7 +5,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCoffee } from '@fortawesome/free-solid-svg-icons'
 import { setCurrentTuid } from 'store/appDataSlice';
 import TargetEditbBox from 'components/editorGrid/targetEditBox';
-import { FixedSizeList as List } from 'react-window';
+import { VariableSizeList as List } from 'react-window';
+import utils from 'utils/utils';
 
 var renderCntr = 0;
 function highLightTags(text) {
@@ -14,10 +15,21 @@ function highLightTags(text) {
 
 const ROW_HEIGHT = 60;
 
+const BASE_HEIGHT = 25;   // assuming 20 pixels for a single line
+const CHAR_THRESHOLD = 50;  // assuming 50 characters fit in one line
+
+const estimateHeight = (text) => {
+    const pureText = utils.extractTextFromHTML(text);
+    const lineCount = Math.ceil(pureText.length / CHAR_THRESHOLD);
+    return Math.max(lineCount * BASE_HEIGHT, ROW_HEIGHT);
+}
+
 const EditorGrid = //React.memo(
     function EditorGrid() {
+        const [rowHeights, setRowHeights] = React.useState({});
         const [viewportHeight, setViewportHeight] = React.useState(0);
         const containerRef = React.useRef(null);
+        const listRef = React.useRef(null);
 
         const dispatch = useDispatch();
         const translationUnits = useSelector((state) => state.appData.translationUnits);
@@ -41,10 +53,31 @@ const EditorGrid = //React.memo(
             return () => window.removeEventListener('resize', handleResize);
         }, []);
 
+        const getItemSize = (index) => {
+            const tu = translationUnits[index];
+            return estimateHeight(highLightTags(tu.source));
+        };
+
+        const setRef = (index) => (node) => {
+            if (node) {
+                const height = node.getBoundingClientRect().height;
+                if (rowHeights[index] !== height) {
+                    setRowHeights((prev) => {
+                        const newHeights = { ...prev, [index]: height };
+                        if (listRef.current) {
+                            listRef.current.resetAfterIndex(index, true);
+                        }
+                        return newHeights;
+                    });
+                }
+            }
+        };
+
+
         const renderRow = ({ index, style }) => {
             const tu = translationUnits[index];
             return (
-                <div key={index} style={style} className="tu-row">
+                <div ref={setRef(index)} key={index} style={style} className="tu-row">
                     <div className="row-num">{index + 1}</div>
                     <div className="source" dangerouslySetInnerHTML={{ __html: highLightTags(tu.source) }} />
                     {currentTuid === index + 1 ?
@@ -63,10 +96,10 @@ const EditorGrid = //React.memo(
         return (
             <div ref={containerRef} className="grid-area">
                 {translationUnits &&
-                    <List
+                    <List ref={listRef}
                         height={viewportHeight}  // replace with the height you want
                         itemCount={translationUnits.length}
-                        itemSize={ROW_HEIGHT}
+                        itemSize={getItemSize}
                         width='100%'  // assume you want it to take up the full width of its container
                     >
                         {renderRow}
