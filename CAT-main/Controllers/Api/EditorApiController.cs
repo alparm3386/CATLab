@@ -33,16 +33,13 @@ namespace CAT.Controllers.Api
             _mapper = mapper;
         }
 
-        [HttpGet("DownloadDocument/{id}")]
-        public async Task<IActionResult> DownloadDocument(int id)
+        [HttpGet("DownloadDocument/{idJob}")]
+        public async Task<IActionResult> DownloadDocument(int idJob)
         {
-            var document = await _mainDbContext.Documents.FirstOrDefaultAsync(d => d.Id == id);
+            // Offload the execution of CreateDocument to a separate thread.
+            var fileData = await Task.Run(() => _jobService.CreateDocument(idJob));
 
-            if (document == null)
-                return NotFound("Document not found.");
-
-            var bytes = new byte[0];
-            return File(bytes, "application/octet-stream", document.FileName);  // Change the MIME type if you know the specific type for the file
+            return File(fileData.Content!, "application/octet-stream", fileData.FileName);  // Change the MIME type if you know the specific type for the file
         }
     }
 }

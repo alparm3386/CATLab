@@ -103,7 +103,8 @@ const editorApi = (function () {
             return _apiClient.get('/api/EditorApi/DownloadJob?urlParams=' + encodeURIComponent(_urlParams), {
                 headers: {
                     'Authorization': `Bearer ${_jwt}`
-                }
+                },
+                responseType: 'arraybuffer'
             });
         },
     }

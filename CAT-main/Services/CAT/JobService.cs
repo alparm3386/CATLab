@@ -40,5 +40,10 @@ namespace CAT.Services.CAT
         {
             _catConnector.ParseDoc(idJob);
         }
+
+        public FileData CreateDocument(int idJob)
+        {
+            return _catConnector.CreateDoc(idJob, Guid.NewGuid().ToString(), false);
+        }
     }
 }

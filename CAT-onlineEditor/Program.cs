@@ -38,6 +38,7 @@ builder.Services.AddScoped<JwtService>();
 builder.Services.AddScoped<JobService>();
 builder.Services.AddScoped<CATConnector>();
 builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
+builder.Services.AddHttpClient();
 
 builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddEntityFrameworkStores<IdentityDbContext>();

@@ -32,15 +32,17 @@ namespace CAT.Controllers.Api
         private readonly ILogger _logger;
         private readonly JobService _jobService;
         private readonly IMapper _mapper;
+        private readonly IHttpClientFactory _httpClientFactory;
 
         public EditorApiController(CATConnector catClientService, IMemoryCache cache, JobService jobService,
-            IMapper mapper, ILogger<EditorApiController> logger)
+            IMapper mapper, ILogger<EditorApiController> logger, IHttpClientFactory httpClientFactory)
         {
             _catClientService = catClientService;
             _cache = cache;
             _jobService = jobService;
             _mapper = mapper;
             _logger = logger;
+            _httpClientFactory = httpClientFactory;
         }
 
         private void SaveJobDataToSession(JobData jobData)
@@ -78,7 +80,7 @@ namespace CAT.Controllers.Api
             try
             {
                 var decryptedDarams = EncryptionHelper.DecryptString(urlParams);
-                NameValueCollection queryParams = HttpUtility.ParseQueryString(decryptedDarams);
+                var queryParams = HttpUtility.ParseQueryString(decryptedDarams);
                 //load the job
                 var idJob = int.Parse(queryParams["idJob"]!);
                 var jobData = await _jobService.GetJobData(idJob);
@@ -178,24 +180,29 @@ namespace CAT.Controllers.Api
         }
 
         [HttpPost("GetConcordance")]
-        public IActionResult GetConcordance([FromBody] dynamic model)
+        public async Task<IActionResult> GetConcordance([FromBody] dynamic model)
         {
             try
             {
-                //the job data
-                string urlParams = model.GetProperty("urlParams").GetString();
-                var idJob = QueryHelper.GetQuerystringIntParameter(urlParams, "idJob");
-                var jobData = GetJobDataFromSession(idJob);
+                var ret = await Task.Run(() =>
+                {
+                    //the job data
+                    string urlParams = model.GetProperty("urlParams").GetString();
+                    var idJob = QueryHelper.GetQuerystringIntParameter(urlParams, "idJob");
+                    var jobData = GetJobDataFromSession(idJob);
 
-                var searchText = model.GetProperty("searchText").GetString();
-                bool caseSensitive = model.GetProperty("caseSensitive").GetBoolean();
-                bool searchInTarget = model.GetProperty("searchInTarget").GetBoolean();
+                    var searchText = model.GetProperty("searchText").GetString();
+                    bool caseSensitive = model.GetProperty("caseSensitive").GetBoolean();
+                    bool searchInTarget = model.GetProperty("searchInTarget").GetBoolean();
 
-                //get corpus entries
-                var tmMatches = _catClientService.GetConcordance(jobData.tmAssignments!.ToArray(), searchText, 
-                    caseSensitive, searchInTarget);
+                    //get corpus entries
+                    var tmMatches = _catClientService.GetConcordance(jobData.tmAssignments!.ToArray(), searchText,
+                        caseSensitive, searchInTarget);
 
-                return Ok(tmMatches);
+                    return Ok(tmMatches);
+                });
+
+                return ret;
             }
             catch (Exception ex)
             {
@@ -205,20 +212,28 @@ namespace CAT.Controllers.Api
             }
         }
 
-        [HttpGet("downloadJob")]
-        public IActionResult DownloadJob(string urlParams)
+        [HttpGet("DownloadJob")]
+        public async Task<IActionResult> DownloadJob(string urlParams)
         {
-            var pathToFile = @"C:/Alpar/test.xliff";  // replace with your file's path
-            var mimeType = "application/octet-stream";  // replace with your file's MIME type
+            var decryptedDarams = EncryptionHelper.DecryptString(urlParams);
+            var queryParams = HttpUtility.ParseQueryString(decryptedDarams);
+            //load the job
+            var idJob = int.Parse(queryParams["idJob"]!);
 
-            if (!System.IO.File.Exists(pathToFile))
-                return NotFound();
+            var httpClient = _httpClientFactory.CreateClient();
+            var response = await httpClient.GetAsync($"https://localhost:7096/api/editorApi/downloadDocument/{idJob}");
 
-            var fileStream = new FileStream(pathToFile, FileMode.Open);
-            return new FileStreamResult(fileStream, mimeType)
+            if (response.IsSuccessStatusCode)
             {
-                FileDownloadName = "Test.xliff"  // replace with your desired download file name
-            };
+                var fileByteArray = await response.Content.ReadAsByteArrayAsync();
+                var contentDispositionHeader = response.Content.Headers.ContentDisposition;
+                var fileName = contentDispositionHeader?.FileName!.Trim('"') ?? "defaultFileName.ext";
+
+                return File(fileByteArray, "application/octet-stream", fileName);
+            }
+
+            return BadRequest("Could not download the file.");
+            
         }
     }
 }

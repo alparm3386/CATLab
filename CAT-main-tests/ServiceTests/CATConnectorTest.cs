@@ -25,8 +25,8 @@ namespace YourNamespace.Tests
                 _testFixture.MockConfiguration.Object, _testFixture.MockedMachineTranslators, _testFixture.MockMapper.Object,
                 _testFixture.GetLoggerMockObject<CATConnector>(), _testFixture.MockDocumentProcessor.Object);
 
-            var outBytes = catConnector.CreateDoc(1, 1, false);
-            File.WriteAllBytes("C:\\Alpar\\out.docx", outBytes);
+            var fileData = catConnector.CreateDoc(1, Guid.NewGuid().ToString(), false);
+            File.WriteAllBytes("C:\\Alpar\\out.docx", fileData.Content!);
         }
     }
 }

@@ -27,6 +27,7 @@ using CATService;
 using CAT.Helpers;
 using Microsoft.EntityFrameworkCore;
 using CAT.Models.Entities.TranslationUnits;
+using CAT.Models;
 
 namespace CAT.Services.CAT
 {
@@ -46,8 +47,8 @@ namespace CAT.Services.CAT
         /// <summary>
         /// CATClientService
         /// </summary>
-        public CATConnector(IdentityDbContext identityDBContext, MainDbContext mainDbContext, TranslationUnitsDbContext translationUnitsDbContext, 
-            IConfiguration configuration, IEnumerable<IMachineTranslator> machineTranslators, IMapper mapper, ILogger<CATConnector> logger, 
+        public CATConnector(IdentityDbContext identityDBContext, MainDbContext mainDbContext, TranslationUnitsDbContext translationUnitsDbContext,
+            IConfiguration configuration, IEnumerable<IMachineTranslator> machineTranslators, IMapper mapper, ILogger<CATConnector> logger,
             IDocumentProcessor documentProcessor)
         {
             _identityDBContext = identityDBContext;
@@ -347,7 +348,7 @@ namespace CAT.Services.CAT
                     }
 
                     //get the TMs
-                    var aTMAssignments = GetTMAssignments(job!.Order!.ClientId, job!.Quote!.SourceLanguage!, 
+                    var aTMAssignments = GetTMAssignments(job!.Order!.ClientId, job!.Quote!.SourceLanguage!,
                         new string[] { job!.Quote!.TargetLanguage! }, job.Quote.Speciality, true);
                     CreateXliffFromDocument(jobDataFolder, Path.GetFileName(sXlifFilePath), filePath, filterPath,
                         job!.Quote!.SourceLanguage!, job!.Quote!.TargetLanguage!, iThreshold);
@@ -476,7 +477,7 @@ namespace CAT.Services.CAT
             }
         }
 
-        public byte[] CreateDoc(int idJob, int userId, bool updateTM)
+        public FileData CreateDoc(int idJob, string userId, bool updateTM)
         {
             var lstFilesToDelete = new List<String>();
             try
@@ -682,7 +683,8 @@ namespace CAT.Services.CAT
                 }
 
                 //create the file
-                byte[] aOutFileBytes = null;
+                byte[]? aOutFileBytes = null;
+                var fileExtension = Path.GetExtension(filePath).ToLower();
                 if (filterPath != null && Path.GetExtension(filterPath).ToLower() == ".mqres" || Path.GetExtension(filePath).ToLower() == ".sdlxliff")
                 {
                     throw new NotSupportedException("MemoQ is not supported");
@@ -721,7 +723,6 @@ namespace CAT.Services.CAT
                 }
                 else
                 {
-                    var fileExtension = Path.GetFileNameWithoutExtension(filePath).ToLower();
                     if (fileExtension == ".mqxlz")
                     {
                         String sTempDir = ConfigurationSettings.AppSettings["TempFolder"].ToString() + Guid.NewGuid();
@@ -757,7 +758,13 @@ namespace CAT.Services.CAT
                 //post-process document
                 sOutFilePath = DocumentProcessor.PostProcessDocument(idJob, tmpFilePath);*/
 
-                return aOutFileBytes;
+                var fileData = new FileData()
+                {
+                    Content = aOutFileBytes,
+                    FileName = "tmp" + idJob.ToString() + fileExtension
+                };
+
+                return fileData;
             }
             catch (Exception ex)
             {
