@@ -31,6 +31,8 @@ builder.Services.AddDbContext<MainDbContext>(options =>
 builder.Services.AddDbContext<TranslationUnitsDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("TranslationUnitsDbConnection") ?? throw new InvalidOperationException("Connection string 'TranslationUnitsDbConnection' not found.")));
 
+builder.Services.AddTransient<DbContextContainer>();
+
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<JwtService>();

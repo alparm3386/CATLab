@@ -17,12 +17,10 @@ namespace CAT.Services.CAT
     public class JobService
     {
         private readonly DbContextContainer _dbContextContainer;
-        private readonly TranslationUnitsDbContext _translationUnitsDbContext;
         private readonly IConfiguration _configuration;
         private readonly CATConnector _catClientService;
         private readonly IMapper _mapper;
         private readonly ILogger _logger;
-
 
         public JobService(DbContextContainer dbContextContainer, IConfiguration configuration, CATConnector catClientService, 
             IMapper mapper, ILogger<JobService> logger)
@@ -43,7 +41,7 @@ namespace CAT.Services.CAT
                 throw new Exception("The job has not been processed.");
 
             //load the translation units
-            var translationUnits = await _translationUnitsDbContext.TranslationUnit
+            var translationUnits = await _dbContextContainer.TranslationUnitsContext.TranslationUnit
                              .Where(tu => tu.idJob == idJob).OrderBy(tu => tu.tuid).ToListAsync();
 
             var translationUnitDTOs = _mapper.Map<TranslationUnitDTO[]>(translationUnits);
@@ -136,10 +134,10 @@ namespace CAT.Services.CAT
             tuDto.target = sTarget;
             List<int> aRet = new List<int>();
             //save the translated segment
-            using (var dbContext = _translationUnitsDbContext)
+            using (var dbContext = _dbContextContainer.TranslationUnitsContext)
             {
                 var tu = _mapper.Map<TranslationUnit>(tuDto);
-                _translationUnitsDbContext.TranslationUnit.Update(tu);
+                _dbContextContainer.TranslationUnitsContext.TranslationUnit.Update(tu);
 
                 //do the auto-propagation
                 if (propagate > 0 && propagate < 3 && bConfirmed)
@@ -154,11 +152,11 @@ namespace CAT.Services.CAT
                         var tmpTu = _mapper.Map<TranslationUnit>(tu);
                         //update the segment
                         tmpTu.status = bConfirmed ? tu.status | mask : tu.status & ~mask;
-                        _translationUnitsDbContext.TranslationUnit.Update(tmpTu);
+                        _dbContextContainer.TranslationUnitsContext.TranslationUnit.Update(tmpTu);
                     }
                 }
 
-                _translationUnitsDbContext.SaveChanges();
+                _dbContextContainer.TranslationUnitsContext.SaveChanges();
             }
 
             //update the progress
