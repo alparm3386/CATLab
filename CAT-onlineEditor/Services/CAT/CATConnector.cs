@@ -32,9 +32,7 @@ namespace CAT.Services.CAT
 {
     public class CATConnector
     {
-        private readonly IdentityDbContext _identityDBContext;
-        private readonly MainDbContext _mainDbContext;
-        private readonly TranslationUnitsDbContext _translationUnitsDbContext;
+        private readonly DbContextContainer _dbContextContainer;
         private readonly IConfiguration _configuration;
         private readonly IMapper _mapper;
         private readonly ILogger _logger;
@@ -44,12 +42,10 @@ namespace CAT.Services.CAT
         /// <summary>
         /// CATClientService
         /// </summary>
-        public CATConnector(IdentityDbContext identityDBContext, MainDbContext mainDbContext, TranslationUnitsDbContext translationUnitsDbContext,
+        public CATConnector(DbContextContainer dbContextContainer,
             IConfiguration configuration, IMapper mapper, ILogger<CATConnector> logger)
         {
-            _identityDBContext = identityDBContext;
-            _mainDbContext = mainDbContext;
-            _translationUnitsDbContext = translationUnitsDbContext;
+            _dbContextContainer = dbContextContainer;
             _configuration = configuration;
             _mapper = mapper;
             _logger = logger;

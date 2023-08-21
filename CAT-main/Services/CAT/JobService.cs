@@ -13,9 +13,7 @@ namespace CAT.Services.CAT
 {
     public class JobService
     {
-        private readonly IdentityDbContext _identityDBContext;
-        private readonly MainDbContext _mainDbContext;
-        private readonly TranslationUnitsDbContext _translationUnitsDbContext;
+        private readonly DbContextContainer _dbContextContainer;
         private readonly IConfiguration _configuration;
         private readonly CATConnector _catConnector;
         private readonly IMemoryCache _cache;
@@ -23,12 +21,10 @@ namespace CAT.Services.CAT
         private readonly ILogger _logger;
 
 
-        public JobService(IdentityDbContext identityDBContext, MainDbContext mainDbContext, TranslationUnitsDbContext translationUnitsDbContext, 
-            IConfiguration configuration, CATConnector catConnector, IMemoryCache cache, IMapper mapper, ILogger<JobService> logger)
+        public JobService(DbContextContainer dbContextContainer, IConfiguration configuration, CATConnector catConnector, IMemoryCache cache, 
+            IMapper mapper, ILogger<JobService> logger)
         {
-            _identityDBContext = identityDBContext;
-            _mainDbContext = mainDbContext;
-            _translationUnitsDbContext = translationUnitsDbContext;
+            _dbContextContainer = dbContextContainer;
             _configuration = configuration;
             _catConnector = catConnector;
             _cache = cache;

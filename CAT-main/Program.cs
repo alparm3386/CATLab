@@ -23,6 +23,8 @@ var translationUnitsConnectionString = builder.Configuration.GetConnectionString
 builder.Services.AddDbContext<TranslationUnitsDbContext>(options =>
     options.UseSqlServer(translationUnitsConnectionString));
 
+builder.Services.AddTransient<DbContextContainer>();
+
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 // Add services to the container.

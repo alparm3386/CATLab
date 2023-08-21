@@ -14,9 +14,7 @@ using System.Security.Cryptography.Xml;
 public class TestFixture
 {
     //databases
-    public IdentityDbContext IdentityDbContext { get; }
-    public MainDbContext MainDbContext { get; }
-    public TranslationUnitsDbContext TranslationUnitsDbContext { get; }
+    public DbContextContainer DbContextContainer { get; }
 
     //configuration
     public Mock<IConfiguration> MockConfiguration { get; }
@@ -37,19 +35,22 @@ public class TestFixture
         var identityOptions = new DbContextOptionsBuilder<IdentityDbContext>()
             .UseInMemoryDatabase(databaseName: "IdentityInMemoryDb")
             .Options;
-        IdentityDbContext = new IdentityDbContext(identityOptions);
+
+        var identityDbContext = new IdentityDbContext(identityOptions);
 
         //main
         var mainOptions = new DbContextOptionsBuilder<MainDbContext>()
             .UseInMemoryDatabase(databaseName: "MainInMemoryDb")
             .Options;
-        MainDbContext = new MainDbContext(mainOptions);
+        var mainDbContext = new MainDbContext(mainOptions);
 
         //translation units
         var translationUnitsOptions = new DbContextOptionsBuilder<TranslationUnitsDbContext>()
             .UseInMemoryDatabase(databaseName: "TranslationUnitsInMemoryDb")
             .Options;
-        TranslationUnitsDbContext = new TranslationUnitsDbContext(translationUnitsOptions);
+        var translationUnitsDbContext = new TranslationUnitsDbContext(translationUnitsOptions);
+
+        DbContextContainer = new DbContextContainer(identityDbContext, mainDbContext, translationUnitsDbContext);
 
         //seed the data
         SeedDbContextsWithSampleData();
@@ -104,8 +105,8 @@ public class TestFixture
         };
 
         // Save the job
-        MainDbContext.Documents.Add(document);
-        MainDbContext.SaveChanges();
+        DbContextContainer.MainContext.Documents.Add(document);
+        DbContextContainer.MainContext.SaveChanges();
 
         var quote = new Quote()
         {
@@ -130,14 +131,14 @@ public class TestFixture
         };
 
         //Save the order
-        MainDbContext.Orders.Add(order);
+        DbContextContainer.MainContext.Orders.Add(order);
 
         //Save the quote
-        MainDbContext.Quotes.Add(quote);
+        DbContextContainer.MainContext.Quotes.Add(quote);
 
         // Save the job
-        MainDbContext.Jobs.Add(job);
-        MainDbContext.SaveChanges();
+        DbContextContainer.MainContext.Jobs.Add(job);
+        DbContextContainer.MainContext.SaveChanges();
 
         //the translation units db
         var tuLines = File.ReadAllLines("translationUnitsData.txt");
@@ -154,8 +155,8 @@ public class TestFixture
                 tuid = i + 1
             });
         }
-        TranslationUnitsDbContext.TranslationUnit.AddRange(tus);
-        TranslationUnitsDbContext.SaveChanges();
+        DbContextContainer.TranslationUnitsContext.TranslationUnit.AddRange(tus);
+        DbContextContainer.TranslationUnitsContext.SaveChanges();
     }
 
     // ... any other utility methods that might help in seeding data or other configurations

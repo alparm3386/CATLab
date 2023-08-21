@@ -21,20 +21,16 @@ namespace CAT.Controllers.Mvc
 {
     public class JobsController : Controller
     {
-        private readonly IdentityDbContext _identityDBContext;
-        private readonly MainDbContext _mainDbContext;
-        private readonly TranslationUnitsDbContext _translationUnitsDbContext;
+        private readonly DbContextContainer _dbContextContainer;
         private readonly IConfiguration _configuration;
         private readonly JobService _jobService;
         private readonly IMapper _mapper;
         private readonly ILogger _logger;
 
-        public JobsController(IdentityDbContext identityDBContext, MainDbContext mainDbContext, TranslationUnitsDbContext translationUnitsDbContext,
+        public JobsController(DbContextContainer dbContextContainer, MainDbContext mainDbContext, TranslationUnitsDbContext translationUnitsDbContext,
             IConfiguration configuration, JobService jobService, IMapper mapper, ILogger<JobService> logger)
         {
-            _identityDBContext = identityDBContext;
-            _mainDbContext = mainDbContext;
-            _translationUnitsDbContext = translationUnitsDbContext;
+            _dbContextContainer = dbContextContainer;
             _configuration = configuration;
             _jobService = jobService;
             _logger = logger;
@@ -56,8 +52,8 @@ namespace CAT.Controllers.Mvc
                     TempData.Remove("ErrorMessage");
                 }
 
-                var jobsViewModels = await (from job in _mainDbContext.Jobs
-                                         join document in _mainDbContext.Documents on job.SourceDocumentId equals document.Id
+                var jobsViewModels = await (from job in _dbContextContainer.MainContext.Jobs
+                                         join document in _dbContextContainer.MainContext.Documents on job.SourceDocumentId equals document.Id
                                          select new JobViewModel
                                          {
                                             Id = job.Id,
@@ -79,13 +75,13 @@ namespace CAT.Controllers.Mvc
         // GET: Jobs/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null || _mainDbContext.Jobs == null)
+            if (id == null || _dbContextContainer.MainContext.Jobs == null)
             {
                 return NotFound();
             }
 
-            var jobsViewModels = await (from job in _mainDbContext.Jobs
-                                  join document in _mainDbContext.Documents on job.SourceDocumentId equals document.Id
+            var jobsViewModels = await (from job in _dbContextContainer.MainContext.Jobs
+                                  join document in _dbContextContainer.MainContext.Documents on job.SourceDocumentId equals document.Id
                                   where job.Id == id
                                   select new JobViewModel
                                   {
@@ -162,8 +158,8 @@ namespace CAT.Controllers.Mvc
                     };
 
                     // Save the job
-                    _mainDbContext.Documents.Add(document);
-                    await _mainDbContext.SaveChangesAsync();
+                    _dbContextContainer.MainContext.Documents.Add(document);
+                    await _dbContextContainer.MainContext.SaveChangesAsync();
 
                     var quote = new Quote()
                     {
@@ -188,14 +184,14 @@ namespace CAT.Controllers.Mvc
                     };
 
                     //Save the order
-                    _mainDbContext.Orders.Add(order);
+                    _dbContextContainer.MainContext.Orders.Add(order);
 
                     //Save the quote
-                    _mainDbContext.Quotes.Add(quote);
+                    _dbContextContainer.MainContext.Quotes.Add(quote);
 
                     // Save the job
-                    _mainDbContext.Jobs.Add(job);
-                    await _mainDbContext.SaveChangesAsync();
+                    _dbContextContainer.MainContext.Jobs.Add(job);
+                    await _dbContextContainer.MainContext.SaveChangesAsync();
                     return RedirectToAction(nameof(Index));
                 }
                 else
@@ -212,12 +208,12 @@ namespace CAT.Controllers.Mvc
         // GET: Jobs/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null || _mainDbContext.Jobs == null)
+            if (id == null || _dbContextContainer.MainContext.Jobs == null)
             {
                 return NotFound();
             }
 
-            var job = await _mainDbContext.Jobs.FindAsync(id);
+            var job = await _dbContextContainer.MainContext.Jobs.FindAsync(id);
             if (job == null)
             {
                 return NotFound();
@@ -241,8 +237,8 @@ namespace CAT.Controllers.Mvc
             {
                 try
                 {
-                    _mainDbContext.Update(job);
-                    await _mainDbContext.SaveChangesAsync();
+                    _dbContextContainer.MainContext.Update(job);
+                    await _dbContextContainer.MainContext.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -263,12 +259,12 @@ namespace CAT.Controllers.Mvc
         // GET: Jobs/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null || _mainDbContext.Jobs == null)
+            if (id == null || _dbContextContainer.MainContext.Jobs == null)
             {
                 return NotFound();
             }
 
-            var job = await _mainDbContext.Jobs
+            var job = await _dbContextContainer.MainContext.Jobs
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (job == null)
             {
@@ -283,23 +279,23 @@ namespace CAT.Controllers.Mvc
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            if (_mainDbContext.Jobs == null)
+            if (_dbContextContainer.MainContext.Jobs == null)
             {
                 return Problem("Entity set 'CATWebContext.Job'  is null.");
             }
-            var job = await _mainDbContext.Jobs.FindAsync(id);
+            var job = await _dbContextContainer.MainContext.Jobs.FindAsync(id);
             if (job != null)
             {
-                _mainDbContext.Jobs.Remove(job);
+                _dbContextContainer.MainContext.Jobs.Remove(job);
             }
 
-            await _mainDbContext.SaveChangesAsync();
+            await _dbContextContainer.MainContext.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool JobExists(int id)
         {
-            return (_mainDbContext.Jobs?.Any(e => e.Id == id)).GetValueOrDefault();
+            return (_dbContextContainer.MainContext.Jobs?.Any(e => e.Id == id)).GetValueOrDefault();
         }
 
 

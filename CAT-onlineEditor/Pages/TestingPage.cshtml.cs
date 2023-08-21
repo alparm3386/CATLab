@@ -13,11 +13,11 @@ namespace CAT.Pages
 {
     public class TestingPageModel : PageModel
     {
-        private readonly MainDbContext _mainDbContext;
+        private readonly DbContextContainer _dbContextContainer;
 
-        public TestingPageModel(MainDbContext mainDbContext)
+        public TestingPageModel(DbContextContainer dbContextContainer)
         {
-            _mainDbContext = mainDbContext;
+            _dbContextContainer = dbContextContainer;
         }
 
         public IActionResult OnGet()
@@ -32,13 +32,13 @@ namespace CAT.Pages
         // To protect from overposting attacks, see https://aka.ms/RazorPagesCRUD
         public async Task<IActionResult> OnPostAsync()
         {
-          if (!ModelState.IsValid || _mainDbContext.Jobs == null || Job == null)
+          if (!ModelState.IsValid || _dbContextContainer.MainContext.Jobs == null || Job == null)
             {
                 return Page();
             }
 
-            _mainDbContext.Jobs.Add(Job);
-            await _mainDbContext.SaveChangesAsync();
+            _dbContextContainer.MainContext.Jobs.Add(Job);
+            await _dbContextContainer.MainContext.SaveChangesAsync();
 
             return RedirectToPage("./Index");
         }

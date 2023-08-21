@@ -16,7 +16,7 @@ namespace CAT.Services.CAT
 {
     public class JobService
     {
-        private readonly MainDbContext _mainDbContext;
+        private readonly DbContextContainer _dbContextContainer;
         private readonly TranslationUnitsDbContext _translationUnitsDbContext;
         private readonly IConfiguration _configuration;
         private readonly CATConnector _catClientService;
@@ -25,11 +25,10 @@ namespace CAT.Services.CAT
         private readonly ILogger _logger;
 
 
-        public JobService(MainDbContext mainDbContext, TranslationUnitsDbContext translationUnitsDbContext, IConfiguration configuration,
-            CATConnector catClientService, IMemoryCache cache, IMapper mapper, ILogger<JobService> logger)
+        public JobService(DbContextContainer dbContextContainer, IConfiguration configuration, CATConnector catClientService, IMemoryCache cache, 
+            IMapper mapper, ILogger<JobService> logger)
         {
-            _mainDbContext = mainDbContext;
-            _translationUnitsDbContext = translationUnitsDbContext;
+            _dbContextContainer = dbContextContainer;
             _configuration = configuration;
             _catClientService = catClientService;
             _cache = cache;
@@ -39,7 +38,7 @@ namespace CAT.Services.CAT
 
         public async Task<JobData> GetJobData(int idJob)
         {
-            var job = await _mainDbContext.Jobs.FindAsync(idJob);
+            var job = await _dbContextContainer.MainContext.Jobs.FindAsync(idJob);
 
             //check if the job was processed
             if (job?.DateProcessed == null)

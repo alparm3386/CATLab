@@ -13,20 +13,16 @@ namespace CAT.Controllers.Api
     [ApiController]
     public class EditorApiController : ControllerBase
     {
-        private readonly IdentityDbContext _identityDBContext;
-        private readonly MainDbContext _mainDbContext;
-        private readonly TranslationUnitsDbContext _translationUnitsDbContext;
+        private readonly DbContextContainer _dbContextContainer;
         private readonly IConfiguration _configuration;
         private readonly JobService _jobService;
         private readonly IMapper _mapper;
         private readonly ILogger _logger;
 
-        public EditorApiController(IdentityDbContext identityDBContext, MainDbContext mainDbContext, TranslationUnitsDbContext translationUnitsDbContext,
-            IConfiguration configuration, JobService jobService, IMapper mapper, ILogger<JobService> logger)
+        public EditorApiController(DbContextContainer dbContextContainer, IConfiguration configuration, 
+            JobService jobService, IMapper mapper, ILogger<JobService> logger)
         {
-            _identityDBContext = identityDBContext;
-            _mainDbContext = mainDbContext;
-            _translationUnitsDbContext = translationUnitsDbContext;
+            _dbContextContainer = dbContextContainer;
             _configuration = configuration;
             _jobService = jobService;
             _logger = logger;

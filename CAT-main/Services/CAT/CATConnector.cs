@@ -33,9 +33,7 @@ namespace CAT.Services.CAT
 {
     public class CATConnector
     {
-        private readonly IdentityDbContext _identityDBContext;
-        private readonly MainDbContext _mainDbContext;
-        private readonly TranslationUnitsDbContext _translationUnitsDbContext;
+        private readonly DbContextContainer _dbContextContainer;
         private readonly IConfiguration _configuration;
         private readonly IEnumerable<IMachineTranslator> _machineTranslators;
         private readonly IMapper _mapper;
@@ -47,13 +45,10 @@ namespace CAT.Services.CAT
         /// <summary>
         /// CATClientService
         /// </summary>
-        public CATConnector(IdentityDbContext identityDBContext, MainDbContext mainDbContext, TranslationUnitsDbContext translationUnitsDbContext,
-            IConfiguration configuration, IEnumerable<IMachineTranslator> machineTranslators, IMapper mapper, ILogger<CATConnector> logger,
-            IDocumentProcessor documentProcessor)
+        public CATConnector(DbContextContainer dbContextContainer, IConfiguration configuration, IEnumerable<IMachineTranslator> machineTranslators, 
+            IMapper mapper, ILogger<CATConnector> logger, IDocumentProcessor documentProcessor)
         {
-            _identityDBContext = identityDBContext;
-            _mainDbContext = mainDbContext;
-            _translationUnitsDbContext = translationUnitsDbContext;
+            _dbContextContainer = dbContextContainer;
             _configuration = configuration;
             _machineTranslators = machineTranslators;
             _mapper = mapper;
@@ -310,8 +305,8 @@ namespace CAT.Services.CAT
                 {
 
                     //get the translation details
-                    var job = _mainDbContext.Jobs.Include(j => j.Quote).FirstOrDefault(j => j.Id == idJob);
-                    var document = _mainDbContext.Documents.Find(job!.SourceDocumentId);
+                    var job = _dbContextContainer.MainContext.Jobs.Include(j => j.Quote).FirstOrDefault(j => j.Id == idJob);
+                    var document = _dbContextContainer.MainContext.Documents.Find(job!.SourceDocumentId);
 
                     //check if it is parsed already
                     if (job?.DateProcessed != null)
@@ -331,7 +326,7 @@ namespace CAT.Services.CAT
 
                     //var aContentForMT = new List<MTContent>();
 
-                    String sXlifFilePath = CATUtils.CreateXlfFilePath(idJob, DocumentType.original, _configuration["JobDataBaseFolder"]!, true); //we do a backup of the original xliff
+                    String sXlifFilePath = CATUtils.CreateXlfFilePath(idJob, DocumentType.Original, _configuration["JobDataBaseFolder"]!, true); //we do a backup of the original xliff
 
                     //pre-process the document
                     String tmpFilePath = null!;// DocumentProcessor.PreProcessDocument(sFilePath, idFilter, idFrom, idTo);
@@ -457,12 +452,12 @@ namespace CAT.Services.CAT
                     xliff.Save(sXlifFilePath);
 
                     // Add the array of TranslationUnit objects to the DbSet
-                    _translationUnitsDbContext.TranslationUnit.AddRange(lstTus);
+                    _dbContextContainer.TranslationUnitsContext.TranslationUnit.AddRange(lstTus);
                     // Save changes in the context to the database
-                    _translationUnitsDbContext.SaveChanges();
+                    _dbContextContainer.TranslationUnitsContext.SaveChanges();
 
                     job.DateProcessed = DateTime.Now;
-                    _mainDbContext.SaveChanges();
+                    _dbContextContainer.MainContext.SaveChanges();
                 }
             }
             catch (Exception)
@@ -488,10 +483,10 @@ namespace CAT.Services.CAT
                 int iThreshold = 100;
 
                 //get the job details
-                var job = _mainDbContext.Jobs.Include(j => j.Quote).FirstOrDefault(j => j.Id == idJob);
+                var job = _dbContextContainer.MainContext.Jobs.Include(j => j.Quote).FirstOrDefault(j => j.Id == idJob);
 
                 //get the document
-                var document = _mainDbContext.Documents.Find(job!.SourceDocumentId);
+                var document = _dbContextContainer.MainContext.Documents.Find(job!.SourceDocumentId);
                 var sourceFilesFolder = Path.Combine(_configuration["SourceFilesFolder"]!);
                 string filePath = Path.Combine(sourceFilesFolder, document!.FileName!);
 
@@ -513,7 +508,7 @@ namespace CAT.Services.CAT
 
                 var sourceLanguage = job!.Quote!.SourceLanguage!;
                 var targetLanguage = job!.Quote!.TargetLanguage!;
-                var xlifFilePath = CATUtils.CreateXlfFilePath(idJob, DocumentType.original, _configuration["JobDataBaseFolder"]!, false);
+                var xlifFilePath = CATUtils.CreateXlfFilePath(idJob, DocumentType.Original, _configuration["JobDataBaseFolder"]!, false);
                 if (!File.Exists(xlifFilePath))
                 {
                     if (CATUtils.IsCompressedMemoQXliff(filePath))
@@ -528,7 +523,7 @@ namespace CAT.Services.CAT
                 }
 
                 //get the translated texts
-                var translationUnits = _translationUnitsDbContext.TranslationUnit
+                var translationUnits = _dbContextContainer.TranslationUnitsContext.TranslationUnit
                                  .Where(tu => tu.idJob == idJob).OrderBy(tu => tu.tuid).ToList();
 
                 //fill the xliff file with the translations
@@ -651,7 +646,7 @@ namespace CAT.Services.CAT
                 }*/
 
                 //save the intermediate xlf file.
-                var docType = DocumentType.unspecified;
+                var docType = DocumentType.Unspecified;
                 /*if (intermediateFileType == IntermediateFileType.currentTask)
                 {
                     //get the current doc type

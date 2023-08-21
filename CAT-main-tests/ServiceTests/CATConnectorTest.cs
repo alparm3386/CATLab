@@ -21,9 +21,9 @@ namespace YourNamespace.Tests
         [Fact]
         public void TestYourFunctionality()
         {
-            var catConnector = new CATConnector(_testFixture.IdentityDbContext, _testFixture.MainDbContext, _testFixture.TranslationUnitsDbContext,
-                _testFixture.MockConfiguration.Object, _testFixture.MockedMachineTranslators, _testFixture.MockMapper.Object,
-                _testFixture.GetLoggerMockObject<CATConnector>(), _testFixture.MockDocumentProcessor.Object);
+            var catConnector = new CATConnector(_testFixture.DbContextContainer, _testFixture.MockConfiguration.Object, 
+                _testFixture.MockedMachineTranslators, _testFixture.MockMapper.Object, _testFixture.GetLoggerMockObject<CATConnector>(), 
+                _testFixture.MockDocumentProcessor.Object);
 
             var fileData = catConnector.CreateDoc(1, Guid.NewGuid().ToString(), false);
             File.WriteAllBytes("C:\\Alpar\\out.docx", fileData.Content!);
