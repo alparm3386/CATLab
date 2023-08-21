@@ -158,13 +158,13 @@ namespace CAT.Controllers.Api
                 if (ix > 0)
                 {
                     tu = jobData.translationUnits[ix - 1];
-                    precedingXml = CATUtils.CodedTextToTmx(tu.source);
+                    precedingXml = CATUtils.CodedTextToTmx(tu.source!);
                 }
                 String? followingXml = null;
                 if (ix < jobData.translationUnits.Count - 1)
                 {
                     tu = jobData.translationUnits[ix + 1];
-                    followingXml = CATUtils.CodedTextToTmx(tu.source);
+                    followingXml = CATUtils.CodedTextToTmx(tu.source!);
                 }
 
                 var tmMatches = _catClientService.GetTMMatches(jobData.tmAssignments!.ToArray(), sourceXml, precedingXml!, followingXml!, null!);

@@ -56,17 +56,17 @@ namespace CAT.Controllers.Mvc
                     TempData.Remove("ErrorMessage");
                 }
 
-                var jobsViewModels = (from job in _mainDbContext.Jobs
+                var jobsViewModels = await (from job in _mainDbContext.Jobs
                                          join document in _mainDbContext.Documents on job.SourceDocumentId equals document.Id
                                          select new JobViewModel
                                          {
                                             Id = job.Id,
                                             Analysis = "",
-                                            DateCreated = job.Order.DateCreated,
+                                            DateCreated = job.Order!.DateCreated,
                                             DateProcessed = job.DateProcessed,
-                                            Fee = job.Quote.Fee,
+                                            Fee = job.Quote!.Fee,
                                             OriginalFileName = document.OriginalFileName
-                                         }).ToList();
+                                         }).ToListAsync();
 
                 return View(jobsViewModels);
             }
@@ -84,18 +84,18 @@ namespace CAT.Controllers.Mvc
                 return NotFound();
             }
 
-            var jobsViewModels = (from job in _mainDbContext.Jobs
+            var jobsViewModels = await (from job in _mainDbContext.Jobs
                                   join document in _mainDbContext.Documents on job.SourceDocumentId equals document.Id
                                   where job.Id == id
                                   select new JobViewModel
                                   {
                                       Id = job.Id,
                                       Analysis = "",
-                                      DateCreated = job.Order.DateCreated,
+                                      DateCreated = job.Order!.DateCreated,
                                       DateProcessed = job.DateProcessed,
-                                      Fee = job.Quote.Fee,
+                                      Fee = job.Quote!.Fee,
                                       OriginalFileName = document.OriginalFileName
-                                  }).FirstOrDefault();
+                                  }).FirstOrDefaultAsync();
 
             if (jobsViewModels == null)
             {
@@ -123,7 +123,7 @@ namespace CAT.Controllers.Mvc
                 if (file != null && file.Length > 0)
                 {
                     //save the file
-                    var sourceFilesFolder = Path.Combine(_configuration["SourceFilesFolder"]);
+                    var sourceFilesFolder = Path.Combine(_configuration["SourceFilesFolder"]!);
                     // Generate a unique file name based on the original file name
                     string fileName = FileHelper.GetUniqueFileName(file.FileName);
 
@@ -139,7 +139,7 @@ namespace CAT.Controllers.Mvc
                     var filterName = "";
                     if (fileFilter != null && fileFilter.Length > 0)
                     {
-                        var fileFiltersFolder = Path.Combine(_configuration["FileFiltersFolder"]);
+                        var fileFiltersFolder = Path.Combine(_configuration["FileFiltersFolder"]!);
                         // Generate a unique file name based on the original file name
                         filterName = FileHelper.GetUniqueFileName(fileFilter.FileName);
 
@@ -351,7 +351,7 @@ namespace CAT.Controllers.Mvc
             }
             catch (Exception ex)
             {
-                return Problem(title: "An error occurred while processing the job.");
+                return Problem(title: "An error occurred while processing the job." + ex.Message);
             }
 
             return Json(new { success = true, message = "Job processed successfully." });
