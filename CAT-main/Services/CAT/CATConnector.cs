@@ -154,9 +154,9 @@ namespace CAT.Services.CAT
             }
 
             if (String.IsNullOrEmpty(sFilterName))
-                return null;
+                return null!;
 
-            var fileFiltersFolder = Path.Combine(_configuration["FileFiltersFolder"]);
+            var fileFiltersFolder = Path.Combine(_configuration!["FileFiltersFolder"]!);
             var sFilterPath = Path.Combine(fileFiltersFolder, sFilterName);
 
             return sFilterPath;
@@ -181,7 +181,7 @@ namespace CAT.Services.CAT
 
                 if (CATUtils.IsCompressedMemoQXliff(sFilePath))
                 {
-                    sFilePath = CATUtils.ExtractMQXlz(sFilePath, _configuration["TempFolder"]);
+                    sFilePath = CATUtils.ExtractMQXlz(sFilePath, _configuration!["TempFolder"]!);
                     lstFilesToDelete.Add(sFilePath);
                 }
 
@@ -220,9 +220,9 @@ namespace CAT.Services.CAT
                 sw.Stop();
                 return aRet.ToArray();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                throw ex;
+                throw;
             }
             finally
             {
@@ -263,7 +263,7 @@ namespace CAT.Services.CAT
                 var sOutXliffPath = Path.Combine(sTranslationDir, sOutFileName);
                 File.WriteAllText(sOutXliffPath, sXliffContent);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 throw;
             }
@@ -334,7 +334,7 @@ namespace CAT.Services.CAT
                     String sXlifFilePath = CATUtils.CreateXlfFilePath(idJob, DocumentType.original, _configuration["JobDataBaseFolder"]!, true); //we do a backup of the original xliff
 
                     //pre-process the document
-                    String tmpFilePath = null;// DocumentProcessor.PreProcessDocument(sFilePath, idFilter, idFrom, idTo);
+                    String tmpFilePath = null!;// DocumentProcessor.PreProcessDocument(sFilePath, idFilter, idFrom, idTo);
                     if (tmpFilePath != null)
                     {
                         filePath = tmpFilePath;
@@ -435,7 +435,7 @@ namespace CAT.Services.CAT
                     var translatables = lstTus.Select(tu => new Translatable
                     {
                         id = tu.tuid,
-                        source = CATUtils.CodedTextToTmx(tu.source),
+                        source = CATUtils.CodedTextToTmx(tu!.source!),
                         target = tu.target!
                     }).ToList();
 
@@ -448,7 +448,7 @@ namespace CAT.Services.CAT
                     {
                         if (translatableDictionary.TryGetValue(tu.tuid, out var translatable))
                         {
-                            String targetWithGoogleTags = CATUtils.XmlTags2GoogleTags(translatable.target, CATUtils.TagType.Tmx); //we store the target text with google tags
+                            String targetWithGoogleTags = CATUtils.XmlTags2GoogleTags(translatable!.target!, CATUtils.TagType.Tmx); //we store the target text with google tags
                             tu.target = targetWithGoogleTags;
                         }
                     });
@@ -465,7 +465,7 @@ namespace CAT.Services.CAT
                     _mainDbContext.SaveChanges();
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 throw;
             }
@@ -671,8 +671,8 @@ namespace CAT.Services.CAT
                 //create the document
                 String sFilename = Path.GetFileName(filePath);
                 byte[] fileContent = File.ReadAllBytes(filePath);
-                String sFiltername = null;
-                byte[] filterContent = null;
+                String? sFiltername = null;
+                byte[]? filterContent = null;
                 if (String.IsNullOrEmpty(filterPath))
                     filterPath = GetDefaultFilter(filePath);
 
@@ -725,7 +725,7 @@ namespace CAT.Services.CAT
                 {
                     if (fileExtension == ".mqxlz")
                     {
-                        String sTempDir = ConfigurationSettings.AppSettings["TempFolder"].ToString() + Guid.NewGuid();
+                        String sTempDir = _configuration!["TempFolder"]! + Guid.NewGuid();
                         ZipHelper.UnZipFiles(filePath, sTempDir, null);
                         var tmFilePath = Path.Combine(sTempDir, "document.mqxliff");
                         sFilename = Path.GetFileName(tmFilePath);
@@ -780,7 +780,7 @@ namespace CAT.Services.CAT
 
         private TMAssignment[] GetTMAssignments(int idCorporateProfile, string sourceLanguage, string[] targetLanguages, int speciality, bool createTM)
         {
-            return null;
+            return null!;
         }
 
     }

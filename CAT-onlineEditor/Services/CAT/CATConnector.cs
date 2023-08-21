@@ -14,7 +14,6 @@ using System.Transactions;
 using static ICSharpCode.SharpZipLib.Zip.ZipEntryFactory;
 using System.Xml;
 using CAT.Enums;
-using CAT.Services.MT;
 using Microsoft.Extensions.Options;
 using CAT.Models.CAT;
 using Statistics = CAT.Models.CAT.Statistics;
@@ -37,7 +36,6 @@ namespace CAT.Services.CAT
         private readonly MainDbContext _mainDbContext;
         private readonly TranslationUnitsDbContext _translationUnitsDbContext;
         private readonly IConfiguration _configuration;
-        private readonly IEnumerable<IMachineTranslator> _machineTranslators;
         private readonly IMapper _mapper;
         private readonly ILogger _logger;
 
@@ -47,13 +45,12 @@ namespace CAT.Services.CAT
         /// CATClientService
         /// </summary>
         public CATConnector(IdentityDbContext identityDBContext, MainDbContext mainDbContext, TranslationUnitsDbContext translationUnitsDbContext,
-            IConfiguration configuration, IEnumerable<IMachineTranslator> machineTranslators, IMapper mapper, ILogger<CATConnector> logger)
+            IConfiguration configuration, IMapper mapper, ILogger<CATConnector> logger)
         {
             _identityDBContext = identityDBContext;
             _mainDbContext = mainDbContext;
             _translationUnitsDbContext = translationUnitsDbContext;
             _configuration = configuration;
-            _machineTranslators = machineTranslators;
             _mapper = mapper;
             _logger = logger;
         }
@@ -151,9 +148,9 @@ namespace CAT.Services.CAT
             }
 
             if (String.IsNullOrEmpty(sFilterName))
-                return null;
+                return null!;
 
-            var fileFiltersFolder = Path.Combine(_configuration["FileFiltersFolder"]);
+            var fileFiltersFolder = Path.Combine(_configuration!["FileFiltersFolder"]!);
             var sFilterPath = Path.Combine(fileFiltersFolder, sFilterName);
 
             return sFilterPath;
@@ -180,7 +177,7 @@ namespace CAT.Services.CAT
 
                 if (CATUtils.IsCompressedMemoQXliff(sFilePath))
                 {
-                    sFilePath = CATUtils.ExtractMQXlz(sFilePath, _configuration["TempFolder"]);
+                    sFilePath = CATUtils.ExtractMQXlz(sFilePath, _configuration!["TempFolder"]!);
                     lstFilesToDelete.Add(sFilePath);
                 }
 
@@ -219,9 +216,9 @@ namespace CAT.Services.CAT
                 sw.Stop();
                 return aRet.ToArray();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                throw ex;
+                throw;
             }
             finally
             {
@@ -262,7 +259,7 @@ namespace CAT.Services.CAT
                 var sOutXliffPath = Path.Combine(sTranslationDir, sOutFileName);
                 File.WriteAllText(sOutXliffPath, sXliffContent);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 throw;
             }

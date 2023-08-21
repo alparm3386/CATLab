@@ -63,9 +63,9 @@ namespace CAT.Helpers
 
                 return sNewXlfPath;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                throw ex;
+                throw;
             }
         }
 
@@ -101,7 +101,7 @@ namespace CAT.Helpers
             if (!sXml.StartsWith("<seg>"))
                 sXml = "<seg>" + sXml + "</seg>";
             xmlDoc.LoadXml(sXml);
-            XmlNodeList nodeList = xmlDoc.ChildNodes[0].ChildNodes;
+            XmlNodeList nodeList = xmlDoc!.ChildNodes[0]!.ChildNodes;
 
             try
             {
@@ -118,7 +118,7 @@ namespace CAT.Helpers
                 var matces = Regex.Match(sbTextContent.ToString(), @"\A\s*\z");
                 return matces.Length > 0;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
             }
 
@@ -142,9 +142,9 @@ namespace CAT.Helpers
         public static String XmlTags2GoogleTags(String sXml, TagType tagType)
         {
             //collect the ids to skip
-            StringBuilder sRet = new StringBuilder();
+            var sRet = new StringBuilder();
             MatchCollection matches = Regex.Matches(sXml, @"{\s*(?<id>\d+)\s*}|{\s*/\s*(?<id>\d+)\s*}|{\s*(?<id>\d+)\s*/\s*}");
-            HashSet<String> idsToSkip = new HashSet<String>();
+            var idsToSkip = new HashSet<String>();
             foreach (Match match in matches)
                 idsToSkip.Add(match.Groups["id"].Value);
 
@@ -152,12 +152,12 @@ namespace CAT.Helpers
             if (tagType == TagType.Tmx)
                 sIdAttr = "i";
 
-            XmlDocument xmlDoc = new XmlDocument();
+            var xmlDoc = new XmlDocument();
             xmlDoc.PreserveWhitespace = true;
             if (!sXml.StartsWith("<seg>"))
                 sXml = "<seg>" + sXml + "</seg>";
             xmlDoc.LoadXml(sXml);
-            XmlNodeList nodeList = xmlDoc.ChildNodes[0].ChildNodes;
+            XmlNodeList nodeList = xmlDoc!.ChildNodes![0]!.ChildNodes;
             var openTags = new Dictionary<String, String>();
             int id = 1;
             String outerXml = "";
@@ -181,11 +181,11 @@ namespace CAT.Helpers
                                 break;
                             case "bpt":
                                 sRet.Append("{" + id + "}");
-                                openTags.Add(node.Attributes[sIdAttr].Value, id.ToString());
+                                openTags.Add(node!.Attributes![sIdAttr]!.Value, id.ToString());
                                 id++;
                                 break;
                             case "ept":
-                                sRet.Append("{/" + openTags[node.Attributes[sIdAttr].Value] + "}");
+                                sRet.Append("{/" + openTags[node!.Attributes![sIdAttr]!.Value] + "}");
                                 break;
                             case "it":
                                 sRet.Append("{" + id + "/}");
@@ -197,7 +197,7 @@ namespace CAT.Helpers
                     }
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 throw new Exception("id=" + id);
             }
@@ -221,7 +221,7 @@ namespace CAT.Helpers
                     sXliffSegment = "";
 
                 // remove the outer tag
-                StringBuilder sbOut = new StringBuilder();
+                var sbOut = new StringBuilder();
 
                 // matcher for the tmx tags
                 var matches = Regex.Matches(sXliffSegment, "<[^>]*>[^>]*>");
@@ -271,7 +271,7 @@ namespace CAT.Helpers
         public static string CodedTextToXliff(string codedText)
         {
             //create simple codes
-            StringBuilder tmp = new StringBuilder();
+            var tmp = new StringBuilder();
             for (int i = 0; i < codedText.Length; i++)
             {
                 var charCode = codedText[i];
@@ -342,7 +342,7 @@ namespace CAT.Helpers
                     return "";
 
                 // remove the outer tag
-                StringBuilder sbOut = new StringBuilder();
+                var sbOut = new StringBuilder();
 
                 // matcher for the tmx tags
                 var matches = Regex.Matches(sTmxSeg, "<[^>]*>[^>]*>");
@@ -395,7 +395,7 @@ namespace CAT.Helpers
             var reversedTagsMap = tagsMap.ToDictionary(x => x.Value, x => x.Key);
 
             //create simple codes
-            StringBuilder tmp = new StringBuilder();
+            var tmp = new StringBuilder();
             for (int i = 0; i < codedText.Length; i++)
             {
                 var charCode = codedText[i];
@@ -422,7 +422,7 @@ namespace CAT.Helpers
         {
             var tagsMap = new Dictionary<int, int>();
             MatchCollection matches = Regex.Matches(codedText, @"{\s*(?<id>\d+)\s*}|{\s*/\s*(?<id>\d+)\s*}|{\s*(?<id>\d+)\s*/\s*}");
-            HashSet<String> idsToSkip = new HashSet<String>();
+            var idsToSkip = new HashSet<String>();
             foreach (Match match in matches)
                 idsToSkip.Add(match.Groups["id"].Value);
 
@@ -462,7 +462,7 @@ namespace CAT.Helpers
             xmlDoc.PreserveWhitespace = true;
             xmlDoc.LoadXml("<root>" + sXliff + "</root>");
             var openTags = new Dictionary<string, string>();
-            XmlNodeList nodeList = xmlDoc.ChildNodes[0].ChildNodes;
+            XmlNodeList nodeList = xmlDoc!.ChildNodes![0]!.ChildNodes;
             int id = 1;
             foreach (XmlNode node in nodeList)
             {
@@ -480,11 +480,11 @@ namespace CAT.Helpers
                         case "bpt":
                             var sId = id.ToString();
                             outTagsMap.Add(sId, node.OuterXml);
-                            openTags.Add(node.Attributes[idAttr].Value, sId);
+                            openTags.Add(node!.Attributes![idAttr]!.Value, sId);
                             id++;
                             break;
                         case "ept":
-                            outTagsMap.Add("/" + openTags[node.Attributes[idAttr].Value], node.OuterXml);
+                            outTagsMap.Add("/" + openTags[node!.Attributes![idAttr]!.Value], node.OuterXml);
                             break;
                         case "it":
                             outTagsMap.Add(id + "/", node.OuterXml);

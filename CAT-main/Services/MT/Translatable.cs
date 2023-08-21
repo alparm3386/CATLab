@@ -3,7 +3,7 @@
     public class Translatable
     {
         public int id;
-        public string source;
-        public string target;
+        public string? source;
+        public string? target;
     }
 }

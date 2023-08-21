@@ -3,7 +3,6 @@ using Microsoft.Extensions.DependencyInjection;
 using CAT.Data;
 using CAT.Models;
 using CAT.Services.CAT;
-using CAT.Services.MT;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using System.Configuration;
 using Microsoft.Extensions.Caching.Memory;
@@ -45,13 +44,6 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.Requ
 // Add Razor Pages (needed for Identity)
 builder.Services.AddRazorPages();
 
-builder.Services.TryAddEnumerable(new[]
-    {
-        // Type-based services
-        ServiceDescriptor.Singleton<IMachineTranslator, MMT>(),
-        //ServiceDescriptor.Singleton<IMachineTranslator, MachineTranslator2>(),
-    });
-
 builder.Services.AddSession();
 builder.Services.AddMemoryCache();
 
@@ -71,7 +63,7 @@ builder.Services.AddAuthentication(options =>
         ValidateIssuerSigningKey = true,
         ValidIssuer = builder.Configuration["Jwt:Issuer"],
         ValidAudience = builder.Configuration["Jwt:Audience"],
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder!.Configuration["Jwt:Key"]!))
     };
 });
 

@@ -15,8 +15,8 @@ namespace CAT.Services.MT
 {
     public class MMT : IMachineTranslator
     {
-        public static int ID_GENERAL_TM = 11471;
-        public static int MT_MAX_LENGTH = 4000;
+        public const int ID_GENERAL_TM = 11471;
+        public const int MT_MAX_LENGTH = 4000;
         public enum MemoryType
         {
             TM = 0,
@@ -42,7 +42,7 @@ namespace CAT.Services.MT
             try
             {
                 if (sFrom != "en" && sTo != "en")
-                    return null;
+                    return null!;
 
                 sFrom = ConvertLanguageCode(sFrom);
                 sTo = ConvertLanguageCode(sTo);
@@ -53,7 +53,7 @@ namespace CAT.Services.MT
 
                 return sContextVector;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 throw;
             }
@@ -85,18 +85,18 @@ namespace CAT.Services.MT
                 byte[] responsebytes = webClient.UploadValues(sUrl, "POST", reqparm);
                 var sResponse = Encoding.Default.GetString(responsebytes);
 
-                var o = (JToken)JsonConvert.DeserializeObject(sResponse);
-                var sContextVector = o["data"]["vectors"][sTo].ToString();
+                var o = (JToken)JsonConvert.DeserializeObject(sResponse)!;
+                var sContextVector = o!["data"]!["vectors"]![sTo]!.ToString();
 
                 return sContextVector;
             }
             catch (WebException ex)
             {
-                var responseStream = (MemoryStream)ex.Response.GetResponseStream();
+                var responseStream = (MemoryStream)ex.Response!.GetResponseStream()!;
                 String responseJson = Encoding.ASCII.GetString(responseStream.ToArray());
                 //throw;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 //throw;
             }
@@ -181,7 +181,7 @@ namespace CAT.Services.MT
             return HttpUtility.HtmlDecode(sText);
         }
 
-        public String Translate(String sText, String sFrom, String sTo, Object mtParams)
+        public String Translate(String sText, String sFrom, String sTo, Object? mtParams)
         {
             if (String.IsNullOrEmpty(sText))
                 return "";
@@ -214,8 +214,8 @@ namespace CAT.Services.MT
                     webClient.Encoding = Encoding.UTF8;
                     String sTranslation = webClient.DownloadString(sUrl);
 
-                    var o = (Newtonsoft.Json.Linq.JToken)JsonConvert.DeserializeObject(sTranslation);
-                    sTranslation = o["data"]["translation"].ToString();
+                    var o = (JToken)JsonConvert.DeserializeObject(sTranslation)!;
+                    sTranslation = o!["data"]!["translation"]!.ToString();
 
                     sTranslation = MTTagsToGoogleTags(sTranslation);
                     return sTranslation;
@@ -226,17 +226,17 @@ namespace CAT.Services.MT
                     {
                         if (ex.Message.Contains("Payload Too Large"))
                             return sText;
-                        var responseStream = (MemoryStream)ex.Response.GetResponseStream();
+                        var responseStream = (MemoryStream)ex!.Response!.GetResponseStream();
                         String responseJson = Encoding.ASCII.GetString(responseStream.ToArray());
                         if (responseJson.Contains("Language pair not supported"))
                             break;
                         Thread.Sleep(5000);
                     }
-                    catch (Exception e)
+                    catch (Exception)
                     {
                     }
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     Thread.Sleep(5000);
                 }
@@ -252,30 +252,30 @@ namespace CAT.Services.MT
         {
             //return TranslateContents(mtContents, sFrom, sTo, mtParams, MT_MAX_LENGTH, TranslateArray);
             Dictionary<int, String> aRet = new Dictionary<int, String>();
-            String[] aMemoryNames = null;
+            String[]? aMemoryNames = null;
             if (mtParams != null)
                 aMemoryNames = (String[])mtParams;
 
             int segmentsToExtract = Math.Min(translatables.Count, 100);
             var sbTextExtract = new StringBuilder();
             for (int i = 0; i < segmentsToExtract; i++)
-                sbTextExtract.Append(GoogleTagsToMTTags(translatables[i].source) + "\n");
+                sbTextExtract.Append(GoogleTagsToMTTags(translatables[i]!.source!) + "\n");
 
             String sContextVector = GetContextVector(sFrom, sTo, sbTextExtract.ToString());
             var lookupTable = new Dictionary<String, String>();
 
             foreach (var translatable in translatables)
             {
-                if (lookupTable.ContainsKey(translatable.source))
+                if (lookupTable.ContainsKey(translatable!.source!))
                 {
-                    translatable.target = lookupTable[translatable.source];
+                    translatable.target = lookupTable[translatable!.source!];
                     continue;
                 }
 
                 //do the translation
-                String sTranslation = Translate(translatable.source, sFrom, sTo, sContextVector);
+                String sTranslation = Translate(translatable!.source!, sFrom, sTo, sContextVector);
                 translatable.target = sTranslation;
-                lookupTable.Add(translatable.source, translatable.target);
+                lookupTable.Add(translatable!.source!, translatable.target);
             }
         }
 
@@ -287,7 +287,7 @@ namespace CAT.Services.MT
             //else
             //    return TranslateOneByOne(mtContents, sFrom, sTo, mtParams, withRisk);
 
-            TranslateOneByOne(translatables, sFrom, sTo, mtParams);
+            TranslateOneByOne(translatables, sFrom, sTo, mtParams!);
         }
 
         //public List<MTContent> TranslateInBatch(List<MTContent> mtContents, string sFrom, string sTo, Object mtParams, bool withRisk)

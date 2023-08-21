@@ -20,12 +20,12 @@ namespace CAT.Services
 
         public string GenerateJWT(IdentityUser user)
         {
-            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
+            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration!["Jwt:Key"]!));
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
             var token = new JwtSecurityToken(_configuration["Jwt:Issuer"],
                 _configuration["Jwt:Audience"],
-                new[] { new Claim(JwtRegisteredClaimNames.Sub, user.UserName) },
+                new[] { new Claim(JwtRegisteredClaimNames.Sub, user!.UserName!) },
                 expires: DateTime.Now.AddHours(12),
                 signingCredentials: credentials);
 

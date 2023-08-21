@@ -85,7 +85,7 @@ public class TestFixture
         // Mocking DocumentProcessor
         MockDocumentProcessor = new Mock<IDocumentProcessor>();
         MockDocumentProcessor.Setup(dp => dp.PreProcessDocument(It.IsAny<string>(), It.IsAny<string>()))
-                                     .Returns((string filePath, string filterPath) => null);
+                                     .Returns((string filePath, string filterPath) => null!);
     }
 
     // You can also provide methods to setup specific behaviors or seed data

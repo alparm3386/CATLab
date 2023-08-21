@@ -24,7 +24,7 @@ namespace CAT.Helpers
 			//string[] filenames = Directory.GetFiles(args[0]);
 
 			bool bRet = true;
-			Crc32 crc = new Crc32();
+			var crc = new Crc32();
 			ZipOutputStream s = new ZipOutputStream(File.Create(sZipName));
 		
 			s.SetLevel(6); // 0 - store only to 9 - means best compression
@@ -45,10 +45,10 @@ namespace CAT.Helpers
 					bRet = false;
 					continue;
 				}
-				sNameInPack = asNamesInThePack == null ? file : asNamesInThePack[i];
+				sNameInPack = asNamesInThePack == null ? file : asNamesInThePack![i]!;
 				byte[] buffer = new byte[fs.Length];
 				fs.Read(buffer, 0, buffer.Length);
-                ZipEntry entry = null;
+                ZipEntry? entry = null;
                 if(bKeepDirectoryStructure)
 					entry = new ZipEntry(sNameInPack);
 			    else
@@ -177,8 +177,8 @@ namespace CAT.Helpers
                     {
                         string fullPath = directoryName + "\\" + theEntry.Name;
                         fullPath = fullPath.Replace("\\ ", "\\");
-                        string fullDirPath = Path.GetDirectoryName(fullPath);
-                        if (!Directory.Exists(fullDirPath)) Directory.CreateDirectory(fullDirPath);
+                        string fullDirPath = Path.GetDirectoryName(fullPath!)!;
+                        if (!Directory.Exists(fullDirPath)) Directory.CreateDirectory(fullDirPath!);
                         FileStream streamWriter = File.Create(fullPath);
                         int size = 2048;
                         byte[] data = new byte[2048];

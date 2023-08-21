@@ -91,7 +91,7 @@ namespace CAT.Controllers.Api
                 {
                     translationUnits = jobData!.translationUnits!.Select(tu => new {
                         source = CATUtils.CodedTextToGoogleTags(tu.source!),
-                        target = tu.target
+                        tu.target
                     }).ToList<object>()
                 };
 

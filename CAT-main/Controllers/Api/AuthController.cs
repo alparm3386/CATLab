@@ -31,7 +31,7 @@ namespace CAT.Controllers.Api
             }
 
             var user = await _signInManager.UserManager.FindByEmailAsync(model.Input.Email);
-            var token = _jwtService.GenerateJWT(user);
+            var token = _jwtService.GenerateJWT(user!);
 
             return Ok(new { Token = token });
 

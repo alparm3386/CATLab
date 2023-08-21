@@ -4,7 +4,7 @@
     {
         public string PreProcessDocument(string filePath, string filterPath)
         {
-            return null;
+            return null!;
         }
     }
 }
