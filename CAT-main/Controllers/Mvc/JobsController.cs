@@ -16,6 +16,7 @@ using CAT.Enums;
 using CAT.Models.ViewModels;
 using CAT.Services.CAT;
 using AutoMapper;
+using Task = CAT.Enums.Task;
 
 namespace CAT.Controllers.Mvc
 {
@@ -340,7 +341,7 @@ namespace CAT.Controllers.Mvc
 
             try
             {
-                await Task.Run(() =>
+                await System.Threading.Tasks.Task.Run(() =>
                 {
                     _jobService.ProcessJob((int)id);
                 });

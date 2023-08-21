@@ -16,18 +16,16 @@ namespace CAT.Services.CAT
         private readonly DbContextContainer _dbContextContainer;
         private readonly IConfiguration _configuration;
         private readonly CATConnector _catConnector;
-        private readonly IMemoryCache _cache;
         private readonly IMapper _mapper;
         private readonly ILogger _logger;
 
 
-        public JobService(DbContextContainer dbContextContainer, IConfiguration configuration, CATConnector catConnector, IMemoryCache cache, 
+        public JobService(DbContextContainer dbContextContainer, IConfiguration configuration, CATConnector catConnector, 
             IMapper mapper, ILogger<JobService> logger)
         {
             _dbContextContainer = dbContextContainer;
             _configuration = configuration;
             _catConnector = catConnector;
-            _cache = cache;
             _logger = logger;
             _mapper = mapper;
         }

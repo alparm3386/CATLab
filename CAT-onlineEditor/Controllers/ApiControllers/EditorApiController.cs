@@ -28,17 +28,15 @@ namespace CAT.Controllers.Api
     public class EditorApiController : ControllerBase
     {
         private readonly CATConnector _catClientService;
-        private readonly IMemoryCache _cache;
         private readonly ILogger _logger;
         private readonly JobService _jobService;
         private readonly IMapper _mapper;
         private readonly IHttpClientFactory _httpClientFactory;
 
-        public EditorApiController(CATConnector catClientService, IMemoryCache cache, JobService jobService,
-            IMapper mapper, ILogger<EditorApiController> logger, IHttpClientFactory httpClientFactory)
+        public EditorApiController(CATConnector catClientService, JobService jobService, IMapper mapper, ILogger<EditorApiController> logger, 
+            IHttpClientFactory httpClientFactory)
         {
             _catClientService = catClientService;
-            _cache = cache;
             _jobService = jobService;
             _mapper = mapper;
             _logger = logger;
