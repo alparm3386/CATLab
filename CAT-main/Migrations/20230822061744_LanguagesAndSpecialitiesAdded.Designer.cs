@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CAT.Migrations
 {
     [DbContext(typeof(MainDbContext))]
-    [Migration("20230816140328_modelUpdate")]
-    partial class modelUpdate
+    [Migration("20230822061744_LanguagesAndSpecialitiesAdded")]
+    partial class LanguagesAndSpecialitiesAdded
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -85,6 +85,25 @@ namespace CAT.Migrations
                     b.ToTable("Jobs");
                 });
 
+            modelBuilder.Entity("CAT.Models.Entities.Main.Language", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ISO639_1")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Languages");
+                });
+
             modelBuilder.Entity("CAT.Models.Entities.Main.Order", b =>
                 {
                     b.Property<int>("Id")
@@ -132,6 +151,23 @@ namespace CAT.Migrations
                     b.ToTable("Quotes");
                 });
 
+            modelBuilder.Entity("CAT.Models.Entities.Main.Speciality", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Specialities");
+                });
+
             modelBuilder.Entity("CAT.Models.Entities.Main.WorkflowStep", b =>
                 {
                     b.Property<int>("Id")
@@ -140,7 +176,28 @@ namespace CAT.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<DateTime?>("CompletionDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<decimal?>("Fee")
+                        .HasColumnType("decimal(18,2)");
+
                     b.Property<int>("JobId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("ScheduledDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("StartDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<int>("StepOrder")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TaskId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");

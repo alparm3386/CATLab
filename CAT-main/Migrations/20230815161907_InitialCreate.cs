@@ -52,7 +52,7 @@ namespace CAT.Migrations
                     Fee = table.Column<double>(type: "float", nullable: false),
                     SourceLanguage = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     TargetLanguage = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Specility = table.Column<int>(type: "int", nullable: false)
+                    Speciality = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {

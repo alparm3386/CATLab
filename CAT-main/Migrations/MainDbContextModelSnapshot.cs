@@ -82,6 +82,25 @@ namespace CAT.Migrations
                     b.ToTable("Jobs");
                 });
 
+            modelBuilder.Entity("CAT.Models.Entities.Main.Language", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ISO639_1")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Languages");
+                });
+
             modelBuilder.Entity("CAT.Models.Entities.Main.Order", b =>
                 {
                     b.Property<int>("Id")
@@ -118,7 +137,7 @@ namespace CAT.Migrations
                     b.Property<string>("SourceLanguage")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("Specility")
+                    b.Property<int>("Speciality")
                         .HasColumnType("int");
 
                     b.Property<string>("TargetLanguage")
@@ -129,6 +148,23 @@ namespace CAT.Migrations
                     b.ToTable("Quotes");
                 });
 
+            modelBuilder.Entity("CAT.Models.Entities.Main.Speciality", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Specialities");
+                });
+
             modelBuilder.Entity("CAT.Models.Entities.Main.WorkflowStep", b =>
                 {
                     b.Property<int>("Id")
@@ -137,7 +173,28 @@ namespace CAT.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<DateTime?>("CompletionDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<decimal?>("Fee")
+                        .HasColumnType("decimal(18,2)");
+
                     b.Property<int>("JobId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("ScheduledDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("StartDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<int>("StepOrder")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TaskId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");

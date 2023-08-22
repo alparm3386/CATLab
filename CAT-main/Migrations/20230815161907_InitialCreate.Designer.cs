@@ -118,7 +118,7 @@ namespace CAT.Migrations
                     b.Property<string>("SourceLanguage")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("Specility")
+                    b.Property<int>("Speciality")
                         .HasColumnType("int");
 
                     b.Property<string>("TargetLanguage")

@@ -24,6 +24,10 @@ namespace CAT.Data
 
         public DbSet<WorkflowStep> WorkflowSteps { get; set; } = default!;
 
+        public DbSet<Language> Languages { get; set; } = default!;
+
+        public DbSet<Speciality> Specialities { get; set; } = default!;
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         { 
         }
