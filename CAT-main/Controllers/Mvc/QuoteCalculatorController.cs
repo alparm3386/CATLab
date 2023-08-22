@@ -43,31 +43,22 @@ namespace CAT.Controllers.Mvc
         //}
 
         [HttpPost]
-        public async Task<IActionResult> CalculateQuote(QuoteCalculatorViewModel model)
+        public async Task<IActionResult> HandleQuote(QuoteCalculatorViewModel model, string action)
         {
-            if (ModelState.IsValid)
+
+            if (!ModelState.IsValid)
             {
-                // Calculate the price for the uploaded file. This is a placeholder.
-                //double price = CalculatePriceBasedOnFileAndCriteria(model);
-
-                //var quote = new Quote
-                //{
-                //    SourceLanguage = model.SourceLanguage,
-                //    TargetLanguage = model.TargetLanguage,
-                //    Speciality = model.Speciality,
-                //    Price = price,
-                //    // Store file path if necessary
-                //};
-
-                //_dbContext.Quotes.Add(quote);
-                //await _dbContext.SaveChangesAsync();
-
-                //return RedirectToAction("QuoteDetails", new { id = quote.Id });
-
-                return RedirectToAction("QuoteDetails", 1);
+                return View("Index", model);
             }
 
-            return View("Index", model);
+            switch (action)
+            {
+                case "CalculateQuote":
+                    // Your logic for Calculate Quote
+                    return RedirectToAction("QuoteDetails"); // or wherever you want to redirect
+                default:
+                    return View("Index", model);
+            }
         }
 
         public async Task<IActionResult> QuoteDetails(int id)
