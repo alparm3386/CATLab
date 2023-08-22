@@ -21,14 +21,27 @@
                 </button>
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
-@*                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                        <!-- Operations dropdown -->
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="operationsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Operations
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="operationsDropdown">
+                                <li><a class="dropdown-item" asp-area="" asp-controller="Jobs" asp-action="Index">Jobs</a></li>
+                            </ul>
                         </li>
-*@ 
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Jobs" asp-action="Index">Jobs</a>
+
+                        <!-- Clients dropdown -->
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="clientsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Clients
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="clientsDropdown">
+                                <li><a class="dropdown-item" asp-area="" asp-controller="QuoteCalculator" asp-action="Index">Quote Calculator</a></li>
+                            </ul>
                         </li>
                     </ul>
+
                     <partial name="_LoginPartial" />
                 </div>
             </div>

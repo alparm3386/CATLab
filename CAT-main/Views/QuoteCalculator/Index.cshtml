@@ -1,0 +1,47 @@
+﻿@model QuoteCalculatorViewModel
+@{
+    ViewBag.Title = "Quote Calculator";
+}
+
+<h2>Quote Calculator</h2>
+
+<form method="post" enctype="multipart/form-data" asp-action="CalculateQuote">
+    >
+    <div class="form-group">
+        <label for="sourceLanguage">Source Language:</label>
+        <select id="sourceLanguage" name="SourceLanguage" class="form-control">
+            @foreach (var lang in Model.Languages)
+            {
+                <option value="@lang.Key">@lang.Value</option>
+            }
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label for="targetLanguage">Target Language:</label>
+        <select id="targetLanguage" name="TargetLanguage" class="form-control">
+            @foreach (var lang in Model.Languages)
+            {
+                <option value="@lang.Key">@lang.Value</option>
+            }
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label for="speciality">Speciality:</label>
+        <select id="speciality" name="Speciality" class="form-control">
+            @foreach (var speciality in Model.Specialities)
+            {
+                <option value="@speciality.Key">@speciality.Value</option>
+            }
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label for="file">Upload File:</label>
+        <input type="file" id="file" name="FileToUpload" class="form-control" />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Calculate Quote</button>
+
+</form>

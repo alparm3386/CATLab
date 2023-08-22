@@ -24,7 +24,23 @@ namespace CAT.Controllers.Mvc
             _mapper = mapper;
         }
 
-        // ... Existing methods ...
+        public IActionResult Index()
+        {
+            return View(new QuoteCalculatorViewModel());
+        }
+
+        //[HttpPost]
+        //public IActionResult Index(QuoteCalculatorViewModel model)
+        //{
+        //    if (ModelState.IsValid)
+        //    {
+        //        // Process the uploaded file and other data as needed
+        //        // Save to database, call another service, etc.
+        //        return RedirectToAction("Success"); // or wherever you wish to redirect after processing
+        //    }
+
+        //    return View(model);
+        //}
 
         [HttpPost]
         public async Task<IActionResult> CalculateQuote(QuoteCalculatorViewModel model)

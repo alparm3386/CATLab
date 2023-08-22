@@ -8,18 +8,18 @@
         public IFormFile? FileToUpload { get; set; }
 
         public Dictionary<string, string> Languages => new Dictionary<string, string>
-    {
-        {"en", "English"},
-        {"fr", "French"},
-        {"de", "German"},
-        // Add more languages as needed
-    };
+        {
+            {"en", "English"},
+            {"fr", "French"},
+            {"de", "German"},
+            // Add more languages as needed
+        };
 
         public Dictionary<int, string> Specialities => new Dictionary<int, string>
-    {
-        {1, "General"},
-        {2, "Marketing"},
-        {3, "Technical"}
-    };
+        {
+            {1, "General"},
+            {2, "Marketing"},
+            {3, "Technical"}
+        };
     }
 }
