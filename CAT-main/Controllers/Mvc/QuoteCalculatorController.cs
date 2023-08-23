@@ -60,7 +60,8 @@ namespace CAT.Controllers.Mvc
                 case "CalculateQuote":
                     try
                     {
-                        using (var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled)) //MSDTC
+                        //using (var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled)) //MSDTC
+                        //using (var transaction = context.Database.BeginTransaction())
                         {
                             //save the file
                             var sourceFilesFolder = Path.Combine(_configuration["SourceFilesFolder"]!);
@@ -87,8 +88,11 @@ namespace CAT.Controllers.Mvc
                             };
 
                             await _dbContextContainer.MainContext.Documents.AddAsync(document);
+                            await _dbContextContainer.MainContext.SaveChangesAsync();
 
-                            scope.Complete();
+
+
+                            //scope.Complete();
                         }
 
                     }
