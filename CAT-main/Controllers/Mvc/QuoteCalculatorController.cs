@@ -1,8 +1,12 @@
 ﻿using AutoMapper;
 using CAT.Data;
+using CAT.Enums;
+using CAT.Helpers;
+using CAT.Models.Entities.Main;
 using CAT.Models.ViewModels;
 using CAT.Services.CAT;
 using Microsoft.AspNetCore.Mvc;
+using System.Transactions;
 
 namespace CAT.Controllers.Mvc
 {
@@ -56,8 +60,37 @@ namespace CAT.Controllers.Mvc
                 case "CalculateQuote":
                     try
                     {
-                        throw new Exception("My custom error");
-                        // Your logic for Calculate Quote
+                        using (var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled)) //MSDTC
+                        {
+                            //save the file
+                            var sourceFilesFolder = Path.Combine(_configuration["SourceFilesFolder"]!);
+                            // Generate a unique file name based on the original file name
+                            string fileName = FileHelper.GetUniqueFileName(model!.FileToUpload!.FileName);
+
+                            // Combine the unique file name with the server's path to create the full path
+                            string filePath = Path.Combine(sourceFilesFolder, fileName);
+
+                            // Save the file to the server
+                            using (var stream = new FileStream(filePath, FileMode.Create))
+                            {
+                                await model!.FileToUpload!.CopyToAsync(stream);
+                            }
+
+                            //create the document
+                            var document = new Document()
+                            {
+                                DocumentType = (int)DocumentType.Original,
+                                FileName = Path.GetFileNameWithoutExtension(filePath),
+                                OriginalFileName = fileName,
+                                //FilterId = -1,
+                                //AnalisysId = -1
+                            };
+
+                            await _dbContextContainer.MainContext.Documents.AddAsync(document);
+
+                            scope.Complete();
+                        }
+
                     }
                     catch (Exception ex)
                     {
