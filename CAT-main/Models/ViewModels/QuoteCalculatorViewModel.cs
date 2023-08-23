@@ -1,10 +1,16 @@
-﻿namespace CAT.Models.ViewModels
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace CAT.Models.ViewModels
 {
     public class QuoteCalculatorViewModel
     {
+        [Required]
         public string? SourceLanguage { get; set; }
+        [Required]
         public string? TargetLanguage { get; set; }
+        [Required]
         public int Speciality { get; set; }
+        [Required]
         public IFormFile? FileToUpload { get; set; }
 
         public Dictionary<string, string> Languages => new Dictionary<string, string>

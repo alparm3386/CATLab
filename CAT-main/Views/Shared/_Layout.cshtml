@@ -63,6 +63,17 @@
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
 
+    @if (Context.Items.ContainsKey("RequiresValidation"))
+    {
+        <text>
+            <!-- Add jQuery Validate -->
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js"></script>
+            
+            <!-- Add jQuery Validate Unobtrusive -->
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/3.2.11/jquery.validate.unobtrusive.min.js"></script>
+        </text>
+    }
+
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

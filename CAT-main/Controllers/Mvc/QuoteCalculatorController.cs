@@ -54,7 +54,16 @@ namespace CAT.Controllers.Mvc
             switch (action)
             {
                 case "CalculateQuote":
-                    // Your logic for Calculate Quote
+                    try
+                    {
+                        throw new Exception("My custom error");
+                        // Your logic for Calculate Quote
+                    }
+                    catch (Exception ex)
+                    {
+                        ModelState.AddModelError(string.Empty, "An error occurred while calculating the quote. Please try again.");
+                        return View("Index", model);
+                    }
                     return RedirectToAction("QuoteDetails"); // or wherever you want to redirect
                 default:
                     return View("Index", model);

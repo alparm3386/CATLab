@@ -6,22 +6,26 @@
 <h2>Quote Calculator</h2>
 
 <form method="post" enctype="multipart/form-data" asp-action="HandleQuote">
+    
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    
     <div class="form-group">
         <label for="sourceLanguage">Source Language:</label>
         <select id="sourceLanguage" name="SourceLanguage" class="form-control">
             @foreach (var lang in Model.Languages)
             {
-                <option value="@lang.Key">@lang.Value</option>
+                <option value="@lang.Key" selected="@(Model.SourceLanguage == lang.Key ? "selected" : null)">@lang.Value</option>
             }
         </select>
     </div>
+
 
     <div class="form-group">
         <label for="targetLanguage">Target Language:</label>
         <select id="targetLanguage" name="TargetLanguage" class="form-control">
             @foreach (var lang in Model.Languages)
             {
-                <option value="@lang.Key">@lang.Value</option>
+                <option value="@lang.Key" selected="@(Model.TargetLanguage == lang.Key ? "selected" : null)">@lang.Value</option>
             }
         </select>
     </div>
@@ -31,14 +35,14 @@
         <select id="speciality" name="Speciality" class="form-control">
             @foreach (var speciality in Model.Specialities)
             {
-                <option value="@speciality.Key">@speciality.Value</option>
+                <option value="@speciality.Key" selected="@(Model.Speciality == speciality.Key ? "selected" : null)">@speciality.Value</option>
             }
         </select>
     </div>
 
     <div class="form-group">
         <label for="file">Upload File:</label>
-        <input type="file" id="file" name="FileToUpload" class="form-control" />
+        <input type="file" id="file" name="FileToUpload" class="form-control" required />
     </div>
 
     <div class="form-group mt-2">
