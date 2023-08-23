@@ -6,7 +6,6 @@
 <h2>Quote Calculator</h2>
 
 <form method="post" enctype="multipart/form-data" asp-action="HandleQuote">
-    >
     <div class="form-group">
         <label for="sourceLanguage">Source Language:</label>
         <select id="sourceLanguage" name="SourceLanguage" class="form-control">
@@ -42,6 +41,8 @@
         <input type="file" id="file" name="FileToUpload" class="form-control" />
     </div>
 
-    <button type="submit" class="btn btn-primary" name="action" value="CalculateQuote">Calculate Quote</button>
+    <div class="form-group mt-2">
+        <button type="submit" class="btn btn-primary" name="action" value="CalculateQuote">Calculate Quote</button>
+    </div>
 
 </form>
