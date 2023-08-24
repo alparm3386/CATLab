@@ -1,7 +1,7 @@
 ﻿using CAT.Models.Entities.Main;
 using System.Globalization;
 
-namespace CAT.Infrastructure
+namespace CAT.Models.Common
 {
     public class LocaleId
     {

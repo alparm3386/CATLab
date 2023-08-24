@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using CAT.Data;
-using CAT.Infrastructure;
+using CAT.Models.Common;
+using CAT.Models.DTOs;
+using CAT.Models.Entities.Main;
 using CAT.Services.Common;
 
 namespace CAT.Services.Common
@@ -23,8 +25,33 @@ namespace CAT.Services.Common
             _mapper = mapper;
         }
 
-        public void CreateQuote(int ClientId, LocaleId sourceLanguage, LocaleId targetLanguage, int speciality, string filename)
+        public QuoteDto CreateQuote(int clientId, LocaleId sourceLanguage, LocaleId targetLanguage, int speciality, string filename)
         {
+            try
+            {
+                //get the analisys
+                //_catConnector.GetStatisticsForDocument()
+                //create doc
+                var quote = new Quote()
+                {
+                    SourceLanguage = sourceLanguage.Language,
+                    TargetLanguage = targetLanguage.Language,
+                    Speciality = speciality,
+                    DateCreated = DateTime.Now,
+                    Fee = 10.0
+                };
+
+                // Save the job
+                _dbContextContainer.MainContext.Quotes.Add(quote);
+                _dbContextContainer.MainContext.SaveChanges();
+
+                return _mapper.Map<QuoteDto>(quote);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("CreateQuote ERROR:" + ex.Message);
+                throw;
+            }
         }
     }
 }

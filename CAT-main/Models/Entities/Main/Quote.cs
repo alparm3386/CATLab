@@ -12,8 +12,6 @@ namespace CAT.Models.Entities.Main
 
         public DateTime DateCreated { get; set; }
 
-        public double Fee { get; set; }
-
         [System.Diagnostics.CodeAnalysis.MaybeNull]
         public string SourceLanguage { get; set; }
 
@@ -21,5 +19,7 @@ namespace CAT.Models.Entities.Main
         public string TargetLanguage { get; set; }
 
         public int Speciality { get; set; }
+
+        public double Fee { get; set; }
     }
 }
