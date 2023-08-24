@@ -1,8 +1,9 @@
 ﻿using AutoMapper;
 using CAT.Data;
-using Microsoft.Extensions.Caching.Memory;
+using CAT.Infrastructure;
+using CAT.Services.CAT;
 
-namespace CAT.Services.CAT
+namespace CAT.Services.Quote
 {
     public class QuoteService
     {
@@ -12,7 +13,7 @@ namespace CAT.Services.CAT
         private readonly IMapper _mapper;
         private readonly ILogger _logger;
 
-        public QuoteService(DbContextContainer dbContextContainer, IConfiguration configuration, CATConnector catConnector, 
+        public QuoteService(DbContextContainer dbContextContainer, IConfiguration configuration, CATConnector catConnector,
             IMapper mapper, ILogger<JobService> logger)
         {
             _dbContextContainer = dbContextContainer;
@@ -22,9 +23,9 @@ namespace CAT.Services.CAT
             _mapper = mapper;
         }
 
-        public void CreateQuote(string sourceLanguage, string targetLanguage, int speciality, string filename)
+        public CAT.Models.Entities.Main.Quote CreateQuote(int ClientId, LocaleId sourceLanguage, LocaleId targetLanguage, int speciality, string filename)
         {
-               
+            return null;
         }
     }
 }

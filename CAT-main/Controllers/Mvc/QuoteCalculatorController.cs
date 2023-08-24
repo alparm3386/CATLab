@@ -90,6 +90,7 @@ namespace CAT.Controllers.Mvc
                             await _dbContextContainer.MainContext.Documents.AddAsync(document);
                             await _dbContextContainer.MainContext.SaveChangesAsync();
 
+                            //create the quote
 
 
                             //scope.Complete();

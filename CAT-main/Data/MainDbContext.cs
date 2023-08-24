@@ -20,7 +20,7 @@ namespace CAT.Data
 
         public DbSet<Order> Orders { get; set; } = default!;
 
-        public DbSet<Quote> Quotes { get; set; } = default!;
+        public DbSet<CAT.Models.Entities.Main.Quote> Quotes { get; set; } = default!;
 
         public DbSet<WorkflowStep> WorkflowSteps { get; set; } = default!;
 

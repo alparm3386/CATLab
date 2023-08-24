@@ -25,7 +25,7 @@ namespace CAT.Services.CAT
 
         public void CreateDocument(string sourceLanguage, string targetLanguage, int speciality, string filename, DocumentType documentType)
         {
-            _dbContextContainer
+            //_dbContextContainer
         }
     }
 }
