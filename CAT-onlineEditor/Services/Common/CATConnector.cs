@@ -28,7 +28,7 @@ using Newtonsoft.Json;
 using CAT.Models.Entities;
 using CAT.Areas.Identity.Data;
 
-namespace CAT.Services.CAT
+namespace CAT.Services.Common
 {
     public class CATConnector
     {

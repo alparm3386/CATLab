@@ -6,7 +6,7 @@ using CAT.Services;
 using CAT.Infrastructure.Logging;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using CAT.Services.CAT;
+using CAT.Services.Common;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using CAT.Services.MT;
 

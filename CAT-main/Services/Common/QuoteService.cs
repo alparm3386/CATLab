@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
 using CAT.Data;
 using CAT.Infrastructure;
-using CAT.Services.CAT;
+using CAT.Services.Common;
 
-namespace CAT.Services.Quote
+namespace CAT.Services.Common
 {
     public class QuoteService
     {
@@ -23,9 +23,8 @@ namespace CAT.Services.Quote
             _mapper = mapper;
         }
 
-        public CAT.Models.Entities.Main.Quote CreateQuote(int ClientId, LocaleId sourceLanguage, LocaleId targetLanguage, int speciality, string filename)
+        public void CreateQuote(int ClientId, LocaleId sourceLanguage, LocaleId targetLanguage, int speciality, string filename)
         {
-            return null;
         }
     }
 }

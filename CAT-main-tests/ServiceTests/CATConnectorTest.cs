@@ -4,7 +4,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Configuration;
 using AutoMapper;
 using Xunit;
-using CAT.Services.CAT;
+using CAT.Services.Common;
 
 namespace YourNamespace.Tests
 {

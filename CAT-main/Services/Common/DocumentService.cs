@@ -3,7 +3,7 @@ using CAT.Data;
 using CAT.Enums;
 using Microsoft.Extensions.Caching.Memory;
 
-namespace CAT.Services.CAT
+namespace CAT.Services.Common
 {
     public class DocumentService
     {

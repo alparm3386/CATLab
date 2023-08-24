@@ -8,8 +8,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 using System.Diagnostics;
 using static ICSharpCode.SharpZipLib.Zip.ZipEntryFactory;
+using CAT.Models.Common;
 
-namespace CAT.Services.CAT
+namespace CAT.Services.Common
 {
     public class JobService
     {

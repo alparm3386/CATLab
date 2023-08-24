@@ -2,7 +2,7 @@
 using CAT.Data;
 using Microsoft.Extensions.Caching.Memory;
 
-namespace CAT.Services.CAT
+namespace CAT.Services.Common
 {
     public class WorkflowService
     {

@@ -1,4 +1,4 @@
-﻿namespace CAT.Services.CAT
+﻿namespace CAT.Services.Common
 {
     public class DocumentProcessor : IDocumentProcessor
     {

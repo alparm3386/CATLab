@@ -2,7 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using CAT.Data;
 using CAT.Models;
-using CAT.Services.CAT;
+using CAT.Services.Common;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using System.Configuration;
 using Microsoft.Extensions.Caching.Memory;
