@@ -15,6 +15,8 @@ namespace CAT.Models.DTOs
 
         public int Speciality { get; set; }
 
+        public int Service { get; set; }
+
         public double Fee { get; set; }
     }
 }

@@ -21,6 +21,8 @@ namespace CAT.Data
         public DbSet<DocumentFilter> DocumentFilters { get; set; } = default!;
         public DbSet<Filter> Filters { get; set; } = default!;
 
+        public DbSet<Analysis> Analisys { get; set; } = default!;
+
         public DbSet<Order> Orders { get; set; } = default!;
 
         public DbSet<Quote> Quotes { get; set; } = default!;
@@ -38,6 +40,9 @@ namespace CAT.Data
                 .HasNoKey()
                 .HasIndex(p => new { p.DocumentId, p.FilterId })
                 .IsUnique();
+            //Analysis index
+            modelBuilder.Entity<Analysis>()
+                .HasIndex(a => a.DocumentId);
         }
     }
 }

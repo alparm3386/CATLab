@@ -24,4 +24,10 @@
         ClientReview = 5,
         End = 100
     }
+
+    public enum AnalysisType
+    {
+        Normal,
+        WithGlobalTM
+    }
 }

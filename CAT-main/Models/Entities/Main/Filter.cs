@@ -14,7 +14,7 @@
 
             public int ProfileId { get; set; }
 
-            public int FilterName { get; set; }
+            public string? FilterName { get; set; }
         }
     }
 }
