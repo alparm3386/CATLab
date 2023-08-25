@@ -19,7 +19,7 @@ namespace YourNamespace.Tests
         }
 
         [Fact]
-        public void TestYourFunctionality()
+        public void Test_CreateDoc()
         {
             var catConnector = new CATConnector(_testFixture.DbContextContainer, _testFixture.MockConfiguration.Object, 
                 _testFixture.MockedMachineTranslators, _testFixture.MockMapper.Object, _testFixture.GetLoggerMockObject<CATConnector>(), 

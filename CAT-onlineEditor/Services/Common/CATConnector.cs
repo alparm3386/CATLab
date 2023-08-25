@@ -15,13 +15,13 @@ using static ICSharpCode.SharpZipLib.Zip.ZipEntryFactory;
 using System.Xml;
 using CAT.Enums;
 using Microsoft.Extensions.Options;
-using CAT.Models.CAT;
-using Statistics = CAT.Models.CAT.Statistics;
-using TMMatch = CAT.Models.CAT.TMMatch;
-using TMAssignment = CAT.Models.CAT.TMAssignment;
+using CAT.Models.Common;
+using Statistics = CAT.Models.Common.Statistics;
+using TMMatch = CAT.Models.Common.TMMatch;
+using TMAssignment = CAT.Models.Common.TMAssignment;
 using AutoMapper;
 using System.Security.AccessControl;
-using TBEntry = CAT.Models.CAT.TBEntry;
+using TBEntry = CAT.Models.Common.TBEntry;
 using Microsoft.CodeAnalysis.Differencing;
 using ICSharpCode.SharpZipLib.Tar;
 using Newtonsoft.Json;
@@ -152,7 +152,7 @@ namespace CAT.Services.Common
             return sFilterPath;
         }
 
-        public Models.CAT.Statistics[] GetStatisticsForDocument(string sFilePath, string sFilterPath, String sourceLang,
+        public Models.Common.Statistics[] GetStatisticsForDocument(string sFilePath, string sFilterPath, String sourceLang,
             string[] aTargetLangs, TMAssignment[] aTMAssignments)
         {
             List<String> lstFilesToDelete = new List<String>();

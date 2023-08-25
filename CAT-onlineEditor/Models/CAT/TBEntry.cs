@@ -1,4 +1,4 @@
-﻿namespace CAT.Models.CAT
+﻿namespace CAT.Models.Common
 {
     public class TBEntry
     {

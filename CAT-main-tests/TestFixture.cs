@@ -99,9 +99,7 @@ public class TestFixture
         {
             OriginalFileName = "Janet Yellen_small.docx",
             FileName = "Janet Yellen_small_20230817075647681.docx",
-            FilterId = -1,
             DocumentType = 0,
-            AnalisysId = -1
         };
 
         // Save the job

@@ -58,7 +58,7 @@ namespace CAT.Services.Common
                 idJob = idJob,
                 translationUnits = translationUnitDTOs.ToList(),
                 tmAssignments =
-                    new List<Models.CAT.TMAssignment>() { new Models.CAT.TMAssignment() { tmPath = "29610/__35462_en_fr" } },
+                    new List<Models.Common.TMAssignment>() { new Models.Common.TMAssignment() { tmPath = "29610/__35462_en_fr" } },
                 tbAssignments = null
             };
 

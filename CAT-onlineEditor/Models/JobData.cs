@@ -1,4 +1,4 @@
-﻿using CAT.Models.CAT;
+﻿using CAT.Models.Common;
 
 namespace CAT.Models
 {

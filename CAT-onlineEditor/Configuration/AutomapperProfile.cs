@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using CAT.Models;
-using CAT.Models.Entities;
 using CAT.Models.Entities.TranslationUnits;
 
 namespace CAT.Configuration
@@ -10,9 +9,9 @@ namespace CAT.Configuration
         public AutoMapperProfile()
         {
             //CAT service
-            CreateMap<CATService.TMMatch, Models.CAT.TMMatch>().ReverseMap();
-            CreateMap<CATService.TBEntry, Models.CAT.TBEntry>().ReverseMap();
-            CreateMap<CATService.TMAssignment, Models.CAT.TMAssignment>().ReverseMap();
+            CreateMap<CATService.TMMatch, Models.Common.TMMatch>().ReverseMap();
+            CreateMap<CATService.TBEntry, Models.Common.TBEntry>().ReverseMap();
+            CreateMap<CATService.TMAssignment, Models.Common.TMAssignment>().ReverseMap();
             CreateMap<TranslationUnit, TranslationUnitDTO>().ReverseMap();
         }
     }
