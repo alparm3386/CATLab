@@ -2,6 +2,7 @@
 using CAT.Data;
 using CAT.Enums;
 using CAT.Helpers;
+using CAT.Models.Common;
 using CAT.Models.Entities.Main;
 using CAT.Models.ViewModels;
 using CAT.Services.Common;
@@ -14,16 +15,16 @@ namespace CAT.Controllers.Mvc
     {
         private readonly DbContextContainer _dbContextContainer;
         private readonly IConfiguration _configuration;
-        private readonly CATConnector _catConnector;
+        private readonly QuoteService _quoteService;
         private readonly IMapper _mapper;
         private readonly ILogger _logger;
 
-        public QuoteCalculatorController(DbContextContainer dbContextContainer, IConfiguration configuration, CATConnector catConnector,
+        public QuoteCalculatorController(DbContextContainer dbContextContainer, IConfiguration configuration, QuoteService quoteService,
             IMapper mapper, ILogger<JobService> logger)
         {
             _dbContextContainer = dbContextContainer;
             _configuration = configuration;
-            _catConnector = catConnector;
+            _quoteService = quoteService;
             _logger = logger;
             _mapper = mapper;
         }
@@ -82,16 +83,15 @@ namespace CAT.Controllers.Mvc
                             {
                                 DocumentType = (int)DocumentType.Original,
                                 FileName = Path.GetFileNameWithoutExtension(filePath),
-                                OriginalFileName = fileName,
-                                //FilterId = -1,
-                                //AnalisysId = -1
+                                OriginalFileName = fileName
                             };
 
                             await _dbContextContainer.MainContext.Documents.AddAsync(document);
                             await _dbContextContainer.MainContext.SaveChangesAsync();
 
                             //create the quote
-
+                            _quoteService.CreateQuote(1, new LocaleId(model.SourceLanguage!), new LocaleId[] { new LocaleId(model.TargetLanguage!) },
+                                model.Speciality, document.Id, model.Filter);
 
                             //scope.Complete();
                         }

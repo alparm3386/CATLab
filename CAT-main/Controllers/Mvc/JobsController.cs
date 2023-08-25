@@ -153,9 +153,7 @@ namespace CAT.Controllers.Mvc
                     {
                         OriginalFileName = file.FileName,
                         FileName = fileName,
-                        FilterId = -1,
                         DocumentType = 0,
-                        AnalisysId = -1
                     };
 
                     // Save the job

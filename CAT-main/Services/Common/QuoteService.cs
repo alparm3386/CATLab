@@ -9,7 +9,7 @@ using Microsoft.VisualStudio.Web.CodeGeneration;
 
 namespace CAT.Services.Common
 {
-    public class QuoteService
+    public class QuoteService : IQuoteService
     {
         private readonly DbContextContainer _dbContextContainer;
         private readonly IConfiguration _configuration;

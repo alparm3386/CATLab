@@ -17,10 +17,5 @@ namespace CAT.Models.Entities.Main
 
         [System.Diagnostics.CodeAnalysis.MaybeNull]
         public string FileName { get; set; }
-
-        public int FilterId { get; set; }
-
-        public int AnalisysId { get; set; }
-
     }
 }
