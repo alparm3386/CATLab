@@ -20,7 +20,7 @@ namespace CAT_main_tests.ServiceTests
         }
 
         [Fact]
-        public void Test_CreateDocumentAsync()
+        public async Task Test_CreateDocumentAsync()
         {
             var documentService = new DocumentService(_testFixture.DbContextContainer, _testFixture.MockConfiguration.Object,
                 _testFixture.MockMapper.Object, _testFixture.GetLoggerMockObject<DocumentService>());
@@ -38,7 +38,7 @@ namespace CAT_main_tests.ServiceTests
             mockFormFile.Setup(f => f.ContentType).Returns(contentType);
             mockFormFile.Setup(f => f.OpenReadStream()).Returns(stream);
 
-            var result = await documentService.CreateDocumentAsync(mockFormFile, Guid.NewGuid().ToString(), false);
+            var result = await documentService.CreateDocumentAsync(mockFormFile.Object, CAT.Enums.DocumentType.Original);
             Assert.NotNull(result);
         }
     }

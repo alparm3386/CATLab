@@ -43,7 +43,11 @@ namespace CAT.Services.Common
                     await formFile.CopyToAsync(stream);
                 }
 
-                var md5 = FileHelper.CalculateMD5(filePath);
+                var md5 = "";
+                using (var stream = formFile.OpenReadStream())
+                {
+                    md5 = FileHelper.CalculateMD5(stream);
+                }
 
                 //create the document
                 var document = new Document()
