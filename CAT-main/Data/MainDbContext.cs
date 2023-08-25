@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using CAT.Models.Entities.Main;
 using CAT.Models.Entities.TranslationUnits;
+using CAT.Models.Entities.Main.CAT.Models.Entities.Main;
 
 namespace CAT.Data
 {
@@ -17,10 +18,12 @@ namespace CAT.Data
 
         public DbSet<Job> Jobs { get; set; } = default!;
         public DbSet<Document> Documents { get; set; } = default!;
+        public DbSet<DocumentFilter> DocumentFilters { get; set; } = default!;
+        public DbSet<Filter> Filters { get; set; } = default!;
 
         public DbSet<Order> Orders { get; set; } = default!;
 
-        public DbSet<CAT.Models.Entities.Main.Quote> Quotes { get; set; } = default!;
+        public DbSet<Quote> Quotes { get; set; } = default!;
 
         public DbSet<WorkflowStep> WorkflowSteps { get; set; } = default!;
 
@@ -30,13 +33,11 @@ namespace CAT.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity("DocumentFilter", b =>
-            {
-                b.Property<int>("DocumentId");
-                b.Property<int>("FilterId");
-
-                b.ToTable("DocumentFilters");
-            });
+            //DocumentFilter indexes
+            modelBuilder.Entity<DocumentFilter>()
+                .HasNoKey()
+                .HasIndex(p => new { p.DocumentId, p.FilterId })
+                .IsUnique();
         }
     }
 }

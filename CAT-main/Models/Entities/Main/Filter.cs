@@ -12,9 +12,9 @@
             [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
             public int Id { get; set; }
 
-            public int ProfileId;
+            public int ProfileId { get; set; }
 
-            public int FilterName;
+            public int FilterName { get; set; }
         }
     }
 }
