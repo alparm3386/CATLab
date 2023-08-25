@@ -31,8 +31,4 @@
     <PackageReference Include="System.ServiceModel.NetTcp" Version="4.10.*" />
     <PackageReference Include="System.ServiceModel.Security" Version="4.10.*" />
   </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Models\DTOs\" />
-  </ItemGroup>
 </Project>

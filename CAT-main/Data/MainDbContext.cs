@@ -29,7 +29,14 @@ namespace CAT.Data
         public DbSet<Speciality> Specialities { get; set; } = default!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
-        { 
+        {
+            modelBuilder.Entity("DocumentFilter", b =>
+            {
+                b.Property<int>("DocumentId");
+                b.Property<int>("FilterId");
+
+                b.ToTable("DocumentFilters");
+            });
         }
     }
 }

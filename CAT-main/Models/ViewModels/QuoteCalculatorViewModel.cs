@@ -11,6 +11,9 @@ namespace CAT.Models.ViewModels
         [Required]
         public int Speciality { get; set; }
         [Required]
+
+        public int Filter { get; set; }
+
         public IFormFile? FileToUpload { get; set; }
 
         public Dictionary<string, string> Languages => new Dictionary<string, string>
