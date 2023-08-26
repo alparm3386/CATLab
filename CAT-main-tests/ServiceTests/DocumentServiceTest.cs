@@ -29,7 +29,7 @@ namespace CAT_main_tests.ServiceTests
             var mockFormFile = new Mock<IFormFile>();
 
             // Setup the mock properties and methods as needed
-            var content = "File content here"; // or any content you want
+            var content = "File content here updated"; // or any content you want
             var fileName = "test.txt";
             var contentType = "text/plain";
             using var stream = new MemoryStream(Encoding.UTF8.GetBytes(content));
@@ -37,6 +37,8 @@ namespace CAT_main_tests.ServiceTests
             mockFormFile.Setup(f => f.Length).Returns(stream.Length);
             mockFormFile.Setup(f => f.ContentType).Returns(contentType);
             mockFormFile.Setup(f => f.OpenReadStream()).Returns(stream);
+            mockFormFile.Setup(f => f.CopyToAsync(It.IsAny<Stream>(), It.IsAny<CancellationToken>()))
+                        .Returns((Stream targetStream, CancellationToken? cancellationToken) => stream.CopyToAsync(targetStream));
 
             var result = await documentService.CreateDocumentAsync(mockFormFile.Object, CAT.Enums.DocumentType.Original);
             Assert.NotNull(result);

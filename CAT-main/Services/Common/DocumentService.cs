@@ -5,6 +5,7 @@ using CAT.Helpers;
 using CAT.Models.Common;
 using CAT.Models.Entities.Main;
 using Microsoft.Extensions.Caching.Memory;
+using System.IO;
 using Task = System.Threading.Tasks.Task;
 
 namespace CAT.Services.Common
@@ -29,22 +30,32 @@ namespace CAT.Services.Common
         {
             try
             {
-                var sourceFilesFolder = Path.Combine(_configuration["SourceFilesFolder"]!);
+                //save the file into the temp folder
+                var tempFolder = _configuration["TempFolder"]!;
+                var tempFilePath = Path.Combine(tempFolder, Guid.NewGuid().ToString());
+                using (var stream = new FileStream(tempFilePath, FileMode.Create))
+                {
+                    await formFile.CopyToAsync(stream);
+                }
+
+                var sourceFilesFolder = _configuration["SourceFilesFolder"]!;
                 var fileName = formFile.FileName;
-                var destinationPath = Path.Combine(sourceFilesFolder, fileName);
+                var filePath = Path.Combine(sourceFilesFolder, fileName);
                 var bSaveFile = true;
+
                 //get the md5 hash
                 var md5Hash = "";
                 using (var stream = formFile.OpenReadStream())
                 {
-                    md5Hash = FileHelper.CalculateMD5(stream);
+                    md5Hash = FileHelper.CalculateMD5(tempFilePath);
                 }
-                if (File.Exists(destinationPath))
+
+                if (File.Exists(filePath))
                 {
                     var md5Existing = "";
                     using (var stream = formFile.OpenReadStream())
                     {
-                        md5Existing = FileHelper.CalculateMD5(destinationPath);
+                        md5Existing = FileHelper.CalculateMD5(filePath);
                     }
 
                     if (md5Hash == md5Existing)
@@ -52,7 +63,8 @@ namespace CAT.Services.Common
                     else
                     {
                         // Generate a unique file name based on the original file name
-                        fileName = FileHelper.GetUniqueFileName(formFile.FileName);
+                        fileName = FileHelper.GetUniqueFileName(filePath);
+                        filePath = Path.Combine(sourceFilesFolder, fileName);
                     }
                 }
 
@@ -60,14 +72,11 @@ namespace CAT.Services.Common
                 if (bSaveFile)
                 {
                     // Combine the unique file name with the server's path to create the full path
-                    string filePath = Path.Combine(sourceFilesFolder, fileName);
-
-                    // Save the file to the server
-                    using (var stream = new FileStream(filePath, FileMode.Create))
-                    {
-                        await formFile.CopyToAsync(stream);
-                    }
+                    File.Copy(tempFilePath, filePath);
                 }
+
+                //now we can delete the temp file
+                File.Delete(tempFilePath);
 
                 //create the document
                 var document = new Document()

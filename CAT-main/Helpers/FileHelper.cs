@@ -25,16 +25,11 @@ namespace CAT.Helpers
         {
             using (var fileStream = File.OpenRead(filePath))
             {
-                return CalculateMD5(fileStream);
-            }
-        }
-
-        public static string CalculateMD5(Stream fileStream)
-        {
-            using (var md5 = MD5.Create())
-            {
-                var hash = md5.ComputeHash(fileStream);
-                return BitConverter.ToString(hash).Replace("-", "").ToLowerInvariant();
+                using (var md5 = MD5.Create())
+                {
+                    var hash = md5.ComputeHash(fileStream);
+                    return BitConverter.ToString(hash).Replace("-", "").ToLowerInvariant();
+                }
             }
         }
     }

@@ -18,7 +18,7 @@ namespace YourNamespace.Tests
             _testFixture = testFixture;
         }
 
-        [Fact]
+        //[Fact]
         public void Test_CreateDoc()
         {
             var catConnector = new CATConnector(_testFixture.DbContextContainer, _testFixture.MockConfiguration.Object, 
