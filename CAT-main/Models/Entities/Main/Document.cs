@@ -18,6 +18,6 @@ namespace CAT.Models.Entities.Main
         [System.Diagnostics.CodeAnalysis.MaybeNull]
         public string FileName { get; set; }
 
-        public string MD5Hash { get; set; }
+        public string? MD5Hash { get; set; }
     }
 }

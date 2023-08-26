@@ -21,18 +21,6 @@ namespace CAT.Helpers
             return uniqueFileName;
         }
 
-        public static string GetUniqueFileName(string originalFileName, string md5)
-        {
-            string fileNameWithoutExtension = Path.GetFileNameWithoutExtension(originalFileName);
-            string fileExtension = Path.GetExtension(originalFileName);
-            string timeStamp = DateTime.Now.ToString("yyyyMMddHHmmssfff");
-
-            // Combine the original file name without extension, timestamp, and file extension to create a unique file name
-            string uniqueFileName = $"{fileNameWithoutExtension}_{timeStamp}{fileExtension}";
-
-            return uniqueFileName;
-        }
-
         public static string CalculateMD5(string filePath)
         {
             using (var fileStream = File.OpenRead(filePath))

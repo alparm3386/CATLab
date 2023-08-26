@@ -29,24 +29,44 @@ namespace CAT.Services.Common
         {
             try
             {
-                //save the file
                 var sourceFilesFolder = Path.Combine(_configuration["SourceFilesFolder"]!);
-                // Generate a unique file name based on the original file name
-                string fileName = FileHelper.GetUniqueFileName(formFile.FileName);
-
-                // Combine the unique file name with the server's path to create the full path
-                string filePath = Path.Combine(sourceFilesFolder, fileName);
-
-                // Save the file to the server
-                using (var stream = new FileStream(filePath, FileMode.Create))
-                {
-                    await formFile.CopyToAsync(stream);
-                }
-
-                var md5 = "";
+                var fileName = formFile.FileName;
+                var destinationPath = Path.Combine(sourceFilesFolder, fileName);
+                var bSaveFile = true;
+                //get the md5 hash
+                var md5Hash = "";
                 using (var stream = formFile.OpenReadStream())
                 {
-                    md5 = FileHelper.CalculateMD5(stream);
+                    md5Hash = FileHelper.CalculateMD5(stream);
+                }
+                if (File.Exists(destinationPath))
+                {
+                    var md5Existing = "";
+                    using (var stream = formFile.OpenReadStream())
+                    {
+                        md5Existing = FileHelper.CalculateMD5(destinationPath);
+                    }
+
+                    if (md5Hash == md5Existing)
+                        bSaveFile = false;
+                    else
+                    {
+                        // Generate a unique file name based on the original file name
+                        fileName = FileHelper.GetUniqueFileName(formFile.FileName);
+                    }
+                }
+
+                //save the file
+                if (bSaveFile)
+                {
+                    // Combine the unique file name with the server's path to create the full path
+                    string filePath = Path.Combine(sourceFilesFolder, fileName);
+
+                    // Save the file to the server
+                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await formFile.CopyToAsync(stream);
+                    }
                 }
 
                 //create the document
@@ -55,7 +75,7 @@ namespace CAT.Services.Common
                     DocumentType = (int)DocumentType.Original,
                     FileName = fileName,
                     OriginalFileName = formFile.FileName,
-                    MD5Hash = md5
+                    MD5Hash = md5Hash
                 };
 
                 await _dbContextContainer.MainContext.Documents.AddAsync(document);
