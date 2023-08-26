@@ -88,7 +88,10 @@ namespace CAT.Services.Common
                     quotes.Add(quote);
                 }
 
-                // Save the job
+                // Add the quotes
+                _dbContextContainer.MainContext.Quotes.AddRange(quotes);
+
+                //save the changes
                 _dbContextContainer.MainContext.SaveChanges();
 
                 return _mapper.Map<QuoteDto[]>(quotes);

@@ -30,4 +30,11 @@
         Normal,
         WithGlobalTM
     }
+
+    public enum ServiceType
+    {
+        Unknown = -1,
+        AI = 1,
+        AIWithRevision = 2
+    }
 }

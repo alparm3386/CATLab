@@ -7,6 +7,7 @@ using CAT.Models.Entities.Main;
 using CAT.Models.ViewModels;
 using CAT.Services.Common;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Transactions;
 
 namespace CAT.Controllers.Mvc
@@ -69,7 +70,7 @@ namespace CAT.Controllers.Mvc
                             var document = await _documentService.CreateDocumentAsync(model.FileToUpload!, DocumentType.Original);
                             //create the quote
                             var targetLocales = model.TargetLanguages!.Select(lang => new LocaleId(lang)).ToArray();
-                            _quoteService.CreateQuote(1, new LocaleId(model.SourceLanguage!), targetLocales,
+                            var quotes = _quoteService.CreateQuote(1, new LocaleId(model.SourceLanguage!), targetLocales,
                                 model.Speciality, document.Id, model.Filter);
 
                             //scope.Complete();
@@ -87,9 +88,9 @@ namespace CAT.Controllers.Mvc
             }
         }
 
-        public async Task<IActionResult> QuoteDetails(int id)
+        public async Task<IActionResult> QuoteDetails(int idDocument)
         {
-            var quote = await _dbContextContainer.MainContext.Quotes.FindAsync(id);
+            var quote = await _dbContextContainer.MainContext.Quotes.FirstOrDefaultAsync(quote => quote.Id == idDocument);
             if (quote == null)
             {
                 return NotFound();

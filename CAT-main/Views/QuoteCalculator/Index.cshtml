@@ -3,6 +3,14 @@
     ViewBag.Title = "Quote Calculator";
 }
 
+@section Scripts {
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#targetLanguages').multiselect();
+        });
+    </script>
+}
+
 <h2>Quote Calculator</h2>
 
 <form method="post" enctype="multipart/form-data" asp-action="HandleQuote">
@@ -25,7 +33,7 @@
         <select id="targetLanguages" name="TargetLanguages" class="form-control" multiple>
             @foreach (var lang in Model.Languages)
             {
-                <option value="@lang.Key" selected=@(Model.TargetLanguages != null && Model.TargetLanguages.Contains(lang.Key) ? "selected" : "")>@lang.Value</option>
+                <option value="@lang.Key" selected=@(Model.TargetLanguages != null && Model.TargetLanguages.Contains(lang.Key) ? "selected" : null)>@lang.Value</option>
             }
         </select>
     </div>
@@ -48,5 +56,4 @@
     <div class="form-group mt-2">
         <button type="submit" class="btn btn-primary" name="action" value="CalculateQuote">Calculate Quote</button>
     </div>
-
 </form>
