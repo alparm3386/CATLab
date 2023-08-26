@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using CAT.Models;
 
 namespace CAT.Configuration
 {
@@ -7,7 +8,11 @@ namespace CAT.Configuration
         public AutoMapperProfile()
         {
             //CAT service
-            //CreateMap<TranslationUnit, TranslationUnitDTO>().ReverseMap();
+            //CreateMap<CAT.Models.Common.TMAssignment, CATService.TMAssignment>();
+            //.ForMember(dest => dest.tmPath, opt => opt.MapFrom(src => src.tmId))
+            //.ReverseMap()
+            //.ForMember(dest => dest.tmId, opt => opt.MapFrom(src => src.tmPath));
+            CreateMap<CAT.Models.DTOs.QuoteDto, CAT.Models.Entities.Main.Quote>().ReverseMap();
         }
     }
 

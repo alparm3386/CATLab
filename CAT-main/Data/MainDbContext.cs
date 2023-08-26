@@ -4,8 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using CAT.Models.Entities.Main;
-using CAT.Models.Entities.TranslationUnits;
-using CAT.Models.Entities.Main.CAT.Models.Entities.Main;
 
 namespace CAT.Data
 {
@@ -42,7 +40,9 @@ namespace CAT.Data
                 .IsUnique();
             //Analysis index
             modelBuilder.Entity<Analysis>()
-                .HasIndex(a => a.DocumentId);
+                .HasIndex(a => new { a.DocumentId, a.Type, a.SourceLanguage, a.TargetLanguage, a.Speciality });
+            modelBuilder.Entity<Analysis>()
+                    .HasKey(a => new { a.DocumentId, a.Type, a.SourceLanguage, a.TargetLanguage, a.Speciality });
         }
     }
 }

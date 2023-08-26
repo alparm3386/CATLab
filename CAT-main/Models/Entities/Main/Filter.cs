@@ -3,18 +3,15 @@
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
 
-    namespace CAT.Models.Entities.Main
+    [Table("Filters")]
+    public class Filter
     {
-        [Table("Filters")]
-        public class Filter
-        {
-            [Key]
-            [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-            public int Id { get; set; }
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int Id { get; set; }
 
-            public int ProfileId { get; set; }
+        public int ProfileId { get; set; }
 
-            public string? FilterName { get; set; }
-        }
+        public string? FilterName { get; set; }
     }
 }

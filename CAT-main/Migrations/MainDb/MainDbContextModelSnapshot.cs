@@ -24,13 +24,21 @@ namespace CAT.Migrations.MainDb
 
             modelBuilder.Entity("CAT.Models.Entities.Main.Analysis", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
+                    b.Property<int>("DocumentId")
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
 
-                    b.Property<int>("DocumentId")
+                    b.Property<string>("SourceLanguage")
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
+
+                    b.Property<string>("TargetLanguage")
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
+
+                    b.Property<int>("Speciality")
                         .HasColumnType("int");
 
                     b.Property<int>("Match_100")
@@ -57,39 +65,11 @@ namespace CAT.Migrations.MainDb
                     b.Property<int>("Repetitions")
                         .HasColumnType("int");
 
-                    b.Property<string>("SourceLanguage")
-                        .HasColumnType("nvarchar(max)");
+                    b.HasKey("DocumentId", "Type", "SourceLanguage", "TargetLanguage", "Speciality");
 
-                    b.Property<int>("Speciality")
-                        .HasColumnType("int");
-
-                    b.Property<string>("TargetLanguage")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("DocumentId");
+                    b.HasIndex("DocumentId", "Type", "SourceLanguage", "TargetLanguage", "Speciality");
 
                     b.ToTable("Analysis");
-                });
-
-            modelBuilder.Entity("CAT.Models.Entities.Main.CAT.Models.Entities.Main.Filter", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("FilterName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("ProfileId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Filters");
                 });
 
             modelBuilder.Entity("CAT.Models.Entities.Main.Document", b =>
@@ -129,6 +109,25 @@ namespace CAT.Migrations.MainDb
                         .IsUnique();
 
                     b.ToTable("DocumentFilters");
+                });
+
+            modelBuilder.Entity("CAT.Models.Entities.Main.Filter", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("FilterName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("ProfileId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Filters");
                 });
 
             modelBuilder.Entity("CAT.Models.Entities.Main.Job", b =>

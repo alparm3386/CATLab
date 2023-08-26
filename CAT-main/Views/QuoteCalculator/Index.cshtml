@@ -21,11 +21,11 @@
 
 
     <div class="form-group">
-        <label for="targetLanguage">Target Language:</label>
-        <select id="targetLanguage" name="TargetLanguage" class="form-control">
+        <label for="targetLanguages">Target Language:</label>
+        <select id="targetLanguages" name="TargetLanguages" class="form-control" multiple>
             @foreach (var lang in Model.Languages)
             {
-                <option value="@lang.Key" selected="@(Model.TargetLanguage == lang.Key ? "selected" : null)">@lang.Value</option>
+                <option value="@lang.Key" selected=@(Model.TargetLanguages != null && Model.TargetLanguages.Contains(lang.Key) ? "selected" : "")>@lang.Value</option>
             }
         </select>
     </div>

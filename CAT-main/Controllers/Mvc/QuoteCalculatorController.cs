@@ -26,6 +26,7 @@ namespace CAT.Controllers.Mvc
             _dbContextContainer = dbContextContainer;
             _configuration = configuration;
             _quoteService = quoteService;
+            _documentService = documentService;
             _logger = logger;
             _mapper = mapper;
         }
@@ -65,9 +66,11 @@ namespace CAT.Controllers.Mvc
                         //using (var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled)) //MSDTC
                         //using (var transaction = context.Database.BeginTransaction())
                         {
+                            var document = await _documentService.CreateDocumentAsync(model.FileToUpload!, DocumentType.Original);
                             //create the quote
-                            //_quoteService.CreateQuote(1, new LocaleId(model.SourceLanguage!), new LocaleId[] { new LocaleId(model.TargetLanguage!) },
-                            //    model.Speciality, document.Id, model.Filter);
+                            var targetLocales = model.TargetLanguages!.Select(lang => new LocaleId(lang)).ToArray();
+                            _quoteService.CreateQuote(1, new LocaleId(model.SourceLanguage!), targetLocales,
+                                model.Speciality, document.Id, model.Filter);
 
                             //scope.Complete();
                         }

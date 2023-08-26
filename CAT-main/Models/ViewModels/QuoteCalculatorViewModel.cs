@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace CAT.Models.ViewModels
 {
@@ -7,7 +8,7 @@ namespace CAT.Models.ViewModels
         [Required]
         public string? SourceLanguage { get; set; }
         [Required]
-        public string? TargetLanguage { get; set; }
+        public List<String>? TargetLanguages { get; set; }
         [Required]
         public int Speciality { get; set; }
         [Required]

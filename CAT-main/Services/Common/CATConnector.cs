@@ -189,7 +189,9 @@ namespace CAT.Services.Common
                 if (File.Exists(sFilterPath))
                     filterContent = File.ReadAllBytes(sFilterPath);
 
-                var aTMs = _mapper.Map<CATService.TMAssignment[]>(aTMAssignments);
+                //var aTMs = _mapper.Map<CATService.TMAssignment[]>(aTMAssignments);
+                var aTMs = Array.ConvertAll(aTMAssignments, 
+                    tma => new CATService.TMAssignment() { penalty = tma.penalty, speciality = tma.speciality, tmPath = tma.tmId });
 
                 //the target language array
                 var lstTargetLangs = new List<String>();

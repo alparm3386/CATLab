@@ -33,6 +33,7 @@ builder.Services.AddScoped<JwtService>();
 builder.Services.AddScoped<JobService>();
 builder.Services.AddScoped<CATConnector>();
 builder.Services.AddScoped<IDocumentProcessor, DocumentProcessor>();
+builder.Services.AddScoped<IDocumentService, DocumentService>();
 builder.Services.AddScoped<IQuoteService, QuoteService>();
 builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
 

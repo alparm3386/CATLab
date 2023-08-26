@@ -8,15 +8,14 @@ namespace CAT.Models.Entities.Main
     [Table("Analysis")]
     public class Analysis
     {
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int Id { get; set; }
-
         public int DocumentId { get; set; }
 
-        public AnalysisType Type; 
+        public AnalysisType Type { get; set; }
+
+        [MaxLength(10)]
         public string? SourceLanguage { get; set; }
 
+        [MaxLength(10)]
         public string? TargetLanguage { get; set; }
 
         public int Speciality { get; set; }

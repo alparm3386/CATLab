@@ -3,7 +3,6 @@ using CAT.Data;
 using CAT.Models.Common;
 using CAT.Models.DTOs;
 using CAT.Models.Entities.Main;
-using CAT.Models.Entities.Main.CAT.Models.Entities.Main;
 using CAT.Services.Common;
 using Microsoft.VisualStudio.Web.CodeGeneration;
 
@@ -49,7 +48,7 @@ namespace CAT.Services.Common
                 //get the analisys
                 var targetLanguages = Array.ConvertAll(targetLocales, locale => locale.Language);
 
-                var tmAssignments = new List<Models.Common.TMAssignment>() { new Models.Common.TMAssignment() { tmPath = "29610/__35462_en_fr" } };
+                var tmAssignments = new List<Models.Common.TMAssignment>() { new Models.Common.TMAssignment() { tmId = "29610/__35462_en_fr" } };
                 var stats = 
                     _catConnector.GetStatisticsForDocument(filePath, filterPath!, sourceLocale.Language, targetLanguages, tmAssignments.ToArray());
 
