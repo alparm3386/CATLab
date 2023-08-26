@@ -37,4 +37,10 @@
         AI = 1,
         AIWithRevision = 2
     }
+
+    public enum ServiceSpeed
+    {
+        Normal,
+        Express
+    }
 }

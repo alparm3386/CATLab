@@ -21,5 +21,8 @@ namespace CAT.Models.ViewModels
 
         [DisplayName("Fee (£)")]
         public double Fee { get; set; }
+
+        [DisplayName("Speed")]
+        public int Speed { get; set; }
     }
 }

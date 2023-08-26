@@ -6,11 +6,6 @@ namespace CAT.Models.Entities.Main
     [Table("Orders")]
     public class Order
     {
-        public Order()
-        {
-            Jobs = new List<Job>();
-        }
-
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }

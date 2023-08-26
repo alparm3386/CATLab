@@ -12,16 +12,16 @@ namespace CAT.Models.Entities.Main
 
         public DateTime DateCreated { get; set; }
 
-        [System.Diagnostics.CodeAnalysis.MaybeNull]
-        public string SourceLanguage { get; set; }
+        public string SourceLanguage { get; set; } = default!;
 
-        [System.Diagnostics.CodeAnalysis.MaybeNull]
-        public string TargetLanguage { get; set; }
+        public string TargetLanguage { get; set; } = default!;
 
         public int Speciality { get; set; }
 
         public int Service { get; set; }
 
         public double Fee { get; set; }
+
+        public int Speed { get; set; }
     }
 }

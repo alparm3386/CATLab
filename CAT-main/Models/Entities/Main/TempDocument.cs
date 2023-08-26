@@ -3,8 +3,8 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CAT.Models.Entities.Main
 {
-    [Table("Documents")]
-    public class Document
+    [Table("TempDocuments")]
+    public class TempDocument
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]

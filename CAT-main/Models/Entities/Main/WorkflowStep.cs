@@ -18,9 +18,9 @@ namespace CAT.Models.Entities.Main
 
         public int Status { get; set; }
 
-        public DateTime? StartDate { get; set; }
+        public DateTime StartDate { get; set; }
         public DateTime ScheduledDate { get; set; }
-        public DateTime? CompletionDate { get; set; }
+        public DateTime CompletionDate { get; set; }
 
         public decimal? Fee { get; set; }
     }

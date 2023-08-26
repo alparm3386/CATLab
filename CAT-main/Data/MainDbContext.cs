@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using CAT.Models.Entities.Main;
+using CAT.Models.Entities.Main.CAT.Models.Entities.Main;
 
 namespace CAT.Data
 {
@@ -30,6 +31,12 @@ namespace CAT.Data
         public DbSet<Language> Languages { get; set; } = default!;
 
         public DbSet<Speciality> Specialities { get; set; } = default!;
+
+        public DbSet<StoredQuote> StoredQuotes { get; set; } = default!;
+
+        public DbSet<TempQuote> TempQuotes { get; set; } = default!;
+
+        public DbSet<TempDocument> TempDocuments { get; set; } = default!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

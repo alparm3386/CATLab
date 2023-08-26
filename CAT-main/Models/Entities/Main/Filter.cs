@@ -12,6 +12,6 @@
 
         public int ProfileId { get; set; }
 
-        public string? FilterName { get; set; }
+        public string FilterName { get; set; } = default!;
     }
 }

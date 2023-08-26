@@ -7,8 +7,10 @@ namespace CAT.Models.ViewModels
     {
         [Required]
         public string? SourceLanguage { get; set; }
+
         [Required]
         public List<String>? TargetLanguages { get; set; }
+
         [Required]
         public int Speciality { get; set; }
         [Required]
@@ -16,6 +18,8 @@ namespace CAT.Models.ViewModels
         public int Filter { get; set; }
 
         public IFormFile? FileToUpload { get; set; }
+
+        public int ServiceSpeed { get; set; }
 
         public Dictionary<string, string> Languages => new Dictionary<string, string>
         {
