@@ -72,48 +72,6 @@ namespace CAT.Migrations.MainDb
                     b.ToTable("Analysis");
                 });
 
-            modelBuilder.Entity("CAT.Models.Entities.Main.CAT.Models.Entities.Main.TempQuote", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Analysis")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("DateCreated")
-                        .HasColumnType("datetime2");
-
-                    b.Property<double>("Fee")
-                        .HasColumnType("float");
-
-                    b.Property<int>("Service")
-                        .HasColumnType("int");
-
-                    b.Property<string>("SourceLanguage")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("Speciality")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Speed")
-                        .HasColumnType("int");
-
-                    b.Property<string>("TargetLanguage")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("TempDocumentId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("TempQuotes");
-                });
-
             modelBuilder.Entity("CAT.Models.Entities.Main.Document", b =>
                 {
                     b.Property<int>("Id")
@@ -349,6 +307,53 @@ namespace CAT.Migrations.MainDb
                     b.ToTable("TempDocuments");
                 });
 
+            modelBuilder.Entity("CAT.Models.Entities.Main.TempQuote", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Analysis")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("DateCreated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<double>("Fee")
+                        .HasColumnType("float");
+
+                    b.Property<int>("Service")
+                        .HasColumnType("int");
+
+                    b.Property<string>("SourceLanguage")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Speciality")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Speed")
+                        .HasColumnType("int");
+
+                    b.Property<int>("StoredQuoteId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("TargetLanguage")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("TempDocumentId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("StoredQuoteId");
+
+                    b.ToTable("TempQuotes");
+                });
+
             modelBuilder.Entity("CAT.Models.Entities.Main.WorkflowStep", b =>
                 {
                     b.Property<int>("Id")
@@ -407,6 +412,15 @@ namespace CAT.Migrations.MainDb
                     b.Navigation("Quote");
                 });
 
+            modelBuilder.Entity("CAT.Models.Entities.Main.TempQuote", b =>
+                {
+                    b.HasOne("CAT.Models.Entities.Main.StoredQuote", null)
+                        .WithMany("TempQuotes")
+                        .HasForeignKey("StoredQuoteId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("CAT.Models.Entities.Main.WorkflowStep", b =>
                 {
                     b.HasOne("CAT.Models.Entities.Main.Job", null)
@@ -424,6 +438,11 @@ namespace CAT.Migrations.MainDb
             modelBuilder.Entity("CAT.Models.Entities.Main.Order", b =>
                 {
                     b.Navigation("Jobs");
+                });
+
+            modelBuilder.Entity("CAT.Models.Entities.Main.StoredQuote", b =>
+                {
+                    b.Navigation("TempQuotes");
                 });
 #pragma warning restore 612, 618
         }

@@ -70,7 +70,7 @@ namespace CAT.Controllers.Mvc
                             var document = await _documentService.CreateDocumentAsync(model.FileToUpload!, DocumentType.Original);
                             //create the quote
                             var targetLocales = model.TargetLanguages!.Select(lang => new LocaleId(lang)).ToArray();
-                            var quotes = _quoteService.CreateQuote(1, new LocaleId(model.SourceLanguage!), targetLocales,
+                            var quotes = _quoteService.CreateTempQuote(1, 1, new LocaleId(model.SourceLanguage!), targetLocales,
                                 model.Speciality, document.Id, model.Filter);
 
                             //scope.Complete();

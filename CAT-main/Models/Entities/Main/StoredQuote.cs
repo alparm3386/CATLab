@@ -14,5 +14,7 @@ namespace CAT.Models.Entities.Main
         public int ClientId { get; set; }
 
         public int OrderId { get; set; }
+
+        public ICollection<TempQuote> TempQuotes { get; set; } = default!;
     }
 }

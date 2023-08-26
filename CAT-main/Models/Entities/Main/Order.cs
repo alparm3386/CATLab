@@ -14,7 +14,7 @@ namespace CAT.Models.Entities.Main
 
         public DateTime DateCreated { get; set; }
 
-        public ICollection<Job> Jobs { get; set; }
+        public ICollection<Job> Jobs { get; set; } = default!;
 
     }
 }

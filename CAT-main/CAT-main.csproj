@@ -34,5 +34,6 @@
 
   <ItemGroup>
     <Folder Include="Migrations\MainDb\" />
+    <Folder Include="Models\DTOs\" />
   </ItemGroup>
 </Project>

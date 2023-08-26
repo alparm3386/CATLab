@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CAT.Migrations.MainDb
 {
     [DbContext(typeof(MainDbContext))]
-    [Migration("20230826105016_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20230826175237_StoredQuotes")]
+    partial class StoredQuotes
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -87,12 +87,14 @@ namespace CAT.Migrations.MainDb
                         .HasColumnType("int");
 
                     b.Property<string>("FileName")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("MD5Hash")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("OriginalFileName")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -123,6 +125,7 @@ namespace CAT.Migrations.MainDb
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("FilterName")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("ProfileId")
@@ -174,9 +177,11 @@ namespace CAT.Migrations.MainDb
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("ISO639_1")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -221,12 +226,17 @@ namespace CAT.Migrations.MainDb
                         .HasColumnType("int");
 
                     b.Property<string>("SourceLanguage")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Speciality")
                         .HasColumnType("int");
 
+                    b.Property<int>("Speed")
+                        .HasColumnType("int");
+
                     b.Property<string>("TargetLanguage")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -251,6 +261,102 @@ namespace CAT.Migrations.MainDb
                     b.ToTable("Specialities");
                 });
 
+            modelBuilder.Entity("CAT.Models.Entities.Main.StoredQuote", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("ClientId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("DateCreated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("OrderId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("StoredQuotes");
+                });
+
+            modelBuilder.Entity("CAT.Models.Entities.Main.TempDocument", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("DocumentType")
+                        .HasColumnType("int");
+
+                    b.Property<string>("FileName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("MD5Hash")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("OriginalFileName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("TempDocuments");
+                });
+
+            modelBuilder.Entity("CAT.Models.Entities.Main.TempQuote", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Analysis")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("DateCreated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<double>("Fee")
+                        .HasColumnType("float");
+
+                    b.Property<int>("Service")
+                        .HasColumnType("int");
+
+                    b.Property<string>("SourceLanguage")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Speciality")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Speed")
+                        .HasColumnType("int");
+
+                    b.Property<int>("StoredQuoteId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("TargetLanguage")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("TempDocumentId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("StoredQuoteId");
+
+                    b.ToTable("TempQuotes");
+                });
+
             modelBuilder.Entity("CAT.Models.Entities.Main.WorkflowStep", b =>
                 {
                     b.Property<int>("Id")
@@ -259,7 +365,7 @@ namespace CAT.Migrations.MainDb
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<DateTime?>("CompletionDate")
+                    b.Property<DateTime>("CompletionDate")
                         .HasColumnType("datetime2");
 
                     b.Property<decimal?>("Fee")
@@ -271,7 +377,7 @@ namespace CAT.Migrations.MainDb
                     b.Property<DateTime>("ScheduledDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime?>("StartDate")
+                    b.Property<DateTime>("StartDate")
                         .HasColumnType("datetime2");
 
                     b.Property<int>("Status")
@@ -309,6 +415,15 @@ namespace CAT.Migrations.MainDb
                     b.Navigation("Quote");
                 });
 
+            modelBuilder.Entity("CAT.Models.Entities.Main.TempQuote", b =>
+                {
+                    b.HasOne("CAT.Models.Entities.Main.StoredQuote", null)
+                        .WithMany("TempQuotes")
+                        .HasForeignKey("StoredQuoteId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("CAT.Models.Entities.Main.WorkflowStep", b =>
                 {
                     b.HasOne("CAT.Models.Entities.Main.Job", null)
@@ -326,6 +441,11 @@ namespace CAT.Migrations.MainDb
             modelBuilder.Entity("CAT.Models.Entities.Main.Order", b =>
                 {
                     b.Navigation("Jobs");
+                });
+
+            modelBuilder.Entity("CAT.Models.Entities.Main.StoredQuote", b =>
+                {
+                    b.Navigation("TempQuotes");
                 });
 #pragma warning restore 612, 618
         }

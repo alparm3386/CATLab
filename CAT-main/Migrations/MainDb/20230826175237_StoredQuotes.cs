@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace CAT.Migrations.MainDb
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class StoredQuotes : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -52,8 +52,8 @@ namespace CAT.Migrations.MainDb
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     DocumentType = table.Column<int>(type: "int", nullable: false),
-                    OriginalFileName = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    FileName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    OriginalFileName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    FileName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     MD5Hash = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
@@ -68,7 +68,7 @@ namespace CAT.Migrations.MainDb
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     ProfileId = table.Column<int>(type: "int", nullable: false),
-                    FilterName = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    FilterName = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -81,8 +81,8 @@ namespace CAT.Migrations.MainDb
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ISO639_1 = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ISO639_1 = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -110,11 +110,12 @@ namespace CAT.Migrations.MainDb
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     DateCreated = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    SourceLanguage = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    TargetLanguage = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    SourceLanguage = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    TargetLanguage = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Speciality = table.Column<int>(type: "int", nullable: false),
                     Service = table.Column<int>(type: "int", nullable: false),
-                    Fee = table.Column<double>(type: "float", nullable: false)
+                    Fee = table.Column<double>(type: "float", nullable: false),
+                    Speed = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -132,6 +133,37 @@ namespace CAT.Migrations.MainDb
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Specialities", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "StoredQuotes",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    DateCreated = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ClientId = table.Column<int>(type: "int", nullable: false),
+                    OrderId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_StoredQuotes", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "TempDocuments",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    DocumentType = table.Column<int>(type: "int", nullable: false),
+                    OriginalFileName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    FileName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    MD5Hash = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TempDocuments", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -164,6 +196,34 @@ namespace CAT.Migrations.MainDb
                 });
 
             migrationBuilder.CreateTable(
+                name: "TempQuotes",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    StoredQuoteId = table.Column<int>(type: "int", nullable: false),
+                    DateCreated = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    TempDocumentId = table.Column<int>(type: "int", nullable: false),
+                    SourceLanguage = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    TargetLanguage = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Speciality = table.Column<int>(type: "int", nullable: false),
+                    Service = table.Column<int>(type: "int", nullable: false),
+                    Fee = table.Column<double>(type: "float", nullable: false),
+                    Speed = table.Column<int>(type: "int", nullable: false),
+                    Analysis = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TempQuotes", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_TempQuotes_StoredQuotes_StoredQuoteId",
+                        column: x => x.StoredQuoteId,
+                        principalTable: "StoredQuotes",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "WorkflowSteps",
                 columns: table => new
                 {
@@ -173,9 +233,9 @@ namespace CAT.Migrations.MainDb
                     StepOrder = table.Column<int>(type: "int", nullable: false),
                     TaskId = table.Column<int>(type: "int", nullable: false),
                     Status = table.Column<int>(type: "int", nullable: false),
-                    StartDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    StartDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ScheduledDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    CompletionDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    CompletionDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Fee = table.Column<decimal>(type: "decimal(18,2)", nullable: true)
                 },
                 constraints: table =>
@@ -211,6 +271,11 @@ namespace CAT.Migrations.MainDb
                 column: "QuoteId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_TempQuotes_StoredQuoteId",
+                table: "TempQuotes",
+                column: "StoredQuoteId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_WorkflowSteps_JobId",
                 table: "WorkflowSteps",
                 column: "JobId");
@@ -238,7 +303,16 @@ namespace CAT.Migrations.MainDb
                 name: "Specialities");
 
             migrationBuilder.DropTable(
+                name: "TempDocuments");
+
+            migrationBuilder.DropTable(
+                name: "TempQuotes");
+
+            migrationBuilder.DropTable(
                 name: "WorkflowSteps");
+
+            migrationBuilder.DropTable(
+                name: "StoredQuotes");
 
             migrationBuilder.DropTable(
                 name: "Jobs");

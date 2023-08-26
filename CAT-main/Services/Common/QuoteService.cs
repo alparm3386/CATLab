@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using CAT.Data;
 using CAT.Models.Common;
-using CAT.Models.DTOs;
 using CAT.Models.Entities.Main;
 using CAT.Services.Common;
 using Microsoft.VisualStudio.Web.CodeGeneration;
@@ -26,7 +25,9 @@ namespace CAT.Services.Common
             _mapper = mapper;
         }
 
-        public QuoteDto[] CreateQuote(int clientId, LocaleId sourceLocale, LocaleId[] targetLocales, int speciality, int idDocument, int idFilter)
+
+
+        public List<TempQuote> CreateTempQuote(int storedQuote, int clientId, LocaleId sourceLocale, LocaleId[] targetLocales, int speciality, int idDocument, int idFilter)
         {
             try
             {
@@ -94,7 +95,8 @@ namespace CAT.Services.Common
                 //save the changes
                 _dbContextContainer.MainContext.SaveChanges();
 
-                return _mapper.Map<QuoteDto[]>(quotes);
+                //return _mapper.Map<QuoteDto[]>(quotes);
+                return null;
             }
             catch (Exception ex)
             {
