@@ -1,0 +1,24 @@
+﻿@model CAT.Models.DTOs.QuoteDto
+@{
+    ViewBag.Title = "Quote Details";
+}
+
+<h2>Quote Details</h2>
+
+<p>Source Language: @Model.SourceLanguage</p>
+<p>Target Language: @Model.TargetLanguage</p>
+<p>Speciality: @Model.Speciality</p>
+<p>Price: @Model.Fee</p>
+<!-- Add other properties as needed -->
+
+<form method="post" asp-action="LaunchQuote">
+    <input type="hidden" name="id" value="@Model.Id" />
+    <button type="submit" class="btn btn-success">Launch Quote</button>
+</form>
+
+@if (!string.IsNullOrEmpty(ViewBag.Message))
+{
+    <div class="alert alert-success mt-3">
+        @ViewBag.Message
+    </div>
+}

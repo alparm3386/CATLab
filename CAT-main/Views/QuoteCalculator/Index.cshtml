@@ -3,12 +3,21 @@
     ViewBag.Title = "Quote Calculator";
 }
 
+<style>
+</style>
+
 @section Scripts {
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/bbbootstrap/libraries@main/choices.min.css">
+    <script src="https://cdn.jsdelivr.net/gh/bbbootstrap/libraries@main/choices.min.js"></script>
+
     <script type="text/javascript">
-        $(document).ready(function () {
-            $('#targetLanguages').multiselect();
+        var multipleCancelButton = new Choices('#targetLanguages', {
+            removeItemButton: true,
+            maxItemCount: 5,
+            searchResultLimit: 5,
+            renderChoiceLimit: 5
         });
-    </script>
+        </script>
 }
 
 <h2>Quote Calculator</h2>
@@ -26,7 +35,6 @@
             }
         </select>
     </div>
-
 
     <div class="form-group">
         <label for="targetLanguages">Target Language:</label>

@@ -19,9 +19,12 @@ namespace CAT.Models.ViewModels
 
         public Dictionary<string, string> Languages => new Dictionary<string, string>
         {
+            {"nl", "Dutch"},
+            {"de", "German"},
             {"en", "English"},
             {"fr", "French"},
-            {"de", "German"},
+            {"it", "Itaian"},
+            {"es", "Spanish"}
             // Add more languages as needed
         };
 
