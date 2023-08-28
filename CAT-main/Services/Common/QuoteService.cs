@@ -2,8 +2,6 @@
 using CAT.Data;
 using CAT.Models.Common;
 using CAT.Models.Entities.Main;
-using CAT.Services.Common;
-using Microsoft.VisualStudio.Web.CodeGeneration;
 
 namespace CAT.Services.Common
 {
@@ -25,12 +23,21 @@ namespace CAT.Services.Common
             _mapper = mapper;
         }
 
-        public StoredQuote CreateStoredQuote(int clientId)
+        public async Task<StoredQuote> CreateStoredQuoteAsync(int clientId)
         {
-            return null;
+            var storedQuote = new StoredQuote()
+            {
+                ClientId = clientId,
+                DateCreated = DateTime.Now,
+                OrderId = -1
+            };
+
+            _dbContextContainer.MainContext.StoredQuotes.Add(storedQuote);
+            await _dbContextContainer.MainContext.SaveChangesAsync();
+            return storedQuote;
         }
 
-        public List<TempQuote> CreateTempQuote(int storedQuote, int clientId, LocaleId sourceLocale, LocaleId[] targetLocales, int speciality, int idDocument, int idFilter)
+        public async Task<List<TempQuote>> CreateTempQuoteAsync(int storedQuote, int clientId, LocaleId sourceLocale, LocaleId[] targetLocales, int speciality, int idDocument, int idFilter)
         {
             try
             {
@@ -94,10 +101,10 @@ namespace CAT.Services.Common
                 }
 
                 // Add the quotes
-                _dbContextContainer.MainContext.Quotes.AddRange(quotes);
+                await _dbContextContainer.MainContext.Quotes.AddRangeAsync(quotes);
 
                 //save the changes
-                _dbContextContainer.MainContext.SaveChanges();
+                await _dbContextContainer.MainContext.SaveChangesAsync();
 
                 //return _mapper.Map<QuoteDto[]>(quotes);
                 return null;

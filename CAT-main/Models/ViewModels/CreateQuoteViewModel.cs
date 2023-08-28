@@ -5,7 +5,7 @@ namespace CAT.Models.ViewModels
 {
     public class CreateQuoteViewModel
     {
-        public int idStoredQuote { get; set; }
+        public int StoredQuoteId { get; set; }
 
         [Required]
         public string? SourceLanguage { get; set; }

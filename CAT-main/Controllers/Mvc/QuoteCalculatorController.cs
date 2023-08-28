@@ -2,6 +2,7 @@
 using CAT.Data;
 using CAT.Enums;
 using CAT.Helpers;
+using CAT.Migrations.MainDb;
 using CAT.Models.Common;
 using CAT.Models.Entities.Main;
 using CAT.Models.ViewModels;
@@ -69,10 +70,20 @@ namespace CAT.Controllers.Mvc
                         //using (var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled)) //MSDTC
                         //using (var transaction = context.Database.BeginTransaction())
                         {
-                            var document = await _documentService.CreateDocumentAsync(model.FileToUpload!, DocumentType.Original);
+                            //create stored quote if doesn't exists
+                            var clientId = -1;
+                            StoredQuote StoredQuote = default!;
+                            if (model.StoredQuoteId < 0)
+                                StoredQuote = await _quoteService.CreateStoredQuoteAsync(clientId);
+                            else
+                            {
+                                                                
+                            }
+
+                                var document = await _documentService.CreateDocumentAsync(model.FileToUpload!, DocumentType.Original);
                             //create the quote
                             var targetLocales = model.TargetLanguages!.Select(lang => new LocaleId(lang)).ToArray();
-                            var quotes = _quoteService.CreateTempQuote(1, 1, new LocaleId(model.SourceLanguage!), targetLocales,
+                            var quotes = _quoteService.CreateTempQuoteAsync(StoredQuote.Id, 1, new LocaleId(model.SourceLanguage!), targetLocales,
                                 model.Speciality, document.Id, model.Filter);
 
                             //scope.Complete();
@@ -95,7 +106,7 @@ namespace CAT.Controllers.Mvc
         {
             idStoredQuote = idStoredQuote ?? -1;
             var createQuoteViewModel = new CreateQuoteViewModel();
-            createQuoteViewModel.idStoredQuote = (int)idStoredQuote;
+            createQuoteViewModel.StoredQuoteId = (int)idStoredQuote;
 
             return View(createQuoteViewModel);
         }
