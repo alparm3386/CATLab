@@ -9,11 +9,11 @@ namespace CAT.Models.Entities.Main
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
-        public DateTime DateCreated { get; set; }
+        public DateTime? DateCreated { get; set; }
 
         public int ClientId { get; set; }
 
-        public int OrderId { get; set; }
+        public int? OrderId { get; set; }
 
         public ICollection<TempQuote> TempQuotes { get; set; } = default!;
     }

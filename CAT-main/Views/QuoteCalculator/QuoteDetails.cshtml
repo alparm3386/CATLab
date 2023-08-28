@@ -1,18 +1,69 @@
-﻿@model CAT.Models.Entities.Main.TempQuote
+﻿@model StoredQuoteViewModel
 @{
     ViewBag.Title = "Quote Details";
 }
 
 <h2>Quote Details</h2>
 
-<p>Source Language: @Model.SourceLanguage</p>
-<p>Target Language: @Model.TargetLanguage</p>
-<p>Speciality: @Model.Speciality</p>
-<p>Price: @Model.Fee</p>
+<p>Client: @(Model.StoredQuote.ClientId > 0 ? Model.StoredQuote.ClientId.ToString() : "N/A")</p>
+<p>Order: @(Model.StoredQuote.ClientId > 0 ? Model.StoredQuote.OrderId.ToString() : "N/A")</p>
+<p>Order: @(Model.StoredQuote.DateCreated != null  ? Model.StoredQuote.DateCreated.ToString() : "N/A")</p>
+<p>Price total: £@Model.Fee.ToString("N2")</p>
+
 <!-- Add other properties as needed -->
 
 <form method="post" asp-action="LaunchQuote">
-    <input type="hidden" name="id" value="@Model.Id" />
+    <input type="hidden" name="id" value="@Model.StoredQuote?.Id" />
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => ((TempQuote)null!).SourceLanguage)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => ((TempQuote)null!).TargetLanguage)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => ((TempQuote)null!).Speciality)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => ((TempQuote)null!).Speed)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => ((TempQuote)null!).Fee)
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.StoredQuote!.TempQuotes)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.SourceLanguage)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.TargetLanguage)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Speciality)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Speed)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Fee)
+                    </td>
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                        <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                        <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
     <button type="submit" class="btn btn-success">Launch Quote</button>
 </form>
 

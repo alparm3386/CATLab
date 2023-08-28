@@ -34,7 +34,8 @@ namespace CAT.Controllers.Mvc
 
         public IActionResult Index()
         {
-            return View(new QuoteCalculatorViewModel());
+            return RedirectToAction("QuoteDetails"); // or wherever you want to redirect
+            //return View(new QuoteCalculatorViewModel());
         }
 
         //[HttpPost]
@@ -88,9 +89,20 @@ namespace CAT.Controllers.Mvc
             }
         }
 
-        public async Task<IActionResult> QuoteDetails(int idDocument)
+        public async Task<IActionResult> QuoteDetails_()
         {
-            var quote = await _dbContextContainer.MainContext.Quotes.FirstOrDefaultAsync(quote => quote.Id == idDocument);
+            var quote = await _dbContextContainer.MainContext.Quotes.FirstOrDefaultAsync(quote => quote.Id == 1);
+            if (quote == null)
+            {
+                return NotFound();
+            }
+
+            return View(quote);
+        }
+
+        public async Task<IActionResult> QuoteDetails(int idStoredQuote)
+        {
+            var quote = await _dbContextContainer.MainContext.Quotes.FirstOrDefaultAsync(quote => quote.Id == idStoredQuote);
             if (quote == null)
             {
                 return NotFound();

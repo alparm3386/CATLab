@@ -25,7 +25,10 @@ namespace CAT.Services.Common
             _mapper = mapper;
         }
 
-
+        public StoredQuote CreateStoredQuote(int clientId)
+        {
+            return null;
+        }
 
         public List<TempQuote> CreateTempQuote(int storedQuote, int clientId, LocaleId sourceLocale, LocaleId[] targetLocales, int speciality, int idDocument, int idFilter)
         {
@@ -50,14 +53,15 @@ namespace CAT.Services.Common
                 var targetLanguages = Array.ConvertAll(targetLocales, locale => locale.Language);
 
                 var tmAssignments = new List<Models.Common.TMAssignment>() { new Models.Common.TMAssignment() { tmId = "29610/__35462_en_fr" } };
-                var stats = 
+                var stats =
                     _catConnector.GetStatisticsForDocument(filePath, filterPath!, sourceLocale.Language, targetLanguages, tmAssignments.ToArray());
 
                 var quotes = new List<Quote>();
                 foreach (var stat in stats)
                 {
                     //save the analisys
-                    var analisys = new Analysis() {
+                    var analisys = new Analysis()
+                    {
                         DocumentId = idDocument,
                         SourceLanguage = sourceLocale.Language,
                         TargetLanguage = stat.targetLang,

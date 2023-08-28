@@ -44,11 +44,18 @@ namespace CAT.Data
                 .HasNoKey()
                 .HasIndex(p => new { p.DocumentId, p.FilterId })
                 .IsUnique();
+
             //Analysis index
             modelBuilder.Entity<Analysis>()
                 .HasIndex(a => new { a.DocumentId, a.Type, a.SourceLanguage, a.TargetLanguage, a.Speciality });
             modelBuilder.Entity<Analysis>()
                     .HasKey(a => new { a.DocumentId, a.Type, a.SourceLanguage, a.TargetLanguage, a.Speciality });
+
+            //FK TempQuote
+            modelBuilder.Entity<TempQuote>()
+                .HasOne<StoredQuote>()
+                .WithMany(sq => sq.TempQuotes)
+                .HasForeignKey(tq => tq.StoredQuoteId);
         }
     }
 }
