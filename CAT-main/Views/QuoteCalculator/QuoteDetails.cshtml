@@ -5,16 +5,24 @@
 
 <h2>Quote Details</h2>
 
-<p>Client: @(Model.StoredQuote.ClientId > 0 ? Model.StoredQuote.ClientId.ToString() : "N/A")</p>
-<p>Order: @(Model.StoredQuote.ClientId > 0 ? Model.StoredQuote.OrderId.ToString() : "N/A")</p>
-<p>Order: @(Model.StoredQuote.DateCreated != null  ? Model.StoredQuote.DateCreated.ToString() : "N/A")</p>
+<p>Client: @(Model.StoredQuote?.ClientId > 0 ? Model.StoredQuote.ClientId.ToString() : "N/A")</p>
+@if (Model.StoredQuote?.OrderId > 0)
+{
+    <p>Order: @(Model.StoredQuote?.OrderId > 0 ? Model.StoredQuote.OrderId.ToString() : "N/A")</p>
+}
+
+@if (Model.StoredQuote?.OrderId > 0)
+{
+    <p>Date: @(Model.StoredQuote?.DateCreated != null ? Model.StoredQuote.DateCreated.ToString() : "N/A")</p>
+}
+
 <p>Price total: £@Model.Fee.ToString("N2")</p>
 
 <!-- Add other properties as needed -->
 
 <form method="post" asp-action="LaunchQuote">
     <input type="hidden" name="id" value="@Model.StoredQuote?.Id" />
-    <a asp-action="Create">Create New</a>
+    <a asp-action="Create" asp-route-id="@Model.StoredQuote?.Id">Create New</a>
     <table class="table">
         <thead>
             <tr>
@@ -37,35 +45,41 @@
             </tr>
         </thead>
         <tbody>
-            @foreach (var item in Model.StoredQuote!.TempQuotes)
+            @if (Model.StoredQuote?.TempQuotes != null)
             {
-                <tr>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.SourceLanguage)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.TargetLanguage)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Speciality)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Speed)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Fee)
-                    </td>
-                    <td>
-                        <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                        <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                        <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-                    </td>
-                </tr>
+                @foreach (var item in Model.StoredQuote!.TempQuotes)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.SourceLanguage)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.TargetLanguage)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Speciality)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Speed)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Fee)
+                        </td>
+                        <td>
+                            <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                            <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                            <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                        </td>
+                    </tr>
+                }
             }
         </tbody>
     </table>
-
-    <button type="submit" class="btn btn-success">Launch Quote</button>
+    @(Model.StoredQuote?.TempQuotes?.Count > 0 ? "<button type='submit' class='btn btn-success'>Launch Quote</button>" : "")
+    @if (Model.StoredQuote?.TempQuotes?.Count > 0)
+    {
+        <button type="submit" class="btn btn-success">Launch Quote</button>
+    }
 </form>
 
 @if (!string.IsNullOrEmpty(ViewBag.Message))

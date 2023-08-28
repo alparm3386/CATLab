@@ -3,8 +3,10 @@ using System.ComponentModel.DataAnnotations;
 
 namespace CAT.Models.ViewModels
 {
-    public class QuoteCalculatorViewModel
+    public class CreateQuoteViewModel
     {
+        public int idStoredQuote { get; set; }
+
         [Required]
         public string? SourceLanguage { get; set; }
 

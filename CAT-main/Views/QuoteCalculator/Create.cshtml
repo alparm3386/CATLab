@@ -1,23 +1,10 @@
-﻿@model QuoteCalculatorViewModel
+﻿@model CreateQuoteViewModel
 @{
     ViewBag.Title = "Quote Calculator";
 }
 
 <style>
 </style>
-
-@section Scripts {
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/bbbootstrap/libraries@main/choices.min.css">
-    <script src="https://cdn.jsdelivr.net/gh/bbbootstrap/libraries@main/choices.min.js"></script>
-
-    <script type="text/javascript">
-        var multipleCancelButton = new Choices('#targetLanguages', {
-            removeItemButton: true,
-            //searchResultLimit: 5,
-            //renderChoiceLimit: 5
-        });
-    </script>
-}
 
 <h2>Quote Calculator</h2>
 
@@ -67,5 +54,17 @@
 
 
 @section Scripts {
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/bbbootstrap/libraries@main/choices.min.css">
+    <script src="https://cdn.jsdelivr.net/gh/bbbootstrap/libraries@main/choices.min.js"></script>
+
+    <script type="text/javascript">
+        var multipleCancelButton = new Choices('#targetLanguages', {
+            removeItemButton: true,
+            //searchResultLimit: 5,
+            //renderChoiceLimit: 5
+        });
+    </script>
+
+
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }

@@ -8,6 +8,7 @@ using CAT.Models.ViewModels;
 using CAT.Services.Common;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Cryptography.Xml;
 using System.Transactions;
 
 namespace CAT.Controllers.Mvc
@@ -52,7 +53,7 @@ namespace CAT.Controllers.Mvc
         //}
 
         [HttpPost]
-        public async Task<IActionResult> HandleQuote(QuoteCalculatorViewModel model, string action)
+        public async Task<IActionResult> HandleQuote(CreateQuoteViewModel model, string action)
         {
 
             if (!ModelState.IsValid)
@@ -89,18 +90,30 @@ namespace CAT.Controllers.Mvc
             }
         }
 
+        //[Route("QuoteCalculator/Create/{idStoredQuote?}")]
+        public async Task<IActionResult> Create(int? idStoredQuote)
+        {
+            idStoredQuote = idStoredQuote ?? -1;
+            var createQuoteViewModel = new CreateQuoteViewModel();
+            createQuoteViewModel.idStoredQuote = (int)idStoredQuote;
+
+            return View(createQuoteViewModel);
+        }
+
         //[HttpGet()]
         //[HttpGet("{idStoredQuote?}")]
         [Route("QuoteCalculator/QuoteDetails/{idStoredQuote?}")]
         public async Task<IActionResult> QuoteDetails(int? idStoredQuote)
         {
+            idStoredQuote = idStoredQuote ?? -1;
             var quote = await _dbContextContainer.MainContext.Quotes.FirstOrDefaultAsync(quote => quote.Id == idStoredQuote);
             if (quote == null)
             {
-                return NotFound();
+                //return NotFound();
             }
 
-            return View(quote);
+            var storedQuoteViewModel = new StoredQuoteViewModel();
+            return View(storedQuoteViewModel);
         }
 
         [HttpPost]
