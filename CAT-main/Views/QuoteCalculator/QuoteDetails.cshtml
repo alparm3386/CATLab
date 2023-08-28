@@ -14,6 +14,7 @@
 
 <form method="post" asp-action="LaunchQuote">
     <input type="hidden" name="id" value="@Model.StoredQuote?.Id" />
+    <a asp-action="Create">Create New</a>
     <table class="table">
         <thead>
             <tr>

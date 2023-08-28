@@ -1,76 +1,70 @@
-﻿@model CAT.Models.Entities.Main.TempQuote
-
+﻿@model QuoteCalculatorViewModel
 @{
-    ViewData["Title"] = "View";
+    ViewBag.Title = "Quote Calculator";
 }
 
-<h1>View</h1>
+<style>
+</style>
 
-<h4>TempQuote</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="View">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="StoredQuoteId" class="control-label"></label>
-                <select asp-for="StoredQuoteId" class ="form-control" asp-items="ViewBag.StoredQuoteId"></select>
-            </div>
-            <div class="form-group">
-                <label asp-for="DateCreated" class="control-label"></label>
-                <input asp-for="DateCreated" class="form-control" />
-                <span asp-validation-for="DateCreated" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="TempDocumentId" class="control-label"></label>
-                <input asp-for="TempDocumentId" class="form-control" />
-                <span asp-validation-for="TempDocumentId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="SourceLanguage" class="control-label"></label>
-                <input asp-for="SourceLanguage" class="form-control" />
-                <span asp-validation-for="SourceLanguage" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="TargetLanguage" class="control-label"></label>
-                <input asp-for="TargetLanguage" class="form-control" />
-                <span asp-validation-for="TargetLanguage" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Speciality" class="control-label"></label>
-                <input asp-for="Speciality" class="form-control" />
-                <span asp-validation-for="Speciality" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Service" class="control-label"></label>
-                <input asp-for="Service" class="form-control" />
-                <span asp-validation-for="Service" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Fee" class="control-label"></label>
-                <input asp-for="Fee" class="form-control" />
-                <span asp-validation-for="Fee" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Speed" class="control-label"></label>
-                <input asp-for="Speed" class="form-control" />
-                <span asp-validation-for="Speed" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Analysis" class="control-label"></label>
-                <input asp-for="Analysis" class="form-control" />
-                <span asp-validation-for="Analysis" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div>
-        </form>
+@section Scripts {
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/bbbootstrap/libraries@main/choices.min.css">
+    <script src="https://cdn.jsdelivr.net/gh/bbbootstrap/libraries@main/choices.min.js"></script>
+
+    <script type="text/javascript">
+        var multipleCancelButton = new Choices('#targetLanguages', {
+            removeItemButton: true,
+            //searchResultLimit: 5,
+            //renderChoiceLimit: 5
+        });
+    </script>
+}
+
+<h2>Quote Calculator</h2>
+
+<form method="post" enctype="multipart/form-data" asp-action="HandleQuote">
+
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+    <div class="form-group">
+        <label for="sourceLanguage">Source Language:</label>
+        <select id="sourceLanguage" name="SourceLanguage" class="form-control">
+            @foreach (var lang in Model.Languages)
+            {
+                <option value="@lang.Key" selected="@(Model.SourceLanguage == lang.Key ? "selected" : null)">@lang.Value</option>
+            }
+        </select>
     </div>
-</div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
+    <div class="form-group">
+        <label for="targetLanguages">Target Language:</label>
+        <select id="targetLanguages" name="TargetLanguages" class="form-control" multiple>
+            @foreach (var lang in Model.Languages)
+            {
+                <option value="@lang.Key" selected=@(Model.TargetLanguages != null && Model.TargetLanguages.Contains(lang.Key) ? "selected" : null)>@lang.Value</option>
+            }
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label for="speciality">Speciality:</label>
+        <select id="speciality" name="Speciality" class="form-control">
+            @foreach (var speciality in Model.Specialities)
+            {
+                <option value="@speciality.Key" selected="@(Model.Speciality == speciality.Key ? "selected" : null)">@speciality.Value</option>
+            }
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label for="file">Upload File:</label>
+        <input type="file" id="file" name="FileToUpload" class="form-control" required />
+    </div>
+
+    <div class="form-group mt-2">
+        <button type="submit" class="btn btn-primary" name="action" value="CalculateQuote">Calculate Quote</button>
+    </div>
+</form>
+
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}

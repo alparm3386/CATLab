@@ -89,18 +89,10 @@ namespace CAT.Controllers.Mvc
             }
         }
 
-        public async Task<IActionResult> QuoteDetails_()
-        {
-            var quote = await _dbContextContainer.MainContext.Quotes.FirstOrDefaultAsync(quote => quote.Id == 1);
-            if (quote == null)
-            {
-                return NotFound();
-            }
-
-            return View(quote);
-        }
-
-        public async Task<IActionResult> QuoteDetails(int idStoredQuote)
+        //[HttpGet()]
+        //[HttpGet("{idStoredQuote?}")]
+        [Route("QuoteCalculator/QuoteDetails/{idStoredQuote?}")]
+        public async Task<IActionResult> QuoteDetails(int? idStoredQuote)
         {
             var quote = await _dbContextContainer.MainContext.Quotes.FirstOrDefaultAsync(quote => quote.Id == idStoredQuote);
             if (quote == null)
