@@ -22,7 +22,9 @@
 
 <form method="post" asp-action="LaunchQuote">
     <input type="hidden" name="id" value="@Model.StoredQuote?.Id" />
-    <a asp-action="Create" asp-route-id="@Model.StoredQuote?.Id">Create New</a>
+    <a asp-action="Create" asp-controller="QuoteCalculator" asp-route-storedQuoteId="@Model.StoredQuote?.Id">
+        @(Model.StoredQuote?.Id > 0 ? "Add New" : "Create New")
+    </a>
     <table class="table">
         <thead>
             <tr>
@@ -66,7 +68,7 @@
                             @Html.DisplayFor(modelItem => item.Fee)
                         </td>
                         <td>
-                            <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                            @*<a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |*@
                             <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
                             <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
                         </td>
@@ -75,7 +77,7 @@
             }
         </tbody>
     </table>
-    @(Model.StoredQuote?.TempQuotes?.Count > 0 ? "<button type='submit' class='btn btn-success'>Launch Quote</button>" : "")
+
     @if (Model.StoredQuote?.TempQuotes?.Count > 0)
     {
         <button type="submit" class="btn btn-success">Launch Quote</button>

@@ -94,29 +94,30 @@ namespace CAT.Controllers.Mvc
                         ModelState.AddModelError(string.Empty, "An error occurred while calculating the quote. Please try again.");
                         return View("Index", model);
                     }
-                    return RedirectToAction($"QuoteDetails/{storedQuoteId}"); // or wherever you want to redirect
+
+                    return RedirectToAction("QuoteDetails", new { storedQuoteId });
                 default:
                     return View("Index", model);
             }
         }
 
-        //[Route("QuoteCalculator/Create/{idStoredQuote?}")]
-        public async Task<IActionResult> Create(int? idStoredQuote)
+        [Route("QuoteCalculator/Create/{storedQuoteId?}")]
+        public async Task<IActionResult> Create(int? storedQuoteId)
         {
-            idStoredQuote = idStoredQuote ?? -1;
+            storedQuoteId = storedQuoteId ?? -1;
             var createQuoteViewModel = new CreateQuoteViewModel();
-            createQuoteViewModel.StoredQuoteId = (int)idStoredQuote;
+            createQuoteViewModel.StoredQuoteId = (int)storedQuoteId;
 
             return View(createQuoteViewModel);
         }
 
         //[HttpGet()]
         //[HttpGet("{idStoredQuote?}")]
-        [Route("QuoteCalculator/QuoteDetails/{idStoredQuote?}")]
-        public async Task<IActionResult> QuoteDetails(int? idStoredQuote)
+        [Route("QuoteCalculator/QuoteDetails/{storedQuoteId?}")]
+        public async Task<IActionResult> QuoteDetails(int? storedQuoteId)
         {
-            idStoredQuote = idStoredQuote ?? -1;
-            var storedQuote = await _dbContextContainer.MainContext.StoredQuotes.Include(sq => sq.TempQuotes).FirstOrDefaultAsync(quote => quote.Id == idStoredQuote);
+            storedQuoteId = storedQuoteId ?? -1;
+            var storedQuote = await _dbContextContainer.MainContext.StoredQuotes.Include(sq => sq.TempQuotes).FirstOrDefaultAsync(quote => quote.Id == storedQuoteId);
             if (storedQuote == null)
             {
                 //return NotFound();
