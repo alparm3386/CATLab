@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CAT.Migrations.MainDb
 {
     [DbContext(typeof(MainDbContext))]
-    [Migration("20230826175237_StoredQuotes")]
-    partial class StoredQuotes
+    [Migration("20230829100247_SpecialityFix")]
+    partial class SpecialityFix
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -246,19 +246,42 @@ namespace CAT.Migrations.MainDb
 
             modelBuilder.Entity("CAT.Models.Entities.Main.Speciality", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("_Id_")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("_Id_"));
+
+                    b.Property<int>("Id")
+                        .HasColumnType("int");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("Id");
+                    b.HasKey("_Id_");
 
                     b.ToTable("Specialities");
+
+                    b.HasData(
+                        new
+                        {
+                            _Id_ = 1,
+                            Id = 1,
+                            Name = "General"
+                        },
+                        new
+                        {
+                            _Id_ = 2,
+                            Id = 2,
+                            Name = "Marketing"
+                        },
+                        new
+                        {
+                            _Id_ = 3,
+                            Id = 3,
+                            Name = "Technical"
+                        });
                 });
 
             modelBuilder.Entity("CAT.Models.Entities.Main.StoredQuote", b =>
@@ -272,10 +295,10 @@ namespace CAT.Migrations.MainDb
                     b.Property<int>("ClientId")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("DateCreated")
+                    b.Property<DateTime?>("DateCreated")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("OrderId")
+                    b.Property<int?>("OrderId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -297,6 +320,9 @@ namespace CAT.Migrations.MainDb
                     b.Property<string>("FileName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("FilterId")
+                        .HasColumnType("int");
 
                     b.Property<string>("MD5Hash")
                         .HasColumnType("nvarchar(max)");
@@ -334,7 +360,7 @@ namespace CAT.Migrations.MainDb
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("Speciality")
+                    b.Property<int>("SpecialityId")
                         .HasColumnType("int");
 
                     b.Property<int>("Speed")

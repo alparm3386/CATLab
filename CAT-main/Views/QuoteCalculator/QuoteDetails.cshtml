@@ -33,7 +33,7 @@
                     @Html.DisplayNameFor(model => ((TempQuote)null!).TargetLanguage)
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => ((TempQuote)null!).Speciality)
+                    @Html.DisplayNameFor(model => ((TempQuote)null!).SpecialityId)
                 </th>
                 <th>
                     @Html.DisplayNameFor(model => ((TempQuote)null!).Speed)
@@ -57,10 +57,10 @@
                             @Html.DisplayFor(modelItem => item.TargetLanguage)
                         </td>
                         <td>
-                            @Html.DisplayFor(modelItem => item.Speciality)
+                            @Html.DisplayFor(modelItem => item.SpecialityId)
                         </td>
                         <td>
-                            @Html.DisplayFor(modelItem => item.Speed)
+                            @(((CAT.Enums.ServiceSpeed)item.Speed).ToString())
                         </td>
                         <td>
                             @Html.DisplayFor(modelItem => item.Fee)

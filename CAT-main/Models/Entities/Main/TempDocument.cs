@@ -17,5 +17,7 @@ namespace CAT.Models.Entities.Main
         public string FileName { get; set; } = default!;
 
         public string? MD5Hash { get; set; }
+
+        public int FilterId { get; set; }
     }
 }

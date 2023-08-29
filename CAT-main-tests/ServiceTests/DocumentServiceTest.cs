@@ -40,7 +40,7 @@ namespace CAT_main_tests.ServiceTests
             mockFormFile.Setup(f => f.CopyToAsync(It.IsAny<Stream>(), It.IsAny<CancellationToken>()))
                         .Returns((Stream targetStream, CancellationToken? cancellationToken) => stream.CopyToAsync(targetStream));
 
-            var result = await documentService.CreateDocumentAsync(mockFormFile.Object, CAT.Enums.DocumentType.Original);
+            var result = await documentService.CreateTempDocumentAsync(mockFormFile.Object, CAT.Enums.DocumentType.Original, -1);
             Assert.NotNull(result);
         }
     }

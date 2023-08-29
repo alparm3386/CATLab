@@ -2,7 +2,6 @@
 using CAT.Data;
 using CAT.Enums;
 using CAT.Helpers;
-using CAT.Migrations.MainDb;
 using CAT.Models.Common;
 using CAT.Models.Entities.Main;
 using CAT.Models.ViewModels;
@@ -65,6 +64,7 @@ namespace CAT.Controllers.Mvc
             switch (action)
             {
                 case "CalculateQuote":
+                    var storedQuoteId = model.StoredQuoteId;
                     try
                     {
                         //using (var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled)) //MSDTC
@@ -72,18 +72,17 @@ namespace CAT.Controllers.Mvc
                         {
                             //create stored quote if doesn't exists
                             var clientId = -1;
-                            StoredQuote StoredQuote = default!;
                             if (model.StoredQuoteId < 0)
-                                StoredQuote = await _quoteService.CreateStoredQuoteAsync(clientId);
-                            else
                             {
-                                                                
+                                var stroedQuote = await _quoteService.CreateStoredQuoteAsync(clientId);
+                                storedQuoteId = stroedQuote.Id;
                             }
 
-                                var document = await _documentService.CreateDocumentAsync(model.FileToUpload!, DocumentType.Original);
+                            int idFilter = -1;
+                            var document = await _documentService.CreateTempDocumentAsync(model.FileToUpload!, DocumentType.Original, idFilter);
                             //create the quote
                             var targetLocales = model.TargetLanguages!.Select(lang => new LocaleId(lang)).ToArray();
-                            var quotes = _quoteService.CreateTempQuoteAsync(StoredQuote.Id, 1, new LocaleId(model.SourceLanguage!), targetLocales,
+                            var quotes = await _quoteService.CreateTempQuotesAsync(storedQuoteId, 1, new LocaleId(model.SourceLanguage!), targetLocales,
                                 model.Speciality, document.Id, model.Filter);
 
                             //scope.Complete();
@@ -95,7 +94,7 @@ namespace CAT.Controllers.Mvc
                         ModelState.AddModelError(string.Empty, "An error occurred while calculating the quote. Please try again.");
                         return View("Index", model);
                     }
-                    return RedirectToAction("QuoteDetails"); // or wherever you want to redirect
+                    return RedirectToAction($"QuoteDetails/{storedQuoteId}"); // or wherever you want to redirect
                 default:
                     return View("Index", model);
             }
@@ -117,13 +116,14 @@ namespace CAT.Controllers.Mvc
         public async Task<IActionResult> QuoteDetails(int? idStoredQuote)
         {
             idStoredQuote = idStoredQuote ?? -1;
-            var quote = await _dbContextContainer.MainContext.Quotes.FirstOrDefaultAsync(quote => quote.Id == idStoredQuote);
-            if (quote == null)
+            var storedQuote = await _dbContextContainer.MainContext.StoredQuotes.Include(sq => sq.TempQuotes).FirstOrDefaultAsync(quote => quote.Id == idStoredQuote);
+            if (storedQuote == null)
             {
                 //return NotFound();
             }
 
             var storedQuoteViewModel = new StoredQuoteViewModel();
+            storedQuoteViewModel.StoredQuote = storedQuote!;
             return View(storedQuoteViewModel);
         }
 

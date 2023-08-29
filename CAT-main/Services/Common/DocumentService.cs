@@ -17,7 +17,7 @@ namespace CAT.Services.Common
         private readonly IMapper _mapper;
         private readonly ILogger _logger;
 
-        public DocumentService(DbContextContainer dbContextContainer, IConfiguration configuration, 
+        public DocumentService(DbContextContainer dbContextContainer, IConfiguration configuration,
             IMapper mapper, ILogger<DocumentService> logger)
         {
             _dbContextContainer = dbContextContainer;
@@ -26,68 +26,38 @@ namespace CAT.Services.Common
             _mapper = mapper;
         }
 
-        public async Task<Document> CreateDocumentAsync(IFormFile formFile, DocumentType documentType)
+        public async Task<TempDocument> CreateTempDocumentAsync(IFormFile formFile, DocumentType documentType, int filterId)
         {
             try
             {
                 //save the file into the temp folder
                 var tempFolder = _configuration["TempFolder"]!;
-                var tempFilePath = Path.Combine(tempFolder, Guid.NewGuid().ToString());
-                using (var stream = new FileStream(tempFilePath, FileMode.Create))
+                var filePath = Path.Combine(tempFolder, formFile.FileName);
+                var fileName = FileHelper.GetUniqueFileName(filePath);
+                filePath = Path.Combine(tempFolder, fileName);
+                using (var stream = new FileStream(filePath, FileMode.Create))
                 {
                     await formFile.CopyToAsync(stream);
                 }
-
-                var sourceFilesFolder = _configuration["SourceFilesFolder"]!;
-                var fileName = formFile.FileName;
-                var filePath = Path.Combine(sourceFilesFolder, fileName);
-                var bSaveFile = true;
 
                 //get the md5 hash
                 var md5Hash = "";
                 using (var stream = formFile.OpenReadStream())
                 {
-                    md5Hash = FileHelper.CalculateMD5(tempFilePath);
+                    md5Hash = FileHelper.CalculateMD5(filePath);
                 }
-
-                if (File.Exists(filePath))
-                {
-                    var md5Existing = "";
-                    using (var stream = formFile.OpenReadStream())
-                    {
-                        md5Existing = FileHelper.CalculateMD5(filePath);
-                    }
-
-                    if (md5Hash == md5Existing)
-                        bSaveFile = false;
-                    else
-                    {
-                        // Generate a unique file name based on the original file name
-                        fileName = FileHelper.GetUniqueFileName(filePath);
-                        filePath = Path.Combine(sourceFilesFolder, fileName);
-                    }
-                }
-
-                //save the file
-                if (bSaveFile)
-                {
-                    // Combine the unique file name with the server's path to create the full path
-                    File.Copy(tempFilePath, filePath);
-                }
-
-                //now we can delete the temp file
-                File.Delete(tempFilePath);
 
                 //create the document
-                var document = new Document()
+                var document = new TempDocument()
                 {
-                    DocumentType = (int)DocumentType.Original,
+                    DocumentType = (int)documentType,
                     FileName = fileName,
                     OriginalFileName = formFile.FileName,
-                    MD5Hash = md5Hash
+                    MD5Hash = md5Hash,
+                    FilterId = filterId
                 };
 
-                await _dbContextContainer.MainContext.Documents.AddAsync(document);
+                await _dbContextContainer.MainContext.TempDocuments.AddAsync(document);
                 await _dbContextContainer.MainContext.SaveChangesAsync();
 
                 return document;
@@ -97,6 +67,11 @@ namespace CAT.Services.Common
                 _logger.LogError("CreateDocument ERROR: " + ex.Message);
                 throw;
             }
+        }
+
+        public async Task<Document> CreateDocumentAsync(IFormFile formFile, DocumentType documentType)
+        {
+            throw new NotImplementedException();
         }
     }
 }

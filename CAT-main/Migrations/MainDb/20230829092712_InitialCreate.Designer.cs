@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CAT.Migrations.MainDb
 {
     [DbContext(typeof(MainDbContext))]
-    [Migration("20230826213308_TempQuoteFK")]
-    partial class TempQuoteFK
+    [Migration("20230829092712_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -247,16 +247,11 @@ namespace CAT.Migrations.MainDb
             modelBuilder.Entity("CAT.Models.Entities.Main.Speciality", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
 
                     b.ToTable("Specialities");
                 });
@@ -272,10 +267,10 @@ namespace CAT.Migrations.MainDb
                     b.Property<int>("ClientId")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("DateCreated")
+                    b.Property<DateTime?>("DateCreated")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("OrderId")
+                    b.Property<int?>("OrderId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -297,6 +292,9 @@ namespace CAT.Migrations.MainDb
                     b.Property<string>("FileName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("FilterId")
+                        .HasColumnType("int");
 
                     b.Property<string>("MD5Hash")
                         .HasColumnType("nvarchar(max)");
@@ -334,7 +332,7 @@ namespace CAT.Migrations.MainDb
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("Speciality")
+                    b.Property<int>("SpecialityId")
                         .HasColumnType("int");
 
                     b.Property<int>("Speed")

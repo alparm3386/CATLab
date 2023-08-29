@@ -1,4 +1,7 @@
-﻿namespace CAT.Enums
+﻿using System.ComponentModel.DataAnnotations;
+using System.Reflection;
+
+namespace CAT.Enums
 {
     public enum OEMode
     {
@@ -40,7 +43,10 @@
 
     public enum ServiceSpeed
     {
+        [Display(Name = "Regular Speed")]
         Normal,
+
+        [Display(Name = "Express Speed")]
         Express
     }
 }

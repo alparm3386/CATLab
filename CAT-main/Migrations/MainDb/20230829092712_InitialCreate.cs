@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace CAT.Migrations.MainDb
 {
     /// <inheritdoc />
-    public partial class StoredQuotes : Migration
+    public partial class InitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -126,13 +126,11 @@ namespace CAT.Migrations.MainDb
                 name: "Specialities",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Id = table.Column<int>(type: "int", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Specialities", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -141,9 +139,9 @@ namespace CAT.Migrations.MainDb
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    DateCreated = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    DateCreated = table.Column<DateTime>(type: "datetime2", nullable: true),
                     ClientId = table.Column<int>(type: "int", nullable: false),
-                    OrderId = table.Column<int>(type: "int", nullable: false)
+                    OrderId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -159,7 +157,8 @@ namespace CAT.Migrations.MainDb
                     DocumentType = table.Column<int>(type: "int", nullable: false),
                     OriginalFileName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     FileName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    MD5Hash = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    MD5Hash = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    FilterId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -206,7 +205,7 @@ namespace CAT.Migrations.MainDb
                     TempDocumentId = table.Column<int>(type: "int", nullable: false),
                     SourceLanguage = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     TargetLanguage = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Speciality = table.Column<int>(type: "int", nullable: false),
+                    SpecialityId = table.Column<int>(type: "int", nullable: false),
                     Service = table.Column<int>(type: "int", nullable: false),
                     Fee = table.Column<double>(type: "float", nullable: false),
                     Speed = table.Column<int>(type: "int", nullable: false),

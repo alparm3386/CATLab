@@ -20,7 +20,7 @@ namespace CAT.Models.Entities.Main
 
         public string TargetLanguage { get; set; } = default!;
 
-        public int Speciality { get; set; }
+        public int SpecialityId { get; set; }
 
         public int Service { get; set; }
 

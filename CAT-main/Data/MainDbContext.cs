@@ -56,6 +56,14 @@ namespace CAT.Data
                 .HasOne<StoredQuote>()
                 .WithMany(sq => sq.TempQuotes)
                 .HasForeignKey(tq => tq.StoredQuoteId);
+
+            //Speciality no key
+            //modelBuilder.Entity<Speciality>().HasNoKey();
+
+            modelBuilder.Entity<Speciality>().HasData(
+        new Speciality { _Id_ = 1, Id = 1, Name = "General" },
+        new Speciality { _Id_ = 2, Id = 2, Name = "Marketing" },
+        new Speciality { _Id_ = 3, Id = 3, Name = "Technical" });
         }
     }
 }
