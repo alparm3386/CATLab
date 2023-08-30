@@ -21,7 +21,7 @@ namespace CAT.Models.ViewModels
             {
                 if (StoredQuote != null)
                 {
-
+                    return StoredQuote.TempQuotes.Sum(tq => tq.Fee);
                 }
 
                 return 0;
