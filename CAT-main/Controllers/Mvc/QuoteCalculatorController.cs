@@ -56,7 +56,7 @@ namespace CAT.Controllers.Mvc
 
             if (!ModelState.IsValid)
             {
-                return View("Index", model);
+                return View("Create", model);
             }
 
             switch (action)
@@ -90,12 +90,12 @@ namespace CAT.Controllers.Mvc
                     catch (Exception ex)
                     {
                         ModelState.AddModelError(string.Empty, "An error occurred while calculating the quote. Please try again.");
-                        return View("Index", model);
+                        return View("Create", model);
                     }
 
                     return RedirectToAction("QuoteDetails", new { storedQuoteId });
                 default:
-                    return View("Index", model);
+                    return View("Create", model);
             }
         }
 
