@@ -49,4 +49,11 @@ namespace CAT.Enums
         [Display(Name = "Express Speed")]
         Express
     }
+
+    public enum Speciality
+    {
+        General = 1,
+        Marketing,
+        Technical
+    }
 }

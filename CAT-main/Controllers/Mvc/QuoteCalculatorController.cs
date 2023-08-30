@@ -15,7 +15,6 @@ namespace CAT.Controllers.Mvc
 {
     public class QuoteCalculatorController : Controller
     {
-        private readonly DbContextContainer _dbContextContainer;
         private readonly IConfiguration _configuration;
         private readonly IQuoteService _quoteService;
         private readonly IDocumentService _documentService;
@@ -25,7 +24,6 @@ namespace CAT.Controllers.Mvc
         public QuoteCalculatorController(DbContextContainer dbContextContainer, IConfiguration configuration, IQuoteService quoteService,
             IDocumentService documentService, IMapper mapper, ILogger<JobService> logger)
         {
-            _dbContextContainer = dbContextContainer;
             _configuration = configuration;
             _quoteService = quoteService;
             _documentService = documentService;
@@ -117,13 +115,14 @@ namespace CAT.Controllers.Mvc
         public async Task<IActionResult> QuoteDetails(int? storedQuoteId)
         {
             storedQuoteId = storedQuoteId ?? -1;
-            var storedQuote = await _dbContextContainer.MainContext.StoredQuotes.Include(sq => sq.TempQuotes).FirstOrDefaultAsync(quote => quote.Id == storedQuoteId);
+            var storedQuote = await _quoteService.GetStoredQuoteAsync((int)storedQuoteId);
             if (storedQuote == null)
             {
                 //return NotFound();
             }
 
             var storedQuoteViewModel = new StoredQuoteViewModel();
+
             storedQuoteViewModel.StoredQuote = storedQuote!;
             return View(storedQuoteViewModel);
         }
@@ -131,17 +130,18 @@ namespace CAT.Controllers.Mvc
         [HttpPost]
         public async Task<IActionResult> LaunchQuote(int id)
         {
-            var quote = await _dbContextContainer.MainContext.Quotes.FindAsync(id);
-            if (quote == null)
-            {
-                return NotFound();
-            }
+            throw new NotImplementedException();
+            //var quote = await _dbContextContainer.MainContext.Quotes.FindAsync(id);
+            //if (quote == null)
+            //{
+            //    return NotFound();
+            //}
 
-            // Your business logic to launch the quote.
-            // ...
+            //// Your business logic to launch the quote.
+            //// ...
 
-            ViewBag.Message = "Quote launched successfully!";
-            return View("QuoteDetails", quote);
+            //ViewBag.Message = "Quote launched successfully!";
+            //return View("QuoteDetails", quote);
         }
     }
 }

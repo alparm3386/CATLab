@@ -29,8 +29,6 @@ namespace CAT.Data
 
         public DbSet<Language> Languages { get; set; } = default!;
 
-        public DbSet<Speciality> Specialities { get; set; } = default!;
-
         public DbSet<StoredQuote> StoredQuotes { get; set; } = default!;
 
         public DbSet<TempQuote> TempQuotes { get; set; } = default!;
@@ -57,13 +55,6 @@ namespace CAT.Data
                 .WithMany(sq => sq.TempQuotes)
                 .HasForeignKey(tq => tq.StoredQuoteId);
 
-            //Speciality no key
-            //modelBuilder.Entity<Speciality>().HasNoKey();
-
-            modelBuilder.Entity<Speciality>().HasData(
-        new Speciality { _Id_ = 1, Id = 1, Name = "General" },
-        new Speciality { _Id_ = 2, Id = 2, Name = "Marketing" },
-        new Speciality { _Id_ = 3, Id = 3, Name = "Technical" });
         }
     }
 }

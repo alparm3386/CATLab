@@ -29,19 +29,19 @@
         <thead>
             <tr>
                 <th>
-                    @Html.DisplayNameFor(model => ((TempQuote)null!).SourceLanguage)
+                    Source language
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => ((TempQuote)null!).TargetLanguage)
+                    Target language
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => ((TempQuote)null!).SpecialityId)
+                    Speciality
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => ((TempQuote)null!).Speed)
+                    Speed
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => ((TempQuote)null!).Fee)
+                    Fee
                 </th>
                 <th></th>
             </tr>
@@ -59,7 +59,7 @@
                             @Html.DisplayFor(modelItem => item.TargetLanguage)
                         </td>
                         <td>
-                            @Html.DisplayFor(modelItem => item.SpecialityId)
+                            @Html.DisplayFor(modelItem => Model.Specialities[item.SpecialityId])
                         </td>
                         <td>
                             @(((CAT.Enums.ServiceSpeed)item.Speed).ToString())

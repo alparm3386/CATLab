@@ -15,9 +15,12 @@ namespace CAT.Models.Entities.Main
         public DateTime DateCreated { get; set; }
 
         public int TempDocumentId { get; set; }
+        public int TempDocument { get; set; }
 
+        [Display(Name = "Source language")]
         public string SourceLanguage { get; set; } = default!;
 
+        [Display(Name = "Target language")]
         public string TargetLanguage { get; set; } = default!;
 
         public int SpecialityId { get; set; }

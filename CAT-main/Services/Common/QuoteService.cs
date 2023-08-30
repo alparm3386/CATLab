@@ -2,6 +2,7 @@
 using CAT.Data;
 using CAT.Models.Common;
 using CAT.Models.Entities.Main;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 
 namespace CAT.Services.Common
@@ -97,6 +98,11 @@ namespace CAT.Services.Common
                 _logger.LogError("CreateQuote ERROR:" + ex.Message);
                 throw;
             }
+        }
+
+        public async Task<StoredQuote?> GetStoredQuoteAsync(int storedQuoteId)
+        {
+            return await _dbContextContainer!.MainContext!.StoredQuotes!.Include(sq => sq.TempQuotes).FirstOrDefaultAsync(quote => quote.Id == storedQuoteId);
         }
     }
 }
