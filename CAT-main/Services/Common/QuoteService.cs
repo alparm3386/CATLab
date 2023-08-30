@@ -79,7 +79,8 @@ namespace CAT.Services.Common
                         DateCreated = DateTime.Now,
                         Service = 1,
                         Fee = 10.0,
-                        Analysis = JsonConvert.SerializeObject(stat)
+                        TempDocumentId = tempDocumentId,
+                        Analysis = JsonConvert.SerializeObject(stat),
                     };
 
                     tempQuotes.Add(tempQuote);
@@ -102,7 +103,7 @@ namespace CAT.Services.Common
 
         public async Task<StoredQuote?> GetStoredQuoteAsync(int storedQuoteId)
         {
-            return await _dbContextContainer!.MainContext!.StoredQuotes!.Include(sq => sq.TempQuotes).FirstOrDefaultAsync(quote => quote.Id == storedQuoteId);
+            return await _dbContextContainer!.MainContext!.StoredQuotes!.Include(sq => sq.TempQuotes).ThenInclude(tq => tq.TempDocument).FirstOrDefaultAsync(quote => quote.Id == storedQuoteId);
         }
     }
 }

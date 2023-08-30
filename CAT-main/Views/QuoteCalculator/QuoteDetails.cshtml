@@ -29,6 +29,9 @@
         <thead>
             <tr>
                 <th>
+                    Document
+                </th>
+                <th>
                     Source language
                 </th>
                 <th>
@@ -52,6 +55,9 @@
                 @foreach (var item in Model.StoredQuote!.TempQuotes)
                 {
                     <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.TempDocument.OriginalFileName)
+                        </td>
                         <td>
                             @Html.DisplayFor(modelItem => item.SourceLanguage)
                         </td>

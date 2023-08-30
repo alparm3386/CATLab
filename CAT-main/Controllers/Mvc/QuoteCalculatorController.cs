@@ -70,7 +70,7 @@ namespace CAT.Controllers.Mvc
                         {
                             //create stored quote if doesn't exists
                             var clientId = -1;
-                            if (model.StoredQuoteId < 0)
+                            if (model.StoredQuoteId <= 0)
                             {
                                 var stroedQuote = await _quoteService.CreateStoredQuoteAsync(clientId);
                                 storedQuoteId = stroedQuote.Id;
