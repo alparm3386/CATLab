@@ -5,6 +5,7 @@ namespace CAT.Services.Common
 {
     public interface IQuoteService
     {
+        Task<Quote> CreateQuoteFromTempQuoteAsync(int tempQuoteId);
         public Task<StoredQuote> CreateStoredQuoteAsync(int clientId);
         public Task<List<TempQuote>> CreateTempQuotesAsync(int storedQuoteId, int clientId, LocaleId sourceLocale, LocaleId[] targetLocales, 
             int speciality, int service, int idDocument);

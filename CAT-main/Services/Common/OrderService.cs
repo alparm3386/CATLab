@@ -11,16 +11,19 @@ namespace CAT.Services.Common
         private readonly CATConnector _catConnector;
         private readonly IQuoteService _quoteService;
         private readonly IDocumentService _documentService;
+        private readonly IWorkflowService _workflowService;
         private readonly IMapper _mapper;
         private readonly ILogger _logger;
 
         public OrderService(DbContextContainer dbContextContainer, IConfiguration configuration, CATConnector catConnector,
-            IDocumentService documentService, IQuoteService quoteService, IMapper mapper, ILogger<JobService> logger) {
+            IDocumentService documentService, IWorkflowService workflowService, IQuoteService quoteService, IMapper mapper, ILogger<JobService> logger) 
+        {
             _dbContextContainer = dbContextContainer;
             _configuration = configuration;
             _catConnector = catConnector;
             _quoteService = quoteService;
             _documentService = documentService;
+            _workflowService = workflowService;
             _logger = logger;
             _mapper = mapper;
         }
@@ -55,8 +58,37 @@ namespace CAT.Services.Common
                 //create document from temp document
                 var document = await _documentService.CreateDocumentFromTempDocumentAsync(tempQuote.TempDocumentId);
                 await _dbContextContainer.MainContext.Documents.AddAsync(document);
+                
+                //create quote
+                var quote = await _quoteService.CreateQuoteFromTempQuoteAsync(tempQuote.Id);
+
+                //add job to the order
+                var job = await AddJobToOrderAsync(order.Id, quote.Id, document.Id);
+
+                //finalize the order
+                await FinalizeOrderAsync(order.Id);
             }
         }
 
+        public async Task<Job> AddJobToOrderAsync(int orderId, int quoteId, int documentId)
+        {
+            //create job
+            var job = new Job()
+            {
+                OrderId = orderId,
+                QuoteId = quoteId,
+                SourceDocumentId = documentId
+            };
+
+            await _dbContextContainer.MainContext.Jobs.AddAsync(job);
+            await _dbContextContainer.MainContext.SaveChangesAsync();
+
+            return job;
+        }
+
+        public async Task FinalizeOrderAsync(int orderId)
+        {
+            await _workflowService.CreateWorkflowAsync(orderId);
+        }
     }
 }

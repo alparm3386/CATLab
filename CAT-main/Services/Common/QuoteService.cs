@@ -113,5 +113,29 @@ namespace CAT.Services.Common
         {
             return await _dbContextContainer!.MainContext!.StoredQuotes!.Include(sq => sq.TempQuotes).ThenInclude(tq => tq.TempDocument).Where(quote => quote.DateCreated >= from && quote.DateCreated <= to).ToListAsync();
         }
+
+        public async Task<Quote> CreateQuoteFromTempQuoteAsync(int tempQuoteId)
+        {
+            //get the temp quote
+            var tempQuote = await _dbContextContainer.MainContext.TempQuotes.FirstOrDefaultAsync(q => q.Id == tempQuoteId);
+
+            //create the quote
+            var quote = new Quote()
+            {
+                DateCreated = DateTime.Now,
+                Fee = tempQuote!.Fee,
+                Service = tempQuote.Service,
+                SourceLanguage = tempQuote.SourceLanguage,
+                TargetLanguage = tempQuote.TargetLanguage,
+                Speciality = tempQuote.SpecialityId,
+                Speed = tempQuote.Speed
+            };
+
+            //save the quote
+            await _dbContextContainer.MainContext.Quotes.AddAsync(quote);
+            await _dbContextContainer.MainContext.SaveChangesAsync();
+
+            return quote;
+        }
     }
 }
