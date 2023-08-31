@@ -13,15 +13,17 @@ namespace CAT.Services.Common
         private readonly DbContextContainer _dbContextContainer;
         private readonly IConfiguration _configuration;
         private readonly CATConnector _catConnector;
+        private readonly IDocumentService _documentService;
         private readonly IMapper _mapper;
         private readonly ILogger _logger;
 
-        public QuoteService(DbContextContainer dbContextContainer, IConfiguration configuration, CATConnector catConnector,
-            IMapper mapper, ILogger<JobService> logger)
+        public QuoteService(DbContextContainer dbContextContainer, IConfiguration configuration, CATConnector catConnector, 
+            IDocumentService documentService, IMapper mapper, ILogger<JobService> logger)
         {
             _dbContextContainer = dbContextContainer;
             _configuration = configuration;
             _catConnector = catConnector;
+            _documentService = documentService;
             _logger = logger;
             _mapper = mapper;
         }
@@ -110,26 +112,6 @@ namespace CAT.Services.Common
         public async Task<List<StoredQuote>> GetStoredQuotesAsync(DateTime from, DateTime to)
         {
             return await _dbContextContainer!.MainContext!.StoredQuotes!.Include(sq => sq.TempQuotes).ThenInclude(tq => tq.TempDocument).Where(quote => quote.DateCreated >= from && quote.DateCreated <= to).ToListAsync();
-        }
-
-        public async Task LaunchStoredQuotesAsync(int idStoredQuote)
-        {
-            var storedQuote = await GetStoredQuoteAsync(idStoredQuote);
-
-            //create an order
-            var order = new Order()
-            { 
-                ClientId = storedQuote!.ClientId, DateCreated = DateTime.Now 
-            };
-            
-            _dbContextContainer.MainContext.Orders.Add(order);
-
-            //launch the temp quotes one by one
-            foreach (var tempQuote in storedQuote!.TempQuotes)
-            {
-                //create document from temp document
-                tempQuote.TempDocument.
-            }
         }
     }
 }
