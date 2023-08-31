@@ -133,7 +133,7 @@ namespace CAT.Controllers.Mvc
             return View(storedQuoteViewModel);
         }
 
-        [HttpPost]
+        [HttpGet]
         public async Task<IActionResult> LaunchQuote(int id)
         {
             throw new NotImplementedException();

@@ -12,5 +12,7 @@ namespace CAT.Services.Common
         public Task<StoredQuote?> GetStoredQuoteAsync(int storedQuoteId);
 
         public Task<List<StoredQuote>> GetStoredQuotesAsync(DateTime from, DateTime to);
+
+        public Task LaunchStoredQuotesAsync(int idStoredQuote);
     }
 }
