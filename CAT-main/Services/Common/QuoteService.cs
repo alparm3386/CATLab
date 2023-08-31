@@ -40,7 +40,7 @@ namespace CAT.Services.Common
         }
 
         public async Task<List<TempQuote>> CreateTempQuotesAsync(int storedQuoteId, int clientId, LocaleId sourceLocale,
-            LocaleId[] targetLocales, int speciality, int tempDocumentId, int idFilter)
+            LocaleId[] targetLocales, int speciality, int service, int tempDocumentId)
         {
             try
             {
@@ -77,7 +77,7 @@ namespace CAT.Services.Common
                         TargetLanguage = stat.targetLang!,
                         SpecialityId = speciality,
                         DateCreated = DateTime.Now,
-                        Service = 1,
+                        Service = service,
                         Fee = 10.0,
                         TempDocumentId = tempDocumentId,
                         Analysis = JsonConvert.SerializeObject(stat),

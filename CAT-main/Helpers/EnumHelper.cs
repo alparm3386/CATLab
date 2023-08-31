@@ -3,16 +3,31 @@ using System.Reflection;
 
 namespace CAT.Helpers
 {
-    public class EnumHelper
+    public static class EnumHelper
     {
-        public static string GetEnumDisplayName(Enum enumValue)
+        public static string GetDisplayName(this Enum value)
         {
-            var displayAttribute = enumValue.GetType()
-                                           .GetMember(enumValue.ToString())
-                                           .First()
-                                           .GetCustomAttribute<DisplayAttribute>();
+            FieldInfo fi = value.GetType().GetField(value.ToString())!;
+            DisplayAttribute[] attributes = (DisplayAttribute[])fi.GetCustomAttributes(typeof(DisplayAttribute), false);
 
-            return displayAttribute?.Name ?? enumValue.ToString();
+            if (attributes != null && attributes.Length > 0)
+            {
+                return attributes[0].Name!;
+            }
+            else
+            {
+                return value.ToString();
+            }
         }
+
+        //public static string GetDisplayName(Enum enumValue)
+        //{
+        //    var displayAttribute = enumValue.GetType()
+        //                                   .GetMember(enumValue.ToString())
+        //                                   .First()
+        //                                   .GetCustomAttribute<DisplayAttribute>();
+
+        //    return displayAttribute?.Name ?? enumValue.ToString();
+        //}
     }
 }

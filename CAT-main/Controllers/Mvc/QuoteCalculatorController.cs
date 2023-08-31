@@ -81,7 +81,7 @@ namespace CAT.Controllers.Mvc
                             //create the quote
                             var targetLocales = model.TargetLanguages!.Select(lang => new LocaleId(lang)).ToArray();
                             var quotes = await _quoteService.CreateTempQuotesAsync(storedQuoteId, 1, new LocaleId(model.SourceLanguage!), targetLocales,
-                                model.Speciality, document.Id, model.Filter);
+                                model.Speciality, model.Service, document.Id);
 
                             //scope.Complete();
                         }

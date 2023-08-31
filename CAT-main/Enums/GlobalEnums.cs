@@ -56,4 +56,12 @@ namespace CAT.Enums
         Marketing,
         Technical
     }
+
+    public enum Service
+    {
+        [Display(Name = "AI")]
+        AI = 1,
+        [Display(Name = "AI with human revision")]
+        AIWithHumanRevision
+    }
 }

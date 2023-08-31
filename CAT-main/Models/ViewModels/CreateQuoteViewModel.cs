@@ -1,4 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using CAT.Enums;
+using CAT.Helpers;
+using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace CAT.Models.ViewModels
@@ -15,9 +18,12 @@ namespace CAT.Models.ViewModels
 
         [Required]
         public int Speciality { get; set; }
-        [Required]
 
+        [Required]
         public int Filter { get; set; }
+
+        [Required]
+        public int Service { get; set; }
 
         public IFormFile? FileToUpload { get; set; }
 
@@ -34,11 +40,30 @@ namespace CAT.Models.ViewModels
             // Add more languages as needed
         };
 
-        public Dictionary<int, string> Specialities => new Dictionary<int, string>
+        public Dictionary<int, string> Specialities => Enum.GetValues(typeof(Speciality))
+                                           .Cast<Speciality>()
+                                           .ToDictionary(e => (int)e, e => e.ToString());
+
+        public Dictionary<int, string> Services => Enum.GetValues(typeof(Service))
+                                                   .Cast<Service>()
+                                                   .ToDictionary(e => (int)e, e => e.GetDisplayName());
+
+        public Dictionary<int, string> Filters
         {
-            {1, "General"},
-            {2, "Marketing"},
-            {3, "Technical"}
-        };
+            get
+            {
+                var filters = new Dictionary<int, string>()
+                {
+                    {-1, "No filter"},
+                    {1, "Excel 3 column"},
+                    {2, "Word yellow highlighted"}
+                };
+
+                return filters;
+            }
+            set
+            {
+            }
+        }
     }
 }

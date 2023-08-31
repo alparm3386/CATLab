@@ -44,8 +44,28 @@
     </div>
 
     <div class="form-group">
+        <label for="speciality">Service:</label>
+        <select id="speciality" name="Service" class="form-control">
+            @foreach (var service in Model.Services)
+            {
+                <option value="@service.Key" selected="@(Model.Service == service.Key ? "selected" : null)">@service.Value</option>
+            }
+        </select>
+    </div>
+
+    <div class="form-group">
         <label for="file">Upload File:</label>
         <input type="file" id="file" name="FileToUpload" class="form-control" required />
+    </div>
+
+    <div class="form-group">
+        <label for="filter">Filter:</label>
+        <select id="filter" name="Filter" class="form-control">
+            @foreach (var filter in Model.Filters)
+            {
+                <option value="@filter.Key" selected="@(Model.Filter == filter.Key ? "selected" : null)">@filter.Value</option>
+            }
+        </select>
     </div>
 
     <div class="form-group mt-4">
