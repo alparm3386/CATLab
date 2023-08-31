@@ -16,5 +16,18 @@ namespace CAT.Models.Entities.Main
         public int? OrderId { get; set; }
 
         public ICollection<TempQuote> TempQuotes { get; set; } = default!;
+
+        public double Fee
+        {
+            get
+            {
+                if (TempQuotes != null)
+                {
+                    return TempQuotes.Sum(tq => tq.Fee);
+                }
+
+                return 0;
+            }
+        }
     }
 }

@@ -3,9 +3,9 @@ using CAT.Models.Entities.Main;
 
 namespace CAT.Models.ViewModels
 {
-    public class StoredQuoteViewModel
+    public class StoredQuoteDetailsViewModel
     {
-        public StoredQuoteViewModel() 
+        public StoredQuoteDetailsViewModel()
         {
             Specialities = Enum.GetValues(typeof(Speciality))
                                            .Cast<Speciality>()
@@ -14,18 +14,5 @@ namespace CAT.Models.ViewModels
 
         public StoredQuote StoredQuote { get; set; } = default!;
         public Dictionary<int, string> Specialities { get; set; } = default!;
-
-    public double Fee 
-        {
-            get 
-            {
-                if (StoredQuote != null)
-                {
-                    return StoredQuote.TempQuotes.Sum(tq => tq.Fee);
-                }
-
-                return 0;
-            }
-        }
     }
 }

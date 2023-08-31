@@ -1,4 +1,4 @@
-﻿@model StoredQuoteViewModel
+﻿@model StoredQuoteDetailsViewModel
 @{
     ViewBag.Title = "Quote Details";
 }
@@ -13,7 +13,7 @@
     <p>Date: @(Model.StoredQuote?.DateCreated != null ? Model.StoredQuote.DateCreated.ToString() : "N/A")</p>
 }
 
-<p><b>Price total:</b> £@Model.Fee.ToString("N2")</p>
+<p><b>Price total:</b> £@Model.StoredQuote?.Fee.ToString("N2")</p>
 
 <!-- Add other properties as needed -->
 

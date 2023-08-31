@@ -105,5 +105,10 @@ namespace CAT.Services.Common
         {
             return await _dbContextContainer!.MainContext!.StoredQuotes!.Include(sq => sq.TempQuotes).ThenInclude(tq => tq.TempDocument).FirstOrDefaultAsync(quote => quote.Id == storedQuoteId);
         }
+
+        public async Task<List<StoredQuote>> GetStoredQuotesAsync(DateTime from, DateTime to)
+        {
+            return await _dbContextContainer!.MainContext!.StoredQuotes!.Include(sq => sq.TempQuotes).ThenInclude(tq => tq.TempDocument).Where(quote => quote.DateCreated >= from && quote.DateCreated <= to).ToListAsync();
+        }
     }
 }

@@ -31,10 +31,16 @@ namespace CAT.Controllers.Mvc
             _mapper = mapper;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            return RedirectToAction("QuoteDetails"); // or wherever you want to redirect
-            //return View(new QuoteCalculatorViewModel());
+            var storedQuotes = await _quoteService.GetStoredQuotesAsync(DateTime.MinValue, DateTime.MaxValue);
+            var storedQuotesViewModel = new StoredQuotesViewModel()
+            {
+                StoredQuotes = storedQuotes
+            };
+
+            return View(storedQuotesViewModel);
+            //return RedirectToAction("QuoteDetails"); // or wherever you want to redirect
         }
 
         //[HttpPost]
@@ -93,7 +99,7 @@ namespace CAT.Controllers.Mvc
                         return View("Create", model);
                     }
 
-                    return RedirectToAction("QuoteDetails", new { storedQuoteId });
+                    return RedirectToAction("StoredQuoteDetails", new { storedQuoteId });
                 default:
                     return View("Create", model);
             }
@@ -111,8 +117,8 @@ namespace CAT.Controllers.Mvc
 
         //[HttpGet()]
         //[HttpGet("{idStoredQuote?}")]
-        [Route("QuoteCalculator/QuoteDetails/{storedQuoteId?}")]
-        public async Task<IActionResult> QuoteDetails(int? storedQuoteId)
+        [Route("QuoteCalculator/StoredQuoteDetails/{storedQuoteId?}")]
+        public async Task<IActionResult> StoredQuoteDetails(int? storedQuoteId)
         {
             storedQuoteId = storedQuoteId ?? -1;
             var storedQuote = await _quoteService.GetStoredQuoteAsync((int)storedQuoteId);
@@ -121,7 +127,7 @@ namespace CAT.Controllers.Mvc
                 //return NotFound();
             }
 
-            var storedQuoteViewModel = new StoredQuoteViewModel();
+            var storedQuoteViewModel = new StoredQuoteDetailsViewModel();
 
             storedQuoteViewModel.StoredQuote = storedQuote!;
             return View(storedQuoteViewModel);
