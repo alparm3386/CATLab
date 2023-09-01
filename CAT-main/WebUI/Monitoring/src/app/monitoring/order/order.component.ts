@@ -12,6 +12,8 @@ import { JobComponent } from './job/job.component';
 export class OrderComponent {
   readonly baseUrl = 'https://angular.io/assets/images/tutorials/faa';
 
+  @Input() order: any; // Declare an input property
+
 //  @Input() housingLocation!: HousingLocation;
 //  = {
 //    id: 9999,
