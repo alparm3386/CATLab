@@ -1,0 +1,15 @@
+delete StoredQuotes
+Delete jobs
+delete quotes
+delete TempQuotes
+delete orders
+delete TempDocuments
+delete WorkflowSteps
+delete DocumentFilters
+delete Documents
+
+delete WorkflowSteps
+delete orders
+delete quotes
+delete Documents
+delete jobs

@@ -116,7 +116,11 @@ namespace CAT.Services.Common
                 }
                 else
                     throw new NotImplementedException();
+
+                await _dbContextContainer.MainContext.WorkflowSteps.AddRangeAsync(workflowSteps);
             }
+
+            await _dbContextContainer.MainContext.SaveChangesAsync();
         }
 
         private WorkflowStep CreateWorkflowStep(Job job, WorkflowStep previousStep, Task task) 

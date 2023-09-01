@@ -13,7 +13,7 @@ using System.Transactions;
 
 namespace CAT.Controllers.Mvc
 {
-    public class QuoteCalculatorController : Controller
+    public class QuotesController : Controller
     {
         private readonly IConfiguration _configuration;
         private readonly IQuoteService _quoteService;
@@ -22,7 +22,7 @@ namespace CAT.Controllers.Mvc
         private readonly IMapper _mapper;
         private readonly ILogger _logger;
 
-        public QuoteCalculatorController(DbContextContainer dbContextContainer, IConfiguration configuration, IQuoteService quoteService,
+        public QuotesController(DbContextContainer dbContextContainer, IConfiguration configuration, IQuoteService quoteService,
             IDocumentService documentService, IOrderService orderService, IMapper mapper, ILogger<JobService> logger)
         {
             _configuration = configuration;
@@ -46,7 +46,7 @@ namespace CAT.Controllers.Mvc
         }
 
         //[HttpPost]
-        //public IActionResult Index(QuoteCalculatorViewModel model)
+        //public IActionResult Index(QuotesViewModel model)
         //{
         //    if (ModelState.IsValid)
         //    {
@@ -89,7 +89,7 @@ namespace CAT.Controllers.Mvc
                             //create the quote
                             var targetLocales = model.TargetLanguages!.Select(lang => new LocaleId(lang)).ToArray();
                             var quotes = await _quoteService.CreateTempQuotesAsync(storedQuoteId, 1, new LocaleId(model.SourceLanguage!), targetLocales,
-                                model.Speciality, model.Service, document.Id);
+                                model.Speciality, model.Service, document.Id, model.ClientReview);
 
                             //scope.Complete();
                         }
@@ -101,16 +101,16 @@ namespace CAT.Controllers.Mvc
                         return View("Create", model);
                     }
 
-                    return RedirectToAction("StoredQuoteDetails", new { storedQuoteId });
+                    return RedirectToAction("StoredQuoteDetails", new { id = storedQuoteId });
                 default:
                     return View("Create", model);
             }
         }
 
-        [Route("QuoteCalculator/Create/{storedQuoteId?}")]
-        public async Task<IActionResult> Create(int? storedQuoteId)
+        [Route("Quotes/Create/{id?}")]
+        public async Task<IActionResult> Create(int? id)
         {
-            storedQuoteId = storedQuoteId ?? -1;
+            var storedQuoteId = id ?? -1;
             var createQuoteViewModel = new CreateQuoteViewModel();
             createQuoteViewModel.StoredQuoteId = (int)storedQuoteId;
 
@@ -119,10 +119,10 @@ namespace CAT.Controllers.Mvc
 
         //[HttpGet()]
         //[HttpGet("{idStoredQuote?}")]
-        [Route("QuoteCalculator/StoredQuoteDetails/{storedQuoteId?}")]
-        public async Task<IActionResult> StoredQuoteDetails(int? storedQuoteId)
+        [Route("Quotes/StoredQuoteDetails/{id?}")]
+        public async Task<IActionResult> StoredQuoteDetails(int? id)
         {
-            storedQuoteId = storedQuoteId ?? -1;
+            var storedQuoteId = id ?? -1;
             var storedQuote = await _quoteService.GetStoredQuoteAsync((int)storedQuoteId);
 
             var storedQuoteViewModel = new StoredQuoteDetailsViewModel();
@@ -135,11 +135,8 @@ namespace CAT.Controllers.Mvc
         public async Task<IActionResult> LaunchStoredQuote(int id)
         {
             await _orderService.LaunchStoredQuotesAsync(id);
-            var storedQuoteViewModel = new StoredQuoteDetailsViewModel();
 
-            var storedQuote = await _quoteService.GetStoredQuoteAsync(id);
-            storedQuoteViewModel.StoredQuote = storedQuote!;
-            return View("StoredQuoteDetails", storedQuoteViewModel);
+            return RedirectToAction("StoredQuoteDetails", new { id });
         }
     }
 }

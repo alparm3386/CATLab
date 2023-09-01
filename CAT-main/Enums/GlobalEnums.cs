@@ -32,6 +32,14 @@ namespace CAT.Enums
         End = 100
     }
 
+    public enum WorkflowStatus
+    {
+        NotStarted = 0,
+        InProgress = 1,
+        Completed = 2,
+        Cancelled = 3
+    }
+
     public enum AnalysisType
     {
         Normal,

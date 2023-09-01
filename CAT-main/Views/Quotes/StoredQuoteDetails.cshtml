@@ -19,7 +19,7 @@
 
 <form method="post" asp-action="LaunchStoredQuote">
     <input type="hidden" name="id" value="@Model.StoredQuote?.Id" />
-    <a asp-action="Create" asp-controller="QuoteCalculator" asp-route-storedQuoteId="@Model.StoredQuote?.Id">
+    <a asp-action="Create" asp-controller="Quotes" asp-route-id="@Model.StoredQuote?.Id">
         @(Model.StoredQuote?.Id > 0 ? "Add New" : "Create New")
     </a>
     <table class="table">
@@ -93,7 +93,7 @@
         </tbody>
     </table>
 
-    @if (Model.StoredQuote?.TempQuotes?.Count > 0)
+    @if (Model.StoredQuote?.TempQuotes?.Count > 0 && Model.StoredQuote?.OrderId < 0)
     {
         <button type="submit" class="btn btn-success">Launch Quote</button>
     }

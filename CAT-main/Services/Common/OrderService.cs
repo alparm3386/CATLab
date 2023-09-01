@@ -60,13 +60,13 @@ namespace CAT.Services.Common
                 //add job to the order
                 var job = await AddJobToOrderAsync(order.Id, quote.Id, document.Id);
 
-                //finalize the order
-                await FinalizeOrderAsync(order.Id);
-
                 //update the order id in the stored quote
                 storedQuote.OrderId = order.Id;
-                await _dbContextContainer.MainContext.SaveChangesAsync();
             }
+
+            //finalize the order
+            await FinalizeOrderAsync(order.Id);
+            await _dbContextContainer.MainContext.SaveChangesAsync();
         }
 
         public async Task<Job> AddJobToOrderAsync(int orderId, int quoteId, int documentId)
