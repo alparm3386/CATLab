@@ -49,7 +49,7 @@ namespace CAT.Services.Common
                     workflowSteps.Add(workflowStep);
 
                     //client review
-                    if (clientReview)
+                    if (job.Quote.ClientReview)
                     {
                         workflowStep = CreateWorkflowStep(job, workflowStep, Task.ClientReview);
                         workflowSteps.Add(workflowStep);
@@ -88,7 +88,7 @@ namespace CAT.Services.Common
                     workflowSteps.Add(workflowStep);
 
                     //client review
-                    if (clientReview)
+                    if (job.Quote.ClientReview)
                     {
                         workflowStep = CreateWorkflowStep(job, workflowStep, Task.ClientReview);
                         workflowSteps.Add(workflowStep);

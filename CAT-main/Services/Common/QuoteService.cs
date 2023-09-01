@@ -130,6 +130,7 @@ namespace CAT.Services.Common
                 TargetLanguage = tempQuote.TargetLanguage,
                 Speciality = tempQuote.SpecialityId,
                 Speed = tempQuote.Speed,
+                ClientReview = tempQuote.ClientReview,
                 Words = stat!.WordCount
             };
 

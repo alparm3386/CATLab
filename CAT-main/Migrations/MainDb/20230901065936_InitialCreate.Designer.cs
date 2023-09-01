@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CAT.Migrations.MainDb
 {
     [DbContext(typeof(MainDbContext))]
-    [Migration("20230830183823_InitialCreate")]
+    [Migration("20230901065936_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -216,6 +216,9 @@ namespace CAT.Migrations.MainDb
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<bool>("ClientReview")
+                        .HasColumnType("bit");
+
                     b.Property<DateTime>("DateCreated")
                         .HasColumnType("datetime2");
 
@@ -238,6 +241,9 @@ namespace CAT.Migrations.MainDb
                     b.Property<string>("TargetLanguage")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Words")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -306,6 +312,9 @@ namespace CAT.Migrations.MainDb
 
                     b.Property<string>("Analysis")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("ClientReview")
+                        .HasColumnType("bit");
 
                     b.Property<DateTime>("DateCreated")
                         .HasColumnType("datetime2");

@@ -213,6 +213,9 @@ namespace CAT.Migrations.MainDb
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<bool>("ClientReview")
+                        .HasColumnType("bit");
+
                     b.Property<DateTime>("DateCreated")
                         .HasColumnType("datetime2");
 
@@ -235,6 +238,9 @@ namespace CAT.Migrations.MainDb
                     b.Property<string>("TargetLanguage")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Words")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -303,6 +309,9 @@ namespace CAT.Migrations.MainDb
 
                     b.Property<string>("Analysis")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("ClientReview")
+                        .HasColumnType("bit");
 
                     b.Property<DateTime>("DateCreated")
                         .HasColumnType("datetime2");

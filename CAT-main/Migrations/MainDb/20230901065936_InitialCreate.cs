@@ -114,6 +114,8 @@ namespace CAT.Migrations.MainDb
                     TargetLanguage = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Speciality = table.Column<int>(type: "int", nullable: false),
                     Service = table.Column<int>(type: "int", nullable: false),
+                    ClientReview = table.Column<bool>(type: "bit", nullable: false),
+                    Words = table.Column<int>(type: "int", nullable: false),
                     Fee = table.Column<double>(type: "float", nullable: false),
                     Speed = table.Column<int>(type: "int", nullable: false)
                 },
@@ -196,6 +198,7 @@ namespace CAT.Migrations.MainDb
                     TargetLanguage = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     SpecialityId = table.Column<int>(type: "int", nullable: false),
                     Service = table.Column<int>(type: "int", nullable: false),
+                    ClientReview = table.Column<bool>(type: "bit", nullable: false),
                     Fee = table.Column<double>(type: "float", nullable: false),
                     Speed = table.Column<int>(type: "int", nullable: false),
                     Analysis = table.Column<string>(type: "nvarchar(max)", nullable: true)

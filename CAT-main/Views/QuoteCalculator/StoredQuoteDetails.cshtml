@@ -44,6 +44,9 @@
                     Service
                 </th>
                 <th>
+                    Client review
+                </th>
+                <th>
                     Fee
                 </th>
                 <th></th>
@@ -72,6 +75,9 @@
                         </td>
                         <td>
                             @(((CAT.Enums.Service)item.Service).ToString())
+                        </td>
+                        <td>
+                            @(item.ClientReview.ToString())
                         </td>
                         <td>
                             @Html.DisplayFor(modelItem => item.Fee)
