@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { WorkflowComponent } from './workflow/workflow.component';
 
@@ -11,5 +11,6 @@ import { WorkflowComponent } from './workflow/workflow.component';
   styleUrls: ['./job.component.scss']
 })
 export class JobComponent {
+  @Input() job: any; // Declare an input property
 
 }

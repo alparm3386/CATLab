@@ -1,2 +1,4 @@
-<b>Order Id:</b> {{ order.id }}
-<job></job>
+<div><b>Order Id:</b> {{ order.id }}</div>
+<div><b>Date created:</b> {{ order.dateCreated }}</div>
+
+<job *ngFor="let job of order.jobs" [job]="job"></job>

@@ -1,1 +1,24 @@
 <p>workflow works!</p>
+
+<!-- Container for the workflow visualization -->
+<div class="container mt-4">
+  <div class="row">
+    <!-- Iterate over each workflow step and display its data -->
+    <div *ngFor="let step of workflow" class="col-md-2 mb-3">
+      <div class="card">
+        <div class="card-header">
+          Step {{step.stepOrder}}
+        </div>
+        <div class="card-body">
+          <h5 class="card-title">{{step.task}}</h5>
+          <p class="card-text">Status: {{step.status}}</p>
+          <p class="card-text">Fee: ${{step.Fee}}</p>
+          <p class="card-text">Start Date: {{step.StartDate}}</p>
+          <p class="card-text">Scheduled: {{step.ScheduledDate}}</p>
+          <p class="card-text">Completed: {{step.CompletedDate}}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
