@@ -50,14 +50,11 @@ namespace CAT.Services.Common
             //create an order
             var order = await CreateOrderAsync(storedQuote!.ClientId);
 
-            await _dbContextContainer.MainContext.Orders.AddAsync(order);
-
             //create quotes from temp quote
             foreach (var tempQuote in storedQuote!.TempQuotes)
             {
                 //create document from temp document
                 var document = await _documentService.CreateDocumentFromTempDocumentAsync(tempQuote.TempDocumentId);
-                await _dbContextContainer.MainContext.Documents.AddAsync(document);
                 
                 //create quote
                 var quote = await _quoteService.CreateQuoteFromTempQuoteAsync(tempQuote.Id);

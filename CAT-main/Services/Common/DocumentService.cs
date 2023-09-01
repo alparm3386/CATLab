@@ -107,12 +107,13 @@ namespace CAT.Services.Common
             //create the document
             var document = new Document()
             {
-                FileName = tempDocument!.FileName,
+                FileName = fileName,
                 OriginalFileName = tempDocument.OriginalFileName,
                 DocumentType = (int)DocumentType.Original,
                 MD5Hash = tempDocument.MD5Hash
             };
             _dbContextContainer.MainContext.Documents.Add(document);
+            await _dbContextContainer.MainContext.SaveChangesAsync();
 
             //save the analysis
             var tempQuote = await _dbContextContainer.MainContext.TempQuotes.FirstOrDefaultAsync(q => q.TempDocumentId == tempDocumentId);

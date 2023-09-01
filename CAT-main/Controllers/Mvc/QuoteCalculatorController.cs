@@ -18,15 +18,17 @@ namespace CAT.Controllers.Mvc
         private readonly IConfiguration _configuration;
         private readonly IQuoteService _quoteService;
         private readonly IDocumentService _documentService;
+        private readonly IOrderService _orderService;
         private readonly IMapper _mapper;
         private readonly ILogger _logger;
 
         public QuoteCalculatorController(DbContextContainer dbContextContainer, IConfiguration configuration, IQuoteService quoteService,
-            IDocumentService documentService, IMapper mapper, ILogger<JobService> logger)
+            IDocumentService documentService, IOrderService orderService, IMapper mapper, ILogger<JobService> logger)
         {
             _configuration = configuration;
             _quoteService = quoteService;
             _documentService = documentService;
+            _orderService = orderService;
             _logger = logger;
             _mapper = mapper;
         }
@@ -122,10 +124,6 @@ namespace CAT.Controllers.Mvc
         {
             storedQuoteId = storedQuoteId ?? -1;
             var storedQuote = await _quoteService.GetStoredQuoteAsync((int)storedQuoteId);
-            if (storedQuote == null)
-            {
-                //return NotFound();
-            }
 
             var storedQuoteViewModel = new StoredQuoteDetailsViewModel();
 
@@ -133,21 +131,15 @@ namespace CAT.Controllers.Mvc
             return View(storedQuoteViewModel);
         }
 
-        [HttpGet]
-        public async Task<IActionResult> LaunchQuote(int id)
+        [HttpPost]
+        public async Task<IActionResult> LaunchStoredQuote(int id)
         {
-            throw new NotImplementedException();
-            //var quote = await _dbContextContainer.MainContext.Quotes.FindAsync(id);
-            //if (quote == null)
-            //{
-            //    return NotFound();
-            //}
+            await _orderService.LaunchStoredQuotesAsync(id);
+            var storedQuoteViewModel = new StoredQuoteDetailsViewModel();
 
-            //// Your business logic to launch the quote.
-            //// ...
-
-            //ViewBag.Message = "Quote launched successfully!";
-            //return View("QuoteDetails", quote);
+            var storedQuote = await _quoteService.GetStoredQuoteAsync(id);
+            storedQuoteViewModel.StoredQuote = storedQuote!;
+            return View("StoredQuoteDetails", storedQuoteViewModel);
         }
     }
 }

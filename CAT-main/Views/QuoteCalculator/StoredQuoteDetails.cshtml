@@ -17,7 +17,7 @@
 
 <!-- Add other properties as needed -->
 
-<form method="post" asp-action="LaunchQuote">
+<form method="post" asp-action="LaunchStoredQuote">
     <input type="hidden" name="id" value="@Model.StoredQuote?.Id" />
     <a asp-action="Create" asp-controller="QuoteCalculator" asp-route-storedQuoteId="@Model.StoredQuote?.Id">
         @(Model.StoredQuote?.Id > 0 ? "Add New" : "Create New")
@@ -39,6 +39,9 @@
                 </th>
                 <th>
                     Speed
+                </th>
+                <th>
+                    Service
                 </th>
                 <th>
                     Fee
@@ -66,6 +69,9 @@
                         </td>
                         <td>
                             @(((CAT.Enums.ServiceSpeed)item.Speed).ToString())
+                        </td>
+                        <td>
+                            @(((CAT.Enums.Service)item.Service).ToString())
                         </td>
                         <td>
                             @Html.DisplayFor(modelItem => item.Fee)
