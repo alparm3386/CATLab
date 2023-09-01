@@ -118,17 +118,19 @@ namespace CAT.Services.Common
         {
             //get the temp quote
             var tempQuote = await _dbContextContainer.MainContext.TempQuotes.FirstOrDefaultAsync(q => q.Id == tempQuoteId);
+            var stat = JsonConvert.DeserializeObject<Statistics>(tempQuote!.Analysis!);
 
             //create the quote
             var quote = new Quote()
             {
                 DateCreated = DateTime.Now,
-                Fee = tempQuote!.Fee,
+                Fee = tempQuote.Fee,
                 Service = tempQuote.Service,
                 SourceLanguage = tempQuote.SourceLanguage,
                 TargetLanguage = tempQuote.TargetLanguage,
                 Speciality = tempQuote.SpecialityId,
-                Speed = tempQuote.Speed
+                Speed = tempQuote.Speed,
+                Words = stat!.WordCount
             };
 
             //save the quote

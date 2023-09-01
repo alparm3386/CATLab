@@ -2,6 +2,6 @@
 {
     public interface IWorkflowService
     {
-        public Task CreateWorkflowAsync(int ordeId);
+        public Task CreateWorkflowAsync(int orderId);
     }
 }

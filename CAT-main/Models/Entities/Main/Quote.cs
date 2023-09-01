@@ -20,6 +20,10 @@ namespace CAT.Models.Entities.Main
 
         public int Service { get; set; }
 
+        public bool ClientReview { get; set; }
+
+        public int Words { get; set; }
+
         public double Fee { get; set; }
 
         public int Speed { get; set; }

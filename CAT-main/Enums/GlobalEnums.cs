@@ -25,6 +25,10 @@ namespace CAT.Enums
         Translation = 3,
         Revision = 4,
         ClientReview = 5,
+        Completed = 6,
+        CreditLinguists = 7,
+        Billing = 8,
+        Delivery = 9,
         End = 100
     }
 

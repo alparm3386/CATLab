@@ -54,6 +54,11 @@
     </div>
 
     <div class="form-group">
+        @Html.LabelFor(model => model.ClientReview, "Client review:")
+        @Html.CheckBoxFor(model => model.ClientReview)
+    </div>
+
+    <div class="form-group">
         <label for="file">Upload File:</label>
         <input type="file" id="file" name="FileToUpload" class="form-control" required />
     </div>

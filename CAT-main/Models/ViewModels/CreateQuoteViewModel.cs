@@ -29,6 +29,8 @@ namespace CAT.Models.ViewModels
 
         public int ServiceSpeed { get; set; }
 
+        public bool ClientReview { get; set; }
+
         public Dictionary<string, string> Languages => new Dictionary<string, string>
         {
             {"nl", "Dutch"},

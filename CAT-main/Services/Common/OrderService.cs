@@ -8,19 +8,17 @@ namespace CAT.Services.Common
     {
         private readonly DbContextContainer _dbContextContainer;
         private readonly IConfiguration _configuration;
-        private readonly CATConnector _catConnector;
         private readonly IQuoteService _quoteService;
         private readonly IDocumentService _documentService;
         private readonly IWorkflowService _workflowService;
         private readonly IMapper _mapper;
         private readonly ILogger _logger;
 
-        public OrderService(DbContextContainer dbContextContainer, IConfiguration configuration, CATConnector catConnector,
+        public OrderService(DbContextContainer dbContextContainer, IConfiguration configuration,
             IDocumentService documentService, IWorkflowService workflowService, IQuoteService quoteService, IMapper mapper, ILogger<JobService> logger) 
         {
             _dbContextContainer = dbContextContainer;
             _configuration = configuration;
-            _catConnector = catConnector;
             _quoteService = quoteService;
             _documentService = documentService;
             _workflowService = workflowService;
@@ -64,6 +62,10 @@ namespace CAT.Services.Common
 
                 //finalize the order
                 await FinalizeOrderAsync(order.Id);
+
+                //update the order id in the stored quote
+                storedQuote.OrderId = order.Id;
+                await _dbContextContainer.MainContext.SaveChangesAsync();
             }
         }
 
