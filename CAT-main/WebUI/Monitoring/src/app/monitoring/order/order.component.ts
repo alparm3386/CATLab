@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { JobComponent } from './job/job.component';
 
 @Component({
-  selector: 'order',
+  selector: '[order]',
   standalone: true,
   imports: [CommonModule, JobComponent],
   templateUrl: './order.component.html',
