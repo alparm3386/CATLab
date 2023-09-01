@@ -2,12 +2,12 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 @Component({
-  selector: 'order',
+  selector: 'job',
   standalone: true,
   imports: [CommonModule],
-  templateUrl: './order.component.html',
-  styleUrls: ['./order.component.scss']
+  templateUrl: './job.component.html',
+  styleUrls: ['./job.component.scss']
 })
-export class OrderComponent {
+export class JobComponent {
 
 }
