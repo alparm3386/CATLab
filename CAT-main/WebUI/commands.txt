@@ -1,0 +1,2 @@
+ng serve
+ng generate component home --standalone --inline-template
