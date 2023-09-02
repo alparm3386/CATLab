@@ -49,6 +49,17 @@ builder.Services.AddRazorPages();
 builder.Services.AddSession();
 builder.Services.AddMemoryCache();
 
+// Add CORS services
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(builder =>
+    {
+        builder.WithOrigins("http://localhost:4200")
+               .AllowAnyMethod()
+               .AllowAnyHeader();
+    });
+});
+
 // Configure JWT Authentication
 builder.Services.AddAuthentication(options =>
 {
@@ -94,6 +105,12 @@ else
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
+
+// Use CORS middleware here
+app.UseCors(builder => builder
+    .AllowAnyOrigin()
+    .AllowAnyMethod()
+    .AllowAnyHeader());
 
 app.UseRouting();
 

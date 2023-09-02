@@ -40,6 +40,7 @@
   <ItemGroup>
     <Folder Include="Migrations\MainDb\" />
     <Folder Include="Models\DTOs\" />
-    <Folder Include="WebUI\" />
+    <Folder Include="WebUI\Monitoring\src\app\models\" />
+    <Folder Include="WebUI\Monitoring\src\app\services\" />
   </ItemGroup>
 </Project>

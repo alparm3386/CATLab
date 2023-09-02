@@ -1,0 +1,4 @@
+<div><b>Job Id:</b> {{ job.id }}</div>
+<div><b>Source language:</b> {{ job.sourceLanguage }}</div>
+<div><b>Target language:</b> {{ job.targetLanguage }}</div>
+<app-workflow [workflow]="job.workflow" />

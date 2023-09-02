@@ -53,6 +53,18 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.Requ
     .AddEntityFrameworkStores<IdentityDbContext>();
 builder.Services.AddRazorPages();
 
+// Add CORS services
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(builder =>
+    {
+        builder.WithOrigins("http://localhost:4200")
+               .AllowAnyMethod()
+               .AllowAnyHeader();
+    });
+});
+
+
 //the logger
 builder.Logging.AddProvider(new Log4NetLoggerProvider("log4net.config"));
 
@@ -79,6 +91,12 @@ else
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
+
+// Use CORS middleware here
+app.UseCors(builder => builder
+    .AllowAnyOrigin()
+    .AllowAnyMethod()
+    .AllowAnyHeader());
 
 app.UseRouting();
 app.MapControllerRoute(
