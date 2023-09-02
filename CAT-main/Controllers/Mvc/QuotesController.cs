@@ -22,7 +22,7 @@ namespace CAT.Controllers.Mvc
         private readonly IMapper _mapper;
         private readonly ILogger _logger;
 
-        public QuotesController(DbContextContainer dbContextContainer, IConfiguration configuration, IQuoteService quoteService,
+        public QuotesController(IConfiguration configuration, IQuoteService quoteService,
             IDocumentService documentService, IOrderService orderService, IMapper mapper, ILogger<JobService> logger)
         {
             _configuration = configuration;
