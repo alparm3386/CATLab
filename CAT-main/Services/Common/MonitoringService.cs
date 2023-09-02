@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using CAT.Data;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using System.Data;
 using System.Dynamic;
 
 namespace CAT.Services.Common
@@ -26,28 +28,49 @@ namespace CAT.Services.Common
             //the return object
             dynamic monitoringData = new ExpandoObject();
             monitoringData.orders = new List<dynamic>();
+            var dateFrom = DateTime.MinValue;
+            var dateTo = DateTime.MinValue;
 
-            //get the orders
+            //get the orders including jobs, quotes, workflow steps etc...
             var orders = _dbContextContainer.MainContext.Orders
                 .Include(o => o.Jobs)
                     .ThenInclude(j => j.Quote)
                 .Include(o => o.Jobs)
-                    .ThenInclude(j => j.WorkflowSteps);
+                    .ThenInclude(j => j.WorkflowSteps).Where(o => o.DateCreated >= dateFrom && o.DateCreated < dateTo);
 
             //process orders
-            foreach (var dsOrder in orders)
+            foreach (var order in orders)
             {
                 //the order object
-                dynamic order = new ExpandoObject();
-                order.id = dsOrder.Id;
-                order.client = dsOrder.ClientId;
-                order.dateCreated = dsOrder.DateCreated;
-                order.jobs = new List<dynamic>();
+                dynamic dOrder = new ExpandoObject();
+                dOrder.id = order.Id;
+                dOrder.client = order.ClientId;
+                dOrder.dateCreated = order.DateCreated;
+                dOrder.jobs = new List<dynamic>();
 
-                foreach (var dsJob in dsOrder.Jobs)
+                //join into the documents table 
+                var jobsWithDocuments = from j in order.Jobs
+                                         join d in _dbContextContainer.MainContext.Documents on j.SourceDocumentId equals d.Id
+                                     select new
+                                     {
+                                         jobId = j.Id,
+                                         dateProcessed = j.DateProcessed,
+                                         sourceLanguage = j.Quote!.SourceLanguage,
+                                         targetLanguage = j.Quote.TargetLanguage,
+                                         speciality = j.Quote.Speciality,
+                                         speed = j.Quote.Speed,
+                                         service = j.Quote.Service,
+                                         documentId = d.Id,
+                                         d.OriginalFileName,
+                                         d.FileName
+                                     };
+
+                foreach (var job in jobsWithDocuments)
                 {
                     //the job object
-                    dynamic job = new ExpandoObject();
+                    dynamic dJob = new ExpandoObject();
+                    //job.id = dsJob.Id;
+                    //job.
                 }
 
                 monitoringData.orders.Add(order);
