@@ -40,7 +40,6 @@
   <ItemGroup>
     <Folder Include="Migrations\MainDb\" />
     <Folder Include="Models\DTOs\" />
-    <Folder Include="Models\API\" />
     <Folder Include="WebUI\" />
   </ItemGroup>
 </Project>

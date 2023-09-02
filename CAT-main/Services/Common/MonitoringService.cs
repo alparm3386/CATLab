@@ -27,82 +27,90 @@ namespace CAT.Services.Common
             _mapper = mapper;
         }
 
-        public async Task<dynamic> GetMonitoringData(DateTime dateFrom, DateTime dateTo)
+        public async Task<Object> GetMonitoringData(DateTime dateFrom, DateTime dateTo)
         {
             //the return object
-            dynamic monitoringData = new ExpandoObject();
-            monitoringData.orders = new List<dynamic>();
+            //dynamic monitoringData = new ExpandoObject();
+            var monitoringData = new
+            {
+                orders = new List<Object>(),
+                dateFrom,
+                dateTo
+            };
 
             //get the orders including jobs, quotes, workflow steps etc...
             var orders = await _dbContextContainer.MainContext.Orders
-                .Include(o => o.Jobs)
-                    .ThenInclude(j => j.Quote)
-                .Include(o => o.Jobs)
-                    .ThenInclude(j => j.WorkflowSteps).Where(o => o.DateCreated >= dateFrom && o.DateCreated < dateTo).ToListAsync();
+                    .Include(o => o.Jobs)
+                        .ThenInclude(j => j.Quote)
+                    .Include(o => o.Jobs)
+                        .ThenInclude(j => j.WorkflowSteps).Where(o => o.DateCreated >= dateFrom && o.DateCreated < dateTo).ToListAsync();
 
             //process orders
-            foreach (var order in orders)
+            foreach (var dsOrder in orders)
             {
                 //the order object
-                dynamic dOrder = new ExpandoObject();
-                dOrder.id = order.Id;
-                dOrder.client = order.ClientId;
-                dOrder.dateCreated = order.DateCreated;
-                dOrder.jobs = new List<dynamic>();
+                var order = new
+                {
+                    id = dsOrder.Id,
+                    client = dsOrder.ClientId,
+                    dateCreated = dsOrder.DateCreated,
+                    jobs = new List<dynamic>()
+                };
 
                 //join into the documents table 
-                var jobsWithDocuments = (from j in order.Jobs
+                var jobsWithDocuments = (from j in dsOrder.Jobs
                                          join d in _dbContextContainer.MainContext.Documents on j.SourceDocumentId equals d.Id
-                                     select new
-                                     {
-                                         jobId = j.Id,
-                                         dateProcessed = j.DateProcessed,
-                                         sourceLanguage = j.Quote!.SourceLanguage,
-                                         targetLanguage = j.Quote.TargetLanguage,
-                                         speciality = j.Quote.Speciality,
-                                         speed = j.Quote.Speed,
-                                         service = j.Quote.Service,
-                                         documentId = d.Id,
-                                         originalFileName = d.OriginalFileName,
-                                         fileName = d.FileName,
-                                         workflowSteps = j.WorkflowSteps
-                                     }).ToList();
+                                         select new
+                                         {
+                                             jobId = j.Id,
+                                             dateProcessed = j.DateProcessed,
+                                             sourceLanguage = j.Quote!.SourceLanguage,
+                                             targetLanguage = j.Quote.TargetLanguage,
+                                             speciality = j.Quote.Speciality,
+                                             speed = j.Quote.Speed,
+                                             service = j.Quote.Service,
+                                             documentId = d.Id,
+                                             originalFileName = d.OriginalFileName,
+                                             fileName = d.FileName,
+                                             workflowSteps = j.WorkflowSteps
+                                         }).ToList();
 
-                foreach (var job in jobsWithDocuments)
+                foreach (var dsJob in jobsWithDocuments)
                 {
                     //the job object
-                    dynamic dJob = new ExpandoObject();
-                    dJob.jobId = job.jobId;
-                    dJob.dateProcessed = job.dateProcessed;
-                    dJob.sourceLanguage = job.sourceLanguage;
-                    dJob.targetLanguage = job.targetLanguage;
-                    dJob.speciality = job.speciality;
-                    dJob.speed = job.speed;
-                    dJob.service = job.service;
-                    dJob.documentId = job.documentId;
-                    dJob.originalFileName = job.originalFileName;
-                    dJob.fileName = job.fileName;
-                    dJob.workflowSteps = new List<dynamic>();
-                    dOrder.jobs.Add(dJob);
+                    var job = new
+                    {
+                        jobId = dsJob.jobId,
+                        dateProcessed = dsJob.dateProcessed,
+                        sourceLanguage = dsJob.sourceLanguage,
+                        targetLanguage = dsJob.targetLanguage,
+                        speciality = dsJob.speciality,
+                        speed = dsJob.speed,
+                        service = dsJob.service,
+                        documentId = dsJob.documentId,
+                        originalFileName = dsJob.originalFileName,
+                        fileName = dsJob.fileName,
+                        workflowSteps = new List<dynamic>()
+                    };
+                    order.jobs.Add(job);
 
                     //workflow steps
-                    foreach (var workflowStep in job.workflowSteps)
+                    foreach (var dsWorkflowStep in dsJob.workflowSteps)
                     {
-                        dynamic dWorkflowStep = new ExpandoObject();
-                        dWorkflowStep.task = EnumHelper.GetDisplayName((Task)workflowStep.TaskId);
-                        dWorkflowStep.status = workflowStep.Status;
-                        dWorkflowStep.startDate = workflowStep.StartDate;
-                        dWorkflowStep.scheduledDate = workflowStep.ScheduledDate;
-                        dWorkflowStep.completionDate = workflowStep.CompletionDate;
-                        dWorkflowStep.fee = workflowStep.Fee;
-
-                        dJob.workflowSteps.Add(dWorkflowStep);
+                        var workflowStep = new
+                        {
+                            task = EnumHelper.GetDisplayName((Task)dsWorkflowStep.TaskId),
+                            status = dsWorkflowStep.Status,
+                            startDate = dsWorkflowStep.StartDate,
+                            scheduledDate = dsWorkflowStep.ScheduledDate,
+                            completionDate = dsWorkflowStep.CompletionDate,
+                            fee = dsWorkflowStep.Fee
+                        };
+                        job.workflowSteps.Add(workflowStep);
                     }
                 }
 
                 monitoringData.orders.Add(order);
-                monitoringData.dateFrom = dateFrom;
-                monitoringData.dateTo = dateTo;
             }
 
 
