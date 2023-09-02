@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using CAT.Services.Common;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CAT.Controllers.ApiControllers
@@ -7,14 +8,20 @@ namespace CAT.Controllers.ApiControllers
     [ApiController]
     public class MonitoringController : ControllerBase
     {
-        public MonitoringController() { }
+        private IMonitoringService _monitoringService;
+
+        public MonitoringController(IMonitoringService monitoringService) 
+        {
+            _monitoringService = monitoringService;
+        }
 
         [HttpGet("GetMonitoringData")]
-        public async Task<IActionResult> GetMonitoringData() 
+        public async Task<IActionResult> GetMonitoringData(DateTime? dateFrom, DateTime? dateTo) 
         {
-            var monitoringData = new { };
-                //... provide the data here
+            dateFrom = dateFrom ?? DateTime.MinValue;
+            dateTo = dateTo ?? DateTime.MaxValue;
 
+            var monitoringData = await _monitoringService.GetMonitoringData((DateTime)dateFrom, (DateTime)dateTo);
 
             return Ok(monitoringData);
         }

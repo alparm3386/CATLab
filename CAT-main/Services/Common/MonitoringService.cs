@@ -23,20 +23,18 @@ namespace CAT.Services.Common
             _mapper = mapper;
         }
 
-        public async Task<dynamic> GetMonitoringData()
+        public async Task<dynamic> GetMonitoringData(DateTime dateFrom, DateTime dateTo)
         {
             //the return object
             dynamic monitoringData = new ExpandoObject();
             monitoringData.orders = new List<dynamic>();
-            var dateFrom = DateTime.MinValue;
-            var dateTo = DateTime.MinValue;
 
             //get the orders including jobs, quotes, workflow steps etc...
-            var orders = _dbContextContainer.MainContext.Orders
+            var orders = await _dbContextContainer.MainContext.Orders
                 .Include(o => o.Jobs)
                     .ThenInclude(j => j.Quote)
                 .Include(o => o.Jobs)
-                    .ThenInclude(j => j.WorkflowSteps).Where(o => o.DateCreated >= dateFrom && o.DateCreated < dateTo);
+                    .ThenInclude(j => j.WorkflowSteps).Where(o => o.DateCreated >= dateFrom && o.DateCreated < dateTo).ToListAsync();
 
             //process orders
             foreach (var order in orders)
@@ -49,7 +47,7 @@ namespace CAT.Services.Common
                 dOrder.jobs = new List<dynamic>();
 
                 //join into the documents table 
-                var jobsWithDocuments = from j in order.Jobs
+                var jobsWithDocuments = (from j in order.Jobs
                                          join d in _dbContextContainer.MainContext.Documents on j.SourceDocumentId equals d.Id
                                      select new
                                      {
@@ -63,7 +61,7 @@ namespace CAT.Services.Common
                                          documentId = d.Id,
                                          d.OriginalFileName,
                                          d.FileName
-                                     };
+                                     }).ToList();
 
                 foreach (var job in jobsWithDocuments)
                 {

@@ -13,16 +13,14 @@ namespace CAT.Controllers.Api
     [ApiController]
     public class EditorApiController : ControllerBase
     {
-        private readonly DbContextContainer _dbContextContainer;
         private readonly IConfiguration _configuration;
         private readonly JobService _jobService;
         private readonly IMapper _mapper;
         private readonly ILogger _logger;
 
-        public EditorApiController(DbContextContainer dbContextContainer, IConfiguration configuration, 
+        public EditorApiController(IConfiguration configuration, 
             JobService jobService, IMapper mapper, ILogger<JobService> logger)
         {
-            _dbContextContainer = dbContextContainer;
             _configuration = configuration;
             _jobService = jobService;
             _logger = logger;
