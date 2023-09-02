@@ -1,6 +1,7 @@
 <main>
   <section class="content">
-    <monitoring></monitoring>
+    <div *ngIf="data">{{ data | json }}</div>
+    <app-monitoring></app-monitoring>
   </section>
 </main>
 <!--<router-outlet></router-outlet>-->
