@@ -1,9 +1,13 @@
 ﻿using AutoMapper;
 using CAT.Data;
+using CAT.Enums;
+using CAT.Helpers;
+using Microsoft.CodeAnalysis;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using System.Data;
 using System.Dynamic;
+using Task = CAT.Enums.Task;
 
 namespace CAT.Services.Common
 {
@@ -59,19 +63,46 @@ namespace CAT.Services.Common
                                          speed = j.Quote.Speed,
                                          service = j.Quote.Service,
                                          documentId = d.Id,
-                                         d.OriginalFileName,
-                                         d.FileName
+                                         originalFileName = d.OriginalFileName,
+                                         fileName = d.FileName,
+                                         workflowSteps = j.WorkflowSteps
                                      }).ToList();
 
                 foreach (var job in jobsWithDocuments)
                 {
                     //the job object
                     dynamic dJob = new ExpandoObject();
-                    //job.id = dsJob.Id;
-                    //job.
+                    dJob.jobId = job.jobId;
+                    dJob.dateProcessed = job.dateProcessed;
+                    dJob.sourceLanguage = job.sourceLanguage;
+                    dJob.targetLanguage = job.targetLanguage;
+                    dJob.speciality = job.speciality;
+                    dJob.speed = job.speed;
+                    dJob.service = job.service;
+                    dJob.documentId = job.documentId;
+                    dJob.originalFileName = job.originalFileName;
+                    dJob.fileName = job.fileName;
+                    dJob.workflowSteps = new List<dynamic>();
+                    dOrder.jobs.Add(dJob);
+
+                    //workflow steps
+                    foreach (var workflowStep in job.workflowSteps)
+                    {
+                        dynamic dWorkflowStep = new ExpandoObject();
+                        dWorkflowStep.task = EnumHelper.GetDisplayName((Task)workflowStep.TaskId);
+                        dWorkflowStep.status = workflowStep.Status;
+                        dWorkflowStep.startDate = workflowStep.StartDate;
+                        dWorkflowStep.scheduledDate = workflowStep.ScheduledDate;
+                        dWorkflowStep.completionDate = workflowStep.CompletionDate;
+                        dWorkflowStep.fee = workflowStep.Fee;
+
+                        dJob.workflowSteps.Add(dWorkflowStep);
+                    }
                 }
 
                 monitoringData.orders.Add(order);
+                monitoringData.dateFrom = dateFrom;
+                monitoringData.dateTo = dateTo;
             }
 
 

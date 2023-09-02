@@ -19,24 +19,39 @@ namespace CAT.Enums
 
     public enum Task
     {
+        [Display(Name = "Unknown task")]
         Unknown = -1,
+        [Display(Name = "Job board")]
         Jobboard = 1,
+        [Display(Name = "AI process")]
         AIProcess = 2,
+        [Display(Name = "Translation")]
         Translation = 3,
+        [Display(Name = "Revision")]
         Revision = 4,
+        [Display(Name = "Client review")]
         ClientReview = 5,
+        [Display(Name = "Job completed")]
         Completed = 6,
+        [Display(Name = "Credit")]
         CreditLinguists = 7,
+        [Display(Name = "Billing")]
         Billing = 8,
+        [Display(Name = "Delivery")]
         Delivery = 9,
+        [Display(Name = "End")]
         End = 100
     }
 
     public enum WorkflowStatus
     {
+        [Display(Name = "Not started")]
         NotStarted = 0,
+        [Display(Name = "In progress")]
         InProgress = 1,
+        [Display(Name = "Completed")]
         Completed = 2,
+        [Display(Name = "Cancelled")]
         Cancelled = 3
     }
 

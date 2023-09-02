@@ -134,7 +134,7 @@ namespace CAT.Services.Common
                 Status = 0,
                 StartDate = DateTime.Now,
                 ScheduledDate = DateTime.Now.AddMinutes(15),
-                Fee = (decimal?)(job.Quote!.Words * 0.1)
+                Fee = task == Task.Revision ?  (decimal?)(job.Quote!.Words * 0.1) : 0
             };
 
             return workflowStep;
