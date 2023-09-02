@@ -9,7 +9,7 @@ namespace CAT.Controllers.ApiControllers
     {
         public MonitoringController() { }
 
-        [HttpGet]
+        [HttpGet("GetMonitoringData")]
         public async Task<IActionResult> GetMonitoringData() 
         {
             var monitoringData = new { };
