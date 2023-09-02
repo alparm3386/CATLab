@@ -18,14 +18,7 @@ export class AppComponent implements OnInit {
   constructor(private dataService: DataService) { }
 
   ngOnInit(): void {
-    this.dataService.fetchData().subscribe(
-      responseData => {
-        this.data = responseData;
-      },
-      error => {
-        console.error('Error fetching data:', error);
-      }
-    );
+    this.dataService.fetchData();
   }
   title = 'Monitoring';
 }

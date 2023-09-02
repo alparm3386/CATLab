@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, BehaviorSubject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -8,11 +8,21 @@ import { Observable } from 'rxjs';
 export class DataService {
 
   private apiUrl = 'https://localhost:7096/api/Monitoring';
+  private dataSubject = new BehaviorSubject<any>(null);
+  public data$ = this.dataSubject.asObservable();
 
   constructor(private http: HttpClient) { }
 
-  fetchData(): Observable<any> {
-    return this.http.get(`${this.apiUrl}/GetMonitoringData`);
+  fetchData(): void {
+    this.http.get(`${this.apiUrl}/GetMonitoringData`).subscribe(
+      data => {
+        this.dataSubject.next(data);
+      },
+      error => {
+        console.error('Error fetching data:', error);
+        this.dataSubject.error(error);
+      }
+    );
   }
 
   postData(data: any): Observable<any> {

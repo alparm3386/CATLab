@@ -11,21 +11,22 @@ import { DataService } from '../../services/data.service';
   styleUrls: ['./monitoring.component.scss']
 })
 export class MonitoringComponent {
-  orders = [];
+  public monitoringData = {
+    orders: []
+  };
 
-  constructor(private dataService: DataService) { } // Injecting the service here
+  constructor(private dataService: DataService) { // Injecting the service here
+    this.dataService.data$.subscribe(
+      data => {
+        if (data) {
+          this.monitoringData = data;
+        }
+      }
+    );
+} 
 
   onSearchClicked() {
     // Your search logic here
     console.log('Search button clicked!');
-    this.dataService.fetchData().subscribe(
-      responseData => {
-        console.log(responseData);
-      },
-      error => {
-        console.error('Error fetching data:', error);
-      }
-    );
-
   }
 }
