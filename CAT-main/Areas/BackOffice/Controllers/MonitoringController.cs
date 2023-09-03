@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow;
 
 namespace CAT.Areas.BackOffice.Controllers
 {
@@ -8,6 +9,12 @@ namespace CAT.Areas.BackOffice.Controllers
         public IActionResult Index()
         {
             return View();
+        }
+
+        public IActionResult Details(int id)
+        {
+
+            return View(id);
         }
     }
 }

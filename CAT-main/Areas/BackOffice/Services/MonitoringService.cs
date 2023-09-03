@@ -120,7 +120,7 @@ namespace CAT.Areas.BackOffice.Services
                 monitoringData.orders.Add(order);
             }
 
-            monitoringData.orders.Sort((o1, o2) => (o2 as dynamic).Id.CompareTo((o1 as dynamic).Id));
+            monitoringData.orders.Sort((o1, o2) => (o2 as dynamic).id.CompareTo((o1 as dynamic).id));
 
 
             return monitoringData;

@@ -1,7 +1,6 @@
+ng new appname
 ng serve
 ng generate component home --standalone --inline-template
 
 ng build --base-href /Monitoring/dist/monitoring/
 ng build --base-href /Monitoring/dist/monitoring/ --output-hashing=none
-
-https://localhost:7096/BackOffice/Monitoring/
