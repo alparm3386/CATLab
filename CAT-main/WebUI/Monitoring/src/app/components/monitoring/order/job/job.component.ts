@@ -4,7 +4,7 @@ import { WorkflowComponent } from './workflow/workflow.component';
 
 
 @Component({
-  selector: 'app-job',
+  selector: '[app-job]',
   standalone: true,
   imports: [CommonModule, WorkflowComponent],
   templateUrl: './job.component.html',

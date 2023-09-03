@@ -1,10 +1,10 @@
 <div class="row">
-  <div class="job-details col-2">
+  <div class="job-details col-3">
     <div><b>Job Id:</b> {{ job.jobId }}</div>
     <div><b>Source language:</b> {{ job.sourceLanguage }}</div>
     <div><b>Target language:</b> {{ job.targetLanguage }}</div>
   </div>
-  <div class="job-workflow col-10">
+  <div class="job-workflow col-9">
     <app-workflow [workflowSteps]="job.workflowSteps" />
   </div>
 </div>

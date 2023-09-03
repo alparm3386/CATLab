@@ -2,9 +2,9 @@
 <div class="row">
   <!-- Iterate over each workflow step and display its data -->
   <div *ngFor="let workflowStep of workflowSteps" class="mr-1 mb-3">
-    <div class="card bg-warning">
-      <div class="card-body">
-        <h5 class="card-title">{{workflowStep.task}}</h5>
+    <div class="bg-warning">
+      <div class="m-2">
+        <p><b class="card-title">{{workflowStep.task}}</b><p>
         <p class="card-text">Scheduled: {{workflowStep.ScheduledDate}}</p>
       </div>
     </div>
