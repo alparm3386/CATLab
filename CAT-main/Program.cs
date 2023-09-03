@@ -11,6 +11,7 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using CAT.Services.MT;
 using CAT.Enums;
 using Microsoft.Extensions.FileProviders;
+using CAT.Areas.BackOffice.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -98,6 +99,9 @@ app.UseStaticFiles(new StaticFileOptions
     FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "WebUI")),
     RequestPath = ""  // serve from root
 });
+
+// Serve from the default wwwroot directory
+app.UseStaticFiles();
 
 // Use CORS middleware here
 app.UseCors(builder => builder

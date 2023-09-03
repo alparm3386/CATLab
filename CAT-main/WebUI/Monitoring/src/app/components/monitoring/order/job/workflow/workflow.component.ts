@@ -9,6 +9,6 @@ import { CommonModule } from '@angular/common';
   styleUrls: ['./workflow.component.scss']
 })
 export class WorkflowComponent {
-  @Input() workflow: any; // Declare an input property
+  @Input() workflowSteps: any; // Declare an input property
 
 }

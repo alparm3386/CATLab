@@ -1,4 +1,10 @@
-<div><b>Order Id:</b> {{ order.id }}</div>
-<div><b>Date created:</b> {{ order.dateCreated }}</div>
+<div class="row">
+  <div class="col-3"><b>Order:</b> #{{ order.id }}</div>
+  <div class="col-3"><b>Client:</b> {{ order.client }}</div>
+  <div class="col-3"><b>Date created:</b> {{ order.dateCreated }}</div>
+  <div class="col-3"><b>Words:</b> {{ order.words }}</div>
+</div>
 
-<app-job *ngFor="let job of order.jobs" [job]="job"></app-job>
+<div *ngFor="let job of order.jobs" class="row">
+  <app-job [job]="job"></app-job>
+</div>

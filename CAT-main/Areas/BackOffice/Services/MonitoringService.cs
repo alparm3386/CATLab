@@ -2,6 +2,7 @@
 using CAT.Data;
 using CAT.Enums;
 using CAT.Helpers;
+using CAT.Services.Common;
 using Microsoft.CodeAnalysis;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
@@ -9,7 +10,7 @@ using System.Data;
 using System.Dynamic;
 using Task = CAT.Enums.Task;
 
-namespace CAT.Services.Common
+namespace CAT.Areas.BackOffice.Services
 {
     public class MonitoringService : IMonitoringService
     {
@@ -27,13 +28,13 @@ namespace CAT.Services.Common
             _mapper = mapper;
         }
 
-        public async Task<Object> GetMonitoringData(DateTime dateFrom, DateTime dateTo)
+        public async Task<object> GetMonitoringData(DateTime dateFrom, DateTime dateTo)
         {
             //the return object
             //dynamic monitoringData = new ExpandoObject();
             var monitoringData = new
             {
-                orders = new List<Object>(),
+                orders = new List<object>(),
                 dateFrom,
                 dateTo
             };
@@ -54,6 +55,8 @@ namespace CAT.Services.Common
                     id = dsOrder.Id,
                     client = dsOrder.ClientId,
                     dateCreated = dsOrder.DateCreated,
+                    words = dsOrder.Words,
+                    fee = dsOrder.Fee,
                     jobs = new List<dynamic>()
                 };
 
@@ -72,6 +75,8 @@ namespace CAT.Services.Common
                                              documentId = d.Id,
                                              originalFileName = d.OriginalFileName,
                                              fileName = d.FileName,
+                                             words = j.Quote.Words,
+                                             fee = j.Quote.Fee,
                                              workflowSteps = j.WorkflowSteps
                                          }).ToList();
 
@@ -80,16 +85,18 @@ namespace CAT.Services.Common
                     //the job object
                     var job = new
                     {
-                        jobId = dsJob.jobId,
-                        dateProcessed = dsJob.dateProcessed,
-                        sourceLanguage = dsJob.sourceLanguage,
-                        targetLanguage = dsJob.targetLanguage,
-                        speciality = dsJob.speciality,
-                        speed = dsJob.speed,
-                        service = dsJob.service,
-                        documentId = dsJob.documentId,
-                        originalFileName = dsJob.originalFileName,
-                        fileName = dsJob.fileName,
+                        dsJob.jobId,
+                        dsJob.dateProcessed,
+                        dsJob.sourceLanguage,
+                        dsJob.targetLanguage,
+                        dsJob.speciality,
+                        dsJob.speed,
+                        dsJob.service,
+                        dsJob.documentId,
+                        dsJob.originalFileName,
+                        dsJob.fileName,
+                        dsJob.words,
+                        dsJob.fee,
                         workflowSteps = new List<dynamic>()
                     };
                     order.jobs.Add(job);
@@ -99,7 +106,7 @@ namespace CAT.Services.Common
                     {
                         var workflowStep = new
                         {
-                            task = EnumHelper.GetDisplayName((Task)dsWorkflowStep.TaskId),
+                            task = ((Task)dsWorkflowStep.TaskId).GetDisplayName(),
                             status = dsWorkflowStep.Status,
                             startDate = dsWorkflowStep.StartDate,
                             scheduledDate = dsWorkflowStep.ScheduledDate,

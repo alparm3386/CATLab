@@ -16,5 +16,30 @@ namespace CAT.Models.Entities.Main
 
         public ICollection<Job> Jobs { get; set; } = default!;
 
+        public double Fee
+        {
+            get
+            {
+                if (Jobs != null)
+                {
+                    return Jobs.Sum(j => j.Quote!.Fee);
+                }
+
+                return 0;
+            }
+        }
+
+        public double Words
+        {
+            get
+            {
+                if (Jobs != null)
+                {
+                    return Jobs.Sum(j => j.Quote!.Words);
+                }
+
+                return 0;
+            }
+        }
     }
 }

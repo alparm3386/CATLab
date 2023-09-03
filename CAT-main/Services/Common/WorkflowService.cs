@@ -41,11 +41,8 @@ namespace CAT.Services.Common
                 var service = job.Quote!.Service;
                 if (service == (int)Service.AI)
                 {
-                    //job board
-                    var workflowStep = CreateWorkflowStep(job, null!, Task.Jobboard);
-                    workflowSteps.Add(workflowStep);
                     //AI process
-                    workflowStep = CreateWorkflowStep(job, workflowStep, Task.AIProcess);
+                    var workflowStep = CreateWorkflowStep(job, null!, Task.AIProcess);
                     workflowSteps.Add(workflowStep);
 
                     //client review
@@ -77,11 +74,8 @@ namespace CAT.Services.Common
                 }
                 else if (service == (int)Service.AIWithHumanRevision)
                 {
-                    //job board
-                    var workflowStep = CreateWorkflowStep(job, null!, Task.Jobboard);
-                    workflowSteps.Add(workflowStep);
                     //AI process
-                    workflowStep = CreateWorkflowStep(job, workflowStep, Task.AIProcess);
+                    var workflowStep = CreateWorkflowStep(job, null!, Task.AIProcess);
                     workflowSteps.Add(workflowStep);
                     //human revision
                     workflowStep = CreateWorkflowStep(job, workflowStep, Task.Revision);

@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace CAT.Models.Entities.Main
 {
+    [Table("StoredQuotes")]
     public class StoredQuote
     {
         [Key]
