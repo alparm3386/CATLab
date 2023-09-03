@@ -1,28 +1,12 @@
-﻿using CAT.Services.Common;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 
 namespace CAT.Areas.BackOffice.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class MonitoringController : ControllerBase
+    public class MonitoringController : Controller
     {
-        private IMonitoringService _monitoringService;
-
-        public MonitoringController(IMonitoringService monitoringService)
+        public IActionResult Index()
         {
-            _monitoringService = monitoringService;
-        }
-
-        [HttpGet("GetMonitoringData")]
-        public async Task<IActionResult> GetMonitoringData(DateTime? dateFrom, DateTime? dateTo)
-        {
-            dateFrom = dateFrom ?? DateTime.MinValue;
-            dateTo = dateTo ?? DateTime.MaxValue;
-
-            var monitoringData = await _monitoringService.GetMonitoringData((DateTime)dateFrom, (DateTime)dateTo);
-
-            return Ok(monitoringData);
+            return View();
         }
     }
 }
