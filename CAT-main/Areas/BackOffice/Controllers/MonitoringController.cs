@@ -2,6 +2,7 @@
 
 namespace CAT.Areas.BackOffice.Controllers
 {
+    [Area("BackOffice")]
     public class MonitoringController : Controller
     {
         public IActionResult Index()
