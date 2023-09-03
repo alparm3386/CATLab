@@ -11,8 +11,9 @@ using Microsoft.EntityFrameworkCore;
 using System.Security.Cryptography.Xml;
 using System.Transactions;
 
-namespace CAT.Controllers.Mvc
+namespace CAT.Areas.BackOffice.Controllers
 {
+    [Area("BackOffice")]
     public class QuotesController : Controller
     {
         private readonly IConfiguration _configuration;
@@ -112,7 +113,7 @@ namespace CAT.Controllers.Mvc
         {
             var storedQuoteId = id ?? -1;
             var createQuoteViewModel = new CreateQuoteViewModel();
-            createQuoteViewModel.StoredQuoteId = (int)storedQuoteId;
+            createQuoteViewModel.StoredQuoteId = storedQuoteId;
 
             return View(createQuoteViewModel);
         }
@@ -123,7 +124,7 @@ namespace CAT.Controllers.Mvc
         public async Task<IActionResult> StoredQuoteDetails(int? id)
         {
             var storedQuoteId = id ?? -1;
-            var storedQuote = await _quoteService.GetStoredQuoteAsync((int)storedQuoteId);
+            var storedQuote = await _quoteService.GetStoredQuoteAsync(storedQuoteId);
 
             var storedQuoteViewModel = new StoredQuoteDetailsViewModel();
 

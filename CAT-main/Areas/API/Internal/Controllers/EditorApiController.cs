@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace CAT.Controllers.Api
+namespace CAT.Areas.API.Internal.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -18,7 +18,7 @@ namespace CAT.Controllers.Api
         private readonly IMapper _mapper;
         private readonly ILogger _logger;
 
-        public EditorApiController(IConfiguration configuration, 
+        public EditorApiController(IConfiguration configuration,
             JobService jobService, IMapper mapper, ILogger<JobService> logger)
         {
             _configuration = configuration;

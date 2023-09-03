@@ -18,8 +18,9 @@ using CAT.Services.Common;
 using AutoMapper;
 using Task = CAT.Enums.Task;
 
-namespace CAT.Controllers.Mvc
+namespace CAT.Areas.BackOffice.Controllers
 {
+    [Area("BackOffice")]
     public class JobsController : Controller
     {
         private readonly DbContextContainer _dbContextContainer;
@@ -54,16 +55,16 @@ namespace CAT.Controllers.Mvc
                 }
 
                 var jobsViewModels = await (from job in _dbContextContainer.MainContext.Jobs
-                                         join document in _dbContextContainer.MainContext.Documents on job.SourceDocumentId equals document.Id
-                                         select new JobViewModel
-                                         {
-                                            Id = job.Id,
-                                            Analysis = "",
-                                            DateCreated = job.Order!.DateCreated,
-                                            DateProcessed = job.DateProcessed,
-                                            Fee = job.Quote!.Fee,
-                                            OriginalFileName = document.OriginalFileName
-                                         }).ToListAsync();
+                                            join document in _dbContextContainer.MainContext.Documents on job.SourceDocumentId equals document.Id
+                                            select new JobViewModel
+                                            {
+                                                Id = job.Id,
+                                                Analysis = "",
+                                                DateCreated = job.Order!.DateCreated,
+                                                DateProcessed = job.DateProcessed,
+                                                Fee = job.Quote!.Fee,
+                                                OriginalFileName = document.OriginalFileName
+                                            }).ToListAsync();
 
                 return View(jobsViewModels);
             }
@@ -82,17 +83,17 @@ namespace CAT.Controllers.Mvc
             }
 
             var jobsViewModels = await (from job in _dbContextContainer.MainContext.Jobs
-                                  join document in _dbContextContainer.MainContext.Documents on job.SourceDocumentId equals document.Id
-                                  where job.Id == id
-                                  select new JobViewModel
-                                  {
-                                      Id = job.Id,
-                                      Analysis = "",
-                                      DateCreated = job.Order!.DateCreated,
-                                      DateProcessed = job.DateProcessed,
-                                      Fee = job.Quote!.Fee,
-                                      OriginalFileName = document.OriginalFileName
-                                  }).FirstOrDefaultAsync();
+                                        join document in _dbContextContainer.MainContext.Documents on job.SourceDocumentId equals document.Id
+                                        where job.Id == id
+                                        select new JobViewModel
+                                        {
+                                            Id = job.Id,
+                                            Analysis = "",
+                                            DateCreated = job.Order!.DateCreated,
+                                            DateProcessed = job.DateProcessed,
+                                            Fee = job.Quote!.Fee,
+                                            OriginalFileName = document.OriginalFileName
+                                        }).FirstOrDefaultAsync();
 
             if (jobsViewModels == null)
             {

@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using CAT.Services;
 using CAT.Areas.Identity.Pages.Account;
 
-namespace CAT.Controllers.Api
+namespace CAT.Areas.Identity.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
