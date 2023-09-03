@@ -124,4 +124,14 @@ app.UseAuthorization();
 
 app.MapRazorPages();
 
+app.Use(async (context, next) =>
+{
+    if (context.Request.Path.Value == "/")
+    {
+        context.Response.Redirect("/BackOffice/Monitoring");
+        return;
+    }
+    await next.Invoke();
+});
+
 app.Run();
