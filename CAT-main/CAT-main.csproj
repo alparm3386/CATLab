@@ -38,6 +38,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Areas\ClientPortal\" />
+    <Folder Include="Areas\LinguistPortal\" />
     <Folder Include="Migrations\MainDb\" />
     <Folder Include="Models\DTOs\" />
     <Folder Include="WebUI\Monitoring\src\app\models\" />
