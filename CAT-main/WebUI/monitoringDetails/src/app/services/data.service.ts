@@ -13,8 +13,8 @@ export class DataService {
 
   constructor(private http: HttpClient) { }
 
-  fetchData(idJob: any): void {
-    this.http.get(`${this.apiUrl}/GetJobDetails?idJob` + idJob).subscribe(
+  fetchData(jobId: any): void {
+    this.http.get(`${this.apiUrl}/GetJobData?jobId=` + jobId).subscribe(
       data => {
         this.dataSubject.next(data);
       },
@@ -26,7 +26,7 @@ export class DataService {
   }
 
   postData(data: any): Observable<any> {
-    return this.http.post(`${this.apiUrl}/GetMonitoringData`, data);
+    return this.http.post(`${this.apiUrl}/GetJobData`, data);
   }
 
   // Add more methods as needed for PUT, DELETE, etc.

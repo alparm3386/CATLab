@@ -25,5 +25,12 @@ namespace CAT.Areas.API.Internal.Controllers
 
             return Ok(monitoringData);
         }
+
+        [HttpGet("GetJobData")]
+        public async Task<IActionResult> GetJobData(int jobId)
+        {
+
+            return Ok("");
+        }
     }
 }

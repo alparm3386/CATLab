@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { WorkflowComponent } from './components/workflow/workflow.component';
 import { DataService } from './services/data.service';
+import { Location } from '@angular/common';
 
 @Component({
   standalone: true,
@@ -16,12 +17,18 @@ import { DataService } from './services/data.service';
 export class AppComponent {
   title = 'monitoringDetails';
 
-  constructor(private dataService: DataService, private route: ActivatedRoute) { }
+  constructor(private location: Location, private dataService: DataService, private route: ActivatedRoute) { }
 
   ngOnInit(): void {
-    this.route.queryParams.subscribe(params => {
-      const idJob = +params['idJob'];
-      this.dataService.fetchData(idJob);
-    });
+  //  this.route.queryParams.subscribe(params => {
+  //    const idJob = +params['idJob'];
+  //    this.dataService.fetchData(idJob);
+  //  });
+
+    const currentUrl = this.location.path();
+    const urlParams = new URLSearchParams(currentUrl.split('?')[1]);
+    const jobId = +urlParams.get('jobId')! || -1;
+
+    this.dataService.fetchData(jobId);
   }
 }

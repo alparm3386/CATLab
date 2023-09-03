@@ -6,7 +6,9 @@ import { bootstrapApplication,provideProtractorTestingSupport } from '@angular/p
 import { AppComponent } from './app/app.component';
 import { HttpClientModule } from "@angular/common/http";
 import { importProvidersFrom } from "@angular/core";
+import { routes } from './app/app.routes';
+import { provideRouter } from '@angular/router';
 
 bootstrapApplication(AppComponent,
-  { providers: [importProvidersFrom(HttpClientModule) , provideProtractorTestingSupport()]})
+  { providers: [provideRouter(routes), importProvidersFrom(HttpClientModule), provideProtractorTestingSupport()]})
   .catch(err => console.error(err));
