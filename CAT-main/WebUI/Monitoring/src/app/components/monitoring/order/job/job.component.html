@@ -1,8 +1,10 @@
-<div class="row">
-  <div class="job-details col-3">
-    <div><b>Job Id:</b> {{ job.jobId }}</div>
-    <div><b>Source language:</b> {{ job.sourceLanguage }}</div>
-    <div><b>Target language:</b> {{ job.targetLanguage }}</div>
+<div class="row mb-2">
+  <div class="job-details bg-success bg-gradient bg-opacity-25 col-3">
+    <div class="p-1 mr-1">
+      <div><b>Job Id:</b> {{ job.jobId }}</div>
+      <div><b>Source language:</b> {{ job.sourceLanguage }}</div>
+      <div><b>Target language:</b> {{ job.targetLanguage }}</div>
+    </div>
   </div>
   <div class="job-workflow col-9">
     <app-workflow [workflowSteps]="job.workflowSteps" />
