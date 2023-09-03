@@ -1,2 +1,4 @@
 ng serve
 ng generate component home --standalone --inline-template
+
+ng build --base-href /Monitoring/dist/monitoring/

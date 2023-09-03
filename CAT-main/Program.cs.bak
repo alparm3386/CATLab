@@ -10,7 +10,6 @@ using CAT.Services.Common;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using CAT.Services.MT;
 using CAT.Enums;
-using Microsoft.Extensions.FileProviders;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -55,6 +54,12 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.Requ
     .AddEntityFrameworkStores<IdentityDbContext>();
 builder.Services.AddRazorPages();
 
+builder.Services.AddSpaStaticFiles(configuration =>
+{
+    configuration.RootPath = "WebUI/Monitoring/dist";
+});
+
+
 // Add CORS services
 builder.Services.AddCors(options =>
 {
@@ -93,11 +98,19 @@ else
 
 app.UseHttpsRedirection();
 
-app.UseStaticFiles(new StaticFileOptions
+app.UseStaticFiles();
+app.UseSpaStaticFiles();
+
+app.UseSpa(spa =>
 {
-    FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "WebUI")),
-    RequestPath = ""  // serve from root
+    spa.Options.SourcePath = "WebUI/Monitoring";
+
+    if (app.Environment.IsDevelopment())
+    {
+        spa.UseProxyToSpaDevelopmentServer("http://localhost:4200");  // or your Angular dev server URL
+    }
 });
+
 
 // Use CORS middleware here
 app.UseCors(builder => builder
