@@ -1,6 +1,7 @@
 ﻿using CAT.Services.Common;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace CAT.Areas.API.Internal.Controllers
 {
@@ -29,8 +30,9 @@ namespace CAT.Areas.API.Internal.Controllers
         [HttpGet("GetJobData")]
         public async Task<IActionResult> GetJobData(int jobId)
         {
+            var jobData = await _monitoringService.GetJobData(jobId);
 
-            return Ok("");
+            return Ok(jobData);
         }
     }
 }

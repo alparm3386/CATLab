@@ -125,5 +125,47 @@ namespace CAT.Areas.BackOffice.Services
 
             return monitoringData;
         }
+
+        public async Task<object> GetJobData(int jobId)
+        {
+            //get the orders including jobs, quotes, workflow steps etc...
+            var job = await _dbContextContainer.MainContext.Jobs
+                        .Include(j => j.Quote)
+                        .Include(j => j.WorkflowSteps).Where(j => j.Id == jobId).FirstOrDefaultAsync();
+
+
+            //workflow steps
+            var workflowSteps = new List<object>();
+            foreach (var dsWorkflowStep in job!.WorkflowSteps!)
+            {
+                var workflowStep = new
+                {
+                    task = ((Task)dsWorkflowStep.TaskId).GetDisplayName(),
+                    status = dsWorkflowStep.Status,
+                    startDate = dsWorkflowStep.StartDate,
+                    scheduledDate = dsWorkflowStep.ScheduledDate,
+                    completionDate = dsWorkflowStep.CompletionDate,
+                    fee = dsWorkflowStep.Fee
+                };
+                workflowSteps.Add(workflowStep);
+            }
+
+            var jobData = new
+            {
+                jobId = job.Id,
+                dateProcessed = job.DateProcessed,
+                sourceLanguage = job.Quote!.SourceLanguage,
+                targetLanguage = job.Quote.TargetLanguage,
+                speciality = job.Quote.Speciality,
+                speed = job.Quote.Speed,
+                service = job.Quote.Service,
+                //documents = ??,
+                words = job.Quote.Words,
+                fee = job.Quote.Fee,
+                workflowSteps
+            };
+
+            return jobData;
+        }
     }
 }
