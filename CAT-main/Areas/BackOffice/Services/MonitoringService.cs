@@ -150,6 +150,8 @@ namespace CAT.Areas.BackOffice.Services
                 workflowSteps.Add(workflowStep);
             }
 
+            //get the documents for the job
+            //_dbContextContainer.MainContext.Documents.Where(d => d.)
             var jobData = new
             {
                 jobId = job.Id,

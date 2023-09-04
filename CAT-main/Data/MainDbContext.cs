@@ -55,6 +55,20 @@ namespace CAT.Data
                 .WithMany(sq => sq.TempQuotes)
                 .HasForeignKey(tq => tq.StoredQuoteId);
 
+            ////TempQuote Fee
+            //modelBuilder.Entity<TempQuote>()
+            //   .Property(e => e.Fee)
+            //   .HasPrecision(10, 2); //example: max 10 digits in total, with 2 digits after the decimal point
+
+            ////Quote Fee
+            //modelBuilder.Entity<Quote>()
+            //   .Property(e => e.Fee)
+            //   .HasPrecision(10, 2);
+
+            ////WorkFlowStep Fee
+            //modelBuilder.Entity<WorkFlowStep>()
+            //   .Property(e => e.Fee)
+            //   .HasPrecision(10, 2);
         }
     }
 }

@@ -23,5 +23,7 @@ namespace CAT.Models.Entities.Main
         public DateTime CompletionDate { get; set; }
 
         public decimal? Fee { get; set; }
+
+        public int DocumentId { get; set; }
     }
 }
