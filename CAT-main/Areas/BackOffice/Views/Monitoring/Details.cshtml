@@ -1,11 +1,21 @@
-﻿
-@{
-    ViewData["Title"] = "View";
+﻿@{
+    ViewBag.Title = "Monitoring details";
 }
 
-<h1>View</h1>
+<style>
+</style>
 
-<div>
-    <h4>Job</h4>
-    <hr />
-</div>
+@section Scripts {
+}
+
+<!-- Angular styles -->
+<link href="~/monitoring/dist/monitoring/styles.css" rel="stylesheet" />
+
+<h2>Monitoring details</h2>
+
+<app-root>Loading...</app-root>
+
+<!-- Angular scripts -->
+<script type="text/javascript" src="~/monitoringDetails/dist/monitoring-details/runtime.js"></script>
+<script type="text/javascript" src="~/monitoringDetails/dist/monitoring-details/polyfills.js"></script>
+<script type="text/javascript" src="~/monitoringDetails/dist/monitoring-details/main.js"></script>
