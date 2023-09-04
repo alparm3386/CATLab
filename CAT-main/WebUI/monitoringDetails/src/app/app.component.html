@@ -1,3 +1,14 @@
-<style></style>
-<p>Hello world!</p>
-<app-workflow [workflowSteps]="jobData.workflowSteps"/>
+<div class="m-5">
+  <div class="card mt-5">
+    <div class="card-body">
+      Job data
+    </div>
+  </div>
+
+  <div class="card mt-5">
+    <div class="card-header">Job workflow</div>
+    <div class="card-body">
+      <app-workflow [workflowSteps]="jobData.workflowSteps" />
+    </div>
+  </div>
+</div>
