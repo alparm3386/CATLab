@@ -12,9 +12,21 @@ namespace CAT.Enums
 
     public enum DocumentType
     {
+
+        [Display(Name = "Unknown task")]
         Unspecified = -1,
-        Original,
-        Translated
+        [Display(Name = "Original")]
+        Original = 0,
+        [Display(Name = "Processed by AI")]
+        AI = 1,
+        [Display(Name = "Translated")]
+        Translated = 2,
+        [Display(Name = "Revised")]
+        Revised = 3,
+        [Display(Name = "Rectified")]
+        Rectified = 4,
+        [Display(Name = "Reviewed by client")]
+        ReviewedByClient = 5
     }
 
     public enum Task

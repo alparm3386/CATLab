@@ -8,6 +8,7 @@ using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using System.Data;
 using System.Dynamic;
+using System.Xml.Linq;
 using Task = CAT.Enums.Task;
 
 namespace CAT.Areas.BackOffice.Services
@@ -158,7 +159,8 @@ namespace CAT.Areas.BackOffice.Services
                 jobId = d.JobId,
                 fileName = d.FileName,
                 originalFileName = d.OriginalFileName,
-                ocumentType = d.DocumentType
+                documentType = d.DocumentType,
+                documentTypeName = EnumHelper.GetDisplayName((DocumentType)d.DocumentType)
             }).ToList();
 
             var jobData = new
