@@ -47,4 +47,8 @@
     <Folder Include="WebUI\Monitoring\src\app\models\" />
     <Folder Include="WebUI\Monitoring\src\app\services\" />
   </ItemGroup>
+
+  <ItemGroup>
+    <TypeScriptCompile Include="**\*.ts" Exclude="WebUI\**\*.ts" />
+  </ItemGroup>
 </Project>

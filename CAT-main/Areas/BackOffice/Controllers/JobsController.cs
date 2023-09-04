@@ -313,7 +313,7 @@ namespace CAT.Areas.BackOffice.Controllers
 
                 // Generate the URL
                 //string onlineEditorUrl = "/online-editor?" + UrlHelper.CreateOnlineEditorUrl((int)idJob, OEMode.Admin);
-                string onlineEditorUrl = UrlHelper.CreateOnlineEditorUrl((int)idJob, OEMode.Admin);
+                string onlineEditorUrl = UrlHelper.CreateOnlineEditorUrl(_configuration!["OnlineEditorBaseUrl"]!, (int)idJob, OEMode.Admin);
 
 
                 // Redirect the request to the new URL in a new tab

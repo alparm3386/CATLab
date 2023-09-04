@@ -20,6 +20,7 @@ using System.Reflection;
 using CAT.Infrastructure.Logging;
 using CAT.Areas.Identity.Data;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.FileProviders;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -104,6 +105,13 @@ else
     app.UseDeveloperExceptionPage();
 
 app.UseHttpsRedirection();
+
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "online-editor-ui/build")),
+    RequestPath = "/onlineEditor"  // serve from root
+});
+
 app.UseStaticFiles();
 
 // Use CORS middleware here

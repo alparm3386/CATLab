@@ -178,7 +178,7 @@ namespace CAT.Areas.BackOffice.Services
                 documents,
                 words = job.Quote.Words,
                 fee = job.Quote.Fee,
-                onlineEditorLink = UrlHelper.CreateOnlineEditorUrl(job.Id, OEMode.Admin),
+                onlineEditorLink = UrlHelper.CreateOnlineEditorUrl(_configuration!["OnlineEditorBaseUrl"]!, job.Id, OEMode.Admin),
                 workflowSteps
             };
 
