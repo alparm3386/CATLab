@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute } from '@angular/router';
 import { WorkflowComponent } from './components/workflow/workflow.component';
 import { DocumentsComponent } from './components/documents/documents.component';
 import { DataService } from './services/data.service';
@@ -35,7 +34,7 @@ export class AppComponent {
     workflowSteps: [],
   };
 
-  constructor(private location: Location, private dataService: DataService, private route: ActivatedRoute) {
+  constructor(private location: Location, private dataService: DataService) {
     this.dataService.data$.subscribe(
       data => {
         if (data) {
