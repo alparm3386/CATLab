@@ -79,8 +79,11 @@ namespace CAT.Enums
 
     public enum Speciality
     {
+        [Display(Name = "General")]
         General = 1,
+        [Display(Name = "Marketing")]
         Marketing,
+        [Display(Name = "Technical")]
         Technical
     }
 

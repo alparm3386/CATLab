@@ -164,6 +164,7 @@ namespace CAT.Areas.BackOffice.Services
             var jobData = new
             {
                 jobId = job.Id,
+                orderId = job.OrderId,
                 dateProcessed = job.DateProcessed,
                 sourceLanguage = job.Quote!.SourceLanguage,
                 targetLanguage = job.Quote.TargetLanguage,

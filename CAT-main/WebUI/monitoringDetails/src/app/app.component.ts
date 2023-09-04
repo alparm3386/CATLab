@@ -18,7 +18,20 @@ export class AppComponent {
   title = 'monitoring details';
 
   public jobData = {
-    workflowSteps: []
+    jobId: {},
+    orderId: {},
+    dateProcessed: {},
+    sourceLanguage: '',
+    targetLanguage: '',
+    speciality: {},
+    specialityName: '',
+    speed: '',
+    service: '',
+    serviceName: '',
+    documents: [],
+    words: {},
+    fee: {},
+    workflowSteps: [],
   };
 
   constructor(private location: Location, private dataService: DataService, private route: ActivatedRoute) {
