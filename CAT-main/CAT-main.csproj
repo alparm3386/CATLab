@@ -47,8 +47,16 @@
     <Folder Include="WebUI\Monitoring\src\app\models\" />
     <Folder Include="WebUI\Monitoring\src\app\services\" />
   </ItemGroup>
-
   <ItemGroup>
-    <TypeScriptCompile Include="**\*.ts" Exclude="WebUI\**\*.ts" />
+  	<Compile Include="**\*.csccc" Exclude="WebUI\**\*.*" />
+	</ItemGroup>
+  <ItemGroup>
+    <Content Remove="WebUI\monitoringDetails\tsconfig.app.json" />
+    <Content Remove="WebUI\monitoringDetails\tsconfig.json" />
+    <Content Remove="WebUI\monitoringDetails\tsconfig.spec.json" />
+    <Content Remove="WebUI\Monitoring\tsconfig.app.json" />
+    <Content Remove="WebUI\Monitoring\tsconfig.json" />
+    <Content Remove="WebUI\Monitoring\tsconfig.spec.json" />
   </ItemGroup>
+
 </Project>
