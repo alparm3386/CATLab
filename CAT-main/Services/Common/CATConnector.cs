@@ -308,7 +308,7 @@ namespace CAT.Services.Common
                 {
 
                     //get the translation details
-                    var job = _dbContextContainer.MainContext.Jobs.Include(j => j.Quote).FirstOrDefault(j => j.Id == idJob);
+                    var job = _dbContextContainer.MainContext.Jobs.Include(j => j.Quote).Include(j => j.Order).FirstOrDefault(j => j.Id == idJob);
                     var document = _dbContextContainer.MainContext.Documents.Find(job!.SourceDocumentId);
 
                     //check if it is parsed already

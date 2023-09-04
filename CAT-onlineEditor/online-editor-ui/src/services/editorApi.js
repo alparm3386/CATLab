@@ -12,7 +12,7 @@ const editorApi = (function () {
             _urlParams = urlParams;
 
             _apiClient = axios.create({
-                baseURL: 'http://localhost:3000/',
+                baseURL: '/',
                 // other configuration
             });
 
