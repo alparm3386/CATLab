@@ -15,11 +15,22 @@ import { Location } from '@angular/common';
   ],
 })
 export class AppComponent {
-  title = 'monitoringDetails';
+  title = 'monitoring details';
 
-  constructor(private location: Location, private dataService: DataService, private route: ActivatedRoute) { }
+  public jobData = {
+    workflowSteps: []
+  };
 
-  ngOnInit(): void {
+  constructor(private location: Location, private dataService: DataService, private route: ActivatedRoute) {
+    this.dataService.data$.subscribe(
+      data => {
+        if (data) {
+          this.jobData = data;
+        }
+      });
+  }
+
+    ngOnInit(): void {
   //  this.route.queryParams.subscribe(params => {
   //    const idJob = +params['idJob'];
   //    this.dataService.fetchData(idJob);

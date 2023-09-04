@@ -151,7 +151,16 @@ namespace CAT.Areas.BackOffice.Services
             }
 
             //get the documents for the job
-            //_dbContextContainer.MainContext.Documents.Where(d => d.)
+            var dsDocuments = await _dbContextContainer.MainContext.Documents.Where(d => d.JobId == jobId).ToListAsync();
+            var documents = dsDocuments.Select(d => new
+            {
+                id = d.Id,
+                jobId = d.JobId,
+                fileName = d.FileName,
+                originalFileName = d.OriginalFileName,
+                ocumentType = d.DocumentType
+            }).ToList();
+
             var jobData = new
             {
                 jobId = job.Id,
@@ -161,7 +170,7 @@ namespace CAT.Areas.BackOffice.Services
                 speciality = job.Quote.Speciality,
                 speed = job.Quote.Speed,
                 service = job.Quote.Service,
-                //documents = ??,
+                documents,
                 words = job.Quote.Words,
                 fee = job.Quote.Fee,
                 workflowSteps

@@ -1,1 +1,18 @@
-<p>workflow works!</p>
+<!-- Container for the workflow visualization -->
+<div class="row">
+  <!-- Iterate over each workflow step and display its data -->
+  <div *ngFor="let workflowStep of workflowSteps" class="m-workflo-step mr-1 mb-3">
+    <div class="bg-warning bg-gradient" [ngClass]="{
+           'bg-opacity-75': workflowStep.status === 2,
+           'bg-opacity-50': workflowStep.status === 1,
+           'bg-opacity-10': workflowStep.status === 0
+         }"
+         style="min-height: 90px;">
+      <div class="m-2">
+        <p><b class="card-title">{{workflowStep.task}}</b><p>
+      </div>
+      <span class="card-text">Scheduled: {{workflowStep.ScheduledDate}}</span>
+    </div>
+  </div>
+</div>
+
