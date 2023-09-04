@@ -1,12 +1,16 @@
 <div class="d-flex">
-  <div class="w-25 small">
+  <div class="w-25 small text-center">
     <div><i class="fa-regular fa-file" style="font-size: 50px;"></i></div>
-    <a href="#">Check in online editor</a>
+    <div class="">
+      <a href="{{jobData.onlineEditorLink}}" target="_blank">Check in online editor</a>
+    </div>
   </div>
-  <div *ngFor="let document of documents" class="ms-1 w-25 small">
+  <div *ngFor="let document of jobData.documents" class="ms-1 w-25 small text-center">
     <div>
-      <div alt="ddddddd"><i class="fa-regular fa-file" style="font-size: 50px;"></i></div>
-      <a href="#">{{ document.documentTypeName }}</a>
+      <div title="{{ document.originalFileName }}"><i class="fa-regular fa-file" style="font-size: 50px;"></i></div>
+      <div class="">
+        <a href="#">{{ document.documentTypeName }}</a>
+      </div>
     </div>
   </div>
 </div>

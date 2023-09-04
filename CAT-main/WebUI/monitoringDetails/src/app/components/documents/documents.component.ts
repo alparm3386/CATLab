@@ -9,5 +9,5 @@ import { CommonModule } from '@angular/common';
   styleUrls: ['./documents.component.scss']
 })
 export class DocumentsComponent {
-  @Input() documents: any;
+  @Input() jobData: any;
 }

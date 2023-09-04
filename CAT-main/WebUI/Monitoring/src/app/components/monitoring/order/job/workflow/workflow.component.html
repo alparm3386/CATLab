@@ -10,7 +10,7 @@
          style="min-height: 90px;">
       <div class="m-2">
         <p><b class="card-title">{{workflowStep.task}}</b><p>
-        <p class="card-text">{{workflowStep.scheduledDate }}</p>
+          <div class="card-text small">{{ workflowStep.scheduledDate | date:'dd/MM/yyyy HH:mm' }}</div>
       </div>
     </div>
   </div>
