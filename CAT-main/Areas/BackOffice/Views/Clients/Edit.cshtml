@@ -1,21 +1,18 @@
-﻿@model CAT.Models.Entities.Main.Company
+﻿@model CAT.Models.Entities.Main.Client
 
 @{
-    ViewData["Title"] = "Create company";
+    ViewData["Title"] = "Edit";
 }
 
-<h1>Create company</h1>
+<h1>Edit</h1>
 
+<h4>Client</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="Create">
+        <form asp-action="Edit">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="Name" class="control-label"></label>
-                <input asp-for="Name" class="form-control" />
-                <span asp-validation-for="Name" class="text-danger"></span>
-            </div>
+            <input type="hidden" asp-for="Id" />
             <div class="form-group">
                 <label asp-for="Address.Line1" class="control-label"></label>
                 <input asp-for="Address.Line1" class="form-control" />
@@ -51,8 +48,8 @@
                 <input asp-for="Address.Phone" class="form-control" />
                 <span asp-validation-for="Address.Phone" class="text-danger"></span>
             </div>
-            <div class="form-group mt-2">
-                <input type="submit" value="Create" class="btn btn-primary" />
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
             </div>
         </form>
     </div>

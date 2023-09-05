@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using CAT.Areas.BackOffice.Models.ViewModels;
+using CAT.Models.Entities.Main;
 using CAT.Data;
 
 namespace CAT.Areas.BackOffice.Controllers
@@ -20,57 +20,72 @@ namespace CAT.Areas.BackOffice.Controllers
             _context = context;
         }
 
-        // GET: BackOffice/CompanyViewModels
+        // GET: BackOffice/Companies
         public async Task<IActionResult> Index()
         {
-            //return _context.CompanyViewModel != null ? 
-            //            View(await _context.CompanyViewModel.ToListAsync()) :
-            //            Problem("Entity set 'MainDbContext.CompanyViewModel'  is null.");
-            return View();
+            return View(await _context.Companies.Include(c => c.Address).ToListAsync());
         }
 
-        // GET: BackOffice/CompanyViewModels/Details/5
+        // GET: BackOffice/Companies/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            return View();
+            if (id == null || _context.Companies == null)
+                return NotFound();
+
+            var company = await _context.Companies
+                .Include(c => c.Address)
+                .FirstOrDefaultAsync(c => c.Id == id);
+            if (company == null)
+                return NotFound();
+
+            return View(company);
         }
 
-        // GET: BackOffice/CompanyViewModels/Create
+        // GET: BackOffice/Companies/Create
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: BackOffice/CompanyViewModels/Create
+        // POST: BackOffice/Companies/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,CompanyGroupId,Name,AddressId,Line1,Line2,City,PostalCode,Country,Region,Phone")] CompanyViewModel companyViewModel)
+        public async Task<IActionResult> Create([Bind("Id,Name,Address")] Company company)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(companyViewModel);
+                _context.Add(company);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(companyViewModel);
+            return View(company);
         }
 
-        // GET: BackOffice/CompanyViewModels/Edit/5
+        // GET: BackOffice/Companies/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            return View();
+            if (id == null || _context.Companies == null)
+                return NotFound();
+
+            var company = await _context.Companies
+                .Include(c => c.Address)
+                .FirstOrDefaultAsync(c => c.Id == id);
+            if (company == null)
+                return NotFound();
+
+            return View(company);
         }
 
-        // POST: BackOffice/CompanyViewModels/Edit/5
+        // POST: BackOffice/Companies/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,CompanyGroupId,Name,AddressId,Line1,Line2,City,PostalCode,Country,Region,Phone")] CompanyViewModel companyViewModel)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Address")] Company company)
         {
-            if (id != companyViewModel.Id)
+            if (id != company.Id)
             {
                 return NotFound();
             }
@@ -79,12 +94,12 @@ namespace CAT.Areas.BackOffice.Controllers
             {
                 try
                 {
-                    _context.Update(companyViewModel);
+                    _context.Update(company);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!CompanyViewModelExists(companyViewModel.Id))
+                    if (!CompanyExists(company.Id))
                     {
                         return NotFound();
                     }
@@ -95,18 +110,18 @@ namespace CAT.Areas.BackOffice.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(companyViewModel);
+            return View(company);
         }
 
-        // GET: BackOffice/CompanyViewModels/Delete/5
+        // GET: BackOffice/Companies/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             throw new InvalidOperationException("This operation cannot be performed in the object's current state.");
 
-            //return View(companyViewModel);
+            //return View(Companies);
         }
 
-        // POST: BackOffice/CompanyViewModels/Delete/5
+        // POST: BackOffice/Companies/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
@@ -115,9 +130,9 @@ namespace CAT.Areas.BackOffice.Controllers
             //return RedirectToAction(nameof(Index));
         }
 
-        private bool CompanyViewModelExists(int id)
+        private bool CompanyExists(int id)
         {
-            return false; // (_context.CompanyViewModel?.Any(e => e.Id == id)).GetValueOrDefault();
+            return false; // (_context.Companies?.Any(e => e.Id == id)).GetValueOrDefault();
         }
     }
 }
