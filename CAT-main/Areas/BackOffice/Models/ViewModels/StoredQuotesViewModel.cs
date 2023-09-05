@@ -1,7 +1,7 @@
 ﻿using CAT.Enums;
 using CAT.Models.Entities.Main;
 
-namespace CAT.Models.ViewModels
+namespace CAT.Areas.BackOffice.Models.ViewModels
 {
     public class StoredQuotesViewModel
     {

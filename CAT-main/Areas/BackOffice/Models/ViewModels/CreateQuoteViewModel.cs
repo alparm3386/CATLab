@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-namespace CAT.Models.ViewModels
+namespace CAT.Areas.BackOffice.Models.ViewModels
 {
     public class CreateQuoteViewModel
     {
@@ -14,7 +14,7 @@ namespace CAT.Models.ViewModels
         public string? SourceLanguage { get; set; }
 
         [Required]
-        public List<String>? TargetLanguages { get; set; }
+        public List<string>? TargetLanguages { get; set; }
 
         [Required]
         public int Speciality { get; set; }

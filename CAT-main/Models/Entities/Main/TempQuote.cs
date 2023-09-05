@@ -15,7 +15,7 @@ namespace CAT.Models.Entities.Main
         public DateTime DateCreated { get; set; }
 
         public int TempDocumentId { get; set; }
-        public TempDocument TempDocument { get; set; }
+        public TempDocument TempDocument { get; set; } = default!;
 
         [Display(Name = "Source language")]
         public string SourceLanguage { get; set; } = default!;

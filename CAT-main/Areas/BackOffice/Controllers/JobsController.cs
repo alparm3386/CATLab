@@ -17,6 +17,7 @@ using CAT.Models.ViewModels;
 using CAT.Services.Common;
 using AutoMapper;
 using Task = CAT.Enums.Task;
+using CAT.Areas.BackOffice.Models.ViewModels;
 
 namespace CAT.Areas.BackOffice.Controllers
 {

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 
-namespace CAT.Models.ViewModels
+namespace CAT.Areas.BackOffice.Models.ViewModels
 {
     public class JobViewModel
     {

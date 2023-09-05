@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using CAT.Areas.BackOffice.Models.ViewModels;
 using CAT.Data;
 using CAT.Enums;
 using CAT.Helpers;
@@ -96,7 +97,7 @@ namespace CAT.Areas.BackOffice.Controllers
                         }
 
                     }
-                    catch (Exception ex)
+                    catch (Exception)
                     {
                         ModelState.AddModelError(string.Empty, "An error occurred while calculating the quote. Please try again.");
                         return View("Create", model);
@@ -109,7 +110,7 @@ namespace CAT.Areas.BackOffice.Controllers
         }
 
         [Route("Quotes/Create/{id?}")]
-        public async Task<IActionResult> Create(int? id)
+        public IActionResult Create(int? id)
         {
             var storedQuoteId = id ?? -1;
             var createQuoteViewModel = new CreateQuoteViewModel();

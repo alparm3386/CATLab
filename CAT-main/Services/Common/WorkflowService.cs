@@ -12,10 +12,8 @@ namespace CAT.Services.Common
     {
         private readonly DbContextContainer _dbContextContainer;
         private readonly IConfiguration _configuration;
-        private readonly CATConnector _catConnector;
         private readonly IQuoteService _quoteService;
         private readonly IDocumentService _documentService;
-        private readonly IWorkflowService _workflowService;
         private readonly IMapper _mapper;
         private readonly ILogger _logger;
 

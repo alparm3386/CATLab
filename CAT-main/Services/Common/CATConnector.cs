@@ -28,7 +28,6 @@ using CAT.Helpers;
 using Microsoft.EntityFrameworkCore;
 using CAT.Models.Entities.TranslationUnits;
 using CAT.Models;
-using CAT.Models.Common;
 
 namespace CAT.Services.Common
 {
