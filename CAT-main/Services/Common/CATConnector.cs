@@ -40,7 +40,7 @@ namespace CAT.Services.Common
         private readonly ILogger _logger;
         private readonly IDocumentProcessor _documentProcessor;
 
-        private static int MATCH_THRESHOLD = 50;
+        //private static int MATCH_THRESHOLD = 50;
 
         /// <summary>
         /// CATClientService
