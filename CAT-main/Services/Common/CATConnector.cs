@@ -433,7 +433,7 @@ namespace CAT.Services.Common
                     var translatables = lstTus.Select(tu => new Translatable
                     {
                         id = tu.tuid,
-                        source = CATUtils.CodedTextToTmx(tu!.source!),
+                        source = CATUtils.CodedTextToGoogleTags(tu!.source!),
                         target = tu.target!
                     }).ToList();
 
@@ -446,8 +446,7 @@ namespace CAT.Services.Common
                     {
                         if (translatableDictionary.TryGetValue(tu.tuid, out var translatable))
                         {
-                            String targetWithGoogleTags = CATUtils.XmlTags2GoogleTags(translatable!.target!, CATUtils.TagType.Tmx); //we store the target text with google tags
-                            tu.target = targetWithGoogleTags;
+                            tu.target = translatable!.target!;
                         }
                     });
 
