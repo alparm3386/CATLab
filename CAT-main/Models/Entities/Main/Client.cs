@@ -12,6 +12,8 @@ namespace CAT.Models.Entities.Main
 
         public int CompanyId { get; set; }
 
+        public Company Company { get; set; } = default!;
+
         public string UserId { get; set; } = default!;
 
         public int AddressId { get; set; }

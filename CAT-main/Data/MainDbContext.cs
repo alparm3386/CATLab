@@ -61,6 +61,18 @@ namespace CAT.Data
                 .WithMany(sq => sq.TempQuotes)
                 .HasForeignKey(tq => tq.StoredQuoteId);
 
+            // For Clients and Addresses
+            modelBuilder.Entity<Client>()
+                .HasOne(p => p.Address)
+                .WithMany() // If there is no collection navigation property on Address
+                .OnDelete(DeleteBehavior.Restrict);  // Prevents cascading delete
+
+            // For Companies and Addresses
+            modelBuilder.Entity<Company>()
+                .HasOne(p => p.Address)
+                .WithMany() // If there is no collection navigation property on Address
+                .OnDelete(DeleteBehavior.Restrict);  // Prevents cascading delete
+
             ////TempQuote Fee
             //modelBuilder.Entity<TempQuote>()
             //   .Property(e => e.Fee)

@@ -139,6 +139,8 @@ namespace CAT.Migrations.MainDb
 
                     b.HasIndex("AddressId");
 
+                    b.HasIndex("CompanyId");
+
                     b.ToTable("Clients");
                 });
 
@@ -164,7 +166,7 @@ namespace CAT.Migrations.MainDb
 
                     b.HasIndex("AddressId");
 
-                    b.ToTable("Comapnies");
+                    b.ToTable("Companies");
                 });
 
             modelBuilder.Entity("CAT.Models.Entities.Main.Document", b =>
@@ -498,10 +500,18 @@ namespace CAT.Migrations.MainDb
                     b.HasOne("CAT.Models.Entities.Main.Address", "Address")
                         .WithMany()
                         .HasForeignKey("AddressId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("CAT.Models.Entities.Main.Company", "Company")
+                        .WithMany()
+                        .HasForeignKey("CompanyId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Address");
+
+                    b.Navigation("Company");
                 });
 
             modelBuilder.Entity("CAT.Models.Entities.Main.Company", b =>
@@ -509,7 +519,7 @@ namespace CAT.Migrations.MainDb
                     b.HasOne("CAT.Models.Entities.Main.Address", "Address")
                         .WithMany()
                         .HasForeignKey("AddressId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Address");

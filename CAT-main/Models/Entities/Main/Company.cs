@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CAT.Models.Entities.Main
 {
-    [Table("Comapnies")]
+    [Table("Companies")]
     public class Company
     {
         [Key]
