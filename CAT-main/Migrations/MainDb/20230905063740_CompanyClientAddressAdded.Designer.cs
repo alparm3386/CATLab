@@ -4,6 +4,7 @@ using CAT.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CAT.Migrations.MainDb
 {
     [DbContext(typeof(MainDbContext))]
-    partial class MainDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230905063740_CompanyClientAddressAdded")]
+    partial class CompanyClientAddressAdded
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -300,8 +303,6 @@ namespace CAT.Migrations.MainDb
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ClientId");
-
                     b.ToTable("Orders");
                 });
 
@@ -532,17 +533,6 @@ namespace CAT.Migrations.MainDb
                     b.Navigation("Order");
 
                     b.Navigation("Quote");
-                });
-
-            modelBuilder.Entity("CAT.Models.Entities.Main.Order", b =>
-                {
-                    b.HasOne("CAT.Models.Entities.Main.Client", "Client")
-                        .WithMany()
-                        .HasForeignKey("ClientId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Client");
                 });
 
             modelBuilder.Entity("CAT.Models.Entities.Main.TempQuote", b =>

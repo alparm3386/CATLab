@@ -12,6 +12,8 @@ namespace CAT.Models.Entities.Main
 
         public int ClientId { get; set; }
 
+        public Client Client { get; set; } = default!;
+
         public DateTime DateCreated { get; set; }
 
         public ICollection<Job> Jobs { get; set; } = default!;

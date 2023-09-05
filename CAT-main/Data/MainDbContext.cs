@@ -14,6 +14,12 @@ namespace CAT.Data
         {
         }
 
+        public DbSet<Company> Companies { get; set; } = default!;
+
+        public DbSet<Client> Clients { get; set; } = default!;
+
+        public DbSet<Address> Addresses { get; set; } = default!;
+
         public DbSet<Job> Jobs { get; set; } = default!;
         public DbSet<Document> Documents { get; set; } = default!;
         public DbSet<DocumentFilter> DocumentFilters { get; set; } = default!;
