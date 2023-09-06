@@ -14,10 +14,12 @@ namespace CAT.Areas.BackOffice.Controllers
     public class ClientsController : Controller
     {
         private readonly MainDbContext _context;
+        private readonly ILogger _logger;
 
-        public ClientsController(MainDbContext context)
+        public ClientsController(MainDbContext context, ILogger<ClientsController> logger)
         {
             _context = context;
+            _logger = logger;
         }
 
         // GET: BackOffice/Clients
@@ -48,10 +50,23 @@ namespace CAT.Areas.BackOffice.Controllers
         }
 
         // GET: BackOffice/Clients/Create
-        public IActionResult Create(int companyId)
+        public async Task<IActionResult> Create(int companyId)
         {
-            //ViewData["AddressId"] = new SelectList(_context.Addresses, "Id", "City");
-            //ViewData["CompanyId"] = new SelectList(_context.Companies, "Id", "Id");
+            try
+            {
+                //ViewData["CompanyId"] = new SelectList(_context.Companies, "Id", "Id");
+                var company = await _context.Companies.FirstOrDefaultAsync(c => c.Id == companyId);
+                var client = new Client() { CompanyId = companyId, Company = company! };
+
+                return View(client);
+            }
+            catch (Exception)
+            {
+                // set error message here that is displayed in the view
+                ViewData["ErrorMessage"] = "There was an error processing your request. Please try again later.";
+                // Optionally log the error: _logger.LogError(ex, "Error message here");
+            }
+
             return View();
         }
 
