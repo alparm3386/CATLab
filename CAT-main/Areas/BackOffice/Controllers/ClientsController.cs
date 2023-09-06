@@ -107,12 +107,13 @@ namespace CAT.Areas.BackOffice.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,User,Address,CompanyId")] Client client)
+        public async Task<IActionResult> Create([Bind("Id,User,Address,CompanyId,Company.Name")] Client client)
         {
             try
             {
                 ModelState.Remove("Company");
                 ModelState.Remove("UserId");
+                ModelState.Remove("Company.Address");
                 if (ModelState.IsValid)
                 {
                     if (client.User.PasswordHash != client.User.SecurityStamp)
@@ -130,18 +131,22 @@ namespace CAT.Areas.BackOffice.Controllers
                     if (result.Succeeded)
                         client.UserId = user.Id;
                     else
-                        throw new Exception(string.Join(" ", result.Errors));
-
+                    {
+                        var errorMessages = result.Errors.Select(e => e.Description);
+                        throw new Exception(string.Join(" ", errorMessages));
+                    }
                     //save the address
                     _mainDbContext.Addresses.Add(client.Address);
                     await _mainDbContext.SaveChangesAsync();
 
                     //save the client
                     client.UserId = user.Id;
-                    _mainDbContext.Add(client);
+                    //client.AddressId = client.Address.Id;
+                    client.Company = null;
+                    _mainDbContext.Clients.Add(client);
 
                     await _mainDbContext.SaveChangesAsync();
-                    return RedirectToAction(nameof(Index));
+                    return RedirectToAction(nameof(Index), new { companyId = client.CompanyId });
                 }
                 else
                 {
