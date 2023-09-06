@@ -7,46 +7,72 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using CAT.Data;
 using CAT.Models.Entities.Main;
+using CAT.Areas.Identity.Data;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using IdentityDbContext = CAT.Areas.Identity.Data.IdentityDbContext;
 
 namespace CAT.Areas.BackOffice.Controllers
 {
     [Area("BackOffice")]
     public class ClientsController : Controller
     {
-        private readonly MainDbContext _context;
+        private readonly MainDbContext _mainDbContext;
+        private readonly IdentityDbContext _identityDbContext;
         private readonly ILogger _logger;
 
-        public ClientsController(MainDbContext context, ILogger<ClientsController> logger)
+        public ClientsController(MainDbContext mainDbContext, IdentityDbContext identityDbContext, ILogger<ClientsController> logger)
         {
-            _context = context;
+            _mainDbContext = mainDbContext;
+            _identityDbContext = identityDbContext;
             _logger = logger;
         }
 
         // GET: BackOffice/Clients
         public async Task<IActionResult> Index(int companyId)
         {
-            var clients = await _context.Clients.Include(c => c.Address).Include(c => c.Company).Where(c => c.CompanyId == companyId).ToListAsync();
-            return View(clients);
+            try
+            {
+                var clients = await _mainDbContext.Clients.Include(c => c.Address).Include(c => c.Company).Where(c => c.CompanyId == companyId).ToListAsync();
+
+                return View(clients);
+            }
+            catch (Exception)
+            {
+                // set error message here that is displayed in the view
+                ViewData["ErrorMessage"] = "There was an error processing your request. Please try again later.";
+                // Optionally log the error: _logger.LogError(ex, "Error message here");
+            }
+
+            return View();
         }
 
         // GET: BackOffice/Clients/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null || _context.Clients == null)
+            try
             {
-                return NotFound();
+                if (id == null || _mainDbContext.Clients == null)
+                    throw new Exception("Client not found.")
+
+                var client = await _mainDbContext.Clients
+                    .Include(c => c.Address)
+                    .Include(c => c.Company)
+                    .FirstOrDefaultAsync(m => m.Id == id);
+                if (client == null)
+                {
+                    return NotFound();
+                }
+
+                return View(client);
+            }
+            catch (Exception ex)
+            {
+                // set error message here that is displayed in the view
+                ViewData["ErrorMessage"] = ex.Message;
+                // Optionally log the error: _logger.LogError(ex, "Error message here");
             }
 
-            var client = await _context.Clients
-                .Include(c => c.Address)
-                .Include(c => c.Company)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (client == null)
-            {
-                return NotFound();
-            }
-
-            return View(client);
+            return View();
         }
 
         // GET: BackOffice/Clients/Create
@@ -54,8 +80,9 @@ namespace CAT.Areas.BackOffice.Controllers
         {
             try
             {
-                //ViewData["CompanyId"] = new SelectList(_context.Companies, "Id", "Id");
-                var company = await _context.Companies.FirstOrDefaultAsync(c => c.Id == companyId);
+                var company = await _mainDbContext.Companies.FirstOrDefaultAsync(c => c.Id == companyId);
+                if (company == null)
+                    throw new Exception("Invalid company");
                 var client = new Client() { CompanyId = companyId, Company = company! };
 
                 return View(client);
@@ -75,12 +102,15 @@ namespace CAT.Areas.BackOffice.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Address")] Client client)
+        public async Task<IActionResult> Create([Bind("Id,User,Address")] Client client)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(client);
-                await _context.SaveChangesAsync();
+                _mainDbContext.Add(client);
+                //save the user
+                _identityDbContext.Users.Add(client.User);
+
+                await _mainDbContext.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
             return View(client);
@@ -89,19 +119,17 @@ namespace CAT.Areas.BackOffice.Controllers
         // GET: BackOffice/Clients/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null || _context.Clients == null)
+            if (id == null || _mainDbContext.Clients == null)
             {
                 return NotFound();
             }
 
-            var client = await _context.Clients.FindAsync(id);
+            var client = await _mainDbContext.Clients.FindAsync(id);
             if (client == null)
             {
                 return NotFound();
             }
 
-            //ViewData["AddressId"] = new SelectList(_context.Addresses, "Id", "City", client.AddressId);
-            //ViewData["CompanyId"] = new SelectList(_context.Companies, "Id", "Id", client.CompanyId);
             return View(client);
         }
 
@@ -121,8 +149,8 @@ namespace CAT.Areas.BackOffice.Controllers
             {
                 try
                 {
-                    _context.Update(client);
-                    await _context.SaveChangesAsync();
+                    _mainDbContext.Update(client);
+                    await _mainDbContext.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -137,20 +165,19 @@ namespace CAT.Areas.BackOffice.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["AddressId"] = new SelectList(_context.Addresses, "Id", "City", client.AddressId);
-            ViewData["CompanyId"] = new SelectList(_context.Companies, "Id", "Id", client.CompanyId);
+
             return View(client);
         }
 
         // GET: BackOffice/Clients/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null || _context.Clients == null)
+            if (id == null || _mainDbContext.Clients == null)
             {
                 return NotFound();
             }
 
-            var client = await _context.Clients
+            var client = await _mainDbContext.Clients
                 .Include(c => c.Address)
                 .Include(c => c.Company)
                 .FirstOrDefaultAsync(m => m.Id == id);
@@ -167,23 +194,23 @@ namespace CAT.Areas.BackOffice.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            if (_context.Clients == null)
+            if (_mainDbContext.Clients == null)
             {
                 return Problem("Entity set 'MainDbContext.Clients'  is null.");
             }
-            var client = await _context.Clients.FindAsync(id);
+            var client = await _mainDbContext.Clients.FindAsync(id);
             if (client != null)
             {
-                _context.Clients.Remove(client);
+                _mainDbContext.Clients.Remove(client);
             }
 
-            await _context.SaveChangesAsync();
+            await _mainDbContext.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool ClientExists(int id)
         {
-            return (_context.Clients?.Any(e => e.Id == id)).GetValueOrDefault();
+            return (_mainDbContext.Clients?.Any(e => e.Id == id)).GetValueOrDefault();
         }
     }
 }

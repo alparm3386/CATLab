@@ -4,8 +4,6 @@
     ViewData["Title"] = "Create";
 }
 
-@Html.Hidden("CompanyId", (int)ViewData["CompanyId"]!)
-
 <h1>Create client</h1>
 
 <hr />
@@ -27,9 +25,14 @@
                 <span asp-validation-for="Company.Name" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="UserId" class="control-label"></label>
-                <input asp-for="UserId" class="form-control" />
-                <span asp-validation-for="UserId" class="text-danger"></span>
+                <label asp-for="User.Email" class="control-label"></label>
+                <input asp-for="User.Email" class="form-control" />
+                <span asp-validation-for="User.Email" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="User.PasswordHash" class="control-label"></label>
+                <input asp-for="User.PasswordHash" class="form-control" />
+                <span asp-validation-for="User.PasswordHash" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="Address.Line1" class="control-label"></label>

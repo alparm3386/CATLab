@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using CAT.Areas.Identity.Data;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CAT.Models.Entities.Main
@@ -16,6 +17,9 @@ namespace CAT.Models.Entities.Main
 
         [StringLength(50)]
         public string UserId { get; set; } = default!;
+
+        [NotMapped]
+        public ApplicationUser User { get; set; } = default!;
 
         public int AddressId { get; set; }
 

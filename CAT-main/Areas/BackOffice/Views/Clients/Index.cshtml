@@ -2,12 +2,20 @@
 
 @{
     ViewData["Title"] = "Clients";
+    var companyId = Context.Request.Query["companyId"];
 }
 
 <h1>Clients</h1>
 
+@if (ViewData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">
+        @ViewData["ErrorMessage"]
+    </div>
+}
+
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-action="Create" asp-route-companyId="@companyId">Create New</a>
 </p>
 <table class="table">
     <thead>
