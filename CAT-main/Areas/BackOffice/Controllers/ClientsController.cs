@@ -37,7 +37,19 @@ namespace CAT.Areas.BackOffice.Controllers
         {
             try
             {
+                var company = await _mainDbContext.Companies.FirstOrDefaultAsync(c => c.Id == companyId);
+                if (company == null)
+                    throw new Exception("Invalid company");
+                ViewData["CompanyName"] = company.Name;
+
                 var clients = await _mainDbContext.Clients.Include(c => c.Address).Include(c => c.Company).Where(c => c.CompanyId == companyId).ToListAsync();
+
+                //fix me! not ideal the query in the loop.
+                foreach (var client in clients)
+                {
+                    var user = await _identityDbContext.Users.Where(u => u.Id == client.UserId).FirstOrDefaultAsync();
+                    client.User = user;
+                }
 
                 return View(clients);
             }
