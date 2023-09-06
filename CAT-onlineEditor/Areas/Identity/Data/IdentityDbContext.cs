@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CAT.Areas.Identity.Data;
 
-public class IdentityDbContext : IdentityDbContext<IdentityUser>
+public class IdentityDbContext : IdentityDbContext<ApplicationUser>
 {
     public IdentityDbContext(DbContextOptions<IdentityDbContext> options)
         : base(options)

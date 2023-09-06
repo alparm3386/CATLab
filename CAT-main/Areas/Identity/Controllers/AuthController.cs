@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using CAT.Services;
 using CAT.Areas.Identity.Pages.Account;
+using CAT.Areas.Identity.Data;
 
 namespace CAT.Areas.Identity.Controllers
 {
@@ -9,10 +10,10 @@ namespace CAT.Areas.Identity.Controllers
     [ApiController]
     public class AuthController : ControllerBase
     {
-        private readonly SignInManager<IdentityUser> _signInManager;
+        private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly JwtService _jwtService;
 
-        public AuthController(SignInManager<IdentityUser> signInManager, JwtService jwtService)
+        public AuthController(SignInManager<ApplicationUser> signInManager, JwtService jwtService)
         {
             _signInManager = signInManager;
             _jwtService = jwtService;

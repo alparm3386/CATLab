@@ -11,6 +11,7 @@ using CAT.Areas.Identity.Data;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using IdentityDbContext = CAT.Areas.Identity.Data.IdentityDbContext;
 using Microsoft.AspNetCore.Identity;
+using System.ComponentModel.Design;
 
 namespace CAT.Areas.BackOffice.Controllers
 {
@@ -87,7 +88,7 @@ namespace CAT.Areas.BackOffice.Controllers
                 var company = await _mainDbContext.Companies.FirstOrDefaultAsync(c => c.Id == companyId);
                 if (company == null)
                     throw new Exception("Invalid company");
-                var client = new Client() { CompanyId = companyId, Company = company! };
+                var client = new Client() { CompanyId = companyId, Company = company };
 
                 return View(client);
             }
@@ -106,15 +107,16 @@ namespace CAT.Areas.BackOffice.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,User,Address")] Client client)
+        public async Task<IActionResult> Create([Bind("Id,User,Address,CompanyId")] Client client)
         {
             try
             {
+                ModelState.Remove("Company");
+                ModelState.Remove("UserId");
                 if (ModelState.IsValid)
                 {
                     if (client.User.PasswordHash != client.User.SecurityStamp)
                         throw new Exception("passwords don't match.");
-                    _mainDbContext.Add(client);
                     //save the user
                     var user = new ApplicationUser
                     {
@@ -123,20 +125,30 @@ namespace CAT.Areas.BackOffice.Controllers
                     };
 
                     // Use UserManager to create a user
-                    var result = await _userManager.CreateAsync(user, client.User.PasswordHash);
+                    var result = await _userManager.CreateAsync(user, client.User.PasswordHash!);
 
                     if (result.Succeeded)
-                    {
-                        // User created successfully
-                    }
+                        client.UserId = user.Id;
                     else
-                    {
-                        // Handle errors
-                    }
+                        throw new Exception(string.Join(" ", result.Errors));
+
+                    //save the address
+                    _mainDbContext.Addresses.Add(client.Address);
+                    await _mainDbContext.SaveChangesAsync();
+
+                    //save the client
+                    client.UserId = user.Id;
+                    _mainDbContext.Add(client);
+
                     await _mainDbContext.SaveChangesAsync();
                     return RedirectToAction(nameof(Index));
                 }
-
+                else
+                {
+                    var allErrors = ModelState.Values.SelectMany(v => v.Errors.Select(e => e.ErrorMessage));
+                    ViewData["ErrorMessage"] = string.Join(" ", allErrors);
+                    return View(client);
+                }
             }
             catch (Exception ex)
             {
