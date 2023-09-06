@@ -10,6 +10,7 @@ using CAT.Models.Entities.Main;
 using CAT.Areas.Identity.Data;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using IdentityDbContext = CAT.Areas.Identity.Data.IdentityDbContext;
+using Microsoft.AspNetCore.Identity;
 
 namespace CAT.Areas.BackOffice.Controllers
 {
@@ -19,12 +20,15 @@ namespace CAT.Areas.BackOffice.Controllers
         private readonly MainDbContext _mainDbContext;
         private readonly IdentityDbContext _identityDbContext;
         private readonly ILogger _logger;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public ClientsController(MainDbContext mainDbContext, IdentityDbContext identityDbContext, ILogger<ClientsController> logger)
+        public ClientsController(MainDbContext mainDbContext, IdentityDbContext identityDbContext, UserManager<ApplicationUser> userManager,
+            ILogger<ClientsController> logger)
         {
             _mainDbContext = mainDbContext;
             _identityDbContext = identityDbContext;
             _logger = logger;
+            _userManager = userManager;
         }
 
         // GET: BackOffice/Clients
@@ -52,7 +56,7 @@ namespace CAT.Areas.BackOffice.Controllers
             try
             {
                 if (id == null || _mainDbContext.Clients == null)
-                    throw new Exception("Client not found.")
+                    throw new Exception("Client not found.");
 
                 var client = await _mainDbContext.Clients
                     .Include(c => c.Address)
@@ -104,15 +108,43 @@ namespace CAT.Areas.BackOffice.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,User,Address")] Client client)
         {
-            if (ModelState.IsValid)
+            try
             {
-                _mainDbContext.Add(client);
-                //save the user
-                _identityDbContext.Users.Add(client.User);
+                if (ModelState.IsValid)
+                {
+                    if (client.User.PasswordHash != client.User.SecurityStamp)
+                        throw new Exception("passwords don't match.");
+                    _mainDbContext.Add(client);
+                    //save the user
+                    var user = new ApplicationUser
+                    {
+                        UserName = client.User.UserName,
+                        Email = client.User.Email
+                    };
 
-                await _mainDbContext.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                    // Use UserManager to create a user
+                    var result = await _userManager.CreateAsync(user, client.User.PasswordHash);
+
+                    if (result.Succeeded)
+                    {
+                        // User created successfully
+                    }
+                    else
+                    {
+                        // Handle errors
+                    }
+                    await _mainDbContext.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
+                }
+
             }
+            catch (Exception ex)
+            {
+                // set error message here that is displayed in the view
+                ViewData["ErrorMessage"] = ex.Message;
+                // Optionally log the error: _logger.LogError(ex, "Error message here");
+            }
+
             return View(client);
         }
 

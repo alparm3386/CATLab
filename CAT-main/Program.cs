@@ -67,7 +67,6 @@ builder.Services.AddCors(options =>
     });
 });
 
-
 //the logger
 builder.Logging.AddProvider(new Log4NetLoggerProvider("log4net.config"));
 
@@ -120,6 +119,8 @@ app.MapControllerRoute(
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapRazorPages();
