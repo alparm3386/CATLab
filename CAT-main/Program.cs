@@ -52,8 +52,9 @@ builder.Services.TryAddEnumerable(new[]
         //ServiceDescriptor.Singleton<IMachineTranslator, MachineTranslator2>(),
     });
 
-builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddEntityFrameworkStores<IdentityDbContext>();
+
 builder.Services.AddRazorPages();
 
 // Add CORS services
