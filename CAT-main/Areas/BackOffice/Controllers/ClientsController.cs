@@ -22,14 +22,18 @@ namespace CAT.Areas.BackOffice.Controllers
         private readonly IdentityDbContext _identityDbContext;
         private readonly ILogger _logger;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IUserStore<ApplicationUser> _userStore;
+        private readonly IUserEmailStore<ApplicationUser> _emailStore;
 
         public ClientsController(MainDbContext mainDbContext, IdentityDbContext identityDbContext, UserManager<ApplicationUser> userManager,
-            ILogger<ClientsController> logger)
+            IUserStore<ApplicationUser> userStore, ILogger<ClientsController> logger)
         {
             _mainDbContext = mainDbContext;
             _identityDbContext = identityDbContext;
             _logger = logger;
             _userManager = userManager;
+            _userStore = userStore;
+            _emailStore = GetEmailStore();
         }
 
         // GET: BackOffice/Clients
@@ -141,11 +145,28 @@ namespace CAT.Areas.BackOffice.Controllers
                         LastName = client.User.LastName
                     };
 
+                    await _userStore.SetUserNameAsync(user, client.User.Email, CancellationToken.None);
+                    await _emailStore.SetEmailAsync(user, client.User.Email, CancellationToken.None);
+
                     // Use UserManager to create a user
                     var result = await _userManager.CreateAsync(user, client.User.PasswordHash!);
 
                     if (result.Succeeded)
+                    {
                         client.UserId = user.Id;
+                        user.EmailConfirmed = true;
+                        await _userManager.UpdateAsync(user);
+
+                        //if (_userManager.Options.SignIn.RequireConfirmedAccount)
+                        //{
+                        //    return RedirectToPage("RegisterConfirmation", new { email = Input.Email, returnUrl = returnUrl });
+                        //}
+                        //else
+                        //{
+                        //    await _signInManager.SignInAsync(user, isPersistent: false);
+                        //    return LocalRedirect(returnUrl);
+                        //}
+                    }
                     else
                     {
                         var errorMessages = result.Errors.Select(e => e.Description);
@@ -285,6 +306,15 @@ namespace CAT.Areas.BackOffice.Controllers
         private bool ClientExists(int id)
         {
             return (_mainDbContext.Clients?.Any(e => e.Id == id)).GetValueOrDefault();
+        }
+
+        private IUserEmailStore<ApplicationUser> GetEmailStore()
+        {
+            if (!_userManager.SupportsUserEmail)
+            {
+                throw new NotSupportedException("The default UI requires a user store with email support.");
+            }
+            return (IUserEmailStore<ApplicationUser>)_userStore;
         }
     }
 }
