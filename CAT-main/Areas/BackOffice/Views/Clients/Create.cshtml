@@ -28,7 +28,7 @@
                 <span asp-validation-for="Company.Name" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="User.UserName" class="control-label"></label>
+                <label asp-for="User.UserName" class="control-label">User name</label>
                 <input asp-for="User.UserName" class="form-control" />
                 <span asp-validation-for="User.UserName" class="text-danger"></span>
             </div>
@@ -46,6 +46,16 @@
                 <label asp-for="User.SecurityStamp" class="control-label">Password again</label>
                 <input asp-for="User.SecurityStamp" class="form-control" password />
                 <span asp-validation-for="User.SecurityStamp" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="User.FirstName" class="control-label"></label>
+                <input asp-for="User.FirstName" class="form-control" />
+                <span asp-validation-for="User.FirstName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="User.LastName" class="control-label"></label>
+                <input asp-for="User.LastName" class="form-control" />
+                <span asp-validation-for="User.LastName" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="Address.Line1" class="control-label"></label>

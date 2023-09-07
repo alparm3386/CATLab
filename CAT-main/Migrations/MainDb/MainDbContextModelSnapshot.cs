@@ -369,6 +369,8 @@ namespace CAT.Migrations.MainDb
 
                     b.HasKey("Id");
 
+                    b.HasIndex("ClientId");
+
                     b.ToTable("StoredQuotes");
                 });
 
@@ -546,6 +548,17 @@ namespace CAT.Migrations.MainDb
                 });
 
             modelBuilder.Entity("CAT.Models.Entities.Main.Order", b =>
+                {
+                    b.HasOne("CAT.Models.Entities.Main.Client", "Client")
+                        .WithMany()
+                        .HasForeignKey("ClientId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Client");
+                });
+
+            modelBuilder.Entity("CAT.Models.Entities.Main.StoredQuote", b =>
                 {
                     b.HasOne("CAT.Models.Entities.Main.Client", "Client")
                         .WithMany()

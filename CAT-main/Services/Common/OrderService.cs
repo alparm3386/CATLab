@@ -60,6 +60,9 @@ namespace CAT.Services.Common
                 //add job to the order
                 var job = await AddJobToOrderAsync(order.Id, quote.Id, document.Id);
 
+                //update the job id
+                document.JobId = job.Id;
+
                 //update the order id in the stored quote
                 storedQuote.OrderId = order.Id;
             }

@@ -112,7 +112,12 @@ namespace CAT.Services.Common
 
         public async Task<List<StoredQuote>> GetStoredQuotesAsync(DateTime from, DateTime to)
         {
-            return await _dbContextContainer!.MainContext!.StoredQuotes!.Include(sq => sq.TempQuotes).ThenInclude(tq => tq.TempDocument).Where(quote => quote.DateCreated >= from && quote.DateCreated <= to).ToListAsync();
+            return await _dbContextContainer!.MainContext!.StoredQuotes!
+                .Include(sq => sq.Client)
+                .ThenInclude(c => c.Company)
+                .Include(sq => sq.TempQuotes)
+                .ThenInclude(tq => tq.TempDocument)
+                .Where(quote => quote.DateCreated >= from && quote.DateCreated <= to).ToListAsync();
         }
 
         public async Task<Quote> CreateQuoteFromTempQuoteAsync(int tempQuoteId)

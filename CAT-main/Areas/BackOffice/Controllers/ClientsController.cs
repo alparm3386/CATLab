@@ -121,6 +121,8 @@ namespace CAT.Areas.BackOffice.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,User,Address,CompanyId,Company.Name")] Client client)
         {
+            var clientCopy = new Client() { Address = client.Address, AddressId = client.AddressId, 
+                Company = client.Company, CompanyId = client.CompanyId, User = client.User, UserId = client.UserId  };
             try
             {
                 ModelState.Remove("Company");
@@ -134,7 +136,9 @@ namespace CAT.Areas.BackOffice.Controllers
                     var user = new ApplicationUser
                     {
                         UserName = client.User.UserName,
-                        Email = client.User.Email
+                        Email = client.User.Email,
+                        FirstName = client.User.FirstName,
+                        LastName = client.User.LastName
                     };
 
                     // Use UserManager to create a user
@@ -154,7 +158,8 @@ namespace CAT.Areas.BackOffice.Controllers
                     //save the client
                     client.UserId = user.Id;
                     //client.AddressId = client.Address.Id;
-                    client.Company = null;
+                    client.Company = null!;
+
                     _mainDbContext.Clients.Add(client);
 
                     await _mainDbContext.SaveChangesAsync();
@@ -174,7 +179,7 @@ namespace CAT.Areas.BackOffice.Controllers
                 // Optionally log the error: _logger.LogError(ex, "Error message here");
             }
 
-            return View(client);
+            return View(clientCopy);
         }
 
         // GET: BackOffice/Clients/Edit/5
@@ -185,11 +190,19 @@ namespace CAT.Areas.BackOffice.Controllers
                 return NotFound();
             }
 
-            var client = await _mainDbContext.Clients.FindAsync(id);
+            //the client
+            var client = await _mainDbContext.Clients
+                .Include(c => c.Company)
+                .Include(c => c.Address).FirstOrDefaultAsync(c => c.Id == id);
+
             if (client == null)
             {
                 return NotFound();
             }
+
+            //the user
+            var user = await _identityDbContext.Users.Where(u => u.Id == client.UserId).FirstOrDefaultAsync();
+            client.User = user!;
 
             return View(client);
         }

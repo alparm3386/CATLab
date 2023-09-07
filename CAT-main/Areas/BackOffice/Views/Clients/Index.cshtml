@@ -25,7 +25,10 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.User.UserName)
+                Name
+            </th>
+            <th>
+                Username
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.User.Email)
@@ -37,6 +40,9 @@
         @foreach (var item in Model)
         {
             <tr>
+                <td>
+                    @(item.User.FirstName + " " + item.User.LastName)
+                </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.User.UserName)
                 </td>

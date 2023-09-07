@@ -40,6 +40,7 @@
 
   <ItemGroup>
     <Folder Include="Areas\ClientPortal\" />
+    <Folder Include="Areas\Identity\Data\Migrations\" />
     <Folder Include="Areas\LinguistPortal\" />
     <Folder Include="Controllers\" />
     <Folder Include="Migrations\MainDb\" />
