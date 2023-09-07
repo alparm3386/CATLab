@@ -39,7 +39,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Areas\ClientPortal\" />
+    <Folder Include="Areas\ClientsPortal\Models\ViewModels\" />
     <Folder Include="Areas\Identity\Data\Migrations\" />
     <Folder Include="Areas\LinguistPortal\" />
     <Folder Include="Controllers\" />
