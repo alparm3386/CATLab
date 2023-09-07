@@ -52,7 +52,7 @@ namespace CAT.Areas.BackOffice.Controllers
                 foreach (var client in clients)
                 {
                     var user = await _identityDbContext.Users.Where(u => u.Id == client.UserId).FirstOrDefaultAsync();
-                    client.User = user;
+                    client.User = user!;
                 }
 
                 return View(clients);
@@ -79,10 +79,15 @@ namespace CAT.Areas.BackOffice.Controllers
                     .Include(c => c.Address)
                     .Include(c => c.Company)
                     .FirstOrDefaultAsync(m => m.Id == id);
+
                 if (client == null)
                 {
                     return NotFound();
                 }
+
+                //add the user
+                var user = await _identityDbContext.Users.Where(u => u.Id == client.UserId).FirstOrDefaultAsync();
+                client.User = user;
 
                 return View(client);
             }
