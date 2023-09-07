@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using CAT.Data;
 using CAT.Models.Entities.Main;
+using CAT.Helpers;
+using CAT.Enums;
 
 namespace CAT.Areas.ClientsPortal.Controllers
 {
@@ -14,10 +16,12 @@ namespace CAT.Areas.ClientsPortal.Controllers
     public class JobsController : Controller
     {
         private readonly MainDbContext _mainDbcontext;
+        private readonly IConfiguration _configuration;
 
-        public JobsController(MainDbContext context)
+        public JobsController(MainDbContext context, IConfiguration configuration)
         {
             _mainDbcontext = context;
+            _configuration = configuration;
         }
 
         // GET: BackOffice/ClientsPortal
@@ -73,5 +77,36 @@ namespace CAT.Areas.ClientsPortal.Controllers
 
             return View(job);
         }
+
+        public IActionResult OpenInOnlineEditor(int? jobId)
+        {
+            try
+            {
+                if (jobId == null)
+                {
+                    // Handle the case when the ID is not provided or invalid
+                    // For example, return a 404 Not Found page or show an error message
+                    return NotFound();
+                }
+
+                // Generate the URL
+                //string onlineEditorUrl = "/online-editor?" + UrlHelper.CreateOnlineEditorUrl((int)idJob, OEMode.Admin);
+                string onlineEditorUrl = UrlHelper.CreateOnlineEditorUrl(_configuration!["OnlineEditorBaseUrl"]!, (int)jobId, OEMode.Admin);
+
+
+                // Redirect the request to the new URL in a new tab
+                return Redirect(onlineEditorUrl);
+            }
+            catch (Exception ex)
+            {
+                // Store the error message in TempData
+                TempData["ErrorMessage"] = $"An error occurred: {ex.Message}";
+
+                // Redirect back to the Index page
+                return RedirectToAction(nameof(Index));
+            }
+
+        }
+
     }
 }

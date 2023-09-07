@@ -301,11 +301,11 @@ namespace CAT.Areas.BackOffice.Controllers
 
 
         // GET: Jobs/Open/5
-        public IActionResult OpenInOnlineEditor(int? idJob)
+        public IActionResult OpenInOnlineEditor(int? jobId)
         {
             try
             {
-                if (idJob == null)
+                if (jobId == null)
                 {
                     // Handle the case when the ID is not provided or invalid
                     // For example, return a 404 Not Found page or show an error message
@@ -314,7 +314,7 @@ namespace CAT.Areas.BackOffice.Controllers
 
                 // Generate the URL
                 //string onlineEditorUrl = "/online-editor?" + UrlHelper.CreateOnlineEditorUrl((int)idJob, OEMode.Admin);
-                string onlineEditorUrl = UrlHelper.CreateOnlineEditorUrl(_configuration!["OnlineEditorBaseUrl"]!, (int)idJob, OEMode.Admin);
+                string onlineEditorUrl = UrlHelper.CreateOnlineEditorUrl(_configuration!["OnlineEditorBaseUrl"]!, (int)jobId, OEMode.Admin);
 
 
                 // Redirect the request to the new URL in a new tab
@@ -328,7 +328,6 @@ namespace CAT.Areas.BackOffice.Controllers
                 // Redirect back to the Index page
                 return RedirectToAction(nameof(Index));
             }
-
         }
 
         [HttpPost]

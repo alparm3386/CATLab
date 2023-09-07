@@ -61,7 +61,7 @@
                     @Html.DisplayFor(modelItem => item.Fee)
                 </td>
                 <td>
-                    <a asp-action="OpenInOnlineEditor" asp-route-idJob="@item.Id" target="_blank">Open in Online Editor</a>
+                    <a asp-action="OpenInOnlineEditor" asp-route-jobId="@item.Id" target="_blank">Open in Online Editor</a>
                     <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
                     <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
                     <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
