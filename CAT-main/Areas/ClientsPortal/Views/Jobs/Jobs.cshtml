@@ -1,0 +1,53 @@
+﻿@{
+    ViewData["Title"] = "Jobs";
+}
+
+<h1>Jobs</h1>
+
+@{
+    var jsonModel = @Newtonsoft.Json.JsonConvert.SerializeObject(Model);
+    dynamic model = @Newtonsoft.Json.JsonConvert.DeserializeObject(jsonModel);
+}
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Job reference
+            </th>
+            <th>
+                Description
+            </th>
+            <th>
+                Document
+            </th>
+            <th>
+                Status
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+
+        @foreach (dynamic item in model.jobsWithDocuments)
+        {
+            <tr>
+                <td>
+                    @item.orderId / @item.jobId
+                </td>
+                <td>
+                    @item.sourceLanguage " to " @item.targetLanguage @item.speciality translation
+                </td>
+                <td>
+                    @item.originalFileName
+                </td>
+                <td>
+                    In-progress
+                </td>
+                <td>
+                    <a asp-action="Details" asp-route-id="@item.Id">Details</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
