@@ -132,7 +132,11 @@ namespace CAT.Areas.BackOffice.Services
             //get the orders including jobs, quotes, workflow steps etc...
             var job = await _dbContextContainer.MainContext.Jobs
                         .Include(j => j.Quote)
-                        .Include(j => j.WorkflowSteps).Where(j => j.Id == jobId).FirstOrDefaultAsync();
+                        .Include(j => j.WorkflowSteps)
+                        .Include(j => j.Order)
+                        .ThenInclude(o => o!.Client)
+                        .ThenInclude(c => c.Company)
+                        .Where(j => j.Id == jobId).FirstOrDefaultAsync();
 
 
             //workflow steps
@@ -179,7 +183,9 @@ namespace CAT.Areas.BackOffice.Services
                 words = job.Quote.Words,
                 fee = job.Quote.Fee,
                 onlineEditorLink = UrlHelper.CreateOnlineEditorUrl(_configuration!["OnlineEditorBaseUrl"]!, job.Id, OEMode.Admin),
-                workflowSteps
+                workflowSteps,
+                companyName = job.Order!.Client.Company.Name,
+                companyId = job.Order!.Client.Company.Id
             };
 
             return jobData;

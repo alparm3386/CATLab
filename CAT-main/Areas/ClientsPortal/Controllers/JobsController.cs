@@ -108,5 +108,21 @@ namespace CAT.Areas.ClientsPortal.Controllers
 
         }
 
+        public IActionResult Download(string fileName)
+        {
+            // Define the directory that contains the files
+            var fileDirectory = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "files");
+            var filePath = Path.Combine(fileDirectory, fileName);
+
+            var memory = new MemoryStream();
+            using (var stream = new FileStream("C://Alpar//Tmp302489.properties", FileMode.Open))
+            {
+                stream.CopyTo(memory);
+            }
+            memory.Position = 0;
+
+            // Change application/octet-stream to the particular MIME type of your file
+            return File(memory, "application/octet-stream", Path.GetFileName(filePath));
+        }
     }
 }

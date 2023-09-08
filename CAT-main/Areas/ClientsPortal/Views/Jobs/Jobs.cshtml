@@ -42,8 +42,12 @@
                     @item.originalFileName
                 </td>
                 <td>
-                    In-progress
+                    £@item.fee
                 </td>
+                <td>
+                    <a href="@Url.Action("Download", "Jobs", new { fileName = "yourFileName.ext" })">Download File</a>
+@*                    In-progress
+*@                </td>
                 <td>
                     <a asp-action="OpenInOnlineEditor" asp-route-jobId="@item.jobId" target="_blank">Open in Online Editor</a>
                     <a asp-action="Details" asp-route-id="@item.Id">Details</a>

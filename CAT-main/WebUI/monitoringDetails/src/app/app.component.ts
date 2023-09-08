@@ -32,6 +32,8 @@ export class AppComponent {
     words: {},
     fee: {},
     workflowSteps: [],
+    companyName: '',
+   companyId: '',
   };
 
   constructor(private location: Location, private dataService: DataService) {
