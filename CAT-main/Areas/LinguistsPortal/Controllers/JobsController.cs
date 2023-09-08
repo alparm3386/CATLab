@@ -10,9 +10,9 @@ using CAT.Models.Entities.Main;
 using CAT.Helpers;
 using CAT.Enums;
 
-namespace CAT.Areas.ClientsPortal.Controllers
+namespace CAT.Areas.Linguists.Controllers
 {
-    [Area("ClientsPortal")]
+    [Area("LinguistsPortal")]
     public class JobsController : Controller
     {
         private readonly MainDbContext _mainDbcontext;
@@ -26,7 +26,7 @@ namespace CAT.Areas.ClientsPortal.Controllers
 
         // GET: BackOffice/ClientsPortal
         //[Route("[area]/[controller]/[action]")]
-        [Route("ClientsPortal/Jobs")]
+        [Route("LinguistsPortal/Jobs")]
         public async Task<IActionResult> Jobs()
         {
             //get the jobs
@@ -51,10 +51,10 @@ namespace CAT.Areas.ClientsPortal.Controllers
                                                fileName = d.FileName,
                                                words = j.Quote.Words,
                                                fee = j.Quote.Fee,
-                                               workflowSteps = j.WorkflowSteps,
+                                               workflowSteps = j.WorkflowSteps
                                            }).ToListAsync();
 
-            var viewData = new { jobsWithDocuments, name = "" };
+            var viewData = new { jobsWithDocuments, name = "aaaaa" };
             return View(viewData);
         }
 
@@ -108,21 +108,5 @@ namespace CAT.Areas.ClientsPortal.Controllers
 
         }
 
-        public IActionResult Download(string fileName)
-        {
-            // Define the directory that contains the files
-            var fileDirectory = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "files");
-            var filePath = Path.Combine(fileDirectory, fileName);
-
-            var memory = new MemoryStream();
-            using (var stream = new FileStream("C://Alpar//Tmp302489.properties", FileMode.Open))
-            {
-                stream.CopyTo(memory);
-            }
-            memory.Position = 0;
-
-            // Change application/octet-stream to the particular MIME type of your file
-            return File(memory, "application/octet-stream", Path.GetFileName(filePath));
-        }
     }
 }

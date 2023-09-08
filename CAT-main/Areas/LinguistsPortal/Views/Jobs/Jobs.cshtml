@@ -34,11 +34,6 @@
 
         @foreach (dynamic item in model.jobsWithDocuments)
         {
-            // Using LINQ to query the JArray and find the desired element.
-            var workflowSteps = (Newtonsoft.Json.Linq.JArray)item.workflowSteps;
-            var currentStep = workflowSteps.Children<Newtonsoft.Json.Linq.JObject>()
-            .FirstOrDefault(o => o["Status"] != null && o["Status"]!.ToString() == "1");
-
             <tr>
                 <td>
                     @item.orderId / @item.jobId
@@ -51,19 +46,13 @@
                 </td>
                 <td>
                     £@item.fee
+                </td>
                 <td>
-                        @if (currentStep != null && (string)currentStep["TaskId"] == "100")
-                        {
-                            <text><a href="@Url.Action("Download", "Jobs", new { fileName = "yourFileName.ext" })">Download File</a></text>
-                        }
-                        else
-                        {
-                            <text>In-progress</text>
-                        }
+                    In-progress
                 </td>
                 <td>
                     <a asp-action="OpenInOnlineEditor" asp-route-jobId="@item.jobId" target="_blank">Open in Online Editor</a>
-                    @*<a asp-action="Details" asp-route-id="@item.Id">Details</a>*@ 
+                    <a asp-action="Details" asp-route-id="@item.Id">Details</a>
                 </td>
             </tr>
         }
