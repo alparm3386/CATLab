@@ -4,6 +4,7 @@ using CAT.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CAT.Migrations.MainDb
 {
     [DbContext(typeof(MainDbContext))]
-    partial class MainDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230909093349_Linguists")]
+    partial class Linguists
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -287,58 +290,6 @@ namespace CAT.Migrations.MainDb
                     b.ToTable("Languages");
                 });
 
-            modelBuilder.Entity("CAT.Models.Entities.Main.Linguist", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("LinguistsLanguagePairsId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("LinguistsLanguagePairsId");
-
-                    b.ToTable("Linguists");
-                });
-
-            modelBuilder.Entity("CAT.Models.Entities.Main.LinguistLanguagePair", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Comments")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("Roles")
-                        .HasColumnType("int");
-
-                    b.Property<int>("SourceLanguage")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Speciality")
-                        .HasColumnType("int");
-
-                    b.Property<int>("TargetLanguage")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("LinguistLanguagePairs");
-                });
-
             modelBuilder.Entity("CAT.Models.Entities.Main.Order", b =>
                 {
                     b.Property<int>("Id")
@@ -597,17 +548,6 @@ namespace CAT.Migrations.MainDb
                     b.Navigation("Order");
 
                     b.Navigation("Quote");
-                });
-
-            modelBuilder.Entity("CAT.Models.Entities.Main.Linguist", b =>
-                {
-                    b.HasOne("CAT.Models.Entities.Main.LinguistLanguagePair", "LinguistsLanguagePairs")
-                        .WithMany()
-                        .HasForeignKey("LinguistsLanguagePairsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("LinguistsLanguagePairs");
                 });
 
             modelBuilder.Entity("CAT.Models.Entities.Main.Order", b =>

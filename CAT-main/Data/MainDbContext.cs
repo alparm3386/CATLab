@@ -41,6 +41,10 @@ namespace CAT.Data
 
         public DbSet<TempDocument> TempDocuments { get; set; } = default!;
 
+        public DbSet<Linguist> Linguists { get; set; } = default!;
+
+        public DbSet<LinguistLanguagePair> LinguistLanguagePairs { get; set; } = default!;
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             //DocumentFilter indexes
