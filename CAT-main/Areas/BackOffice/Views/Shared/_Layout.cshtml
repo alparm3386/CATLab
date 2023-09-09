@@ -50,6 +50,29 @@
                                 <li><a class="dropdown-item" asp-area="BackOffice" asp-controller="Quotes" asp-action="Index">Quotes</a></li>
                             </ul>
                         </li>
+
+                        <!-- Admin dropdown -->
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="clientsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Admin
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="clientsDropdown">
+                                <li><a class="dropdown-item" asp-area="BackOffice" asp-controller="Companies" asp-action="Index">Users</a></li>
+                                <li><a class="dropdown-item" asp-area="BackOffice" asp-controller="Quotes" asp-action="Create">Reports</a></li>
+                                <li><a class="dropdown-item" asp-area="BackOffice" asp-controller="Quotes" asp-action="Index">Rates</a></li>
+                            </ul>
+                        </li>
+
+                        <!-- Linguists dropdown -->
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="clientsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Linguists
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="clientsDropdown">
+                                <li><a class="dropdown-item" asp-area="BackOffice" asp-controller="Companies" asp-action="Index">Administration</a></li>
+                                <li><a class="dropdown-item" asp-area="BackOffice" asp-controller="Quotes" asp-action="Create">Recruitment</a></li>
+                            </ul>
+                        </li>
                     </ul>
 
                     <partial name="_LoginPartial" />
