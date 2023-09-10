@@ -9,6 +9,7 @@ using CAT.Data;
 using CAT.Models.Entities.Main;
 using CAT.Helpers;
 using CAT.Enums;
+using Microsoft.AspNetCore.Authorization;
 
 namespace CAT.Areas.Linguists.Controllers
 {

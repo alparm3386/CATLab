@@ -73,9 +73,10 @@ builder.Services.AddCors(options =>
 
 builder.Services.AddAuthorization(options =>
 {
-    options.AddPolicy("Admins", policy => policy.RequireRole("Admin"));
-    options.AddPolicy("Linguists", policy => policy.RequireRole("Linguist"));
-    options.AddPolicy("Clients", policy => policy.RequireRole("Client"));
+    options.AddPolicy("AdminsOnly", policy => policy.RequireRole("Admin"));
+    options.AddPolicy("ClientsOnly", policy => policy.RequireRole("Client"));
+    options.AddPolicy("LinguistsOnly", policy => policy.RequireRole("Linguist"));
+    //options.AddPolicy("ClientsOrAdmins", policy => policy.RequireRole("Admin", "Client"));
     // Add other policies as needed
 });
 
@@ -93,23 +94,6 @@ if (app.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();
 }
-
-app.MapAreaControllerRoute(
-    name: "BackOfficeRoute",
-    areaName: "BackOffice",
-    pattern: "BackOffice/{controller=Home}/{action=Index}/{id?}")
-.RequireAuthorization("Admins");  // Apply the policy
-app.MapAreaControllerRoute(
-    name: "ClientsRoute",
-    areaName: "ClientsPortal",
-    pattern: "ClientsPortal/{controller=Home}/{action=Index}/{id?}")
-//.RequireAuthorization("Admins")
-.RequireAuthorization("Clients"); ;  // Apply the policy
-app.MapAreaControllerRoute(
-    name: "LinguistsRoute",
-    areaName: "LinguistsPortal",
-    pattern: "LinguistsPortal/{controller=Home}/{action=Index}/{id?}")
-.RequireAuthorization("Linguists");  // Apply the policy
 
 using (var scope = app.Services.CreateScope())
 {
@@ -149,6 +133,23 @@ app.UseCors(builder => builder
 
 app.UseRouting();
 
+
+app.MapAreaControllerRoute(
+    name: "BackOfficeRoute",
+    areaName: "BackOffice",
+    pattern: "BackOffice/{controller=Home}/{action=Index}/{id?}")
+.RequireAuthorization("AdminsOnly");  // Apply the policy
+//app.MapAreaControllerRoute(
+//    name: "ClientsRoute",
+//    areaName: "ClientsPortal",
+//    pattern: "ClientsPortal")
+//.RequireAuthorization("ClientsOnly"); ;  // Apply the policy
+//app.MapAreaControllerRoute(
+//    name: "LinguistsRoute",
+//    areaName: "LinguistsPortal",
+//    pattern: "LinguistsPortal")
+//.RequireAuthorization("LinguistsOnly");  // Apply the policy
+
 //areas
 app.MapControllerRoute(
     name: "areas",
@@ -160,11 +161,12 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.UseAuthentication();
-app.UseMiddleware<RoleBasedRedirectMiddleware>();
+//app.UseMiddleware<RoleBasedRedirectMiddleware>();
 app.UseAuthorization();
 
 app.MapRazorPages();
 
+//Middlewares
 app.Use(async (context, next) =>
 {
     if (context.Request.Path.Value == "/")
@@ -175,28 +177,39 @@ app.Use(async (context, next) =>
     await next.Invoke();
 });
 
-//Middlewares
+app.Use(async (context, next) =>
+{
+    var user = context.User;
+    if (user.Identity.IsAuthenticated)
+    {
+        var roles = user.FindAll(System.Security.Claims.ClaimTypes.Role).Select(c => c.Value);
+        // Log roles or print them
+        Console.WriteLine(string.Join(",", roles));
+    }
+    await next();
+});
+
 app.UseMiddleware<AuthDebugMiddleware>();
 //app.UseMiddleware<TransactionMiddleware>();
 
 app.Run();
 
-async System.Threading.Tasks.Task EnsureRoleCreated(WebApplication app)
-{
-    using var serviceScope = app.Services.CreateScope();
-    var serviceProvider = serviceScope.ServiceProvider;
-    var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+//async System.Threading.Tasks.Task EnsureRoleCreated(WebApplication app)
+//{
+//    using var serviceScope = app.Services.CreateScope();
+//    var serviceProvider = serviceScope.ServiceProvider;
+//    var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
 
-    if (!await roleManager.RoleExistsAsync("Admin"))
-    {
-        await roleManager.CreateAsync(new IdentityRole("Admin"));
-    }
-    if (!await roleManager.RoleExistsAsync("Client"))
-    {
-        await roleManager.CreateAsync(new IdentityRole("Client"));
-    }
-    if (!await roleManager.RoleExistsAsync("Linguist"))
-    {
-        await roleManager.CreateAsync(new IdentityRole("Linguist"));
-    }
-}
+//    if (!await roleManager.RoleExistsAsync("Admin"))
+//    {
+//        await roleManager.CreateAsync(new IdentityRole("Admin"));
+//    }
+//    if (!await roleManager.RoleExistsAsync("Client"))
+//    {
+//        await roleManager.CreateAsync(new IdentityRole("Client"));
+//    }
+//    if (!await roleManager.RoleExistsAsync("Linguist"))
+//    {
+//        await roleManager.CreateAsync(new IdentityRole("Linguist"));
+//    }
+//}

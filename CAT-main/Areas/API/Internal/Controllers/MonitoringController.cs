@@ -9,7 +9,7 @@ namespace CAT.Areas.API.Internal.Controllers
     [Area("API")]
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Policy = "AdminOnly")]
+    [Authorize(Policy = "AdminsOnly")]
     public class MonitoringController : ControllerBase
     {
         private IMonitoringService _monitoringService;
