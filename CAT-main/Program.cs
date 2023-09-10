@@ -46,7 +46,6 @@ builder.Services.AddScoped<IWorkflowService, WorkflowService>();
 builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
 builder.Services.AddControllersWithViews().AddRazorRuntimeCompilation();
 builder.Services.AddAntiforgery(options => options.HeaderName = "XSRF-TOKEN");
-builder.Services.AddTransient<IEmailSender, SmtpEmailSender>();
 
 builder.Services.TryAddEnumerable(new[]
     {
@@ -81,6 +80,8 @@ builder.Services.AddAuthorization(options =>
 
 //the logger
 builder.Logging.AddProvider(new Log4NetLoggerProvider("log4net.config"));
+
+builder.Services.AddTransient<IEmailSender, SmtpEmailSender>();
 
 var app = builder.Build();
 
