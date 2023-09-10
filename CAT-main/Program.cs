@@ -13,6 +13,7 @@ using CAT.Enums;
 using Microsoft.Extensions.FileProviders;
 using CAT.Areas.BackOffice.Services;
 using Microsoft.Extensions.DependencyInjection;
+using CAT.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -159,6 +160,10 @@ app.Use(async (context, next) =>
     }
     await next.Invoke();
 });
+
+//Middlewares
+app.UseMiddleware<AuthDebugMiddleware>();
+app.UseMiddleware<TransactionMiddleware>();
 
 app.Run();
 
