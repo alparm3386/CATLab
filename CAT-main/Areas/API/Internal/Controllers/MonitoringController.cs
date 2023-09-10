@@ -1,12 +1,15 @@
 ﻿using CAT.Services.Common;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace CAT.Areas.API.Internal.Controllers
 {
+    [Area("API")]
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(Policy = "AdminOnly")]
     public class MonitoringController : ControllerBase
     {
         private IMonitoringService _monitoringService;

@@ -12,6 +12,7 @@ using CAT.Services.MT;
 using CAT.Enums;
 using Microsoft.Extensions.FileProviders;
 using CAT.Areas.BackOffice.Services;
+using Microsoft.Extensions.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -55,6 +56,7 @@ builder.Services.TryAddEnumerable(new[]
     });
 
 builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
+    .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<IdentityDbContext>();
 
 builder.Services.AddRazorPages();
@@ -70,10 +72,30 @@ builder.Services.AddCors(options =>
     });
 });
 
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("AdminOnly", policy => policy.RequireRole("Admin"));
+    // Add other policies as needed
+});
+
+
 //the logger
 builder.Logging.AddProvider(new Log4NetLoggerProvider("log4net.config"));
 
 var app = builder.Build();
+
+EnsureRoleCreated(app).Wait();
+
+if (app.Environment.IsDevelopment())
+{
+    app.UseDeveloperExceptionPage();
+}
+
+app.MapAreaControllerRoute(
+    name: "BackOfficeRoute",
+    areaName: "BackOffice",
+    pattern: "BackOffice/{controller=Home}/{action=Index}/{id?}")
+.RequireAuthorization("AdminOnly");  // Apply the policy
 
 using (var scope = app.Services.CreateScope())
 {
@@ -139,3 +161,15 @@ app.Use(async (context, next) =>
 });
 
 app.Run();
+
+async System.Threading.Tasks.Task EnsureRoleCreated(WebApplication app)
+{
+    using var serviceScope = app.Services.CreateScope();
+    var serviceProvider = serviceScope.ServiceProvider;
+    var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+
+    if (!await roleManager.RoleExistsAsync("Admin"))
+    {
+        await roleManager.CreateAsync(new IdentityRole("Admin"));
+    }
+}
