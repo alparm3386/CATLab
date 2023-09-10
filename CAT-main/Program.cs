@@ -16,6 +16,7 @@ using Microsoft.Extensions.DependencyInjection;
 using CAT.Middleware;
 using System.Data;
 using System.Net;
+using System.Security.Claims;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -171,13 +172,49 @@ app.MapRazorPages();
 //Middlewares
 app.Use(async (context, next) =>
 {
-    if (context.Request.Path.Value == "/")
+  if (context.Request.Path.Value == "/" || context.Request.Path.Value == "/index" || context.Request.Path.Value == "/home")
     {
-        context.Response.Redirect("/BackOffice/Monitoring");
-        return;
+        var user = context.User;
+        if (user.Identity.IsAuthenticated)
+        {
+            var roles = user.FindAll(ClaimTypes.Role).Select(c => c.Value);
+
+            if (roles.Contains("Admin"))
+            {
+                context.Response.Redirect("/BackOffice/Monitoring");
+                return;
+            }
+            else if (roles.Contains("Client"))
+            {
+                context.Response.Redirect("/ClientsPortal/Jobs");
+                return;
+            }
+            else if (roles.Contains("Linguist"))
+            {
+                context.Response.Redirect("/LinguistsPortal/Jobs");
+                return;
+            }
+            else
+            {
+                // If none of the above roles match, you can decide to redirect them to a common area
+                // or just continue processing the request.
+                await next.Invoke();
+                return;
+            }
+        }
+        else
+        {
+            // For unauthenticated users, you can decide where you want to redirect them
+            // or just continue processing the request.
+            context.Response.Redirect("/Identity/Account/Login");
+            //await next.Invoke();
+            return;
+        }
     }
+
     await next.Invoke();
 });
+
 
 app.Use(async (context, next) =>
 {
