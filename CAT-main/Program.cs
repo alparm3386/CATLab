@@ -44,10 +44,9 @@ builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IMonitoringService, MonitoringService>();
 builder.Services.AddScoped<IWorkflowService, WorkflowService>();
 builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
-
 builder.Services.AddControllersWithViews().AddRazorRuntimeCompilation();
-
 builder.Services.AddAntiforgery(options => options.HeaderName = "XSRF-TOKEN");
+builder.Services.AddTransient<IEmailSender, SmtpEmailSender>();
 
 builder.Services.TryAddEnumerable(new[]
     {
@@ -148,6 +147,7 @@ app.MapControllerRoute(
 
 app.UseAuthentication();
 app.UseAuthorization();
+app.UseMiddleware<RoleBasedRedirectMiddleware>();
 
 app.MapRazorPages();
 
@@ -163,7 +163,7 @@ app.Use(async (context, next) =>
 
 //Middlewares
 app.UseMiddleware<AuthDebugMiddleware>();
-app.UseMiddleware<TransactionMiddleware>();
+//app.UseMiddleware<TransactionMiddleware>();
 
 app.Run();
 
@@ -176,5 +176,13 @@ async System.Threading.Tasks.Task EnsureRoleCreated(WebApplication app)
     if (!await roleManager.RoleExistsAsync("Admin"))
     {
         await roleManager.CreateAsync(new IdentityRole("Admin"));
+    }
+    if (!await roleManager.RoleExistsAsync("Client"))
+    {
+        await roleManager.CreateAsync(new IdentityRole("Client"));
+    }
+    if (!await roleManager.RoleExistsAsync("Linguist"))
+    {
+        await roleManager.CreateAsync(new IdentityRole("Linguist"));
     }
 }
