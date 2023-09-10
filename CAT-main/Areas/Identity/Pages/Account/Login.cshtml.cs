@@ -22,11 +22,13 @@ namespace CAT.Areas.Identity.Pages.Account
     {
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly ILogger<LoginModel> _logger;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public LoginModel(SignInManager<ApplicationUser> signInManager, ILogger<LoginModel> logger)
+        public LoginModel(SignInManager<ApplicationUser> signInManager, ILogger<LoginModel> logger, UserManager<ApplicationUser> userManager)
         {
             _signInManager = signInManager;
             _logger = logger;
+            _userManager = userManager;
         }
 
         /// <summary>
@@ -116,7 +118,31 @@ namespace CAT.Areas.Identity.Pages.Account
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User logged in.");
-                    return LocalRedirect(returnUrl);
+
+                    var user = await _userManager.FindByEmailAsync(Input.Email);
+                    var roles = await _userManager.GetRolesAsync(user);
+
+                    if (!String.IsNullOrEmpty(returnUrl))
+                        return LocalRedirect(returnUrl);
+
+                    if (roles.Contains("Admin"))
+                    {
+                        return RedirectToAction("Index", "Monitoring", new { area = "BackOffice" });
+                    }
+                    else if (roles.Contains("Client"))
+                    {
+                        return RedirectToAction("Jobs", "Jobs", new { area = "ClientsPortal" });
+                    }
+                    else if (roles.Contains("Linguist"))
+                    {
+                        return RedirectToAction("Jobs", "Jobs", new { area = "LinguistsPortal" });
+                    }
+                    else
+                    {
+                        // Default redirection or handle unassigned roles.
+                        return RedirectToAction("Index", "Home");
+                    }
+
                 }
                 if (result.RequiresTwoFactor)
                 {

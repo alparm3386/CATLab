@@ -14,6 +14,8 @@ using Microsoft.Extensions.FileProviders;
 using CAT.Areas.BackOffice.Services;
 using Microsoft.Extensions.DependencyInjection;
 using CAT.Middleware;
+using System.Data;
+using System.Net;
 
 var builder = WebApplication.CreateBuilder(args);
 
