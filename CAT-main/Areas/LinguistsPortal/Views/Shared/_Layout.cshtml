@@ -37,11 +37,9 @@
                             <a class="nav-link" asp-area="ClientsPortal" asp-controller="Users" asp-action="Jobs">Settings</a>
                         </li>
                     </ul>
-                    <span class="nav-item ms-auto d-flex">
-                        <!-- This class pushes the item to the right -->
-                        <i class="fa-regular fa-user fa-regular fa-user mt-1 me-2"></i>
-                        <a class="nav-link" href="#">My profile</a>
-                    </span>
+                    <div class="ms-auto">
+                        <partial name="_LoginPartial" />
+                    </div>
                 </div>
             </div>
         </nav>

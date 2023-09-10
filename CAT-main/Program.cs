@@ -73,7 +73,9 @@ builder.Services.AddCors(options =>
 
 builder.Services.AddAuthorization(options =>
 {
-    options.AddPolicy("AdminOnly", policy => policy.RequireRole("Admin"));
+    options.AddPolicy("Admins", policy => policy.RequireRole("Admin"));
+    options.AddPolicy("Linguists", policy => policy.RequireRole("Linguist"));
+    options.AddPolicy("Clients", policy => policy.RequireRole("Client"));
     // Add other policies as needed
 });
 
@@ -85,7 +87,7 @@ builder.Services.AddTransient<IEmailSender, SmtpEmailSender>();
 
 var app = builder.Build();
 
-EnsureRoleCreated(app).Wait();
+//EnsureRoleCreated(app).Wait();
 
 if (app.Environment.IsDevelopment())
 {
@@ -96,7 +98,18 @@ app.MapAreaControllerRoute(
     name: "BackOfficeRoute",
     areaName: "BackOffice",
     pattern: "BackOffice/{controller=Home}/{action=Index}/{id?}")
-.RequireAuthorization("AdminOnly");  // Apply the policy
+.RequireAuthorization("Admins");  // Apply the policy
+app.MapAreaControllerRoute(
+    name: "ClientsRoute",
+    areaName: "ClientsPortal",
+    pattern: "ClientsPortal/{controller=Home}/{action=Index}/{id?}")
+//.RequireAuthorization("Admins")
+.RequireAuthorization("Clients"); ;  // Apply the policy
+app.MapAreaControllerRoute(
+    name: "LinguistsRoute",
+    areaName: "LinguistsPortal",
+    pattern: "LinguistsPortal/{controller=Home}/{action=Index}/{id?}")
+.RequireAuthorization("Linguists");  // Apply the policy
 
 using (var scope = app.Services.CreateScope())
 {
@@ -147,8 +160,8 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.UseAuthentication();
-app.UseAuthorization();
 app.UseMiddleware<RoleBasedRedirectMiddleware>();
+app.UseAuthorization();
 
 app.MapRazorPages();
 
