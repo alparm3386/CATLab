@@ -57,7 +57,7 @@ namespace CAT.Areas.BackOffice.Controllers
             catch (Exception ex)
             {
                 //_logger.LogError(ex, "LinguistsController->Index");
-                ModelState.AddModelError(string.Empty, ex.Message);
+                ViewData["ErrorMessage"] = ex.Message;
                 return View(new List<Linguist>());
             }
         }
@@ -67,15 +67,20 @@ namespace CAT.Areas.BackOffice.Controllers
         {
             try
             {
-                var linguist = await _mainDbContext.Linguists.FirstOrDefaultAsync(m => m.Id == id);
+                //the linguist
+                var linguist = await _mainDbContext.Linguists.Include(c => c.Address).FirstOrDefaultAsync(c => c.Id == id);
+
+                //the user
+                var user = await _identityDbContext.Users.Where(u => u.Id == linguist!.UserId).FirstOrDefaultAsync();
+                linguist!.User = user!;
 
                 return View(linguist);
             }
             catch (Exception ex)
             {
                 //_logger.LogError(ex, "LinguistsController->Index");
-                ModelState.AddModelError(string.Empty, ex.Message);
-                return View(new List<Linguist>());
+                ViewData["ErrorMessage"] = ex.Message;
+                return View(new Linguist());
             }
         }
 
@@ -135,7 +140,7 @@ namespace CAT.Areas.BackOffice.Controllers
                     _mainDbContext.Addresses.Add(linguist.Address);
                     await _mainDbContext.SaveChangesAsync();
 
-                    //save the client
+                    //save the linguist
                     linguist.UserId = user.Id;
 
                     _mainDbContext.Linguists.Add(linguist);
@@ -143,6 +148,8 @@ namespace CAT.Areas.BackOffice.Controllers
                     await _mainDbContext.SaveChangesAsync();
                     return RedirectToAction(nameof(Index));
                 }
+                else
+                    throw new Exception("Invalid model state.");
             }
             catch (Exception ex)
             {
@@ -158,7 +165,7 @@ namespace CAT.Areas.BackOffice.Controllers
         {
             try
             {
-                //the client
+                //the linguist
                 var linguist = await _mainDbContext.Linguists.Include(c => c.Address).FirstOrDefaultAsync(c => c.Id == id);
 
                 //the user
@@ -173,7 +180,7 @@ namespace CAT.Areas.BackOffice.Controllers
                 ModelState.AddModelError(string.Empty, ex.Message);
             }
 
-            return View(new Client());
+            return View(new Linguist());
         }
 
         // POST: BackOffice/Linguists/Edit/5
@@ -185,7 +192,7 @@ namespace CAT.Areas.BackOffice.Controllers
         {
             try
             {
-                //the client
+                //the linguist
                 var storedLinguist = await _mainDbContext.Linguists.Include(c => c.Address).FirstOrDefaultAsync(c => c.Id == id);
                 //the user
                 var storedUser = await _identityDbContext.Users.Where(u => u.Id == linguist!.UserId).FirstOrDefaultAsync();
@@ -225,6 +232,8 @@ namespace CAT.Areas.BackOffice.Controllers
 
                     return RedirectToAction(nameof(Index));
                 }
+                else
+                    throw new Exception("Invalid model state.");
             }
             catch (Exception ex)
             {
@@ -241,7 +250,7 @@ namespace CAT.Areas.BackOffice.Controllers
             try
             {
                 throw new Exception("Operation is not allowed.");
-                ////the client
+                ////the linguist
                 //var linguist = await _mainDbContext.Linguists.Include(c => c.Address).FirstOrDefaultAsync(c => c.Id == id);
 
                 ////the user

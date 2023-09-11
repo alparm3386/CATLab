@@ -4,7 +4,14 @@
     ViewData["Title"] = "Details";
 }
 
-<h1>Details</h1>
+<h1>Linguist details</h1>
+
+@if (ViewData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">
+        @ViewData["ErrorMessage"]
+    </div>
+}
 
 <div>
     <h4>Linguist</h4>
@@ -64,12 +71,12 @@
         <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Address.Country)
         </dd>
-        <dt class="col-sm-2">
+        @*<dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Address.Region)
         </dt>
         <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Address.Region)
-        </dd>
+        </dd>*@
         <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Address.Phone)
         </dt>
