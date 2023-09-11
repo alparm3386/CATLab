@@ -55,14 +55,15 @@ namespace CAT.Areas.BackOffice.Controllers
 
                 return View(clients);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 // set error message here that is displayed in the view
-                ViewData["ErrorMessage"] = "There was an error processing your request. Please try again later.";
+                //ViewData["ErrorMessage"] = "There was an error processing your request. Please try again later.";
+                ViewData["ErrorMessage"] = ex.Message;
                 // Optionally log the error: _logger.LogError(ex, "Error message here");
             }
 
-            return View();
+            return View(new List<Client>());
         }
 
         // GET: BackOffice/Clients/Details/5
@@ -85,7 +86,7 @@ namespace CAT.Areas.BackOffice.Controllers
 
                 //add the user
                 var user = await _identityDbContext.Users.Where(u => u.Id == client.UserId).FirstOrDefaultAsync();
-                client.User = user;
+                client.User = user!;
 
                 return View(client);
             }
@@ -239,7 +240,7 @@ namespace CAT.Areas.BackOffice.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,CompanyId,UserId,AddressId")] Client client)
+        public async Task<IActionResult> Edit(int id, Client client)
         {
             if (id != client.Id)
             {

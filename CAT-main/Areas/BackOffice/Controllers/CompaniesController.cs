@@ -31,7 +31,7 @@ namespace CAT.Areas.BackOffice.Controllers
             {
                 //_logger.LogError(ex, "LinguistsController->Index");
                 ViewData["ErrorMessage"] = ex.Message;
-                return View();
+                return View(new List<Company>());
             }
         }
 
@@ -117,15 +117,28 @@ namespace CAT.Areas.BackOffice.Controllers
         {
             try
             {
-                if (id != company.Id)
-                {
-                    return NotFound();
-                }
+                var storedCompany = await _context.Companies
+                    .Include(c => c.Address)
+                    .FirstOrDefaultAsync(c => c.Id == id);
+
+                if (storedCompany == null)
+                    throw new Exception("Company not found.");
 
                 if (!ModelState.IsValid)
                     throw new Exception("Invalid model state.");
 
-                _context.Update(company);
+                //the comany
+                storedCompany.Name = company.Name;
+
+                //the address
+                storedCompany!.Address.Line1 = company.Address.Line1;
+                storedCompany.Address.Line2 = company.Address.Line2;
+                storedCompany.Address.City = company.Address.City;
+                storedCompany.Address.PostalCode = company.Address.PostalCode;
+                storedCompany.Address.Country = company.Address.Country;
+                //storedLinguist.Address.Region = linguist.Address.Region;
+                storedCompany.Address.Phone = company.Address.Phone;
+
                 await _context.SaveChangesAsync();
 
                 return RedirectToAction(nameof(Index));
