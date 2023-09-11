@@ -9,7 +9,7 @@ namespace CAT.Services.Common
 
         public SmtpEmailSender(IConfiguration configuration)
         {
-            _smtpSettings = configuration.GetSection("SmtpSettings").Get<SmtpSettings>();
+            _smtpSettings = configuration!.GetSection("SmtpSettings")!.Get<SmtpSettings>()!;
         }
 
         public async Task SendEmailAsync(string email, string subject, string message)

@@ -23,7 +23,6 @@ namespace CAT.Areas.BackOffice.Controllers
         private readonly ILogger _logger;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IUserStore<ApplicationUser> _userStore;
-        private readonly IUserEmailStore<ApplicationUser> _emailStore;
 
         public ClientsController(MainDbContext mainDbContext, IdentityDbContext identityDbContext, UserManager<ApplicationUser> userManager,
             IUserStore<ApplicationUser> userStore, ILogger<ClientsController> logger)
@@ -33,7 +32,6 @@ namespace CAT.Areas.BackOffice.Controllers
             _logger = logger;
             _userManager = userManager;
             _userStore = userStore;
-            _emailStore = GetEmailStore();
         }
 
         // GET: BackOffice/Clients
@@ -151,7 +149,9 @@ namespace CAT.Areas.BackOffice.Controllers
                     };
 
                     await _userStore.SetUserNameAsync(user, client.User.Email, CancellationToken.None);
-                    await _emailStore.SetEmailAsync(user, client.User.Email, CancellationToken.None);
+                    var emailStore = (IUserEmailStore<ApplicationUser>)_userStore;
+                    await emailStore.SetEmailAsync(user, user.Email, CancellationToken.None);
+                    await emailStore.SetEmailAsync(user, client.User.Email, CancellationToken.None);
 
                     // Use UserManager to create a user
                     var result = await _userManager.CreateAsync(user, client.User.PasswordHash!);

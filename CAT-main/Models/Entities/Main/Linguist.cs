@@ -18,5 +18,10 @@ namespace CAT.Models.Entities.Main
         public ApplicationUser User { get; set; } = default!;
 
         public ICollection<LinguistLanguagePair> LinguistsLanguagePairs { get; set; } = default!;
+
+        public int AddressId { get; set; }
+
+        public Address Address { get; set; } = default!;
+
     }
 }

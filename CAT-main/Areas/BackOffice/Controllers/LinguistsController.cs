@@ -7,43 +7,76 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using CAT.Data;
 using CAT.Models.Entities.Main;
+using Microsoft.AspNetCore.Identity;
+using CAT.Areas.Identity.Data;
+using CAT.Areas.BackOffice.Models.ViewModels;
+using System.Net;
+using System.Linq.Expressions;
 
 namespace CAT.Areas.BackOffice.Controllers
 {
     [Area("BackOffice")]
     public class LinguistsController : Controller
     {
-        private readonly MainDbContext _context;
+        private readonly MainDbContext _mainDbContext;
+        private readonly IdentityDbContext _identityDbContext;
+        private readonly ILogger _logger;
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IUserStore<ApplicationUser> _userStore;
 
-        public LinguistsController(MainDbContext context)
+        public LinguistsController(MainDbContext mainDbContext, IdentityDbContext identityDbContext, UserManager<ApplicationUser> userManager,
+            IUserStore<ApplicationUser> userStore, ILogger<LinguistsController> logger)
         {
-            _context = context;
+            _mainDbContext = mainDbContext;
+            _identityDbContext = identityDbContext;
+            _logger = logger;
+            _userManager = userManager;
+            _userStore = userStore;
         }
 
         // GET: BackOffice/Linguists
         public async Task<IActionResult> Index()
         {
-            return _context.Linguists != null ?
-                        View(await _context.Linguists.ToListAsync()) :
-                        Problem("Entity set 'MainDbContext.Linguists'  is null.");
+            try
+            {
+                var linguists = await _mainDbContext.Linguists.ToListAsync();
+
+                //join into the users table 
+                linguists = (from linguist in linguists
+                             join user in _identityDbContext.Users on linguist.UserId equals user.Id
+                             select new Linguist
+                             {
+                                 Id = linguist.Id,
+                                 UserId = linguist.UserId,
+                                 LinguistsLanguagePairs = linguist.LinguistsLanguagePairs,
+                                 User = user
+                             }).ToList();
+
+                return View(linguists);
+            }
+            catch (Exception ex)
+            {
+                //_logger.LogError(ex, "LinguistsController->Index");
+                ModelState.AddModelError(string.Empty, ex.Message);
+                return View(new List<Linguist>());
+            }
         }
 
         // GET: BackOffice/Linguists/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null || _context.Linguists == null)
+            try
             {
-                return NotFound();
-            }
+                var linguist = await _mainDbContext.Linguists.FirstOrDefaultAsync(m => m.Id == id);
 
-            var linguist = await _context.Linguists
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (linguist == null)
+                return View(linguist);
+            }
+            catch (Exception ex)
             {
-                return NotFound();
+                //_logger.LogError(ex, "LinguistsController->Index");
+                ModelState.AddModelError(string.Empty, ex.Message);
+                return View(new List<Linguist>());
             }
-
-            return View(linguist);
         }
 
         // GET: BackOffice/Linguists/Create
@@ -57,31 +90,86 @@ namespace CAT.Areas.BackOffice.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,UserId")] Linguist linguist)
+        public async Task<IActionResult> Create(Linguist linguist)
         {
-            if (ModelState.IsValid)
+            try
             {
-                _context.Add(linguist);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                if (ModelState.IsValid)
+                {
+                    if (linguist.User.PasswordHash != linguist.User.SecurityStamp)
+                        throw new Exception("passwords don't match.");
+
+                    //save the user
+                    var user = new ApplicationUser
+                    {
+                        UserName = linguist.User.UserName,
+                        Email = linguist.User.Email,
+                        FirstName = linguist.User.FirstName,
+                        LastName = linguist.User.LastName
+                    };
+
+                    await _userStore.SetUserNameAsync(user, user.Email, CancellationToken.None);
+                    var emailStore = (IUserEmailStore<ApplicationUser>)_userStore;
+                    await emailStore.SetEmailAsync(user, user.Email, CancellationToken.None);
+
+                    // Use UserManager to create a user
+                    var result = await _userManager.CreateAsync(user, linguist.User.PasswordHash!);
+
+                    if (result.Succeeded)
+                    {
+                        linguist.UserId = user.Id;
+                        user.EmailConfirmed = true;
+                        await _userManager.UpdateAsync(user);
+                    }
+                    else
+                    {
+                        var errorMessages = result.Errors.Select(e => e.Description);
+                        throw new Exception(string.Join(" ", errorMessages));
+                    }
+
+                    //save the address
+                    _mainDbContext.Addresses.Add(linguist.Address);
+                    await _mainDbContext.SaveChangesAsync();
+
+                    //save the client
+                    linguist.UserId = user.Id;
+
+                    _mainDbContext.Linguists.Add(linguist);
+
+                    await _mainDbContext.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
+                }
             }
+            catch (Exception ex)
+            {
+                //_logger.LogError(ex, "LinguistsController->Index");
+                ModelState.AddModelError(string.Empty, ex.Message);
+            }
+
             return View(linguist);
         }
 
         // GET: BackOffice/Linguists/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null || _context.Linguists == null)
+            try
             {
-                return NotFound();
+                //the client
+                var linguist = await _mainDbContext.Linguists.Include(c => c.Address).FirstOrDefaultAsync(c => c.Id == id);
+
+                //the user
+                var user = await _identityDbContext.Users.Where(u => u.Id == linguist!.UserId).FirstOrDefaultAsync();
+                linguist!.User = user!;
+
+                return View(linguist);
+            }
+            catch (Exception ex)
+            {
+                //_logger.LogError(ex, "LinguistsController->Index");
+                ModelState.AddModelError(string.Empty, ex.Message);
             }
 
-            var linguist = await _context.Linguists.FindAsync(id);
-            if (linguist == null)
-            {
-                return NotFound();
-            }
-            return View(linguist);
+            return View(new Client());
         }
 
         // POST: BackOffice/Linguists/Edit/5
@@ -91,50 +179,47 @@ namespace CAT.Areas.BackOffice.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,UserId")] Linguist linguist)
         {
-            if (id != linguist.Id)
+            try
             {
-                return NotFound();
+                if (ModelState.IsValid)
+                {
+                    _mainDbContext.Update(linguist);
+                    await _mainDbContext.SaveChangesAsync();
+
+                    return RedirectToAction(nameof(Index));
+                }
+            }
+            catch (Exception ex)
+            {
+                //_logger.LogError(ex, "LinguistsController->Index");
+                ModelState.AddModelError(string.Empty, ex.Message);
             }
 
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _context.Update(linguist);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!LinguistExists(linguist.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
-            }
             return View(linguist);
         }
 
         // GET: BackOffice/Linguists/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null || _context.Linguists == null)
+            try
             {
-                return NotFound();
-            }
+                throw new Exception("Operation is not allowed.");
+                ////the client
+                //var linguist = await _mainDbContext.Linguists.Include(c => c.Address).FirstOrDefaultAsync(c => c.Id == id);
 
-            var linguist = await _context.Linguists
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (linguist == null)
+                ////the user
+                //var user = await _identityDbContext.Users.Where(u => u.Id == linguist!.UserId).FirstOrDefaultAsync();
+                //linguist!.User = user!;
+
+                //return View(linguist);
+            }
+            catch (Exception ex)
             {
-                return NotFound();
-            }
+                //_logger.LogError(ex, "LinguistsController->Index");
+                ModelState.AddModelError(string.Empty, ex.Message);
 
-            return View(linguist);
+                return View(new Linguist());
+            }
         }
 
         // POST: BackOffice/Linguists/Delete/5
@@ -142,23 +227,22 @@ namespace CAT.Areas.BackOffice.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            if (_context.Linguists == null)
+            try
             {
-                return Problem("Entity set 'MainDbContext.Linguists'  is null.");
+                throw new Exception("Operation is not allowed.");
+                ////the linguist
+                //var linguist = await _mainDbContext.Linguists.Include(c => c.Address).FirstOrDefaultAsync(c => c.Id == id);
+
+                //await _mainDbContext.SaveChangesAsync();
+                //return RedirectToAction(nameof(Index));
             }
-            var linguist = await _context.Linguists.FindAsync(id);
-            if (linguist != null)
+            catch (Exception ex)
             {
-                _context.Linguists.Remove(linguist);
+                //_logger.LogError(ex, "LinguistsController->Index");
+                ModelState.AddModelError(string.Empty, ex.Message);
+
+                return View(new Linguist());
             }
-
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
-        }
-
-        private bool LinguistExists(int id)
-        {
-            return (_context.Linguists?.Any(e => e.Id == id)).GetValueOrDefault();
         }
     }
 }
