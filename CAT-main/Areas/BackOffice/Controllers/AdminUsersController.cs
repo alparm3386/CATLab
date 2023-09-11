@@ -66,15 +66,8 @@ namespace CAT.Areas.BackOffice.Controllers
                 {
                     if (user.PasswordHash != user.SecurityStamp)
                         throw new Exception("passwords don't match.");
-                    //save the user
-                    var newUser = new ApplicationUser
-                    {
-                        UserName = user.UserName,
-                        Email = user.Email,
-                        FirstName = user.FirstName,
-                        LastName = user.LastName
-                    };
 
+                    //save the user
                     await _userStore.SetUserNameAsync(user, user.Email, CancellationToken.None);
                     var emailStore = (IUserEmailStore<ApplicationUser>)_userStore;
                     await emailStore.SetEmailAsync(user, user.Email, CancellationToken.None);
@@ -85,6 +78,7 @@ namespace CAT.Areas.BackOffice.Controllers
                     if (result.Succeeded)
                     {
                         user.EmailConfirmed = true;
+                        await _userManager.AddToRoleAsync(user, "Admin");
                         await _userManager.UpdateAsync(user);
                     }
                     else
