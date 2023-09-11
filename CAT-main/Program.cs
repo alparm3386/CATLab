@@ -17,6 +17,7 @@ using CAT.Middleware;
 using System.Data;
 using System.Net;
 using System.Security.Claims;
+using Microsoft.Extensions.Options;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -54,10 +55,14 @@ builder.Services.TryAddEnumerable(new[]
     {
         // Type-based services
         ServiceDescriptor.Singleton<IMachineTranslator, MMT>(),
-        //ServiceDescriptor.Singleton<IMachineTranslator, MachineTranslator2>(),
+    //ServiceDescriptor.Singleton<IMachineTranslator, MachineTranslator2>(),
     });
 
-builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
+builder.Services.AddDefaultIdentity<ApplicationUser>(options =>
+    {
+        options.SignIn.RequireConfirmedAccount = true;
+        options.User.RequireUniqueEmail = true;
+    })
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<IdentityDbContext>();
 
@@ -172,7 +177,7 @@ app.MapRazorPages();
 //Middlewares
 app.Use(async (context, next) =>
 {
-  if (context.Request.Path.Value == "/" || context.Request.Path.Value == "/index" || context.Request.Path.Value == "/home")
+    if (context.Request.Path.Value == "/" || context.Request.Path.Value == "/index" || context.Request.Path.Value == "/home")
     {
         var user = context.User;
         if (user.Identity.IsAuthenticated)

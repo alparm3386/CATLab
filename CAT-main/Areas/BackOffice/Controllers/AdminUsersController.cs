@@ -57,7 +57,7 @@ namespace CAT.Areas.BackOffice.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("FirstName,LastName,Email,PasswordHash,SecurityStamp")] ApplicationUser user)
+        public async Task<IActionResult> Create([Bind("FirstName,LastName,UserName,Email,PasswordHash,SecurityStamp")] ApplicationUser user)
         {
             try
             {
@@ -68,7 +68,7 @@ namespace CAT.Areas.BackOffice.Controllers
                         throw new Exception("passwords don't match.");
 
                     //save the user
-                    await _userStore.SetUserNameAsync(user, user.Email, CancellationToken.None);
+                    await _userStore.SetUserNameAsync(user, user.UserName, CancellationToken.None);
                     var emailStore = (IUserEmailStore<ApplicationUser>)_userStore;
                     await emailStore.SetEmailAsync(user, user.Email, CancellationToken.None);
 
