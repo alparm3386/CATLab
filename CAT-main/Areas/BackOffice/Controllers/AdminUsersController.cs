@@ -11,6 +11,7 @@ using CAT.Areas.Identity.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using IdentityDbContext = CAT.Areas.Identity.Data.IdentityDbContext;
+using System.Data;
 
 namespace CAT.Areas.BackOffice.Controllers
 {
@@ -106,23 +107,21 @@ namespace CAT.Areas.BackOffice.Controllers
         }
 
         // GET: BackOffice/AdminUsers/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        public async Task<IActionResult> Edit(string? id)
         {
-            //if (id == null || _identityDbContext.Clients == null)
-            //{
-            //    return NotFound();
-            //}
+            try
+            {
+                var adminUser = await _userManager.FindByIdAsync(id!);
 
-            //var client = await _identityDbContext.Clients.FindAsync(id);
-            //if (client == null)
-            //{
-            //    return NotFound();
-            //}
-            //ViewData["AddressId"] = new SelectList(_identityDbContext.Addresses, "Id", "City", client.AddressId);
-            //ViewData["CompanyId"] = new SelectList(_identityDbContext.Companies, "Id", "Id", client.CompanyId);
-            //return View(client);
-
-            return View();
+                return View(adminUser);
+            }
+            catch (Exception ex)
+            {
+                // set error message here that is displayed in the view
+                ViewData["ErrorMessage"] = ex.Message;
+                // Optionally log the error: _logger.LogError(ex, "Error message here");
+                return View(new ApplicationUser());
+            }
         }
 
         // POST: BackOffice/AdminUsers/Edit/5
@@ -130,36 +129,40 @@ namespace CAT.Areas.BackOffice.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,CompanyId,UserId,AddressId")] Client client)
+        public async Task<IActionResult> Edit(string id, [Bind("FirstName,LastName,Email")] ApplicationUser user)
         {
-            //if (id != client.Id)
-            //{
-            //    return NotFound();
-            //}
+            try
+            {
+                var adminUser = await _userManager.FindByIdAsync(id!);
+                adminUser!.FirstName = user.FirstName;
+                adminUser.LastName = user.LastName;
+                adminUser.Email = user.Email;
 
-            //if (ModelState.IsValid)
-            //{
-            //    try
-            //    {
-            //        _identityDbContext.Update(client);
-            //        await _identityDbContext.SaveChangesAsync();
-            //    }
-            //    catch (DbUpdateConcurrencyException)
-            //    {
-            //        if (!ClientExists(client.Id))
-            //        {
-            //            return NotFound();
-            //        }
-            //        else
-            //        {
-            //            throw;
-            //        }
-            //    }
-            //    return RedirectToAction(nameof(Index));
-            //}
-            //ViewData["AddressId"] = new SelectList(_identityDbContext.Addresses, "Id", "City", client.AddressId);
-            //ViewData["CompanyId"] = new SelectList(_identityDbContext.Companies, "Id", "Id", client.CompanyId);
-            //return View(client);
+                var result = await _userManager.UpdateAsync(adminUser);
+                if (result.Succeeded)
+                {
+                    // User was updated successfully
+                }
+                else
+                {
+                    foreach (var error in result.Errors)
+                    {
+                        ModelState.AddModelError(string.Empty, error.Description);
+                    }
+                    // Handle the errors and possibly return a view or another action
+                }
+
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception ex)
+            {
+                // set error message here that is displayed in the view
+                ViewData["ErrorMessage"] = ex.Message;
+                // Optionally log the error: _logger.LogError(ex, "Error message here");
+
+                user.Id = id;
+                return View(user);
+            }
 
             return View();
         }
@@ -167,6 +170,8 @@ namespace CAT.Areas.BackOffice.Controllers
         // GET: BackOffice/AdminUsers/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
+            ViewData["ErrorMessage"] = "Operation not permitted.";
+
             //if (id == null || _identityDbContext.Clients == null)
             //{
             //    return NotFound();
@@ -183,7 +188,7 @@ namespace CAT.Areas.BackOffice.Controllers
 
             //return View(client);
 
-            return View();
+            return View(nameof(Index));
         }
 
         // POST: BackOffice/AdminUsers/Delete/5
@@ -191,6 +196,7 @@ namespace CAT.Areas.BackOffice.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
+            ViewData["ErrorMessage"] = "Operation not permitted.";
             //if (_identityDbContext.Clients == null)
             //{
             //    return Problem("Entity set 'MainDbContext.Clients'  is null.");
@@ -202,7 +208,7 @@ namespace CAT.Areas.BackOffice.Controllers
             //}
 
             //await _identityDbContext.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            return View(nameof(Index));
         }
 
         private bool ClientExists(int id)
