@@ -9,6 +9,8 @@ using CAT.Data;
 using CAT.Models.Entities.Main;
 using CAT.Areas.Identity.Data;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using IdentityDbContext = CAT.Areas.Identity.Data.IdentityDbContext;
 
 namespace CAT.Areas.BackOffice.Controllers
 {
@@ -18,12 +20,20 @@ namespace CAT.Areas.BackOffice.Controllers
         private readonly IdentityDbContext _identityDbContext;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly IUserStore<ApplicationUser> _userStore;
 
-        public AdminUsersController(IdentityDbContext context, UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager)
+        public AdminUsersController(IdentityDbContext context, UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager,
+            IUserStore<ApplicationUser> userStore)
         {
             _identityDbContext = context;
             _userManager = userManager;
             _roleManager = roleManager;
+            _userStore = userStore;
+
+            if (!_userManager.SupportsUserEmail)
+            {
+                throw new NotSupportedException("The default UI requires a user store with email support.");
+            }
         }
 
         // GET: BackOffice/AdminUsers
@@ -34,27 +44,6 @@ namespace CAT.Areas.BackOffice.Controllers
             var adminUsers = await _userManager.GetUsersInRoleAsync(role!.Name!);
             
             return View(adminUsers);
-        }
-
-        // GET: BackOffice/AdminUsers/Details/x
-        public async Task<IActionResult> Details(string? id)
-        {
-            //if (id == null || _identityDbContext.Clients == null)
-            //{
-            //    return NotFound();
-            //}
-
-            //var client = await _identityDbContext.Clients
-            //    .Include(c => c.Address)
-            //    .Include(c => c.Company)
-            //    .FirstOrDefaultAsync(m => m.Id == id);
-            //if (client == null)
-            //{
-            //    return NotFound();
-            //}
-
-            //return View(client);
-            return View();
         }
 
         // GET: BackOffice/AdminUsers/Create
@@ -68,17 +57,58 @@ namespace CAT.Areas.BackOffice.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,CompanyId,UserId,AddressId")] Client client)
+        public async Task<IActionResult> Create([Bind("FirstName,LastName,Email,PasswordHash,SecurityStamp")] ApplicationUser user)
         {
-            //if (ModelState.IsValid)
-            //{
-            //    _identityDbContext.Add(client);
-            //    await _identityDbContext.SaveChangesAsync();
-            //    return RedirectToAction(nameof(Index));
-            //}
-            //return View(client);
+            try
+            {
+                //ModelState.Remove("Company");
+                if (ModelState.IsValid)
+                {
+                    if (user.PasswordHash != user.SecurityStamp)
+                        throw new Exception("passwords don't match.");
+                    //save the user
+                    var newUser = new ApplicationUser
+                    {
+                        UserName = user.UserName,
+                        Email = user.Email,
+                        FirstName = user.FirstName,
+                        LastName = user.LastName
+                    };
 
-            return View(client);
+                    await _userStore.SetUserNameAsync(user, user.Email, CancellationToken.None);
+                    var emailStore = (IUserEmailStore<ApplicationUser>)_userStore;
+                    await emailStore.SetEmailAsync(user, user.Email, CancellationToken.None);
+
+                    // Use UserManager to create a user
+                    var result = await _userManager.CreateAsync(user, user.PasswordHash!);
+
+                    if (result.Succeeded)
+                    {
+                        user.EmailConfirmed = true;
+                        await _userManager.UpdateAsync(user);
+                    }
+                    else
+                    {
+                        var errorMessages = result.Errors.Select(e => e.Description);
+                        throw new Exception(string.Join(" ", errorMessages));
+                    }
+                }
+                else
+                {
+                    var allErrors = ModelState.Values.SelectMany(v => v.Errors.Select(e => e.ErrorMessage));
+                    ViewData["ErrorMessage"] = string.Join(" ", allErrors);
+                    return View(user);
+                }
+            }
+            catch (Exception ex)
+            {
+                // set error message here that is displayed in the view
+                ViewData["ErrorMessage"] = ex.Message;
+                // Optionally log the error: _logger.LogError(ex, "Error message here");
+                return View(user);
+            }
+
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: BackOffice/AdminUsers/Edit/5

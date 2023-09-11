@@ -34,12 +34,12 @@
             </div>
             <div class="form-group">
                 <label asp-for="User.PasswordHash" class="control-label">Password</label>
-                <input asp-for="User.PasswordHash" class="form-control" password/>
+                <input asp-for="User.PasswordHash" class="form-control" type="password" />
                 <span asp-validation-for="User.PasswordHash" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="User.SecurityStamp" class="control-label">Password again</label>
-                <input asp-for="User.SecurityStamp" class="form-control" password />
+                <input asp-for="User.SecurityStamp" class="form-control" type="password" />
                 <span asp-validation-for="User.SecurityStamp" class="text-danger"></span>
             </div>
             <div class="form-group">

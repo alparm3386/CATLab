@@ -13,16 +13,16 @@
     <thead>
         <tr>
             <th>
-                Username
-            </th>
-            <th>
-                Email
-            </th>
-            <th>
                 First name
             </th>
             <th>
                 Last name
+            </th>
+            <th>
+                Username
+            </th>
+            <th>
+                Email
             </th>
             <th></th>
         </tr>
@@ -32,20 +32,19 @@
         {
             <tr>
                 <td>
+                    @item.FirstName
+                </td>
+                <td>
+                    @item.LastName
+                </td>
+                <td>
                     @Html.DisplayFor(modelItem => item.UserName)
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.Email)
                 </td>
                 <td>
-                    @item.LastName
-                </td>
-                <td>
-                    @item.LastName
-                </td>
-                <td>
                     <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                    <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
                     <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
                 </td>
             </tr>
