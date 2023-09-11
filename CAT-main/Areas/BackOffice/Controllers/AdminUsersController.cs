@@ -163,32 +163,27 @@ namespace CAT.Areas.BackOffice.Controllers
                 user.Id = id;
                 return View(user);
             }
-
-            return View();
         }
 
         // GET: BackOffice/AdminUsers/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        public async Task<IActionResult> Delete(string? id)
         {
             ViewData["ErrorMessage"] = "Operation not permitted.";
 
-            //if (id == null || _identityDbContext.Clients == null)
-            //{
-            //    return NotFound();
-            //}
+            try
+            {
+                var adminUser = await _userManager.FindByIdAsync(id!);
 
-            //var client = await _identityDbContext.Clients
-            //    .Include(c => c.Address)
-            //    .Include(c => c.Company)
-            //    .FirstOrDefaultAsync(m => m.Id == id);
-            //if (client == null)
-            //{
-            //    return NotFound();
-            //}
+                return View(adminUser);
+            }
+            catch (Exception ex)
+            {
+                // set error message here that is displayed in the view
+                ViewData["ErrorMessage"] = ex.Message;
+                // Optionally log the error: _logger.LogError(ex, "Error message here");
 
-            //return View(client);
-
-            return View(nameof(Index));
+                return View(new ApplicationUser());
+            }
         }
 
         // POST: BackOffice/AdminUsers/Delete/5
@@ -208,7 +203,7 @@ namespace CAT.Areas.BackOffice.Controllers
             //}
 
             //await _identityDbContext.SaveChangesAsync();
-            return View(nameof(Index));
+            return View(new ApplicationUser());
         }
 
         private bool ClientExists(int id)
