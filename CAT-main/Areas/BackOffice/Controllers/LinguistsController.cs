@@ -94,6 +94,8 @@ namespace CAT.Areas.BackOffice.Controllers
         {
             try
             {
+                ModelState.Remove("UserId");
+                ModelState.Remove("LinguistsLanguagePairs");
                 if (ModelState.IsValid)
                 {
                     if (linguist.User.PasswordHash != linguist.User.SecurityStamp)
@@ -108,7 +110,7 @@ namespace CAT.Areas.BackOffice.Controllers
                         LastName = linguist.User.LastName
                     };
 
-                    await _userStore.SetUserNameAsync(user, user.Email, CancellationToken.None);
+                    await _userStore.SetUserNameAsync(user, user.UserName, CancellationToken.None);
                     var emailStore = (IUserEmailStore<ApplicationUser>)_userStore;
                     await emailStore.SetEmailAsync(user, user.Email, CancellationToken.None);
 
@@ -119,6 +121,8 @@ namespace CAT.Areas.BackOffice.Controllers
                     {
                         linguist.UserId = user.Id;
                         user.EmailConfirmed = true;
+                        user.EmailConfirmed = true;
+                        await _userManager.AddToRoleAsync(user, "Linguist");
                         await _userManager.UpdateAsync(user);
                     }
                     else
@@ -177,14 +181,47 @@ namespace CAT.Areas.BackOffice.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,UserId")] Linguist linguist)
+        public async Task<IActionResult> Edit(int id, Linguist linguist)
         {
             try
             {
+                //the client
+                var storedLinguist = await _mainDbContext.Linguists.Include(c => c.Address).FirstOrDefaultAsync(c => c.Id == id);
+                //the user
+                var storedUser = await _identityDbContext.Users.Where(u => u.Id == linguist!.UserId).FirstOrDefaultAsync();
+
+                ModelState.Remove("UserId");
+                ModelState.Remove("LinguistsLanguagePairs");
                 if (ModelState.IsValid)
                 {
-                    _mainDbContext.Update(linguist);
+                    //set the address
+                    storedLinguist!.Address.Line1 = linguist.Address.Line1;
+                    storedLinguist.Address.Line2 = linguist.Address.Line2;
+                    storedLinguist.Address.City = linguist.Address.City;
+                    storedLinguist.Address.PostalCode = linguist.Address.PostalCode;
+                    storedLinguist.Address.Country = linguist.Address.Country;
+                    //storedLinguist.Address.Region = linguist.Address.Region;
+                    storedLinguist.Address.Phone = linguist.Address.Phone;
+
+                    //update the linguist
+                    _mainDbContext.Update(storedLinguist);
                     await _mainDbContext.SaveChangesAsync();
+
+                    //update the user
+                    var user = await _userManager.FindByIdAsync(storedLinguist.UserId);
+                    user!.Email = linguist.User.Email;
+                    user.FirstName = linguist.User.FirstName;
+                    user.LastName = linguist.User.LastName;
+                    var result = await _userManager.UpdateAsync(user);
+                    if (!result.Succeeded)
+                    {
+                        foreach (var error in result.Errors)
+                        {
+                            ModelState.AddModelError(string.Empty, error.Description);
+                        }
+
+                        return View(linguist);
+                    }
 
                     return RedirectToAction(nameof(Index));
                 }

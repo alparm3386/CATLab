@@ -160,6 +160,7 @@ namespace CAT.Areas.BackOffice.Controllers
                     {
                         client.UserId = user.Id;
                         user.EmailConfirmed = true;
+                        await _userManager.AddToRoleAsync(user, "Client");
                         await _userManager.UpdateAsync(user);
 
                         //if (_userManager.Options.SignIn.RequireConfirmedAccount)

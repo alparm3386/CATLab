@@ -1,10 +1,10 @@
 ﻿@model IEnumerable<CAT.Models.Entities.Main.Linguist>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Linguists";
 }
 
-<h1>Index</h1>
+<h1>Linguists</h1>
 
 <p>
     <a asp-action="Create">Create New</a>
@@ -13,23 +13,36 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.UserId)
+                Name
+            </th>
+            <th>
+                Username
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.User.Email)
             </th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.UserId)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
-}
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @(item.User.FirstName + " " + item.User.LastName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.User.UserName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.User.Email)
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@item.Id">Details</a> @*|
+                    <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>*@
+                </td>
+            </tr>
+        }
     </tbody>
 </table>
