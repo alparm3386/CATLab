@@ -23,22 +23,38 @@ namespace CAT.Areas.BackOffice.Controllers
         // GET: BackOffice/Companies
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Companies.Include(c => c.Address).ToListAsync());
+            try
+            {
+                return View(await _context.Companies.Include(c => c.Address).ToListAsync());
+            }
+            catch (Exception ex)
+            {
+                //_logger.LogError(ex, "LinguistsController->Index");
+                ViewData["ErrorMessage"] = ex.Message;
+                return View();
+            }
         }
 
         // GET: BackOffice/Companies/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null || _context.Companies == null)
-                return NotFound();
+            try
+            {
+                var company = await _context.Companies
+                    .Include(c => c.Address)
+                    .FirstOrDefaultAsync(c => c.Id == id);
 
-            var company = await _context.Companies
-                .Include(c => c.Address)
-                .FirstOrDefaultAsync(c => c.Id == id);
-            if (company == null)
-                return NotFound();
+                if (company == null)
+                    throw new Exception("Not found.");
 
-            return View(company);
+                return View(company);
+            }
+            catch (Exception ex)
+            {
+                //_logger.LogError(ex, "LinguistsController->Index");
+                ViewData["ErrorMessage"] = ex.Message;
+                return View();
+            }
         }
 
         // GET: BackOffice/Companies/Create
@@ -54,28 +70,42 @@ namespace CAT.Areas.BackOffice.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Name,Address")] Company company)
         {
-            if (ModelState.IsValid)
+            try
             {
+                if (!ModelState.IsValid)
+                    throw new Exception("Invalid model state.");
+
                 _context.Add(company);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(company);
+            catch (Exception ex)
+            {
+                //_logger.LogError(ex, "LinguistsController->Index");
+                ViewData["ErrorMessage"] = ex.Message;
+                return View(company);
+            }
         }
 
         // GET: BackOffice/Companies/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null || _context.Companies == null)
-                return NotFound();
+            try
+            {
+                var company = await _context.Companies
+                    .Include(c => c.Address)
+                    .FirstOrDefaultAsync(c => c.Id == id);
+                if (company == null)
+                    throw new Exception("Not found.");
 
-            var company = await _context.Companies
-                .Include(c => c.Address)
-                .FirstOrDefaultAsync(c => c.Id == id);
-            if (company == null)
-                return NotFound();
-
-            return View(company);
+                return View(company);
+            }
+            catch (Exception ex)
+            {
+                //_logger.LogError(ex, "LinguistsController->Index");
+                ViewData["ErrorMessage"] = ex.Message;
+                return View();
+            }
         }
 
         // POST: BackOffice/Companies/Edit/5
@@ -85,32 +115,27 @@ namespace CAT.Areas.BackOffice.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Address")] Company company)
         {
-            if (id != company.Id)
+            try
             {
-                return NotFound();
-            }
+                if (id != company.Id)
+                {
+                    return NotFound();
+                }
 
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _context.Update(company);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!CompanyExists(company.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
+                if (!ModelState.IsValid)
+                    throw new Exception("Invalid model state.");
+
+                _context.Update(company);
+                await _context.SaveChangesAsync();
+
                 return RedirectToAction(nameof(Index));
             }
-            return View(company);
+            catch (Exception ex)
+            {
+                //_logger.LogError(ex, "LinguistsController->Index");
+                ViewData["ErrorMessage"] = ex.Message;
+                return View();
+            }
         }
 
         // GET: BackOffice/Companies/Delete/5
@@ -128,11 +153,6 @@ namespace CAT.Areas.BackOffice.Controllers
         {
             throw new InvalidOperationException("This operation cannot be performed in the object's current state.");
             //return RedirectToAction(nameof(Index));
-        }
-
-        private bool CompanyExists(int id)
-        {
-            return false; // (_context.Companies?.Any(e => e.Id == id)).GetValueOrDefault();
         }
     }
 }

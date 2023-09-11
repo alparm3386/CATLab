@@ -40,11 +40,20 @@ namespace CAT.Areas.BackOffice.Controllers
         // GET: BackOffice/AdminUsers
         public async Task<IActionResult> Index()
         {
-            var role = await _roleManager.FindByNameAsync("Admin");
+            try
+            {
+                var role = await _roleManager.FindByNameAsync("Admin");
 
-            var adminUsers = await _userManager.GetUsersInRoleAsync(role!.Name!);
-            
-            return View(adminUsers);
+                var adminUsers = await _userManager.GetUsersInRoleAsync(role!.Name!);
+
+                return View(adminUsers);
+            }
+            catch (Exception ex)
+            {
+                //_logger.LogError(ex, "LinguistsController->Index");
+                ViewData["ErrorMessage"] = ex.Message;
+                return View(new List<Linguist>());
+            }
         }
 
         // GET: BackOffice/AdminUsers/Create
@@ -209,7 +218,7 @@ namespace CAT.Areas.BackOffice.Controllers
         private bool ClientExists(int id)
         {
             return false;
-//            return (_identityDbContext.Clients?.Any(e => e.Id == id)).GetValueOrDefault();
+            //            return (_identityDbContext.Clients?.Any(e => e.Id == id)).GetValueOrDefault();
         }
     }
 }
