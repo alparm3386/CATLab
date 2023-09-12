@@ -18,27 +18,37 @@
 }
 
 <form asp-action="Index" method="get">
-    <div class="form-actions no-color d-flexx">
-        <label for="sourceLanguageFilter" class="control-label">Source language</label>
-        @Html.DropDownList("sourceLanguageFilter", (IEnumerable<SelectListItem>)ViewBag.LanguagesSelectList, new { @class = "form-control"})
-
-        <label for="targetLanguageFilter" class="control-label">Target language</label>
-        @Html.DropDownList("targetLanguageFilter", (IEnumerable<SelectListItem>)ViewBag.LanguagesSelectList, new { @class = "form-control"})
-
-        <label for="specialityFilter" class="control-label">Speciality</label>
-        @Html.DropDownList("specialityFilter", (IEnumerable<SelectListItem>)ViewBag.SpecialitiesSelectList, new { @class = "form-control"})
-
-        <label for="taskFilter" class="control-label">Task</label>
-        <select name="taskFilter" class="form-control">
-            <option value="-1" selected="@(ViewBag.taskFilter==-1)">Select all</option>
-            <option value="3" selected="@(ViewBag.taskFilter==3)">Translation</option>
-            <option value="4" selected="@(ViewBag.taskFilter==4)">Revision</option>
-        </select>
-
-        <input type="submit" value="Go" class="btn btn-default" /> |
-        <a asp-action="Index">Back to Full List</a>
+    <div class="form-actions no-color row align-items-center bg-warning-subtle pb-3">
+        <div class="col">
+            <label for="sourceLanguageFilter" class="form-label">Source language</label>
+            @Html.DropDownList("sourceLanguageFilter", (IEnumerable<SelectListItem>)ViewBag.LanguagesSelectList, new { @class = "form-control"})
+        </div>
+        <div class="col">
+            <label for="targetLanguageFilter" class="form-label">Target language</label>
+            @Html.DropDownList("targetLanguageFilter", (IEnumerable<SelectListItem>)ViewBag.LanguagesSelectList, new { @class = "form-control"})
+        </div>
+        <div class="col">
+            <label for="specialityFilter" class="form-label">Speciality</label>
+            @Html.DropDownList("specialityFilter", (IEnumerable<SelectListItem>)ViewBag.SpecialitiesSelectList, new { @class = "form-control"})
+        </div>
+        <div class="col">
+            <label for="taskFilter" class="form-label">Task</label>
+            <select name="taskFilter" class="form-control">
+                <option value="-1" selected="@(ViewBag.taskFilter==-1)">Select all</option>
+                <option value="3" selected="@(ViewBag.taskFilter==3)">Translation</option>
+                <option value="4" selected="@(ViewBag.taskFilter==4)">Revision</option>
+            </select>
+        </div>
+        <div class="col-auto">
+            <input type="submit" value="Go" class="btn btn-default" />
+        </div>
+        <div class="col-auto">
+            <a asp-action="Index" class="btn btn-link">Back to Full List</a>
+        </div>
     </div>
 </form>
+
+<hr/>
 
 <table class="table">
     <thead>
