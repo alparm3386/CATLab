@@ -4,45 +4,55 @@
     ViewData["Title"] = "Create";
 }
 
-<h1>Create</h1>
+<h1>Create rate</h1>
 
-<h4>Rate</h4>
 <hr />
+
+@if (ViewData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">
+        @ViewData["ErrorMessage"]
+    </div>
+}
+
 <div class="row">
     <div class="col-md-4">
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
-                <label asp-for="SourceLanguageId" class="control-label"></label>
-                <input asp-for="SourceLanguageId" class="form-control" />
+                <label asp-for="SourceLanguageId" class="control-label">Source language</label>
+                <select asp-for="SourceLanguageId" class="form-control" asp-items="ViewBag.Languages"></select>
                 <span asp-validation-for="SourceLanguageId" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="TargetLanguageId" class="control-label"></label>
-                <input asp-for="TargetLanguageId" class="form-control" />
+                <label asp-for="TargetLanguageId" class="control-label">Target language</label>
+                <select asp-for="TargetLanguageId" class="form-control" asp-items="ViewBag.Languages"></select>
                 <span asp-validation-for="TargetLanguageId" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="Speciality" class="control-label"></label>
-                <input asp-for="Speciality" class="form-control" />
+                <select asp-for="Speciality" class="form-control" asp-items="ViewBag.Specialities"></select>
                 <span asp-validation-for="Speciality" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Task" class="control-label"></label>
-                <input asp-for="Task" class="form-control" />
+                <label for="Task" class="control-label">Task</label>
+                <select name="Task" class="form-control">
+                    <option value="3">Translation</option>
+                    <option value="4">Revision</option>
+                </select>
                 <span asp-validation-for="Task" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="RateToClient" class="control-label"></label>
+                <label asp-for="RateToClient" class="control-label">Client rate</label>
                 <input asp-for="RateToClient" class="form-control" />
                 <span asp-validation-for="RateToClient" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="RateToTranslator" class="control-label"></label>
+                <label asp-for="RateToTranslator" class="control-label">Linguist rate</label>
                 <input asp-for="RateToTranslator" class="form-control" />
                 <span asp-validation-for="RateToTranslator" class="text-danger"></span>
             </div>
-            <div class="form-group">
+            <div class="form-group mt-3">
                 <input type="submit" value="Create" class="btn btn-primary" />
             </div>
         </form>

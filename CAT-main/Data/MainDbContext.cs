@@ -99,6 +99,11 @@ namespace CAT.Data
             //modelBuilder.Entity<WorkFlowStep>()
             //   .Property(e => e.Fee)
             //   .HasPrecision(10, 2);
+
+            //Rate composite unique index
+            modelBuilder.Entity<Rate>()
+                .HasIndex(r => new { r.SourceLanguageId, r.TargetLanguageId, r.Speciality, r.Task })
+                .IsUnique();
         }
     }
 }

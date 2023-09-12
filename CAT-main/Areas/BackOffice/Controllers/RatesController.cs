@@ -24,7 +24,7 @@ namespace CAT.Areas.BackOffice.Controllers
         }
 
         // GET: BackOffice/Rates
-        public async Task<IActionResult> Index(int? sourceLanguageFilter, int? targetLanguageFilter, 
+        public async Task<IActionResult> Index(int? sourceLanguageFilter, int? targetLanguageFilter,
             int? specialityFilter, int? taskFilter, int? pageNumber)
         {
             try
@@ -76,8 +76,12 @@ namespace CAT.Areas.BackOffice.Controllers
         }
 
         // GET: BackOffice/Rates/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
+            var languages = await _context.Languages.ToDictionaryAsync(l => l.Id, l => l.Name);
+            ViewData["Languages"] = new SelectList(languages, "Key", "Value");
+            ViewData["Specialities"] = new SelectList(EnumHelper.EnumToDisplayNamesDictionary<Speciality>(), "Key", "Value");
+
             return View();
         }
 
@@ -88,13 +92,30 @@ namespace CAT.Areas.BackOffice.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,SourceLanguageId,TargetLanguageId,Speciality,Task,RateToClient,RateToTranslator")] Rate rate)
         {
-            if (ModelState.IsValid)
+            try
             {
-                _context.Add(rate);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                if (ModelState.IsValid)
+                {
+                    _context.Add(rate);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
+                }
+                else
+                    throw new Exception("Invalid model state");
             }
-            return View(rate);
+            catch (Exception ex)
+            {
+                // set error message here that is displayed in the view
+                //ViewData["ErrorMessage"] = "There was an error processing your request. Please try again later.";
+                ViewData["ErrorMessage"] = ex.Message;
+                // Optionally log the error: _logger.LogError(ex, "Error message here");
+
+                var languages = await _context.Languages.ToDictionaryAsync(l => l.Id, l => l.Name);
+                ViewData["Languages"] = new SelectList(languages, "Key", "Value");
+                ViewData["Specialities"] = new SelectList(EnumHelper.EnumToDisplayNamesDictionary<Speciality>(), "Key", "Value");
+
+                return View();
+            }
         }
 
         // GET: BackOffice/Rates/Edit/5
