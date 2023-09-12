@@ -157,7 +157,7 @@ namespace CAT.Areas.BackOffice.Controllers
                         LastName = client.User.LastName
                     };
 
-                    await _userStore.SetUserNameAsync(user, client.User.Email, CancellationToken.None);
+                    await _userStore.SetUserNameAsync(user, client.User.UserName, CancellationToken.None);
                     var emailStore = (IUserEmailStore<ApplicationUser>)_userStore;
                     await emailStore.SetEmailAsync(user, user.Email, CancellationToken.None);
                     await emailStore.SetEmailAsync(user, client.User.Email, CancellationToken.None);
@@ -285,7 +285,7 @@ namespace CAT.Areas.BackOffice.Controllers
                         ModelState.AddModelError(string.Empty, error.Description);
                     }
 
-                    return View(client);
+                    return View(storedClient);
                 }
                 return RedirectToAction(nameof(Index), new { companyId = storedClient.CompanyId });
             }

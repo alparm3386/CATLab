@@ -21,6 +21,7 @@
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="Id" />
             <div class="form-group">
+                <input type="hidden" asp-for="User.Email" /> <!--disabled field is not posted-->
                 <label asp-for="User.UserName" class="control-label"></label>
                 <input asp-for="User.UserName" class="form-control" disabled/>
                 <span asp-validation-for="User.UserName" class="text-danger"></span>
@@ -83,7 +84,7 @@
 </div>
 
 <div>
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="Index" asp-route-companyId="@Model.Company.Id">Back to List</a>
 </div>
 
 @section Scripts {
