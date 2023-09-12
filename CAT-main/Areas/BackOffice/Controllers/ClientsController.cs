@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using IdentityDbContext = CAT.Areas.Identity.Data.IdentityDbContext;
 using Microsoft.AspNetCore.Identity;
 using System.ComponentModel.Design;
+using CAT.Migrations.MainDb;
 
 namespace CAT.Areas.BackOffice.Controllers
 {
@@ -129,8 +130,15 @@ namespace CAT.Areas.BackOffice.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,User,Address,CompanyId,Company.Name")] Client client)
         {
-            var clientCopy = new Client() { Address = client.Address, AddressId = client.AddressId, 
-                Company = client.Company, CompanyId = client.CompanyId, User = client.User, UserId = client.UserId  };
+            var clientCopy = new Client()
+            {
+                Address = client.Address,
+                AddressId = client.AddressId,
+                Company = client.Company,
+                CompanyId = client.CompanyId,
+                User = client.User,
+                UserId = client.UserId
+            };
             try
             {
                 ModelState.Remove("Company");
@@ -242,33 +250,51 @@ namespace CAT.Areas.BackOffice.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, Client client)
         {
-            if (id != client.Id)
+            try
             {
-                return NotFound();
-            }
+                //the linguist
+                var storedClient = await _mainDbContext.Clients.Include(c => c.Address).FirstOrDefaultAsync(c => c.Id == id);
+                //the user
+                var storedUser = await _identityDbContext.Users.Where(u => u.Id == storedClient!.UserId).FirstOrDefaultAsync();
 
-            if (ModelState.IsValid)
+                ModelState.Remove("UserId");
+                ModelState.Remove("Company");
+                if (!ModelState.IsValid)
+                    throw new Exception("Invalid model state.");
+
+                //update the address
+                storedClient!.Address.Line1 = client.Address.Line1;
+                storedClient.Address.Line2 = client.Address.Line2;
+                storedClient.Address.City = client.Address.City;
+                storedClient.Address.PostalCode = client.Address.PostalCode;
+                storedClient.Address.Country = client.Address.Country;
+                //storedLinguist.Address.Region = linguist.Address.Region;
+                storedClient.Address.Phone = client.Address.Phone;
+                await _mainDbContext.SaveChangesAsync();
+
+                //update the user
+                var user = await _userManager.FindByIdAsync(storedClient.UserId);
+                user!.Email = client.User.Email;
+                user.FirstName = client.User.FirstName;
+                user.LastName = client.User.LastName;
+                var result = await _userManager.UpdateAsync(user);
+                if (!result.Succeeded)
+                {
+                    foreach (var error in result.Errors)
+                    {
+                        ModelState.AddModelError(string.Empty, error.Description);
+                    }
+
+                    return View(client);
+                }
+                return RedirectToAction(nameof(Index), new { companyId = storedClient.CompanyId });
+            }
+            catch (Exception ex)
             {
-                try
-                {
-                    _mainDbContext.Update(client);
-                    await _mainDbContext.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!ClientExists(client.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
+                //_logger.LogError(ex, "LinguistsController->Index");
+                ViewData["ErrorMessage"] = ex.Message;
+                return View(client);
             }
-
-            return View(client);
         }
 
         // GET: BackOffice/Clients/Delete/5
@@ -307,7 +333,7 @@ namespace CAT.Areas.BackOffice.Controllers
             }
 
             await _mainDbContext.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(Index), new { companyId = client!.CompanyId });
         }
 
         private bool ClientExists(int id)
