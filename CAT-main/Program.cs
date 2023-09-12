@@ -49,6 +49,7 @@ builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IMonitoringService, MonitoringService>();
 builder.Services.AddScoped<IWorkflowService, WorkflowService>();
 builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
+//builder.Services.AddSingleton<ConstantRepository>();
 builder.Services.AddControllersWithViews().AddRazorRuntimeCompilation();
 builder.Services.AddAntiforgery(options => options.HeaderName = "XSRF-TOKEN");
 
@@ -68,6 +69,9 @@ builder.Services.AddDefaultIdentity<ApplicationUser>(options =>
     .AddEntityFrameworkStores<IdentityDbContext>();
 
 builder.Services.AddRazorPages();
+
+builder.Services.AddSession();
+builder.Services.AddMemoryCache();
 
 // Add CORS services
 builder.Services.AddCors(options =>

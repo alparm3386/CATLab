@@ -45,6 +45,14 @@ namespace CAT.Data
 
         public DbSet<LinguistLanguagePair> LinguistLanguagePairs { get; set; } = default!;
 
+        public DbSet<Rate> Rates { get; set; } = default!;
+
+        public DbSet<ClientRate> ClientRates { get; set; } = default!;
+
+        public DbSet<LinguistRate> LinguistRates { get; set; } = default!;
+
+        public DbSet<ConfigConstant> ConfigConstants { get; set; } = default!;
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             //DocumentFilter indexes

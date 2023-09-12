@@ -1,0 +1,67 @@
+﻿@model IEnumerable<CAT.Models.Entities.Main.Rate>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Source language
+            </th>
+            <th>
+                Target language
+            </th>
+            <th>
+                Speciality
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => (CAT.Enums.Task)model.Task))
+            </th>
+            <th>
+                Client rate
+            </th>
+            <th>
+                Linguist rate
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            var castedTask = (CAT.Enums.Task)item.Task;
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.SourceLanguageId)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.TargetLanguageId)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Speciality)
+                </td>
+                <td>
+                    @Html.DisplayFor(_ => castedTask)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.RateToClient)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.RateToTranslator)
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                    <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
