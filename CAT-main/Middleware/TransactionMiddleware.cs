@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System.Transactions;
 
 namespace CAT.Middleware
 {
@@ -11,21 +12,44 @@ namespace CAT.Middleware
             _next = next;
         }
 
-        public async Task InvokeAsync(HttpContext httpContext, DbContext dbContext)
+        //public async Task InvokeAsync(HttpContext httpContext, DbContext dbContext)
+        //{
+        //    using var transaction = dbContext.Database.BeginTransaction();
+        //    try
+        //    {
+        //        await _next(httpContext);
+        //        //await dbContext.SaveChangesAsync();
+        //        await transaction.CommitAsync();
+        //    }
+        //    catch
+        //    {
+        //        await transaction.RollbackAsync();
+        //        throw;
+        //    }
+        //}
+
+        public async Task InvokeAsync(HttpContext httpContext)
         {
-            using var transaction = dbContext.Database.BeginTransaction();
+            var transactionOptions = new TransactionOptions
+            {
+                IsolationLevel = IsolationLevel.ReadUncommitted
+            };
+
+            using var scope = new TransactionScope(
+                TransactionScopeOption.Required,
+                transactionOptions,
+                TransactionScopeAsyncFlowOption.Enabled);
             try
             {
                 await _next(httpContext);
-                //await dbContext.SaveChangesAsync();
-                await transaction.CommitAsync();
+                scope.Complete();
             }
             catch
             {
-                await transaction.RollbackAsync();
+                // Transaction will be automatically rolled back 
+                // if scope.Complete() is not called.
                 throw;
             }
         }
     }
-
 }

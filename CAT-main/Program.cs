@@ -18,6 +18,7 @@ using System.Data;
 using System.Net;
 using System.Security.Claims;
 using Microsoft.Extensions.Options;
+using System.Transactions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -234,6 +235,7 @@ app.Use(async (context, next) =>
 });
 
 app.UseMiddleware<AuthDebugMiddleware>();
+//TransactionManager.ImplicitDistributedTransactionsEnabled = true;
 //app.UseMiddleware<TransactionMiddleware>();
 
 app.Run();
