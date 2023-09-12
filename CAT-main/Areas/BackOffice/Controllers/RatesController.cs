@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using CAT.Data;
 using CAT.Models.Entities.Main;
+using CAT.Helpers;
+using CAT.Enums;
 
 namespace CAT.Areas.BackOffice.Controllers
 {
@@ -21,29 +23,51 @@ namespace CAT.Areas.BackOffice.Controllers
         }
 
         // GET: BackOffice/Rates
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int? sourceLanguageFilter, int? targetLanguageFilter, int? specialityFilter, int? taskFilter)
         {
-            return _context.Rates != null ?
-                        View(await _context.Rates.ToListAsync()) :
-                        Problem("Entity set 'MainDbContext.Rates'  is null.");
-        }
-
-        // GET: BackOffice/Rates/Details/5
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null || _context.Rates == null)
+            try
             {
-                return NotFound();
+                //get the rates
+                var ratesQuery = _context.Rates.AsNoTracking();
+                if (sourceLanguageFilter.HasValue && sourceLanguageFilter > 0)
+                    ratesQuery = ratesQuery.Where(r => r.SourceLanguageId == sourceLanguageFilter.Value);
+                if (targetLanguageFilter.HasValue && targetLanguageFilter > 0)
+                    ratesQuery = ratesQuery.Where(r => r.TargetLanguageId == targetLanguageFilter.Value);
+                if (specialityFilter.HasValue && specialityFilter > 0)
+                    ratesQuery = ratesQuery.Where(r => r.Speciality == specialityFilter.Value);
+                if (taskFilter.HasValue && taskFilter > 0)
+                    ratesQuery = ratesQuery.Where(r => r.Task == taskFilter.Value);
+                var rates = await ratesQuery.ToListAsync();
+
+                //set the lists
+                var languages = await _context.Languages.ToDictionaryAsync(l => l.Id, l => l.Name);
+                languages = new Dictionary<int, string> { { -1, "Select all" } }.Concat(languages).ToDictionary(pair => pair.Key, pair => pair.Value);
+                ViewData["LanguagesSelectList"] = new SelectList(languages, "Key", "Value");
+
+                var specialities = EnumHelper.EnumToDisplayNamesDictionary<Speciality>();
+                specialities = new Dictionary<int, string> { { -1, "Select all" } }.Concat(specialities).ToDictionary(pair => pair.Key, pair => pair.Value);
+                ViewData["SpecialitiesSelectList"] = new SelectList(specialities, "Key", "Value");
+
+                ViewData["Specialities"] = EnumHelper.EnumToDisplayNamesDictionary<Speciality>();
+                ViewData["Tasks"] = EnumHelper.EnumToDisplayNamesDictionary<Enums.Task>();
+
+                //the filters
+                ViewData["SourceLanguageFilter"] = sourceLanguageFilter ?? -1;
+                ViewData["TargetLanguageFilter"] = targetLanguageFilter ?? -1;
+                ViewData["specialityFilter"] = specialityFilter ?? -1;
+                ViewData["taskFilter"] = taskFilter ?? -1;
+
+                return View(rates);
+            }
+            catch (Exception ex)
+            {
+                // set error message here that is displayed in the view
+                //ViewData["ErrorMessage"] = "There was an error processing your request. Please try again later.";
+                ViewData["ErrorMessage"] = ex.Message;
+                // Optionally log the error: _logger.LogError(ex, "Error message here");
             }
 
-            var rate = await _context.Rates
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (rate == null)
-            {
-                return NotFound();
-            }
-
-            return View(rate);
+            return View(new List<Rate>());
         }
 
         // GET: BackOffice/Rates/Create

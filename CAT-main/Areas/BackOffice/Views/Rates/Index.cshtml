@@ -1,14 +1,45 @@
 ﻿@model IEnumerable<CAT.Models.Entities.Main.Rate>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Rates";
 }
 
-<h1>Index</h1>
+<h1>Rates</h1>
 
 <p>
     <a asp-action="Create">Create New</a>
 </p>
+
+@if (ViewData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">
+        @ViewData["ErrorMessage"]
+    </div>
+}
+
+<form asp-action="Index" method="get">
+    <div class="form-actions no-color d-flexx">
+        <label for="sourceLanguageFilter" class="control-label">Source language</label>
+        @Html.DropDownList("sourceLanguageFilter", (IEnumerable<SelectListItem>)ViewBag.LanguagesSelectList, new { @class = "form-control"})
+
+        <label for="targetLanguageFilter" class="control-label">Target language</label>
+        @Html.DropDownList("targetLanguageFilter", (IEnumerable<SelectListItem>)ViewBag.LanguagesSelectList, new { @class = "form-control"})
+
+        <label for="specialityFilter" class="control-label">Speciality</label>
+        @Html.DropDownList("specialityFilter", (IEnumerable<SelectListItem>)ViewBag.SpecialitiesSelectList, new { @class = "form-control"})
+
+        <label for="taskFilter" class="control-label">Task</label>
+        <select name="taskFilter" class="form-control">
+            <option value="-1" selected="@(ViewBag.taskFilter==-1)">Select all</option>
+            <option value="3" selected="@(ViewBag.taskFilter==3)">Translation</option>
+            <option value="4" selected="@(ViewBag.taskFilter==4)">Revision</option>
+        </select>
+
+        <input type="submit" value="Go" class="btn btn-default" /> |
+        <a asp-action="Index">Back to Full List</a>
+    </div>
+</form>
+
 <table class="table">
     <thead>
         <tr>
@@ -36,19 +67,20 @@
     <tbody>
         @foreach (var item in Model)
         {
-            var castedTask = (CAT.Enums.Task)item.Task;
+            var sourcedLanguage = ((SelectList)ViewBag.LanguagesSelectList).FirstOrDefault(i => i.Value == item.SourceLanguageId.ToString());
+            var targetLanguage = ((SelectList)ViewBag.LanguagesSelectList).FirstOrDefault(i => i.Value == item.TargetLanguageId.ToString());
             <tr>
                 <td>
-                    @Html.DisplayFor(modelItem => item.SourceLanguageId)
+                    sourcedLanguage
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.TargetLanguageId)
+                    targetLanguage
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Speciality)
+                    @(ViewBag.Specialities[item.Speciality])
                 </td>
                 <td>
-                    @Html.DisplayFor(_ => castedTask)
+                    @(ViewBag.Tasks[item.Task])
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.RateToClient)
@@ -58,7 +90,6 @@
                 </td>
                 <td>
                     <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                    <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
                     <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
                 </td>
             </tr>

@@ -29,5 +29,18 @@ namespace CAT.Helpers
 
         //    return displayAttribute?.Name ?? enumValue.ToString();
         //}
+
+        public static Dictionary<int, string> EnumToDisplayNamesDictionary<TEnum>() where TEnum : Enum
+        {
+            return Enum.GetValues(typeof(TEnum))
+                       .Cast<TEnum>()
+                       .ToDictionary(
+                           e => (int)Convert.ChangeType(e, typeof(int)),
+                           e => e.GetType()
+                                 .GetMember(e.ToString())
+                                 .First()
+                                 .GetCustomAttribute<DisplayAttribute>()
+                                 ?.GetName() ?? e.ToString());
+        }
     }
 }
