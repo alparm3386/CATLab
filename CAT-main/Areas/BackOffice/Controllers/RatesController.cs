@@ -23,7 +23,8 @@ namespace CAT.Areas.BackOffice.Controllers
         }
 
         // GET: BackOffice/Rates
-        public async Task<IActionResult> Index(int? sourceLanguageFilter, int? targetLanguageFilter, int? specialityFilter, int? taskFilter)
+        public async Task<IActionResult> Index(int? sourceLanguageFilter, int? targetLanguageFilter, 
+            int? specialityFilter, int? taskFilter, int? pageNumber)
         {
             try
             {
@@ -37,7 +38,7 @@ namespace CAT.Areas.BackOffice.Controllers
                     ratesQuery = ratesQuery.Where(r => r.Speciality == specialityFilter.Value);
                 if (taskFilter.HasValue && taskFilter > 0)
                     ratesQuery = ratesQuery.Where(r => r.Task == taskFilter.Value);
-                var rates = await ratesQuery.ToListAsync();
+                //var rates = await ratesQuery.ToListAsync();
 
                 //set the lists
                 var languages = await _context.Languages.ToDictionaryAsync(l => l.Id, l => l.Name);
@@ -57,7 +58,10 @@ namespace CAT.Areas.BackOffice.Controllers
                 ViewData["specialityFilter"] = specialityFilter ?? -1;
                 ViewData["taskFilter"] = taskFilter ?? -1;
 
-                return View(rates);
+                int pageSize = 10;
+                pageNumber = pageNumber ?? 1;
+                var paginatedRates = await PaginatedList<Rate>.CreateAsync(ratesQuery, (int)pageNumber, pageSize);
+                return View(paginatedRates);
             }
             catch (Exception ex)
             {
