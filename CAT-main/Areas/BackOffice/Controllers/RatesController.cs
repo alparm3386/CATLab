@@ -9,6 +9,7 @@ using CAT.Data;
 using CAT.Models.Entities.Main;
 using CAT.Helpers;
 using CAT.Enums;
+using Task = CAT.Enums.Task;
 
 namespace CAT.Areas.BackOffice.Controllers
 {
@@ -109,6 +110,12 @@ namespace CAT.Areas.BackOffice.Controllers
             {
                 return NotFound();
             }
+
+            //the languages
+            ViewData["Languages"] = await _context.Languages.ToDictionaryAsync(l => l.Id, l => l.Name);
+            ViewData["Specialities"] = EnumHelper.EnumToDisplayNamesDictionary<Speciality>();
+            ViewData["Tasks"] = EnumHelper.EnumToDisplayNamesDictionary<Task>();
+
             return View(rate);
         }
 
@@ -117,7 +124,7 @@ namespace CAT.Areas.BackOffice.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,SourceLanguageId,TargetLanguageId,Speciality,Task,RateToClient,RateToTranslator")] Rate rate)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,RateToClient,RateToTranslator")] Rate rate)
         {
             if (id != rate.Id)
             {
