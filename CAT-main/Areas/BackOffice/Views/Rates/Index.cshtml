@@ -18,6 +18,7 @@
 }
 
 <form asp-action="Index" method="get">
+    <input type="hidden" name="pageNumber" value="@Model.PageIndex" />
     <div class="form-actions no-color row align-items-center bg-warning-subtle pb-3">
         <div class="col">
             <label for="sourceLanguageFilter" class="form-label">Source language</label>
@@ -114,12 +115,21 @@
 
 <a asp-action="Index"
    asp-route-pageNumber="@(Model.PageIndex - 1)"
-   asp-route-currentFilter="@ViewData["CurrentFilter"]"
+   asp-route-sourceLanguageFilter="@ViewData["sourceLanguageFilter"]"
+   asp-route-targetLanguageFilter="@ViewData["targetLanguageFilter"]"
+   asp-route-specialityFilter="@ViewData["specialityFilter"]"
+   asp-route-taskFilter="@ViewData["taskFilter"]"
    class="btn btn-default @prevDisabled">
     Previous
 </a>
 <a asp-action="Index"
    asp-route-pageNumber="@(Model.PageIndex + 1)"
+   asp-route-sourceLanguageFilter="@ViewData["sourceLanguageFilter"]"
+   asp-route-targetLanguageFilter="@ViewData["targetLanguageFilter"]"
+   asp-route-specialityFilter="@ViewData["specialityFilter"]"
+   asp-route-taskFilter="@ViewData["taskFilter"]"
    class="btn btn-default @nextDisabled">
     Next
 </a>
+
+<span>@Model.PageIndex / @Model.TotalPages</span>
