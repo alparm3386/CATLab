@@ -1,4 +1,4 @@
-﻿@model CAT.Models.Entities.Main.ClientRate
+﻿@model CAT.Models.Entities.Main.LinguistRate
 
 @{
     ViewData["Title"] = "Edit";
@@ -35,9 +35,9 @@
                 <span asp-validation-for="Rate.RateToClient" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="RateToClient" class="control-label">Custom rate</label>
-                <input asp-for="RateToClient" class="form-control" />
-                <span asp-validation-for="RateToClient" class="text-danger"></span>
+                <label asp-for="RateToLinguist" class="control-label">Custom rate</label>
+                <input asp-for="RateToLinguist" class="form-control" />
+                <span asp-validation-for="RateToLinguist" class="text-danger"></span>
             </div>
             <div class="form-group mt-3">
                 <input type="submit" value="Save" class="btn btn-primary" />

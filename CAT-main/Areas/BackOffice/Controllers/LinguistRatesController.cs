@@ -11,6 +11,7 @@ using CAT.Helpers;
 using CAT.Enums;
 using Task = CAT.Enums.Task;
 using CAT.Infrastructure;
+using CAT.Migrations.MainDb;
 
 namespace CAT.Areas.BackOffice.Controllers
 {
@@ -59,7 +60,7 @@ namespace CAT.Areas.BackOffice.Controllers
                 ViewData["linguistName"] = user!.FullName;
 
                 //get the rates
-                var ratesQuery = _contextContainer.MainContext.ClientRates.Include(cr => cr.Rate).AsNoTracking();
+                var ratesQuery = _contextContainer.MainContext.LinguistRates.Include(cr => cr.Rate).AsNoTracking();
                 if (sourceLanguageFilter.HasValue && sourceLanguageFilter > 0)
                     ratesQuery = ratesQuery.Where(cr => cr.Rate.SourceLanguageId == sourceLanguageFilter.Value);
                 if (targetLanguageFilter.HasValue && targetLanguageFilter > 0)
@@ -71,7 +72,7 @@ namespace CAT.Areas.BackOffice.Controllers
                 //var rates = await ratesQuery.ToListAsync();
                 int pageSize = 10;
                 pageNumber = pageNumber ?? 1;
-                var paginatedRates = await PaginatedList<ClientRate>.CreateAsync(ratesQuery, (int)pageNumber, pageSize);
+                var paginatedRates = await PaginatedList<LinguistRate>.CreateAsync(ratesQuery, (int)pageNumber, pageSize);
                 return View(paginatedRates);
             }
             catch (Exception ex)
@@ -84,7 +85,7 @@ namespace CAT.Areas.BackOffice.Controllers
                 // Optionally log the error: _logger.LogError(ex, "Error message here");
             }
 
-            return View(new PaginatedList<ClientRate>(new List<ClientRate>(), 0, 0, 1));
+            return View(new PaginatedList<LinguistRate>(new List<LinguistRate>(), 0, 0, 1));
         }
 
         // GET: BackOffice/Rates/Create
@@ -126,7 +127,7 @@ namespace CAT.Areas.BackOffice.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(int? linguistId, ClientRate clientRate)
+        public async Task<IActionResult> Create(int? linguistId, LinguistRate linguistRate)
         {
             try
             {
@@ -134,10 +135,10 @@ namespace CAT.Areas.BackOffice.Controllers
                     throw new CATException("Invalid linguist");
 
                 //get the base rate
-                var rate = await _contextContainer.MainContext.Rates.Where(cr => cr.SourceLanguageId == clientRate.Rate.SourceLanguageId &&
-                    cr.TargetLanguageId == clientRate.Rate.TargetLanguageId &&
-                    cr.Speciality == clientRate.Rate.Speciality &&
-                    cr.Task == clientRate.Rate.Task).AsNoTracking().FirstOrDefaultAsync();
+                var rate = await _contextContainer.MainContext.Rates.Where(cr => cr.SourceLanguageId == linguistRate.Rate.SourceLanguageId &&
+                    cr.TargetLanguageId == linguistRate.Rate.TargetLanguageId &&
+                    cr.Speciality == linguistRate.Rate.Speciality &&
+                    cr.Task == linguistRate.Rate.Task).AsNoTracking().FirstOrDefaultAsync();
 
                 if (rate == null)
                     throw new CATException("Base rate not found");
@@ -146,9 +147,9 @@ namespace CAT.Areas.BackOffice.Controllers
                 ModelState.Remove("Rate");
                 if (ModelState.IsValid)
                 {
-                    clientRate.RateId = rate.Id;
-                    clientRate.Rate = null!;
-                    _contextContainer.MainContext.Add(clientRate);
+                    linguistRate.RateId = rate.Id;
+                    linguistRate.Rate = null!;
+                    _contextContainer.MainContext.Add(linguistRate);
                     await _contextContainer.MainContext.SaveChangesAsync();
                     return RedirectToAction(nameof(Index), new { linguistId });
                 }
@@ -178,13 +179,13 @@ namespace CAT.Areas.BackOffice.Controllers
         // GET: BackOffice/Rates/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null || _contextContainer.MainContext.ClientRates == null)
+            if (id == null || _contextContainer.MainContext.LinguistRates == null)
             {
                 return NotFound();
             }
 
-            var clientRate = await _contextContainer.MainContext.ClientRates.Include(cr => cr.Rate).Where(cr => cr.Id == id).AsNoTracking().FirstOrDefaultAsync();
-            if (clientRate == null)
+            var linguistRate = await _contextContainer.MainContext.LinguistRates.Include(cr => cr.Rate).Where(cr => cr.Id == id).AsNoTracking().FirstOrDefaultAsync();
+            if (linguistRate == null)
             {
                 return NotFound();
             }
@@ -194,7 +195,7 @@ namespace CAT.Areas.BackOffice.Controllers
             ViewData["Specialities"] = EnumHelper.EnumToDisplayNamesDictionary<Speciality>();
             ViewData["Tasks"] = EnumHelper.EnumToDisplayNamesDictionary<Task>();
 
-            return View(clientRate);
+            return View(linguistRate);
         }
 
         // POST: BackOffice/Rates/Edit/5
@@ -202,16 +203,16 @@ namespace CAT.Areas.BackOffice.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,RateToClient")] ClientRate clientRate)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,RateToLinguist")] LinguistRate linguistRate)
         {
-            if (id != clientRate.Id)
+            if (id != linguistRate.Id)
             {
                 return NotFound();
             }
 
             //update the stored rate
-            var storedClientRate = await _contextContainer.MainContext.ClientRates.Include(cr => cr.Rate).Where(cr => cr.Id == id).AsNoTracking().FirstOrDefaultAsync();
-            storedClientRate!.RateToClient = clientRate.RateToClient;
+            var storedLinguistRate = await _contextContainer.MainContext.LinguistRates.Include(cr => cr.Rate).Where(cr => cr.Id == id).AsNoTracking().FirstOrDefaultAsync();
+            storedLinguistRate!.RateToLinguist = linguistRate.RateToLinguist;
 
             ModelState.Remove("Linguist");
             ModelState.Remove("Rate");
@@ -219,16 +220,16 @@ namespace CAT.Areas.BackOffice.Controllers
             {
                 try
                 {
-                    _contextContainer.MainContext.Update(storedClientRate);
+                    _contextContainer.MainContext.Update(storedLinguistRate);
                     await _contextContainer.MainContext.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
                     throw;
                 }
-                return RedirectToAction(nameof(Index), new { linguistId = storedClientRate.CompanyId });
+                return RedirectToAction(nameof(Index), new { linguistId = storedLinguistRate.LinguistId });
             }
-            return View(clientRate);
+            return View(linguistRate);
         }
 
         // GET: BackOffice/Rates/Delete/5

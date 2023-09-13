@@ -20,6 +20,6 @@ namespace CAT.Models.Entities.Main
 
         public float RateToClient { get; set; }
 
-        public float RateToTranslator { get; set; }
+        public float RateToLinguist { get; set; }
     }
 }

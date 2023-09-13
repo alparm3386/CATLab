@@ -1,4 +1,4 @@
-﻿@model CAT.Models.Entities.Main.Rate
+﻿@model CAT.Models.Entities.Main.LinguistRate
 
 @{
     ViewData["Title"] = "Delete";
@@ -12,40 +12,40 @@
     <hr />
     <dl class="row">
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.SourceLanguageId)
+            Source language
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.SourceLanguageId)
+            @Html.DisplayFor(model => model.Rate.SourceLanguageId)
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.TargetLanguageId)
+            Target language
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.TargetLanguageId)
+            @Html.DisplayFor(model => model.Rate.TargetLanguageId)
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Speciality)
+            Speciality
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Speciality)
+            @Html.DisplayFor(model => model.Rate.Speciality)
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Task)
+            Task
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Task)
+            @Html.DisplayFor(model => model.Rate.Task)
         </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.RateToClient)
+        <dt class="col-sm-2">
+            Linguist base rate
         </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.RateToClient)
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Rate.RateToLinguist)
         </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.RateToTranslator)
+        <dt class="col-sm-2">
+            Linguist custom rate
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.RateToTranslator)
+            @Html.DisplayFor(model => model.RateToLinguist)
         </dd>
     </dl>
     

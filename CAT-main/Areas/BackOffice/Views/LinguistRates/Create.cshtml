@@ -1,10 +1,10 @@
-﻿@model CAT.Models.Entities.Main.ClientRate
+﻿@model CAT.Models.Entities.Main.LinguistRate
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Create rate";
 }
 
-<h1>Create custom rate for @(ViewData["CompanyName"] ?? " ...")</h1>
+<h1>Create custom rate for @(ViewData["LinguistName"] ?? " ...")</h1>
 
 <hr />
 
@@ -44,9 +44,9 @@
                 <span asp-validation-for="Rate.Task" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="RateToClient" class="control-label">Custom rate</label>
-                <input asp-for="RateToClient" class="form-control"/>
-                <span asp-validation-for="RateToClient" class="text-danger"></span>
+                <label asp-for="RateToLinguist" class="control-label">Custom rate</label>
+                <input asp-for="RateToLinguist" class="form-control" />
+                <span asp-validation-for="RateToLinguist" class="text-danger"></span>
             </div>
             <div class="form-group mt-3">
                 <input type="submit" value="Create" class="btn btn-primary" />

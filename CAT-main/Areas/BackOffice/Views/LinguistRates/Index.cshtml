@@ -1,4 +1,4 @@
-﻿@model CAT.Helpers.PaginatedList<ClientRate>
+﻿@model CAT.Helpers.PaginatedList<LinguistRate>
 
 @{
     ViewData["Title"] = "Custom rates";
@@ -94,10 +94,10 @@
                     @(ViewBag.Tasks[item.Rate.Task])
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Rate.RateToClient)
+                    @Html.DisplayFor(modelItem => item.Rate.RateToLinguist)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.RateToClient)
+                    @Html.DisplayFor(modelItem => item.RateToLinguist)
                 </td>
                 <td>
                     <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
