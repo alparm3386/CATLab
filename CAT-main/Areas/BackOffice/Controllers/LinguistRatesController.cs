@@ -55,7 +55,7 @@ namespace CAT.Areas.BackOffice.Controllers
                     throw new CATException("Invalid linguist");
 
                 //get the user
-                var user = await _contextContainer.IdentityContext.Users.FindAsync(linguist.Id);
+                var user = await _contextContainer.IdentityContext.Users.FindAsync(linguist.UserId);
                 ViewData["linguistId"] = linguist.Id;
                 ViewData["linguistName"] = user!.FullName;
 
