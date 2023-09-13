@@ -98,7 +98,7 @@ namespace CAT.Areas.BackOffice.Controllers
                 if (linguist == null)
                     throw new CATException("Invalid linguist");
                 //get the user
-                var user = await _contextContainer.IdentityContext.Users.FindAsync(linguist.Id);
+                var user = await _contextContainer.IdentityContext.Users.FindAsync(linguist.UserId);
                 if (user == null)
                     throw new CATException("Invalid user");
 

@@ -4,10 +4,10 @@
     ViewData["Title"] = "Custom rates";
 }
 
-<h1>Custom rates for @(ViewData["CompanyName"] ?? " ...")</h1>
+<h1>Custom rates for @(ViewData["LinguistName"] ?? " ...")</h1>
 
 <p>
-    <a asp-action="Create" asp-route-companyId="@ViewBag.CompanyId">Create New</a>
+    <a asp-action="Create" asp-route-linguistId="@ViewBag.LinguistId">Create New</a>
 </p>
 
 @if (ViewData["ErrorMessage"] != null)
@@ -19,6 +19,7 @@
 
 <form asp-action="Index" method="get">
     <input type="hidden" name="pageNumber" value="@Model.PageIndex" />
+    <input type="hidden" name="linguistId" value="@ViewBag.LinguistId" />
     <div class="form-actions no-color row align-items-center bg-warning-subtle pb-3">
         <div class="col">
             <label for="sourceLanguageFilter" class="form-label">Source language</label>
