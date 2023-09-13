@@ -85,8 +85,27 @@ namespace CAT.Areas.BackOffice.Controllers
         }
 
         // GET: BackOffice/Rates/Create
-        public async Task<IActionResult> Create()
+        public async Task<IActionResult> Create(int? companyId)
         {
+            try
+            {
+                //get the company
+                var company = _context.Companies.Where(c => c.Id == companyId).AsNoTracking().FirstOrDefault();
+                if (company == null)
+                    throw new CATException("Invalid company");
+                ViewData["CompanyId"] = company.Id;
+                ViewData["CompanyName"] = company.Name;
+            }
+            catch (Exception ex)
+            {
+                // set error message here that is displayed in the view
+                if (ex is CATException)
+                    ViewData["ErrorMessage"] = ex.Message;
+                else
+                    ViewData["ErrorMessage"] = "There was an error processing your request. Please try again later.";
+                // Optionally log the error: _logger.LogError(ex, "Error message here");
+            }
+
             var languages = await _context.Languages.ToDictionaryAsync(l => l.Id, l => l.Name);
             ViewData["Languages"] = new SelectList(languages, "Key", "Value");
             ViewData["Specialities"] = new SelectList(EnumHelper.EnumToDisplayNamesDictionary<Speciality>(), "Key", "Value");
@@ -99,10 +118,13 @@ namespace CAT.Areas.BackOffice.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(ClientRate clientRate)
+        public async Task<IActionResult> Create(int? companyId, ClientRate clientRate)
         {
             try
             {
+                if (!companyId.HasValue)
+                    throw new CATException("Invalid company");
+
                 //get the base rate
                 var rate = await _context.Rates.Where(cr => cr.SourceLanguageId == clientRate.Rate.SourceLanguageId &&
                     cr.TargetLanguageId == clientRate.Rate.TargetLanguageId &&
@@ -116,9 +138,11 @@ namespace CAT.Areas.BackOffice.Controllers
                 ModelState.Remove("Rate");
                 if (ModelState.IsValid)
                 {
+                    clientRate.RateId = rate.Id;
+                    clientRate.Rate = null!;
                     _context.Add(clientRate);
                     await _context.SaveChangesAsync();
-                    return RedirectToAction(nameof(Index));
+                    return RedirectToAction(nameof(Index), new { companyId });
                 }
                 else
                     throw new CATException("Invalid model state");
@@ -135,6 +159,9 @@ namespace CAT.Areas.BackOffice.Controllers
                 var languages = await _context.Languages.ToDictionaryAsync(l => l.Id, l => l.Name);
                 ViewData["Languages"] = new SelectList(languages, "Key", "Value");
                 ViewData["Specialities"] = new SelectList(EnumHelper.EnumToDisplayNamesDictionary<Speciality>(), "Key", "Value");
+
+                ViewData["CompanyId"] = companyId;
+                ViewData["CompanyName"] = "";
 
                 return View();
             }

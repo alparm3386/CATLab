@@ -7,7 +7,7 @@
 <h1>Custom rates for @(ViewData["CompanyName"] ?? " ...")</h1>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-action="Create" asp-route-companyId="@ViewBag.CompanyId">Create New</a>
 </p>
 
 @if (ViewData["ErrorMessage"] != null)
