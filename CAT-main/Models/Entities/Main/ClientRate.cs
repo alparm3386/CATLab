@@ -10,16 +10,15 @@ namespace CAT.Models.Entities.Main
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
-        public int ClientId { get; set; }
+        public int CompanyId { get; set; }
+        public Company Company { get; set; } = default!;
 
-        public int SourceLanguageId { get; set; }
+        public int RateId { get; set; }
 
-        public int TargetLanguageId { get; set; }
+        public Rate Rate { get; set; } = default!;
 
-        public int Speciality { get; set; }
+        public int Currency { get; set; }
 
-        public int Task { get; set; }
-
-        public float Rate { get; set; }
+        public float RateToClient { get; set; }
     }
 }

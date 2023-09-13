@@ -1,10 +1,10 @@
-﻿@model CAT.Helpers.PaginatedList<Rate>
+﻿@model CAT.Helpers.PaginatedList<ClientRate>
 
 @{
-    ViewData["Title"] = "Rates";
+    ViewData["Title"] = "Custom rates";
 }
 
-<h1>Rates</h1>
+<h1>Custom rates for @(ViewData["CompanyName"] ?? " ...")</h1>
 
 <p>
     <a asp-action="Create">Create New</a>
@@ -67,10 +67,10 @@
                 Task
             </th>
             <th>
-                Client rate
+                Base rate
             </th>
             <th>
-                Linguist rate
+                Custom rate
             </th>
             <th></th>
         </tr>
@@ -78,8 +78,8 @@
     <tbody>
         @foreach (var item in Model)
         {
-            var sourceLanguage = ((SelectList)ViewBag.LanguagesSelectList).FirstOrDefault(i => i.Value == item.SourceLanguageId.ToString());
-            var targetLanguage = ((SelectList)ViewBag.LanguagesSelectList).FirstOrDefault(i => i.Value == item.TargetLanguageId.ToString());
+            var sourceLanguage = ((SelectList)ViewBag.LanguagesSelectList).FirstOrDefault(i => i.Value == item.Rate.SourceLanguageId.ToString());
+            var targetLanguage = ((SelectList)ViewBag.LanguagesSelectList).FirstOrDefault(i => i.Value == item.Rate.TargetLanguageId.ToString());
             <tr>
                 <td>
                     @sourceLanguage!.Text
@@ -88,16 +88,16 @@
                     @targetLanguage!.Text
                 </td>
                 <td>
-                    @(ViewBag.Specialities[item.Speciality])
+                    @(ViewBag.Specialities[item.Rate.Speciality])
                 </td>
                 <td>
-                    @(ViewBag.Tasks[item.Task])
+                    @(ViewBag.Tasks[item.Rate.Task])
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Rate.RateToClient)
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.RateToClient)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.RateToTranslator)
                 </td>
                 <td>
                     <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |

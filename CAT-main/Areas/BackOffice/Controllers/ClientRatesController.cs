@@ -10,21 +10,22 @@ using CAT.Models.Entities.Main;
 using CAT.Helpers;
 using CAT.Enums;
 using Task = CAT.Enums.Task;
+using CAT.Infrastructure;
 
 namespace CAT.Areas.BackOffice.Controllers
 {
     [Area("BackOffice")]
-    public class RatesController : Controller
+    public class ClientRatesController : Controller
     {
         private readonly MainDbContext _context;
 
-        public RatesController(MainDbContext context)
+        public ClientRatesController(MainDbContext context)
         {
             _context = context;
         }
 
         // GET: BackOffice/Rates
-        public async Task<IActionResult> Index(int? sourceLanguageFilter, int? targetLanguageFilter,
+        public async Task<IActionResult> Index(int? companyId, int? sourceLanguageFilter, int? targetLanguageFilter,
             int? specialityFilter, int? taskFilter, int? pageNumber)
         {
             try
@@ -47,32 +48,40 @@ namespace CAT.Areas.BackOffice.Controllers
                 ViewData["specialityFilter"] = specialityFilter ?? -1;
                 ViewData["taskFilter"] = taskFilter ?? -1;
 
-                //get the rates
-                var ratesQuery = _context.Rates.AsNoTracking();
-                if (sourceLanguageFilter.HasValue && sourceLanguageFilter > 0)
-                    ratesQuery = ratesQuery.Where(r => r.SourceLanguageId == sourceLanguageFilter.Value);
-                if (targetLanguageFilter.HasValue && targetLanguageFilter > 0)
-                    ratesQuery = ratesQuery.Where(r => r.TargetLanguageId == targetLanguageFilter.Value);
-                if (specialityFilter.HasValue && specialityFilter > 0)
-                    ratesQuery = ratesQuery.Where(r => r.Speciality == specialityFilter.Value);
-                if (taskFilter.HasValue && taskFilter > 0)
-                    ratesQuery = ratesQuery.Where(r => r.Task == taskFilter.Value);
-                //var rates = await ratesQuery.ToListAsync();
+                //get the company
+                var company = _context.Companies.Where(c => c.Id == companyId).AsNoTracking().FirstOrDefault();
+                if (company == null)
+                    throw new CATException("Invalid company");
+                ViewData["CompanyId"] = company.Id;
+                ViewData["CompanyName"] = company.Name;
 
+                //get the rates
+                var ratesQuery = _context.ClientRates.Include(cr => cr.Rate).AsNoTracking();
+                if (sourceLanguageFilter.HasValue && sourceLanguageFilter > 0)
+                    ratesQuery = ratesQuery.Where(cr => cr.Rate.SourceLanguageId == sourceLanguageFilter.Value);
+                if (targetLanguageFilter.HasValue && targetLanguageFilter > 0)
+                    ratesQuery = ratesQuery.Where(cr => cr.Rate.TargetLanguageId == targetLanguageFilter.Value);
+                if (specialityFilter.HasValue && specialityFilter > 0)
+                    ratesQuery = ratesQuery.Where(cr => cr.Rate.Speciality == specialityFilter.Value);
+                if (taskFilter.HasValue && taskFilter > 0)
+                    ratesQuery = ratesQuery.Where(cr => cr.Rate.Task == taskFilter.Value);
+                //var rates = await ratesQuery.ToListAsync();
                 int pageSize = 10;
                 pageNumber = pageNumber ?? 1;
-                var paginatedRates = await PaginatedList<Rate>.CreateAsync(ratesQuery, (int)pageNumber, pageSize);
+                var paginatedRates = await PaginatedList<ClientRate>.CreateAsync(ratesQuery, (int)pageNumber, pageSize);
                 return View(paginatedRates);
             }
             catch (Exception ex)
             {
                 // set error message here that is displayed in the view
-                //ViewData["ErrorMessage"] = "There was an error processing your request. Please try again later.";
-                ViewData["ErrorMessage"] = ex.Message;
+                if (ex is CATException)
+                    ViewData["ErrorMessage"] = ex.Message;
+                else
+                    ViewData["ErrorMessage"] = "There was an error processing your request. Please try again later.";
                 // Optionally log the error: _logger.LogError(ex, "Error message here");
             }
 
-            return View(new PaginatedList<Rate>(new List<Rate>(), 0, 0, 1));
+            return View(new PaginatedList<ClientRate>(new List<ClientRate>(), 0, 0, 1));
         }
 
         // GET: BackOffice/Rates/Create
@@ -90,24 +99,37 @@ namespace CAT.Areas.BackOffice.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,SourceLanguageId,TargetLanguageId,Speciality,Task,RateToClient,RateToTranslator")] Rate rate)
+        public async Task<IActionResult> Create(ClientRate clientRate)
         {
             try
             {
+                //get the base rate
+                var rate = await _context.Rates.Where(cr => cr.SourceLanguageId == clientRate.Rate.SourceLanguageId &&
+                    cr.TargetLanguageId == clientRate.Rate.TargetLanguageId &&
+                    cr.Speciality == clientRate.Rate.Speciality &&
+                    cr.Task == clientRate.Rate.Task).AsNoTracking().FirstOrDefaultAsync();
+
+                if (rate == null)
+                    throw new CATException("Base rate not found");
+
+                ModelState.Remove("Company");
+                ModelState.Remove("Rate");
                 if (ModelState.IsValid)
                 {
-                    _context.Add(rate);
+                    _context.Add(clientRate);
                     await _context.SaveChangesAsync();
                     return RedirectToAction(nameof(Index));
                 }
                 else
-                    throw new Exception("Invalid model state");
+                    throw new CATException("Invalid model state");
             }
             catch (Exception ex)
             {
                 // set error message here that is displayed in the view
-                //ViewData["ErrorMessage"] = "There was an error processing your request. Please try again later.";
-                ViewData["ErrorMessage"] = ex.Message;
+                if (ex is CATException)
+                    ViewData["ErrorMessage"] = ex.Message;
+                else
+                    ViewData["ErrorMessage"] = "There was an error processing your request. Please try again later.";
                 // Optionally log the error: _logger.LogError(ex, "Error message here");
 
                 var languages = await _context.Languages.ToDictionaryAsync(l => l.Id, l => l.Name);
@@ -121,13 +143,13 @@ namespace CAT.Areas.BackOffice.Controllers
         // GET: BackOffice/Rates/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null || _context.Rates == null)
+            if (id == null || _context.ClientRates == null)
             {
                 return NotFound();
             }
 
-            var rate = await _context.Rates.FindAsync(id);
-            if (rate == null)
+            var clientRate = await _context.ClientRates.Include(cr => cr.Rate).Where(cr => cr.Id == id).AsNoTracking().FirstOrDefaultAsync();
+            if (clientRate == null)
             {
                 return NotFound();
             }
@@ -137,7 +159,7 @@ namespace CAT.Areas.BackOffice.Controllers
             ViewData["Specialities"] = EnumHelper.EnumToDisplayNamesDictionary<Speciality>();
             ViewData["Tasks"] = EnumHelper.EnumToDisplayNamesDictionary<Task>();
 
-            return View(rate);
+            return View(clientRate);
         }
 
         // POST: BackOffice/Rates/Edit/5
@@ -145,34 +167,33 @@ namespace CAT.Areas.BackOffice.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,RateToClient,RateToTranslator")] Rate rate)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,RateToClient")] ClientRate clientRate)
         {
-            if (id != rate.Id)
+            if (id != clientRate.Id)
             {
                 return NotFound();
             }
 
+            //update the stored rate
+            var storedClientRate = await _context.ClientRates.Include(cr => cr.Rate).Where(cr => cr.Id == id).AsNoTracking().FirstOrDefaultAsync();
+            storedClientRate!.RateToClient = clientRate.RateToClient;
+
+            ModelState.Remove("Company");
+            ModelState.Remove("Rate");
             if (ModelState.IsValid)
             {
                 try
                 {
-                    _context.Update(rate);
+                    _context.Update(storedClientRate);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!RateExists(rate.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    throw;
                 }
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(Index), new { companyId = storedClientRate.CompanyId });
             }
-            return View(rate);
+            return View(clientRate);
         }
 
         // GET: BackOffice/Rates/Delete/5
@@ -210,11 +231,6 @@ namespace CAT.Areas.BackOffice.Controllers
 
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
-        }
-
-        private bool RateExists(int id)
-        {
-            return (_context.Rates?.Any(e => e.Id == id)).GetValueOrDefault();
         }
     }
 }

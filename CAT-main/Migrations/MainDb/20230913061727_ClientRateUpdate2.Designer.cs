@@ -4,6 +4,7 @@ using CAT.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CAT.Migrations.MainDb
 {
     [DbContext(typeof(MainDbContext))]
-    partial class MainDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230913061727_ClientRateUpdate2")]
+    partial class ClientRateUpdate2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -153,7 +156,7 @@ namespace CAT.Migrations.MainDb
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("CompanyId")
+                    b.Property<int>("ClientId")
                         .HasColumnType("int");
 
                     b.Property<int>("Currency")
@@ -167,10 +170,9 @@ namespace CAT.Migrations.MainDb
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CompanyId");
+                    b.HasIndex("ClientId");
 
-                    b.HasIndex("RateId")
-                        .IsUnique();
+                    b.HasIndex("RateId");
 
                     b.ToTable("ClientRates");
                 });
@@ -692,9 +694,9 @@ namespace CAT.Migrations.MainDb
 
             modelBuilder.Entity("CAT.Models.Entities.Main.ClientRate", b =>
                 {
-                    b.HasOne("CAT.Models.Entities.Main.Company", "Company")
+                    b.HasOne("CAT.Models.Entities.Main.Client", "Client")
                         .WithMany()
-                        .HasForeignKey("CompanyId")
+                        .HasForeignKey("ClientId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -704,7 +706,7 @@ namespace CAT.Migrations.MainDb
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Company");
+                    b.Navigation("Client");
 
                     b.Navigation("Rate");
                 });

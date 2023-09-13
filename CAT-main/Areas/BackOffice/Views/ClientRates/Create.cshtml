@@ -1,0 +1,63 @@
+﻿@model CAT.Models.Entities.Main.ClientRate
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h1>Create rate</h1>
+
+<hr />
+
+@if (ViewData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">
+        @ViewData["ErrorMessage"]
+    </div>
+}
+
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Rate.SourceLanguageId" class="control-label">Source language</label>
+                <select asp-for="Rate.SourceLanguageId" class="form-control" asp-items="ViewBag.Languages"></select>
+                <span asp-validation-for="Rate.SourceLanguageId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Rate.TargetLanguageId" class="control-label">Target language</label>
+                <select asp-for="Rate.TargetLanguageId" class="form-control" asp-items="ViewBag.Languages"></select>
+                <span asp-validation-for="Rate.TargetLanguageId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Rate.Speciality" class="control-label"></label>
+                <select asp-for="Rate.Speciality" class="form-control" asp-items="ViewBag.Specialities"></select>
+                <span asp-validation-for="Rate.Speciality" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label for="Rate.Task" class="control-label">Task</label>
+                <select name="Rate.Task" class="form-control">
+                    <option value="3">Translation</option>
+                    <option value="4">Revision</option>
+                </select>
+                <span asp-validation-for="Rate.Task" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="RateToClient" class="control-label">Custom rate</label>
+                <input asp-for="RateToClient" class="form-control"/>
+                <span asp-validation-for="RateToClient" class="text-danger"></span>
+            </div>
+            <div class="form-group mt-3">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
