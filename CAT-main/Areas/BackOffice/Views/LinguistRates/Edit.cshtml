@@ -1,0 +1,55 @@
+﻿@model CAT.Models.Entities.Main.ClientRate
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1>Edit</h1>
+
+<h4>Rate</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Id" />
+            <div class="form-group">
+                <label asp-for="Rate.SourceLanguageId" class="control-label">Source language</label>
+                <input name="SourceLanguageId" class="form-control" disabled value="@ViewBag.Languages[Model.Rate.SourceLanguageId]" />
+            </div>
+            <div class="form-group">
+                <label asp-for="Rate.TargetLanguageId" class="control-label">Target language</label>
+                <input name="TargetLanguageId" class="form-control" disabled value="@ViewBag.Languages[Model.Rate.TargetLanguageId]" />
+            </div>
+            <div class="form-group">
+                <label asp-for="Rate.Speciality" class="control-label">Speciality</label>
+                <input name="Speciality" class="form-control" disabled value="@ViewBag.Specialities[Model.Rate.Speciality]" />
+            </div>
+            <div class="form-group">
+                <label asp-for="Rate.Task" class="control-label">Task</label>
+                <input name="Task" class="form-control" disabled value="@ViewBag.Tasks[Model.Rate.Task]" />
+            </div>
+            <div class="form-group">
+                <label asp-for="Rate.RateToClient" class="control-label">Base rate</label>
+                <input asp-for="Rate.RateToClient" class="form-control" disabled />
+                <span asp-validation-for="Rate.RateToClient" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="RateToClient" class="control-label">Custom rate</label>
+                <input asp-for="RateToClient" class="form-control" />
+                <span asp-validation-for="RateToClient" class="text-danger"></span>
+            </div>
+            <div class="form-group mt-3">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

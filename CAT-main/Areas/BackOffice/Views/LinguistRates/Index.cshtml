@@ -1,0 +1,135 @@
+﻿@model CAT.Helpers.PaginatedList<ClientRate>
+
+@{
+    ViewData["Title"] = "Custom rates";
+}
+
+<h1>Custom rates for @(ViewData["CompanyName"] ?? " ...")</h1>
+
+<p>
+    <a asp-action="Create" asp-route-companyId="@ViewBag.CompanyId">Create New</a>
+</p>
+
+@if (ViewData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">
+        @ViewData["ErrorMessage"]
+    </div>
+}
+
+<form asp-action="Index" method="get">
+    <input type="hidden" name="pageNumber" value="@Model.PageIndex" />
+    <div class="form-actions no-color row align-items-center bg-warning-subtle pb-3">
+        <div class="col">
+            <label for="sourceLanguageFilter" class="form-label">Source language</label>
+            @Html.DropDownList("sourceLanguageFilter", (IEnumerable<SelectListItem>)ViewBag.LanguagesSelectList, new { @class = "form-control"})
+        </div>
+        <div class="col">
+            <label for="targetLanguageFilter" class="form-label">Target language</label>
+            @Html.DropDownList("targetLanguageFilter", (IEnumerable<SelectListItem>)ViewBag.LanguagesSelectList, new { @class = "form-control"})
+        </div>
+        <div class="col">
+            <label for="specialityFilter" class="form-label">Speciality</label>
+            @Html.DropDownList("specialityFilter", (IEnumerable<SelectListItem>)ViewBag.SpecialitiesSelectList, new { @class = "form-control"})
+        </div>
+        <div class="col">
+            <label for="taskFilter" class="form-label">Task</label>
+            <select name="taskFilter" class="form-control">
+                <option value="-1" selected="@(ViewBag.taskFilter==-1)">Select all</option>
+                <option value="3" selected="@(ViewBag.taskFilter==3)">Translation</option>
+                <option value="4" selected="@(ViewBag.taskFilter==4)">Revision</option>
+            </select>
+        </div>
+        <div class="col-auto">
+            <input type="submit" value="Go" class="btn btn-primary" />
+        </div>
+        <div class="col-auto">
+            <a asp-action="Index" class="btn btn-link">Back to Full List</a>
+        </div>
+    </div>
+</form>
+
+<hr/>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Source language
+            </th>
+            <th>
+                Target language
+            </th>
+            <th>
+                Speciality
+            </th>
+            <th>
+                Task
+            </th>
+            <th>
+                Base rate
+            </th>
+            <th>
+                Custom rate
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            var sourceLanguage = ((SelectList)ViewBag.LanguagesSelectList).FirstOrDefault(i => i.Value == item.Rate.SourceLanguageId.ToString());
+            var targetLanguage = ((SelectList)ViewBag.LanguagesSelectList).FirstOrDefault(i => i.Value == item.Rate.TargetLanguageId.ToString());
+            <tr>
+                <td>
+                    @sourceLanguage!.Text
+                </td>
+                <td>
+                    @targetLanguage!.Text
+                </td>
+                <td>
+                    @(ViewBag.Specialities[item.Rate.Speciality])
+                </td>
+                <td>
+                    @(ViewBag.Tasks[item.Rate.Task])
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Rate.RateToClient)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.RateToClient)
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                    <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@{
+    var prevDisabled = !Model.HasPreviousPage ? "disabled" : "";
+    var nextDisabled = !Model.HasNextPage ? "disabled" : "";
+}
+
+<a asp-action="Index"
+   asp-route-pageNumber="@(Model.PageIndex - 1)"
+   asp-route-sourceLanguageFilter="@ViewData["sourceLanguageFilter"]"
+   asp-route-targetLanguageFilter="@ViewData["targetLanguageFilter"]"
+   asp-route-specialityFilter="@ViewData["specialityFilter"]"
+   asp-route-taskFilter="@ViewData["taskFilter"]"
+   class="btn btn-default @prevDisabled">
+    Previous
+</a>
+<a asp-action="Index"
+   asp-route-pageNumber="@(Model.PageIndex + 1)"
+   asp-route-sourceLanguageFilter="@ViewData["sourceLanguageFilter"]"
+   asp-route-targetLanguageFilter="@ViewData["targetLanguageFilter"]"
+   asp-route-specialityFilter="@ViewData["specialityFilter"]"
+   asp-route-taskFilter="@ViewData["taskFilter"]"
+   class="btn btn-default @nextDisabled">
+    Next
+</a>
+
+<span class="ms-3">@Model.PageIndex / @Model.TotalPages</span>

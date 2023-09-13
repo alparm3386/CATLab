@@ -109,6 +109,11 @@ namespace CAT.Data
             modelBuilder.Entity<ClientRate>()
                 .HasIndex(cr => cr.RateId)
                 .IsUnique();
+
+            //LinguistRate
+            modelBuilder.Entity<LinguistRate>()
+                .HasIndex(cr => cr.RateId)
+                .IsUnique();
         }
     }
 }
