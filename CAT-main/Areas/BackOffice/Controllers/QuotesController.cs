@@ -21,16 +21,18 @@ namespace CAT.Areas.BackOffice.Controllers
         private readonly IQuoteService _quoteService;
         private readonly IDocumentService _documentService;
         private readonly IOrderService _orderService;
+        private readonly ILanguageService _languageService; 
         private readonly IMapper _mapper;
         private readonly ILogger _logger;
 
-        public QuotesController(IConfiguration configuration, IQuoteService quoteService,
+        public QuotesController(IConfiguration configuration, IQuoteService quoteService, ILanguageService languageService,
             IDocumentService documentService, IOrderService orderService, IMapper mapper, ILogger<JobService> logger)
         {
             _configuration = configuration;
             _quoteService = quoteService;
             _documentService = documentService;
             _orderService = orderService;
+            _languageService = languageService;
             _logger = logger;
             _mapper = mapper;
         }
@@ -44,21 +46,7 @@ namespace CAT.Areas.BackOffice.Controllers
             };
 
             return View(storedQuotesViewModel);
-            //return RedirectToAction("QuoteDetails"); // or wherever you want to redirect
         }
-
-        //[HttpPost]
-        //public IActionResult Index(QuotesViewModel model)
-        //{
-        //    if (ModelState.IsValid)
-        //    {
-        //        // Process the uploaded file and other data as needed
-        //        // Save to database, call another service, etc.
-        //        return RedirectToAction("Success"); // or wherever you wish to redirect after processing
-        //    }
-
-        //    return View(model);
-        //}
 
         [HttpPost]
         public async Task<IActionResult> HandleQuote(CreateQuoteViewModel model, string action)
@@ -108,7 +96,7 @@ namespace CAT.Areas.BackOffice.Controllers
             }
         }
 
-        [Route("Quotes/Create/{id?}")]
+        [Route("BackOffice/Quotes/Create/{id?}")]
         public IActionResult Create(int? id)
         {
             var storedQuoteId = id ?? -1;
