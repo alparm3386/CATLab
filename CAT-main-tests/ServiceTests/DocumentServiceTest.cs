@@ -23,7 +23,7 @@ namespace CAT_main_tests.ServiceTests
         public async Task Test_CreateDocumentAsync()
         {
             var documentService = new DocumentService(_testFixture.DbContextContainer, _testFixture.MockConfiguration.Object,
-                _testFixture.MockMapper.Object, _testFixture.GetLoggerMockObject<DocumentService>());
+                _testFixture.MockLanguageService.Object, _testFixture.MockMapper.Object, _testFixture.GetLoggerMockObject<DocumentService>());
 
             // Create a mock instance of IFormFile
             var mockFormFile = new Mock<IFormFile>();

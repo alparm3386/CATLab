@@ -89,9 +89,8 @@ namespace CAT.Areas.BackOffice.Controllers
                             int idFilter = -1;
                             var document = await _documentService.CreateTempDocumentAsync(model.FileToUpload!, DocumentType.Original, idFilter);
                             //create the quote
-                            var targetLocales = model.TargetLanguages!.Select(lang => new LocaleId(lang)).ToArray();
-                            var quotes = await _quoteService.CreateTempQuotesAsync(storedQuoteId, 1, new LocaleId(model.SourceLanguage!), targetLocales,
-                                model.Speciality, model.Service, document.Id, model.ClientReview);
+                            var quotes = await _quoteService.CreateTempQuotesAsync(storedQuoteId, 1, model.SourceLanguage, 
+                                model.TargetLanguages!.ToArray(), model.Speciality, model.Service, document.Id, model.ClientReview);
 
                             //scope.Complete();
                         }

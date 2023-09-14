@@ -25,6 +25,8 @@ public class TestFixture
     // ... other mocks
     public Mock<IMapper> MockMapper { get; }
 
+    public Mock<ILanguageService> MockLanguageService { get; }
+
     public Mock<ILogger<CATConnector>> MockLogger { get; }
 
     public Mock<IDocumentProcessor> MockDocumentProcessor { get; }
@@ -83,6 +85,11 @@ public class TestFixture
         MockMapper.Setup(mapper => mapper.Map<It.IsAnyType>(It.IsAny<object>()))
                   .Returns(new InvocationFunc(invocation => invocation.Arguments[0]));
 
+        // Mocking IMapper
+        MockLanguageService = new Mock<ILanguageService>();
+        //MockLanguageService.Setup(mapper => mapper.Map<It.IsAnyType>(It.IsAny<object>()))
+        //          .Returns(new InvocationFunc(invocation => invocation.Arguments[0]));
+
         // Mocking DocumentProcessor
         MockDocumentProcessor = new Mock<IDocumentProcessor>();
         MockDocumentProcessor.Setup(dp => dp.PreProcessDocument(It.IsAny<string>(), It.IsAny<string>()))
@@ -108,8 +115,8 @@ public class TestFixture
 
         var quote = new Quote()
         {
-            SourceLanguage = "en",
-            TargetLanguage = "fr",
+            SourceLanguage = 1,
+            TargetLanguage = 2,
             Fee = 10.0,
             DateCreated = DateTime.Now,
             Speciality = 0

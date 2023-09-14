@@ -18,14 +18,16 @@ namespace CAT.Services.Common
         private readonly IConfiguration _configuration;
         private readonly IMapper _mapper;
         private readonly ILogger _logger;
+        private readonly ILanguageService _languageService;
 
-        public DocumentService(DbContextContainer dbContextContainer, IConfiguration configuration,
+        public DocumentService(DbContextContainer dbContextContainer, IConfiguration configuration, ILanguageService languageService,
             IMapper mapper, ILogger<DocumentService> logger)
         {
             _dbContextContainer = dbContextContainer;
             _configuration = configuration;
             _logger = logger;
             _mapper = mapper;
+            _languageService = languageService;
         }
 
         public async Task<TempDocument> CreateTempDocumentAsync(IFormFile formFile, DocumentType documentType, int filterId)
@@ -134,7 +136,7 @@ namespace CAT.Services.Common
                         No_match = stat!.no_match,
                         Repetitions = stat!.repetitions,
                         SourceLanguage = tempQuote.SourceLanguage,
-                        TargetLanguage = stat!.targetLang,
+                        TargetLanguage = tempQuote.TargetLanguage,
                         Speciality = tempQuote.SpecialityId,
                         Type = AnalysisType.Normal
                     };

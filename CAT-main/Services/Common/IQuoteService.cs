@@ -7,7 +7,7 @@ namespace CAT.Services.Common
     {
         Task<Quote> CreateQuoteFromTempQuoteAsync(int tempQuoteId);
         public Task<StoredQuote> CreateStoredQuoteAsync(int clientId);
-        public Task<List<TempQuote>> CreateTempQuotesAsync(int storedQuoteId, int clientId, LocaleId sourceLocale, LocaleId[] targetLocales, 
+        public Task<List<TempQuote>> CreateTempQuotesAsync(int storedQuoteId, int clientId, int sourceLanguage, int[] targetLanguages, 
             int speciality, int service, int idDocument, bool clientReview);
 
         public Task<StoredQuote?> GetStoredQuoteAsync(int storedQuoteId);

@@ -164,8 +164,8 @@ namespace CAT.Areas.BackOffice.Controllers
 
                     var quote = new Quote()
                     {
-                        SourceLanguage = "en",
-                        TargetLanguage = "fr",
+                        SourceLanguage = 1,
+                        TargetLanguage = 2,
                         Fee = 10.0,
                         DateCreated = DateTime.Now,
                         Speciality = 0

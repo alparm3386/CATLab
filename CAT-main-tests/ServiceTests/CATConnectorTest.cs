@@ -22,7 +22,7 @@ namespace YourNamespace.Tests
         public void Test_CreateDoc()
         {
             var catConnector = new CATConnector(_testFixture.DbContextContainer, _testFixture.MockConfiguration.Object, 
-                _testFixture.MockedMachineTranslators, _testFixture.MockMapper.Object, _testFixture.GetLoggerMockObject<CATConnector>(), 
+                _testFixture.MockedMachineTranslators, _testFixture.MockLanguageService.Object, _testFixture.MockMapper.Object, _testFixture.GetLoggerMockObject<CATConnector>(), 
                 _testFixture.MockDocumentProcessor.Object);
 
             var fileData = catConnector.CreateDoc(1, Guid.NewGuid().ToString(), false);

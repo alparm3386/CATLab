@@ -16,9 +16,11 @@ namespace CAT.Services.Common
         private readonly IDocumentService _documentService;
         private readonly IMapper _mapper;
         private readonly ILogger _logger;
+        private readonly ILanguageService _languageService;
+
 
         public QuoteService(DbContextContainer dbContextContainer, IConfiguration configuration, CATConnector catConnector, 
-            IDocumentService documentService, IMapper mapper, ILogger<JobService> logger)
+            IDocumentService documentService, ILanguageService languageService, IMapper mapper, ILogger<JobService> logger)
         {
             _dbContextContainer = dbContextContainer;
             _configuration = configuration;
@@ -26,6 +28,7 @@ namespace CAT.Services.Common
             _documentService = documentService;
             _logger = logger;
             _mapper = mapper;
+            _languageService = languageService;
         }
 
         public async Task<StoredQuote> CreateStoredQuoteAsync(int clientId)
@@ -42,8 +45,8 @@ namespace CAT.Services.Common
             return storedQuote;
         }
 
-        public async Task<List<TempQuote>> CreateTempQuotesAsync(int storedQuoteId, int clientId, LocaleId sourceLocale,
-            LocaleId[] targetLocales, int speciality, int service, int tempDocumentId, bool clientReview)
+        public async Task<List<TempQuote>> CreateTempQuotesAsync(int storedQuoteId, int clientId, int sourceLanguage,
+            int[] targetLanguages, int speciality, int service, int tempDocumentId, bool clientReview)
         {
             try
             {
@@ -63,11 +66,11 @@ namespace CAT.Services.Common
                 }
 
                 //get the analisys
-                var targetLanguages = Array.ConvertAll(targetLocales, locale => locale.Language);
-
                 var tmAssignments = new List<TMAssignment>() { new TMAssignment() { tmId = "29610/__35462_en_fr" } };
-                var stats =
-                    _catConnector.GetStatisticsForDocument(filePath, filterPath!, sourceLocale.Language, targetLanguages, tmAssignments.ToArray());
+                var sourceLanguageIso639_1 = _languageService.GetLanguageCodeIso639_1(sourceLanguage);
+                var targetLanguagesIso639_1 = Array.ConvertAll(targetLanguages, lang => _languageService.GetLanguageCodeIso639_1(lang));
+                var stats = _catConnector.GetStatisticsForDocument(filePath, filterPath!, sourceLanguageIso639_1, 
+                    targetLanguagesIso639_1, tmAssignments.ToArray());
 
                 var tempQuotes = new List<TempQuote>();
                 foreach (var stat in stats)
@@ -76,8 +79,8 @@ namespace CAT.Services.Common
                     var tempQuote = new TempQuote()
                     {
                         StoredQuoteId = storedQuoteId,
-                        SourceLanguage = sourceLocale.Language,
-                        TargetLanguage = stat.targetLang!,
+                        SourceLanguage = sourceLanguage,
+                        TargetLanguage = _languageService.GetLanguageIdFromIso639_1Code(stat.targetLang!),
                         SpecialityId = speciality,
                         DateCreated = DateTime.Now,
                         Service = service,

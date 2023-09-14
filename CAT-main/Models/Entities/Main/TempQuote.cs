@@ -18,10 +18,10 @@ namespace CAT.Models.Entities.Main
         public TempDocument TempDocument { get; set; } = default!;
 
         [Display(Name = "Source language")]
-        public string SourceLanguage { get; set; } = default!;
+        public int SourceLanguage { get; set; }
 
         [Display(Name = "Target language")]
-        public string TargetLanguage { get; set; } = default!;
+        public int TargetLanguage { get; set; }
 
         public int SpecialityId { get; set; }
 

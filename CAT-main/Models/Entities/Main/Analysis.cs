@@ -13,10 +13,10 @@ namespace CAT.Models.Entities.Main
         public AnalysisType Type { get; set; }
 
         [MaxLength(10)]
-        public string? SourceLanguage { get; set; }
+        public int SourceLanguage { get; set; }
 
         [MaxLength(10)]
-        public string? TargetLanguage { get; set; }
+        public int TargetLanguage { get; set; }
 
         public int Speciality { get; set; }
 

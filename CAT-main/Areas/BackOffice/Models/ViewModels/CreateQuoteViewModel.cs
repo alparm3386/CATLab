@@ -14,10 +14,10 @@ namespace CAT.Areas.BackOffice.Models.ViewModels
         public int StoredQuoteId { get; set; }
 
         [Required]
-        public string? SourceLanguage { get; set; }
+        public int SourceLanguage { get; set; }
 
         [Required]
-        public List<string>? TargetLanguages { get; set; }
+        public List<int>? TargetLanguages { get; set; }
 
         [Required]
         public int Speciality { get; set; }
@@ -34,14 +34,14 @@ namespace CAT.Areas.BackOffice.Models.ViewModels
 
         public bool ClientReview { get; set; }
 
-        public Dictionary<string, string> Languages => new Dictionary<string, string>
+        public Dictionary<int, string> Languages => new Dictionary<int, string>
         {
-            {"nl", "Dutch"},
-            {"de", "German"},
-            {"en", "English"},
-            {"fr", "French"},
-            {"it", "Itaian"},
-            {"es", "Spanish"}
+            {1, "English"},
+            {2, "French"},
+            {3, "German"},
+            {4, "Itaian"},
+            {5, "Dutch"},
+            {6, "Spanish"}
             // Add more languages as needed
         };
 

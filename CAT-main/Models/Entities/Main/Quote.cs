@@ -12,9 +12,9 @@ namespace CAT.Models.Entities.Main
 
         public DateTime DateCreated { get; set; }
 
-        public string SourceLanguage { get; set; } = default!;
+        public int SourceLanguage { get; set; } = default!;
 
-        public string TargetLanguage { get; set; } = default!;
+        public int TargetLanguage { get; set; } = default!;
 
         public int Speciality { get; set; }
 
