@@ -78,7 +78,7 @@ namespace CAT.Services.Common
                     {
                         StoredQuoteId = storedQuoteId,
                         SourceLanguage = sourceLanguage,
-                        TargetLanguage = _languageService.GetLanguageIdFromIso639_1Code(stat.targetLang!),
+                        TargetLanguage = stat.targetLang,
                         SpecialityId = speciality,
                         DateCreated = DateTime.Now,
                         Service = service,

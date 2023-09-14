@@ -212,7 +212,7 @@ namespace CAT.Services.Common
                         match_75_84 = stats[0].match_75_84,
                         match_50_74 = stats[0].match_50_74,
                         no_match = stats[0].no_match,
-                        targetLang = targetLanguageIso639_1
+                        targetLang = targetLang
                     });
 
                 }

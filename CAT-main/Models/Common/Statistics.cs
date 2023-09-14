@@ -6,7 +6,7 @@
     [Serializable()]
     public class Statistics
     {
-        public string? targetLang;
+        public int targetLang;
         public int repetitions = 0;
         public int match_100 = 0;
         public int match_101 = 0;
@@ -38,7 +38,7 @@
                         && match_85_94 == 0 && match_95_99 == 0 && (match_100 != 0 || match_101 != 0);
         }
 
-        public static Statistics[] GetStatisticsByWordCount(int nWordCount, string targetLang)
+        public static Statistics[] GetStatisticsByWordCount(int nWordCount, int targetLang)
         {
             return new Statistics[] { new Statistics() { no_match = nWordCount,
                     targetLang = targetLang} };
