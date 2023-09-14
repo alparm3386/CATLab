@@ -94,9 +94,9 @@ namespace CAT.Enums
         [Display(Name = "General")]
         General = 1,
         [Display(Name = "Marketing")]
-        Marketing,
+        Marketing = 2,
         [Display(Name = "Technical")]
-        Technical
+        Technical = 3
     }
 
     public enum Service
