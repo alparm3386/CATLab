@@ -159,8 +159,8 @@ namespace CAT.Services.Common
             return sFilterPath;
         }
 
-        public Statistics[] GetStatisticsForDocument(string sFilePath, string sFilterPath, String sourceLang,
-            string[] aTargetLangs, TMAssignment[] aTMAssignments)
+        public Statistics[] GetStatisticsForDocument(string sFilePath, string sFilterPath, int sourceLang,
+            int[] aTargetLangs, TMAssignment[] aTMAssignments)
         {
             List<String> lstFilesToDelete = new List<String>();
             try
@@ -197,10 +197,11 @@ namespace CAT.Services.Common
                 //the target language array
                 var lstTargetLangs = new List<String>();
                 var aRet = new List<Statistics>();
-                foreach (string sTargetLang in aTargetLangs)
+                foreach (int targetLang in aTargetLangs)
                 {
+                    var targetLanguageIso639_1 = _languageService.GetLanguageCodeIso639_1(targetLang);
                     var stats = client.GetStatisticsForDocument(sFilename, fileContent, sFiltername, filterContent,
-                    sourceLang, new string[] { sTargetLang }, aTMs);
+                    _languageService.GetLanguageCodeIso639_1(sourceLang), new string[] { targetLanguageIso639_1 }, aTMs);
                     aRet.Add(new Statistics()
                     {
                         repetitions = stats[0].repetitions,
@@ -211,7 +212,7 @@ namespace CAT.Services.Common
                         match_75_84 = stats[0].match_75_84,
                         match_50_74 = stats[0].match_50_74,
                         no_match = stats[0].no_match,
-                        targetLang = sTargetLang
+                        targetLang = targetLanguageIso639_1
                     });
 
                 }

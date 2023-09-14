@@ -12,7 +12,6 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using IdentityDbContext = CAT.Areas.Identity.Data.IdentityDbContext;
 using Microsoft.AspNetCore.Identity;
 using System.ComponentModel.Design;
-using CAT.Migrations.MainDb;
 
 namespace CAT.Areas.BackOffice.Controllers
 {

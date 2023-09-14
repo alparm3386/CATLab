@@ -6,14 +6,14 @@ namespace CAT.Services.Common
 {
     public class LanguageService : ILanguageService
     {
-        private readonly DbContextContainer _dbContextContainer;
+        private readonly MainDbContext _mainDbContext;
         private readonly ILogger<JobService> _logger;
 
         private static Dictionary<int, string> _languageCache = new Dictionary<int, string>();
         
-        public LanguageService(DbContextContainer dbContextContainer, ILogger<JobService> logger)
+        public LanguageService(MainDbContext mainDbContext, ILogger<JobService> logger)
         {
-            _dbContextContainer = dbContextContainer;
+            _mainDbContext = mainDbContext;
             _logger = logger;
         }
 

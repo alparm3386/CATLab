@@ -49,6 +49,8 @@ builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IMonitoringService, MonitoringService>();
 builder.Services.AddScoped<IWorkflowService, WorkflowService>();
 builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
+builder.Services.AddScoped<ILanguageService, LanguageService>();
+
 //builder.Services.AddSingleton<ConstantRepository>();
 builder.Services.AddControllersWithViews().AddRazorRuntimeCompilation();
 builder.Services.AddAntiforgery(options => options.HeaderName = "XSRF-TOKEN");

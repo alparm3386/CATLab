@@ -67,10 +67,8 @@ namespace CAT.Services.Common
 
                 //get the analisys
                 var tmAssignments = new List<TMAssignment>() { new TMAssignment() { tmId = "29610/__35462_en_fr" } };
-                var sourceLanguageIso639_1 = _languageService.GetLanguageCodeIso639_1(sourceLanguage);
-                var targetLanguagesIso639_1 = Array.ConvertAll(targetLanguages, lang => _languageService.GetLanguageCodeIso639_1(lang));
-                var stats = _catConnector.GetStatisticsForDocument(filePath, filterPath!, sourceLanguageIso639_1, 
-                    targetLanguagesIso639_1, tmAssignments.ToArray());
+                var stats = _catConnector.GetStatisticsForDocument(filePath, filterPath!, sourceLanguage,
+                    targetLanguages, tmAssignments.ToArray());
 
                 var tempQuotes = new List<TempQuote>();
                 foreach (var stat in stats)
