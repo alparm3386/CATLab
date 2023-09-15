@@ -111,6 +111,12 @@ namespace CAT.Services.Common
             return await _dbContextContainer!.MainContext!.StoredQuotes!.Include(sq => sq.TempQuotes).ThenInclude(tq => tq.TempDocument).FirstOrDefaultAsync(quote => quote.Id == storedQuoteId);
         }
 
+        public async Task DeleteStoredQuoteAsync(StoredQuote storedQuote)
+        {
+            _dbContextContainer!.MainContext!.StoredQuotes!.Remove(storedQuote);
+            await _dbContextContainer.MainContext.SaveChangesAsync();
+        }
+
         public async Task<List<StoredQuote>> GetStoredQuotesAsync(DateTime from, DateTime to)
         {
             return await _dbContextContainer!.MainContext!.StoredQuotes!

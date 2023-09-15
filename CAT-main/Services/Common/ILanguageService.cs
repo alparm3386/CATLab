@@ -6,5 +6,6 @@ namespace CAT.Services.Common
     {
         String GetLanguageCodeIso639_1(int languageId);
         int GetLanguageIdFromIso639_1Code(string laguageCode);
+        Task<Dictionary<int, Language>> GetLanguages();
     }
 }

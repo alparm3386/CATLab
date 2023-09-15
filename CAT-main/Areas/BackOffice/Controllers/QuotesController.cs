@@ -3,11 +3,13 @@ using CAT.Areas.BackOffice.Models.ViewModels;
 using CAT.Data;
 using CAT.Enums;
 using CAT.Helpers;
+using CAT.Infrastructure;
 using CAT.Models.Common;
 using CAT.Models.Entities.Main;
 using CAT.Models.ViewModels;
 using CAT.Services.Common;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Cryptography.Xml;
 using System.Transactions;
@@ -96,7 +98,6 @@ namespace CAT.Areas.BackOffice.Controllers
             }
         }
 
-        [Route("BackOffice/Quotes/Create/{id?}")]
         public IActionResult Create(int? id)
         {
             var storedQuoteId = id ?? -1;
@@ -106,9 +107,6 @@ namespace CAT.Areas.BackOffice.Controllers
             return View(createQuoteViewModel);
         }
 
-        //[HttpGet()]
-        //[HttpGet("{idStoredQuote?}")]
-        [Route("Quotes/StoredQuoteDetails/{id?}")]
         public async Task<IActionResult> StoredQuoteDetails(int? id)
         {
             var storedQuoteId = id ?? -1;
@@ -126,6 +124,59 @@ namespace CAT.Areas.BackOffice.Controllers
             await _orderService.LaunchStoredQuotesAsync(id);
 
             return RedirectToAction("StoredQuoteDetails", new { id });
+        }
+
+
+        // GET: BackOffice/Orders/Delete/5
+        public async Task<IActionResult> StoredQuoteDelete(int? id)
+        {
+            var storedQuoteId = id ?? -1;
+            var storedQuote = await _quoteService.GetStoredQuoteAsync(storedQuoteId);
+
+            //set the lists
+            var languages = await _languageService.GetLanguages();
+            ViewData["Languages"] = new SelectList(languages.Select(l => new
+            {
+                Value = l.Key.ToString(),
+                Text = l.Value.Name
+            }), "Value", "Text");
+            
+            ViewData["Specialities"] = EnumHelper.EnumToDisplayNamesDictionary<Speciality>();
+            if (storedQuote == null)
+            {
+                return NotFound();
+            }
+
+            return View(storedQuote);
+        }
+
+        // POST: BackOffice/Orders/Delete/5
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteStoredQuoteConfirmed(int? id)
+        {
+            var storedQuote = new StoredQuote();
+            try
+            {
+                var storedQuoteId = id ?? -1;
+                storedQuote = await _quoteService.GetStoredQuoteAsync(storedQuoteId);
+                if (storedQuote == null)
+                    throw new CATException("Stored quote not found.");
+                await _quoteService.DeleteStoredQuoteAsync(storedQuote);
+
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception ex)
+            {
+                // set error message here that is displayed in the view
+                if (ex is CATException)
+                    ViewData["ErrorMessage"] = ex.Message;
+                else
+                    ViewData["ErrorMessage"] = "There was an error processing your request. Please try again later.";
+                // Optionally log the error: _logger.LogError(ex, "Error message here");
+
+                return View("DeleteStoredQuote", storedQuote);
+            }
         }
     }
 }
