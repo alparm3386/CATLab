@@ -1,26 +1,31 @@
-﻿@model StoredQuoteDetailsViewModel
+﻿@model StoredQuote
 @{
     ViewBag.Title = "Quote Details";
 }
 
-<h2>Quote Details</h2>
+<h2>Quote details</h2>
 
-<p><b>Client:</b> @(Model.StoredQuote?.ClientId > 0 ? Model.StoredQuote.ClientId.ToString() : "N/A")</p>
-<p><b>Order:</b> @(Model.StoredQuote?.OrderId > 0 ? Model.StoredQuote.OrderId.ToString() : "N/A")</p>
+<p><b>Client:</b> @(Model.ClientId > 0 ? Model.Client.User.FullName : "N/A")</p>
+<p><b>Order:</b> @(Model?.OrderId > 0 ? Model.OrderId.ToString() : "N/A")</p>
 
-@if (Model.StoredQuote?.OrderId > 0)
+@if (Model!.OrderId > 0)
 {
-    <p>Date: @(Model.StoredQuote?.DateCreated != null ? Model.StoredQuote.DateCreated.ToString() : "N/A")</p>
+    <p>Date: @(Model.DateCreated != null ? Model.DateCreated.ToString() : "N/A")</p>
 }
 
-<p><b>Price total:</b> £@Model.StoredQuote?.Fee.ToString("N2")</p>
+<p><b>Price total:</b> £@Model.Fee.ToString("N2")</p>
 
-<!-- Add other properties as needed -->
+@if (ViewData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">
+        @ViewData["ErrorMessage"]
+    </div>
+}
 
 <form method="post" asp-action="LaunchStoredQuote">
-    <input type="hidden" name="id" value="@Model.StoredQuote?.Id" />
-    <a asp-action="Create" asp-controller="Quotes" asp-route-id="@Model.StoredQuote?.Id">
-        @(Model.StoredQuote?.Id > 0 ? "Add New" : "Create New")
+    <input type="hidden" name="id" value="@Model.Id" />
+    <a asp-action="Create" asp-controller="Quotes" asp-route-id="@Model.Id">
+        @(Model.Id > 0 ? "Add New" : "Create New")
     </a>
     <table class="table">
         <thead>
@@ -53,22 +58,22 @@
             </tr>
         </thead>
         <tbody>
-            @if (Model.StoredQuote?.TempQuotes != null)
+            @if (Model.TempQuotes != null)
             {
-                @foreach (var item in Model.StoredQuote!.TempQuotes)
+                @foreach (var item in Model.TempQuotes)
                 {
                     <tr>
                         <td>
                             @Html.DisplayFor(modelItem => item.TempDocument.OriginalFileName)
                         </td>
                         <td>
-                            @Html.DisplayFor(modelItem => item.SourceLanguage)
+                            @ViewBag.Languages[item.SourceLanguage]
                         </td>
                         <td>
-                            @Html.DisplayFor(modelItem => item.TargetLanguage)
+                            @ViewBag.Languages[item.TargetLanguage]
                         </td>
                         <td>
-                            @Html.DisplayFor(modelItem => Model.Specialities[item.SpecialityId])
+                            @ViewBag.Specialities[item.SpecialityId]
                         </td>
                         <td>
                             @(((CAT.Enums.ServiceSpeed)item.Speed).ToString())
@@ -93,11 +98,15 @@
         </tbody>
     </table>
 
-    @if (Model.StoredQuote?.TempQuotes?.Count > 0 && Model.StoredQuote?.OrderId < 0)
+    @if (Model.TempQuotes?.Count > 0 && Model.OrderId < 0)
     {
         <button type="submit" class="btn btn-success">Launch Quote</button>
     }
 </form>
+
+<div class="mt-3">
+    <a asp-action="Index">Back to List</a>
+</div>
 
 @if (!string.IsNullOrEmpty(ViewBag.Message))
 {

@@ -23,7 +23,7 @@ namespace CAT.Areas.BackOffice.Controllers
         private readonly IQuoteService _quoteService;
         private readonly IDocumentService _documentService;
         private readonly IOrderService _orderService;
-        private readonly ILanguageService _languageService; 
+        private readonly ILanguageService _languageService;
         private readonly IMapper _mapper;
         private readonly ILogger _logger;
 
@@ -39,15 +39,29 @@ namespace CAT.Areas.BackOffice.Controllers
             _mapper = mapper;
         }
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int? pageNumber)
         {
-            var storedQuotes = await _quoteService.GetStoredQuotesAsync(DateTime.MinValue, DateTime.MaxValue);
-            var storedQuotesViewModel = new StoredQuotesViewModel()
+            try
             {
-                StoredQuotes = storedQuotes
-            };
+                var storedQuotes = _quoteService.GetStoredQuotes(DateTime.MinValue, DateTime.MaxValue);
 
-            return View(storedQuotesViewModel);
+                int pageSize = 10;
+                pageNumber = pageNumber ?? 1;
+                var paginatedStoredQuotes = await PaginatedList<StoredQuote>.CreateAsync(storedQuotes, (int)pageNumber, pageSize);
+
+                return View(paginatedStoredQuotes);
+            }
+            catch (Exception ex)
+            {
+                // set error message here that is displayed in the view
+                if (ex is CATException)
+                    ViewData["ErrorMessage"] = ex.Message;
+                else
+                    ViewData["ErrorMessage"] = "There was an error processing your request. Please try again later.";
+                // Optionally log the error: _logger.LogError(ex, "Error message here");
+            }
+
+            return View(new PaginatedList<StoredQuote>(new List<StoredQuote>(), 0, 0, 1));
         }
 
         [HttpPost]
@@ -79,7 +93,7 @@ namespace CAT.Areas.BackOffice.Controllers
                             int idFilter = -1;
                             var document = await _documentService.CreateTempDocumentAsync(model.FileToUpload!, DocumentType.Original, idFilter);
                             //create the quote
-                            var quotes = await _quoteService.CreateTempQuotesAsync(storedQuoteId, 1, model.SourceLanguage, 
+                            var quotes = await _quoteService.CreateTempQuotesAsync(storedQuoteId, 1, model.SourceLanguage,
                                 model.TargetLanguages!.ToArray(), model.Speciality, model.Service, document.Id, model.ClientReview);
 
                             //scope.Complete();
@@ -109,13 +123,32 @@ namespace CAT.Areas.BackOffice.Controllers
 
         public async Task<IActionResult> StoredQuoteDetails(int? id)
         {
-            var storedQuoteId = id ?? -1;
-            var storedQuote = await _quoteService.GetStoredQuoteAsync(storedQuoteId);
+            try
+            {
+                var storedQuoteId = id ?? -1;
+                var storedQuote = await _quoteService.GetStoredQuoteAsync(storedQuoteId, true);
 
-            var storedQuoteViewModel = new StoredQuoteDetailsViewModel();
+                if (storedQuote == null)
+                    throw new Exception("Stored quote not found.");
 
-            storedQuoteViewModel.StoredQuote = storedQuote!;
-            return View(storedQuoteViewModel);
+                //set the ViewData
+                var languages = await _languageService.GetLanguages();
+                ViewData["Languages"] = languages.ToDictionary(l => l.Key, l => l.Value.Name);
+                ViewData["Specialities"] = EnumHelper.EnumToDisplayNamesDictionary<Speciality>();
+
+                return View(storedQuote);
+            }
+            catch (Exception ex)
+            {
+                // set error message here that is displayed in the view
+                if (ex is CATException)
+                    ViewData["ErrorMessage"] = ex.Message;
+                else
+                    ViewData["ErrorMessage"] = "There was an error processing your request. Please try again later.";
+                // Optionally log the error: _logger.LogError(ex, "Error message here");
+
+                return View(new StoredQuote());
+            }
         }
 
         [HttpPost]
@@ -128,20 +161,16 @@ namespace CAT.Areas.BackOffice.Controllers
 
 
         // GET: BackOffice/Orders/Delete/5
-        public async Task<IActionResult> StoredQuoteDelete(int? id)
+        public async Task<IActionResult> DeleteStoredQuote(int? id)
         {
             var storedQuoteId = id ?? -1;
-            var storedQuote = await _quoteService.GetStoredQuoteAsync(storedQuoteId);
+            var storedQuote = await _quoteService.GetStoredQuoteAsync(storedQuoteId, true);
 
             //set the lists
             var languages = await _languageService.GetLanguages();
-            ViewData["Languages"] = new SelectList(languages.Select(l => new
-            {
-                Value = l.Key.ToString(),
-                Text = l.Value.Name
-            }), "Value", "Text");
-            
+            ViewData["Languages"] = languages.ToDictionary(l => l.Key, l => l.Value.Name);
             ViewData["Specialities"] = EnumHelper.EnumToDisplayNamesDictionary<Speciality>();
+
             if (storedQuote == null)
             {
                 return NotFound();
@@ -159,7 +188,7 @@ namespace CAT.Areas.BackOffice.Controllers
             try
             {
                 var storedQuoteId = id ?? -1;
-                storedQuote = await _quoteService.GetStoredQuoteAsync(storedQuoteId);
+                storedQuote = await _quoteService.GetStoredQuoteAsync(storedQuoteId, false);
                 if (storedQuote == null)
                     throw new CATException("Stored quote not found.");
                 await _quoteService.DeleteStoredQuoteAsync(storedQuote);

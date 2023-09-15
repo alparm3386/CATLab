@@ -43,7 +43,7 @@ namespace CAT.Services.Common
 
         public async Task LaunchStoredQuotesAsync(int idStoredQuote)
         {
-            var storedQuote = await _quoteService.GetStoredQuoteAsync(idStoredQuote);
+            var storedQuote = await _quoteService.GetStoredQuoteAsync(idStoredQuote, false);
 
             //create an order
             var order = await CreateOrderAsync(storedQuote!.ClientId);

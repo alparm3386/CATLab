@@ -67,7 +67,7 @@ namespace CAT.Services.Common
 
                 //get the analisys
                 var tmAssignments = new List<TMAssignment>() { new TMAssignment() { tmId = "29610/__35462_en_fr" } };
-                var stats = _catConnector.GetStatisticsForDocument(filePath, filterPath!, sourceLanguage,
+                var stats = await _catConnector.GetStatisticsForDocument(filePath, filterPath!, sourceLanguage,
                     targetLanguages, tmAssignments.ToArray());
 
                 var tempQuotes = new List<TempQuote>();
@@ -106,9 +106,21 @@ namespace CAT.Services.Common
             }
         }
 
-        public async Task<StoredQuote?> GetStoredQuoteAsync(int storedQuoteId)
+        public async Task<StoredQuote?> GetStoredQuoteAsync(int storedQuoteId, bool withClientDetails)
         {
-            return await _dbContextContainer!.MainContext!.StoredQuotes!.Include(sq => sq.TempQuotes).ThenInclude(tq => tq.TempDocument).FirstOrDefaultAsync(quote => quote.Id == storedQuoteId);
+            var storedQuote = await _dbContextContainer!.MainContext!.StoredQuotes!
+                .Include(sq => sq.Client)
+                .Include(sq => sq.TempQuotes)
+                .ThenInclude(tq => tq.TempDocument)
+                .FirstOrDefaultAsync(quote => quote.Id == storedQuoteId);
+
+            if (withClientDetails)
+            {
+                var user = await _dbContextContainer.IdentityContext.Users.Where(u => u.Id == storedQuote!.Client.UserId).FirstOrDefaultAsync();
+                storedQuote!.Client.User = user!;
+            }
+
+            return storedQuote;
         }
 
         public async Task DeleteStoredQuoteAsync(StoredQuote storedQuote)
@@ -117,14 +129,14 @@ namespace CAT.Services.Common
             await _dbContextContainer.MainContext.SaveChangesAsync();
         }
 
-        public async Task<List<StoredQuote>> GetStoredQuotesAsync(DateTime from, DateTime to)
+        public IQueryable<StoredQuote> GetStoredQuotes(DateTime from, DateTime to)
         {
-            return await _dbContextContainer!.MainContext!.StoredQuotes!
+            return _dbContextContainer!.MainContext!.StoredQuotes!
                 .Include(sq => sq.Client)
                 .ThenInclude(c => c.Company)
                 .Include(sq => sq.TempQuotes)
                 .ThenInclude(tq => tq.TempDocument)
-                .Where(quote => quote.DateCreated >= from && quote.DateCreated <= to).ToListAsync();
+                .Where(quote => quote.DateCreated >= from && quote.DateCreated <= to);
         }
 
         public async Task<Quote> CreateQuoteFromTempQuoteAsync(int tempQuoteId)

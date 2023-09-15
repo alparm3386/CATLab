@@ -1,4 +1,4 @@
-﻿@model CAT.Models.Entities.Main.StoredQuote
+﻿@model StoredQuote
 
 @{
     ViewData["Title"] = "Delete";
@@ -57,13 +57,13 @@
                             @Html.DisplayFor(modelItem => item.TempDocument.OriginalFileName)
                         </td>
                         <td>
-                            @Html.DisplayFor(modelItem => item.SourceLanguage)
+                            @ViewBag.Languages[item.SourceLanguage]
                         </td>
                         <td>
-                            @Html.DisplayFor(modelItem => item.TargetLanguage)
+                            @ViewBag.Languages[item.TargetLanguage]
                         </td>
                         <td>
-                            ViewBag.Specialities[item.SpecialityId]
+                            @ViewBag.Specialities[item.SpecialityId]
                         </td>
                         <td>
                             @(((CAT.Enums.ServiceSpeed)item.Speed).ToString())

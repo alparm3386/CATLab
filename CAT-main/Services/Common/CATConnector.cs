@@ -159,7 +159,7 @@ namespace CAT.Services.Common
             return sFilterPath;
         }
 
-        public Statistics[] GetStatisticsForDocument(string sFilePath, string sFilterPath, int sourceLang,
+        public async Task<Statistics[]> GetStatisticsForDocument(string sFilePath, string sFilterPath, int sourceLang,
             int[] aTargetLangs, TMAssignment[] aTMAssignments)
         {
             List<String> lstFilesToDelete = new List<String>();
@@ -199,9 +199,10 @@ namespace CAT.Services.Common
                 var aRet = new List<Statistics>();
                 foreach (int targetLang in aTargetLangs)
                 {
-                    var targetLanguageIso639_1 = _languageService.GetLanguageCodeIso639_1(targetLang);
+                    var targetLanguageIso639_1 = await _languageService.GetLanguageCodeIso639_1(targetLang);
+                    var sourceLanguageIso639_1 = await _languageService.GetLanguageCodeIso639_1(sourceLang);
                     var stats = client.GetStatisticsForDocument(sFilename, fileContent, sFiltername, filterContent,
-                    _languageService.GetLanguageCodeIso639_1(sourceLang), new string[] { targetLanguageIso639_1 }, aTMs);
+                        sourceLanguageIso639_1, new string[] { targetLanguageIso639_1 }, aTMs);
                     aRet.Add(new Statistics()
                     {
                         repetitions = stats[0].repetitions,
@@ -295,7 +296,7 @@ namespace CAT.Services.Common
             return "ParseDoc_" + idJob.ToString();
         }
 
-        public void ParseDoc(int idJob)
+        public async void ParseDoc(int idJob)
         {
             if (IsLocked(String.Intern(GetParseDocLockString(idJob))))
                 throw new Exception("Translation is locked: " + idJob.ToString());
@@ -348,11 +349,12 @@ namespace CAT.Services.Common
                     }
 
                     //get the TMs
-                    var aTMAssignments = GetTMAssignments(job!.Order!.ClientId, _languageService.GetLanguageCodeIso639_1(job!.Quote!.SourceLanguage!),
-                        new string[] { _languageService.GetLanguageCodeIso639_1(job!.Quote!.TargetLanguage!) }, job.Quote.Speciality, true);
+                    var aTMAssignments = GetTMAssignments(job!.Order!.ClientId, 
+                        _languageService.GetLanguageCodeIso639_1(job!.Quote!.SourceLanguage!).Result,
+                        new string[] { _languageService.GetLanguageCodeIso639_1(job!.Quote!.TargetLanguage!).Result }, job.Quote.Speciality, true);
                     CreateXliffFromDocument(jobDataFolder, Path.GetFileName(sXlifFilePath), filePath, filterPath,
-                        _languageService.GetLanguageCodeIso639_1(job!.Quote!.SourceLanguage!), 
-                        _languageService.GetLanguageCodeIso639_1(job!.Quote!.TargetLanguage!), iThreshold);
+                        _languageService.GetLanguageCodeIso639_1(job!.Quote!.SourceLanguage!).Result, 
+                        _languageService.GetLanguageCodeIso639_1(job!.Quote!.TargetLanguage!).Result, iThreshold);
 
                     //parse the xliff file
                     var xliff = new XmlDocument();
@@ -441,8 +443,8 @@ namespace CAT.Services.Common
                     }).ToList();
 
                     //do the machine translation
-                    mmt.Translate(translatables, _languageService.GetLanguageCodeIso639_1(job!.Quote!.SourceLanguage!),
-                        _languageService.GetLanguageCodeIso639_1(job!.Quote!.TargetLanguage!), null);
+                    mmt.Translate(translatables, _languageService.GetLanguageCodeIso639_1(job!.Quote!.SourceLanguage!).Result,
+                        _languageService.GetLanguageCodeIso639_1(job!.Quote!.TargetLanguage!).Result, null);
 
                     //populate the translation units with the machine translation
                     Dictionary<int, Translatable> translatableDictionary = translatables.ToDictionary(t => t.id);
@@ -525,8 +527,8 @@ namespace CAT.Services.Common
 
                     //create the xliff file
                     CreateXliffFromDocument(jobDataFolder, Path.GetFileName(xlifFilePath), filePath, filterPath,
-                        _languageService.GetLanguageCodeIso639_1(sourceLanguage),
-                        _languageService.GetLanguageCodeIso639_1(targetLanguage), iThreshold);
+                        _languageService.GetLanguageCodeIso639_1(sourceLanguage).Result,
+                        _languageService.GetLanguageCodeIso639_1(targetLanguage).Result, iThreshold);
                 }
 
                 //get the translated texts
@@ -733,8 +735,8 @@ namespace CAT.Services.Common
                         sFilename = Path.GetFileName(tmFilePath);
                         fileContent = File.ReadAllBytes(tmFilePath);
                         aOutFileBytes = client.CreateDocumentFromXliff(sFilename, fileContent, sFiltername,
-                            filterContent, _languageService.GetLanguageCodeIso639_1(sourceLanguage),
-                            _languageService.GetLanguageCodeIso639_1(targetLanguage), xlfFile.OuterXml);
+                            filterContent, _languageService.GetLanguageCodeIso639_1(sourceLanguage).Result,
+                            _languageService.GetLanguageCodeIso639_1(targetLanguage).Result, xlfFile.OuterXml);
                         var mqXliffContent = System.Text.Encoding.UTF8.GetString(aOutFileBytes);
                         mqXliffContent = mqXliffContent.Replace("mq:status=\"NotStarted\"", "mq:status=\"ManuallyConfirmed\"");
                         File.WriteAllText(Path.Combine(sTempDir, "document.mqxliff"), mqXliffContent);
@@ -749,8 +751,8 @@ namespace CAT.Services.Common
                     else
                     {
                         aOutFileBytes = client.CreateDocumentFromXliff(sFilename, fileContent, sFiltername,
-                            filterContent, _languageService.GetLanguageCodeIso639_1(sourceLanguage),
-                            _languageService.GetLanguageCodeIso639_1(targetLanguage), xlfFile.OuterXml);
+                            filterContent, _languageService.GetLanguageCodeIso639_1(sourceLanguage).Result,
+                            _languageService.GetLanguageCodeIso639_1(targetLanguage).Result, xlfFile.OuterXml);
                     }
                 }
 

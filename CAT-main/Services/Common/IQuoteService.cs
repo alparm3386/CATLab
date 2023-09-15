@@ -10,8 +10,8 @@ namespace CAT.Services.Common
         public Task<List<TempQuote>> CreateTempQuotesAsync(int storedQuoteId, int clientId, int sourceLanguage, int[] targetLanguages, 
             int speciality, int service, int idDocument, bool clientReview);
         Task DeleteStoredQuoteAsync(StoredQuote storedQuote);
-        public Task<StoredQuote?> GetStoredQuoteAsync(int storedQuoteId);
+        public Task<StoredQuote?> GetStoredQuoteAsync(int storedQuoteId, bool withClientDetails);
 
-        public Task<List<StoredQuote>> GetStoredQuotesAsync(DateTime from, DateTime to);
+        public IQueryable<StoredQuote> GetStoredQuotes(DateTime from, DateTime to);
     }
 }

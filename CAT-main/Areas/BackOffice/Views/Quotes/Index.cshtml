@@ -1,4 +1,4 @@
-﻿@model StoredQuotesViewModel
+﻿@model CAT.Helpers.PaginatedList<StoredQuote>
 @{
     ViewBag.Title = "Quote Calculator";
 }
@@ -10,6 +10,13 @@
 }
 
 <h2>Quotes</h2>
+
+@if (ViewData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">
+        @ViewData["ErrorMessage"]
+    </div>
+}
 
 <form method="post" asp-action="LaunchQuote">
     <table class="table">
@@ -31,31 +38,46 @@
             </tr>
         </thead>
         <tbody>
-            @if (Model.StoredQuotes != null)
+            @foreach (var storedQuote in Model)
             {
-                @foreach (var storedQuote in Model.StoredQuotes)
-                {
-                    <tr>
-                        <td>
-                            <a href="#">@Html.DisplayFor(modelItem => storedQuote.Client.Company.Name)</a>
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => storedQuote.DateCreated)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => storedQuote.OrderId)
-                        </td>
-                        <td>
-                            £@Html.DisplayFor(modelItem => storedQuote.Fee)
-                        </td>
-                        <td>
-                            @*<a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |*@
-                            <a asp-action="StoredQuoteDetails" asp-route-id="@storedQuote.Id">Details</a> |
-                            <a asp-action="StoredQuoteDelete" asp-route-id="@storedQuote.Id">Delete</a>
-                        </td>
-                    </tr>
-                }
+                <tr>
+                    <td>
+                        <a href="#">@Html.DisplayFor(modelItem => storedQuote.Client.Company.Name)</a>
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => storedQuote.DateCreated)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => storedQuote.OrderId)
+                    </td>
+                    <td>
+                        £@Html.DisplayFor(modelItem => storedQuote.Fee)
+                    </td>
+                    <td>
+                        @*<a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |*@
+                        <a asp-action="StoredQuoteDetails" asp-route-id="@storedQuote.Id">Details</a> |
+                        <a asp-action="DeleteStoredQuote" asp-route-id="@storedQuote.Id">Delete</a>
+                    </td>
+                </tr>
             }
         </tbody>
     </table>
 </form>
+
+@{
+    var prevDisabled = !Model.HasPreviousPage ? "disabled" : "";
+    var nextDisabled = !Model.HasNextPage ? "disabled" : "";
+}
+
+<a asp-action="Index"
+   asp-route-pageNumber="@(Model.PageIndex - 1)"
+   class="btn btn-default @prevDisabled">
+    Previous
+</a>
+<a asp-action="Index"
+   asp-route-pageNumber="@(Model.PageIndex + 1)"
+   class="btn btn-default @nextDisabled">
+    Next
+</a>
+
+<span class="ms-3">@Model.PageIndex / @Model.TotalPages</span>
