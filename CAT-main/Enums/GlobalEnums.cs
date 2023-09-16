@@ -75,8 +75,11 @@ namespace CAT.Enums
 
     public enum ServiceType
     {
-        Unknown = -1,
+        //[Display(Name = "Unknown")]
+        //Unknown = -1,
+        [Display(Name = "AI process")]
         AI = 1,
+        [Display(Name = "AI with revision")]
         AIWithRevision = 2
     }
 

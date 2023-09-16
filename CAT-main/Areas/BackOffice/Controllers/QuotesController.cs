@@ -64,61 +64,80 @@ namespace CAT.Areas.BackOffice.Controllers
             return View(new PaginatedList<StoredQuote>(new List<StoredQuote>(), 0, 0, 1));
         }
 
-        [HttpPost]
-        public async Task<IActionResult> HandleQuote(CreateQuoteViewModel model, string action)
-        {
-
-            if (!ModelState.IsValid)
-            {
-                return View("Create", model);
-            }
-
-            switch (action)
-            {
-                case "CalculateQuote":
-                    var storedQuoteId = model.StoredQuoteId;
-                    try
-                    {
-                        //using (var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled)) //MSDTC
-                        //using (var transaction = context.Database.BeginTransaction())
-                        {
-                            //create stored quote if doesn't exists
-                            var clientId = 1;
-                            if (model.StoredQuoteId <= 0)
-                            {
-                                var stroedQuote = await _quoteService.CreateStoredQuoteAsync(clientId);
-                                storedQuoteId = stroedQuote.Id;
-                            }
-
-                            int idFilter = -1;
-                            var document = await _documentService.CreateTempDocumentAsync(model.FileToUpload!, DocumentType.Original, idFilter);
-                            //create the quote
-                            var quotes = await _quoteService.CreateTempQuotesAsync(storedQuoteId, 1, model.SourceLanguage,
-                                model.TargetLanguages!.ToArray(), model.Speciality, model.Service, document.Id, model.ClientReview);
-
-                            //scope.Complete();
-                        }
-
-                    }
-                    catch (Exception)
-                    {
-                        ModelState.AddModelError(string.Empty, "An error occurred while calculating the quote. Please try again.");
-                        return View("Create", model);
-                    }
-
-                    return RedirectToAction("StoredQuoteDetails", new { id = storedQuoteId });
-                default:
-                    return View("Create", model);
-            }
-        }
-
-        public IActionResult Create(int? id)
+        public async Task<IActionResult> Create(int? id)
         {
             var storedQuoteId = id ?? -1;
             var createQuoteViewModel = new CreateQuoteViewModel();
             createQuoteViewModel.StoredQuoteId = storedQuoteId;
 
+            var languages = (await _languageService.GetLanguages()).ToDictionary(l => l.Key, l => l.Value.Name);
+            ViewData["SourceLanguages"] = new SelectList(languages, "Key", "Value", languages[1]); //English as selected
+            ViewData["TargetLanguages"] = new SelectList(languages, "Key", "Value"); //French as selected
+
+            ViewData["Specialities"] = new SelectList(EnumHelper.EnumToDisplayNamesDictionary<Speciality>(), "Key", "Value");
+            ViewData["Services"] = new SelectList(EnumHelper.EnumToDisplayNamesDictionary<ServiceType>(), "Key", "Value");
+            var filters = new Dictionary<int, string> { { -1, "Not selected" } };//.Concat(languages).ToDictionary(pair => pair.Key, pair => pair.Value);
+
+            ViewData["Filters"] = new SelectList(filters, "Key", "Value");
+
             return View(createQuoteViewModel);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create(CreateQuoteViewModel model)
+        {
+            try
+            {
+                var storedQuoteId = model.StoredQuoteId;
+                if (ModelState.IsValid)
+                {
+                    //using (var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled)) //MSDTC
+                    //using (var transaction = context.Database.BeginTransaction())
+                    {
+                        //create stored quote if doesn't exists
+                        var clientId = 1;
+                        if (model.StoredQuoteId <= 0)
+                        {
+                            var stroedQuote = await _quoteService.CreateStoredQuoteAsync(clientId);
+                            storedQuoteId = stroedQuote.Id;
+                        }
+
+                        int idFilter = -1;
+                        var document = await _documentService.CreateTempDocumentAsync(model.FileToUpload!, DocumentType.Original, idFilter);
+                        //create the quote
+                        var quotes = await _quoteService.CreateTempQuotesAsync(storedQuoteId, 1, model.SourceLanguage,
+                            model.TargetLanguages!.ToArray(), model.Speciality, model.Service, document.Id, model.ClientReview);
+
+                        //scope.Complete();
+                    }
+
+                    return RedirectToAction("StoredQuoteDetails", new { id = storedQuoteId });
+                }
+                else
+                    throw new Exception("Invalid model state");
+            }
+            catch (Exception ex)
+            {
+                // set error message here that is displayed in the view
+                if (ex is CATException)
+                    ViewData["ErrorMessage"] = ex.Message;
+                else
+                    ViewData["ErrorMessage"] = "There was an error processing your request. Please try again later.";
+                // Optionally log the error: _logger.LogError(ex, "Error message here");
+
+                var languages = (await _languageService.GetLanguages()).ToDictionary(l => l.Key, l => l.Value.Name);
+                ViewData["SourceLanguages"] = new SelectList(languages, "Key", "Value", languages[model.SourceLanguage]);
+                var selectedTargetLanguages = model!.TargetLanguages!.Select(l => languages[l]).ToArray();
+                ViewData["TargetLanguages"] = new SelectList(languages, "Key", "Value", selectedTargetLanguages);
+
+                ViewData["Specialities"] = new SelectList(EnumHelper.EnumToDisplayNamesDictionary<Speciality>(), "Key", "Value");
+                ViewData["Services"] = new SelectList(EnumHelper.EnumToDisplayNamesDictionary<ServiceType>(), "Key", "Value");
+                var filters = new Dictionary<int, string> { { -1, "Not selected" } };//.Concat(languages).ToDictionary(pair => pair.Key, pair => pair.Value);
+                ViewData["Filters"] = new SelectList(filters, "Key", "Value");
+
+                return View(model);
+            }
         }
 
         public async Task<IActionResult> StoredQuoteDetails(int? id)

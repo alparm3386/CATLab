@@ -8,76 +8,61 @@
 
 <h2>Quote Calculator</h2>
 
-<form method="post" enctype="multipart/form-data" asp-action="HandleQuote">
+@if (ViewData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">
+        @ViewData["ErrorMessage"]
+    </div>
+}
+
+<form method="post" enctype="multipart/form-data" asp-action="Create">
 
     @Html.ValidationSummary(true, "", new { @class = "text-danger" })
     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
     <input type="hidden" name="StoredQuoteId" value="@Model.StoredQuoteId" />
 
     <div class="form-group">
-        <label for="sourceLanguage">Source Language:</label>
-        <select id="sourceLanguage" name="SourceLanguage" class="form-control">
-            @foreach (var lang in Model.Languages)
-            {
-                <p>@(Model.TargetLanguages != null && Model.TargetLanguages.Contains(lang.Key) ? "selected :" : null)</p>
-                <option value="@lang.Key" selected="@(Model.SourceLanguage == lang.Key ? "selected" : null)">@lang.Value</option>
-            }
-        </select>
+        <label for="SourceLanguage">Source Language:</label>
+        <select asp-for="SourceLanguage" class="form-control" asp-items="ViewBag.SourceLanguages"></select>
+        <span asp-validation-for="SourceLanguage" class="text-danger"></span>
     </div>
 
     <div class="form-group">
-        <label for="targetLanguages">Target Language:</label>
-        <select id="targetLanguages" name="TargetLanguages" class="form-control" multiple>
-            @foreach (var lang in Model.Languages)
-            {
-                <option value="@lang.Key" selected=@(Model.TargetLanguages != null && Model.TargetLanguages.Contains(lang.Key) ? "selected" : null)>@lang.Value</option>
-            }
-        </select>
+        <label for="TargetLanguages">Target Language:</label>
+        <select id="targetLanguages" asp-for="TargetLanguages" class="form-control" asp-items="ViewBag.TargetLanguages" required></select>
+        <span asp-validation-for="TargetLanguages" class="text-danger"></span>
     </div>
 
     <div class="form-group">
         <label for="speciality">Speciality:</label>
-        <select id="speciality" name="Speciality" class="form-control">
-            @foreach (var speciality in Model.Specialities)
-            {
-                <option value="@speciality.Key" selected="@(Model.Speciality == speciality.Key ? "selected" : null)">@speciality.Value</option>
-            }
-        </select>
+        <select asp-for="Speciality" class="form-control" asp-items="ViewBag.Specialities"></select>
+        <span asp-validation-for="Speciality" class="text-danger"></span>
     </div>
 
     <div class="form-group">
-        <label for="speciality">Service:</label>
-        <select id="speciality" name="Service" class="form-control">
-            @foreach (var service in Model.Services)
-            {
-                <option value="@service.Key" selected="@(Model.Service == service.Key ? "selected" : null)">@service.Value</option>
-            }
-        </select>
+        <label for="Service">Service:</label>
+        <select asp-for="Service" class="form-control" asp-items="ViewBag.Services"></select>
+        <span asp-validation-for="Service" class="text-danger"></span>
     </div>
 
     <div class="form-group">
-        @Html.LabelFor(model => model.ClientReview, "Client review:")
-        @Html.CheckBoxFor(model => model.ClientReview, new { @class = "form-check-input" })
+        <label for="Service">Client review:</label>
+        <input type="checkbox" asp-for="ClientReview" class="form-check-input" />
     </div>
 
     <div class="form-group mt-5">
-        <label for="file">Upload File:</label>
-        <input type="file" id="file" name="FileToUpload" class="form-control" required title="Please upload a file." />
+        <label for="FileToUpload">Upload File:</label>
+        <input type="file" asp-for="FileToUpload" class="form-control" required title="Please upload a file." />
         <span asp-validation-for="FileToUpload" class="text-danger"></span>
     </div>
 
     <div class="form-group">
-        <label for="filter">Filter:</label>
-        <select id="filter" name="Filter" class="form-control">
-            @foreach (var filter in Model.Filters)
-            {
-                <option value="@filter.Key" selected="@(Model.Filter == filter.Key ? "selected" : null)">@filter.Value</option>
-            }
-        </select>
+        <label for="Service">Filter:</label>
+        <select asp-for="Filter" class="form-control" asp-items="ViewBag.Filters"></select>
     </div>
 
     <div class="form-group mt-4">
-        <button type="submit" class="btn btn-primary" name="action" value="CalculateQuote">Calculate Quote</button>
+        <button type="submit" class="btn btn-primary">Calculate Quote</button>
     </div>
 </form>
 
@@ -87,7 +72,7 @@
     <script src="https://cdn.jsdelivr.net/gh/bbbootstrap/libraries@main/choices.min.js"></script>
 
     <script type="text/javascript">
-        var multipleCancelButton = new Choices('#targetLanguages', {
+        var multipleCancelButton = new Choices('[name="TargetLanguages"]', {
             removeItemButton: true,
             //searchResultLimit: 5,
             //renderChoiceLimit: 5
