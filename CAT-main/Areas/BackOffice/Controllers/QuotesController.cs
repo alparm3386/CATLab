@@ -163,20 +163,32 @@ namespace CAT.Areas.BackOffice.Controllers
         // GET: BackOffice/Orders/Delete/5
         public async Task<IActionResult> DeleteStoredQuote(int? id)
         {
-            var storedQuoteId = id ?? -1;
-            var storedQuote = await _quoteService.GetStoredQuoteAsync(storedQuoteId, true);
-
-            //set the lists
-            var languages = await _languageService.GetLanguages();
-            ViewData["Languages"] = languages.ToDictionary(l => l.Key, l => l.Value.Name);
-            ViewData["Specialities"] = EnumHelper.EnumToDisplayNamesDictionary<Speciality>();
-
-            if (storedQuote == null)
+            try
             {
-                return NotFound();
-            }
+                var storedQuoteId = id ?? -1;
+                var storedQuote = await _quoteService.GetStoredQuoteAsync(storedQuoteId, true);
 
-            return View(storedQuote);
+                //set the lists
+                var languages = await _languageService.GetLanguages();
+                ViewData["Languages"] = languages.ToDictionary(l => l.Key, l => l.Value.Name);
+                ViewData["Specialities"] = EnumHelper.EnumToDisplayNamesDictionary<Speciality>();
+
+                if (storedQuote == null)
+                    throw new CATException("Stored quote not found.");
+
+                return View(storedQuote);
+            }
+            catch (Exception ex)
+            {
+                // set error message here that is displayed in the view
+                if (ex is CATException)
+                    ViewData["ErrorMessage"] = ex.Message;
+                else
+                    ViewData["ErrorMessage"] = "There was an error processing your request. Please try again later.";
+                // Optionally log the error: _logger.LogError(ex, "Error message here");
+
+                return View(new StoredQuote());
+            }
         }
 
         // POST: BackOffice/Orders/Delete/5

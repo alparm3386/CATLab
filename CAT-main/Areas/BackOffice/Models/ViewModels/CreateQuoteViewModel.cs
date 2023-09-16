@@ -28,6 +28,7 @@ namespace CAT.Areas.BackOffice.Models.ViewModels
         [Required]
         public int Service { get; set; }
 
+        [Required(ErrorMessage = "Please upload a file.")]
         public IFormFile? FileToUpload { get; set; }
 
         public int ServiceSpeed { get; set; }
