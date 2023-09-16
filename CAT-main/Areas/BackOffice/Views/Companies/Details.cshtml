@@ -67,8 +67,9 @@
     </dl>
 </div>
 <div>
-    <a asp-controller="Clients" asp-action="Index" asp-route-companyId="@Model?.Id">Clients</a>
-    <a asp-controller="ClientRates" asp-action="Index" asp-route-companyId="@Model?.Id">Custom rates</a>
+    <a asp-controller="Clients" asp-action="Index" asp-route-companyId="@Model?.Id">Clients</a> |
+    <a asp-controller="ClientRates" asp-action="Index" asp-route-companyId="@Model?.Id">Custom rates</a> |
+    <a asp-controller="ClientFilters" asp-action="Index" asp-route-companyId="@Model?.Id">Filters </a> |
     <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
     <a asp-action="Index">Back to List</a>
 </div>

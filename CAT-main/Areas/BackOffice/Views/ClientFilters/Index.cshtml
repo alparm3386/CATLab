@@ -1,0 +1,60 @@
+﻿@model ICollection<Filter>
+
+@{
+    ViewData["Title"] = "Custom rates";
+}
+
+<h1>Filters for @(ViewData["CompanyName"] ?? " ...")</h1>
+
+@if (ViewData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">
+        @ViewData["ErrorMessage"]
+    </div>
+}
+
+<form method="post" enctype="multipart/form-data" asp-action="UploadFilter">
+    <input type="hidden" name="companyId" value="@ViewBag.CompanyId" />
+    <div class="mt-4">
+        <div class="form-group">
+            <label for="upload">Upload filter:</label>
+            <div name="upload" class="d-flex w-50">
+                <input name="FilterToUpload" type="file" class="form-control" required title="Upload a filter." />
+                <span validation-for="FilterToUpload" class="text-danger"></span>
+                <button type="submit" class="btn btn-primary ms-4">Upload</button>
+            </div>
+        </div>
+    </div>
+</form>
+
+<hr />
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Filter name
+            </th>
+            <th>
+                File types
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @item.FilterName
+                </td>
+                <td>
+                    @item.FileTypes
+                </td>
+                <td>
+                    <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

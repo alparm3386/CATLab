@@ -10,8 +10,10 @@
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
-        public int ProfileId { get; set; }
+        public int CompanyId { get; set; }
 
         public string FilterName { get; set; } = default!;
+
+        public string FileTypes { get; set; } = default!;
     }
 }

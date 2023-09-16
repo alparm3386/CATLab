@@ -128,6 +128,7 @@ namespace CAT.Areas.BackOffice.Controllers
 
                 var languages = (await _languageService.GetLanguages()).ToDictionary(l => l.Key, l => l.Value.Name);
                 ViewData["SourceLanguages"] = new SelectList(languages, "Key", "Value", languages[model.SourceLanguage]);
+                model!.TargetLanguages = model!.TargetLanguages ?? new List<int>();
                 var selectedTargetLanguages = model!.TargetLanguages!.Select(l => languages[l]).ToArray();
                 ViewData["TargetLanguages"] = new SelectList(languages, "Key", "Value", selectedTargetLanguages);
 
