@@ -18,10 +18,12 @@ namespace CAT.Areas.BackOffice.Controllers
     public class ClientFiltersController : Controller
     {
         private readonly MainDbContext _mainDbContext;
+        private readonly IConfiguration _configuration;
 
-        public ClientFiltersController(MainDbContext mainDbContext)
+        public ClientFiltersController(MainDbContext mainDbContext, IConfiguration configuration)
         {
             _mainDbContext = mainDbContext;
+            _configuration = configuration;
         }
 
         // GET: BackOffice/Rates
@@ -50,7 +52,7 @@ namespace CAT.Areas.BackOffice.Controllers
                 // Optionally log the error: _logger.LogError(ex, "Error message here");
             }
 
-            return View(new PaginatedList<ClientRate>(new List<ClientRate>(), 0, 0, 1));
+            return View(new PaginatedList<Filter>(new List<Filter>(), 0, 0, 1));
         }
 
         // POST: BackOffice/Rates/Create
@@ -58,14 +60,56 @@ namespace CAT.Areas.BackOffice.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> UploadFilter(int? companyId)
+        public async Task<IActionResult> UploadFilter(int companyId, IFormFile FilterToUpload)
         {
             try
             {
-                if (!companyId.HasValue)
-                    throw new CATException("Invalid company");
+                //check if the company exists
+                var company = await _mainDbContext.Companies.FindAsync(companyId);
+                if (company == null)
+                    throw new CATException("Company not found.");
+
+                //save the file
+                var fileFiltersFolder = Path.Combine(_configuration["FileFiltersFolder"]!, companyId.ToString());
+                var filterPath = Path.Combine(fileFiltersFolder, FilterToUpload!.FileName);
+                if (System.IO.File.Exists(filterPath))
+                    throw new CATException("The filter already exists.");
+
+                // Ensure the directory exists
+                if (!Directory.Exists(fileFiltersFolder))
+                    Directory.CreateDirectory(fileFiltersFolder);
+
+                using var fileStream = new FileStream(filterPath, FileMode.Create);
+                await FilterToUpload.CopyToAsync(fileStream);
+
+                //add the filter to the database
+                _mainDbContext.Filters.Add(new Filter() { CompanyId = companyId, FilterName = FilterToUpload.FileName, FileTypes = "*" });
+                _mainDbContext.SaveChanges();
 
                 return RedirectToAction(nameof(Index), new { companyId });
+            }
+            catch (Exception ex)
+            {
+                // set error message here that is displayed in the view
+                if (ex is CATException)
+                    ViewData["ErrorMessage"] = ex.Message;
+                else
+                    ViewData["ErrorMessage"] = "There was an error processing your request. Please try again later.";
+                // Optionally log the error: _logger.LogError(ex, "Error message here");
+
+                return View();
+            }
+        }
+
+        public async Task<IActionResult> Delete(int? id)
+        {
+            try
+            {
+                var filter = await _mainDbContext.Filters.FirstOrDefaultAsync(m => m.Id == id);
+                if (filter == null)
+                    throw new CATException("Filter not found.");
+
+                return View(filter);
             }
             catch (Exception ex)
             {
@@ -86,14 +130,11 @@ namespace CAT.Areas.BackOffice.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             if (_mainDbContext.Rates == null)
-            {
                 return Problem("Entity set 'MainDbContext.Rates'  is null.");
-            }
-            var rate = await _mainDbContext.Rates.FindAsync(id);
-            if (rate != null)
-            {
-                _mainDbContext.Rates.Remove(rate);
-            }
+
+            var filter = await _mainDbContext.Filters.FindAsync(id);
+            if (filter != null)
+                _mainDbContext.Filters.Remove(filter);
 
             await _mainDbContext.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
