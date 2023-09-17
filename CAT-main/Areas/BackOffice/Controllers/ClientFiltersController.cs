@@ -11,6 +11,7 @@ using CAT.Helpers;
 using CAT.Enums;
 using Task = CAT.Enums.Task;
 using CAT.Infrastructure;
+using System.ComponentModel.Design;
 
 namespace CAT.Areas.BackOffice.Controllers
 {
@@ -97,7 +98,7 @@ namespace CAT.Areas.BackOffice.Controllers
                     ViewData["ErrorMessage"] = "There was an error processing your request. Please try again later.";
                 // Optionally log the error: _logger.LogError(ex, "Error message here");
 
-                return View();
+                return RedirectToPage(nameof(Index), new { companyId });
             }
         }
 
@@ -133,11 +134,18 @@ namespace CAT.Areas.BackOffice.Controllers
                 return Problem("Entity set 'MainDbContext.Rates'  is null.");
 
             var filter = await _mainDbContext.Filters.FindAsync(id);
+            
             if (filter != null)
                 _mainDbContext.Filters.Remove(filter);
 
             await _mainDbContext.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+
+            //delete the file
+            var fileFiltersFolder = Path.Combine(_configuration["FileFiltersFolder"]!, filter!.CompanyId.ToString());
+            var filterPath = Path.Combine(fileFiltersFolder, filter.FilterName);
+            System.IO.File.Delete(filterPath);
+
+            return RedirectToAction(nameof(Index), new { companyId = filter!.CompanyId });
         }
     }
 }
