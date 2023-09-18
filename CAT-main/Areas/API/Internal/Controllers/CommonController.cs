@@ -9,11 +9,11 @@ namespace CAT.Areas.API.Internal.Controllers
     [Route("api/{controller}/{action}")]
     [ApiController]
     //[Authorize(Policy = "AdminsOnly")]
-    public class AutoCompleteController : ControllerBase
+    public class CommonController : ControllerBase
     {
         private readonly MainDbContext _mainDbContext;
 
-        public AutoCompleteController(MainDbContext mainDbContext)
+        public CommonController(MainDbContext mainDbContext)
         {
             _mainDbContext = mainDbContext;
         }
@@ -29,6 +29,5 @@ namespace CAT.Areas.API.Internal.Controllers
 
             return Ok(suggestions);
         }
-
     }
 }

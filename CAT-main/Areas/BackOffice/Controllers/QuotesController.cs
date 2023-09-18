@@ -71,8 +71,10 @@ namespace CAT.Areas.BackOffice.Controllers
             createQuoteViewModel.StoredQuoteId = storedQuoteId;
 
             var languages = (await _languageService.GetLanguages()).ToDictionary(l => l.Key, l => l.Value.Name);
-            ViewData["SourceLanguages"] = new SelectList(languages, "Key", "Value", languages[1]); //English as selected
-            ViewData["TargetLanguages"] = new SelectList(languages, "Key", "Value"); //French as selected
+            createQuoteViewModel.SourceLanguage = 1; //English as selected
+            ViewData["SourceLanguages"] = new SelectList(languages, "Key", "Value");
+            createQuoteViewModel.TargetLanguages = new List<int> { 2 }; //French as selected
+            ViewData["TargetLanguages"] = new SelectList(languages, "Key", "Value");
 
             ViewData["Specialities"] = new SelectList(EnumHelper.EnumToDisplayNamesDictionary<Speciality>(), "Key", "Value");
             ViewData["Services"] = new SelectList(EnumHelper.EnumToDisplayNamesDictionary<ServiceType>(), "Key", "Value");
@@ -127,10 +129,9 @@ namespace CAT.Areas.BackOffice.Controllers
                 // Optionally log the error: _logger.LogError(ex, "Error message here");
 
                 var languages = (await _languageService.GetLanguages()).ToDictionary(l => l.Key, l => l.Value.Name);
-                ViewData["SourceLanguages"] = new SelectList(languages, "Key", "Value", languages[model.SourceLanguage]);
+                ViewData["SourceLanguages"] = new SelectList(languages, "Key", "Value");
                 model!.TargetLanguages = model!.TargetLanguages ?? new List<int>();
-                var selectedTargetLanguages = model!.TargetLanguages!.Select(l => languages[l]).ToArray();
-                ViewData["TargetLanguages"] = new SelectList(languages, "Key", "Value", selectedTargetLanguages);
+                ViewData["TargetLanguages"] = new SelectList(languages, "Key", "Value");
 
                 ViewData["Specialities"] = new SelectList(EnumHelper.EnumToDisplayNamesDictionary<Speciality>(), "Key", "Value");
                 ViewData["Services"] = new SelectList(EnumHelper.EnumToDisplayNamesDictionary<ServiceType>(), "Key", "Value");

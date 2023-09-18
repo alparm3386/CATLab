@@ -1,0 +1,12 @@
+﻿@model List<CAT.Models.Entities.Main.Client>
+
+<div class="form-group">
+    <label for="clientSearch">Client:</label>
+    <input type="text" id="clientSearch" class="form-control" placeholder="Type to search..." />
+    <div id="clientDropdown" class="dropdown-menu" aria-labelledby="clientSearch">
+        @foreach(var client in Model)
+        {
+            <a class="dropdown-item" href="#">@client.Company.Name</a>
+        }
+    </div>
+</div>

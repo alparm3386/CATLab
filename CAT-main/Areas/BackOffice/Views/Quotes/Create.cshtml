@@ -21,6 +21,9 @@
     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
     <input type="hidden" name="StoredQuoteId" value="@Model.StoredQuoteId" />
 
+    <!--Client search-->
+    @await Component.InvokeAsync("ClientSearch")
+
     <div class="form-group">
         <label for="SourceLanguage">Source Language:</label>
         <select asp-for="SourceLanguage" class="form-control" asp-items="ViewBag.SourceLanguages"></select>
@@ -72,10 +75,14 @@
     <script src="https://cdn.jsdelivr.net/gh/bbbootstrap/libraries@main/choices.min.js"></script>
 
     <script type="text/javascript">
-        var multipleCancelButton = new Choices('[name="TargetLanguages"]', {
-            removeItemButton: true,
-            //searchResultLimit: 5,
-            //renderChoiceLimit: 5
+
+        $(document).ready(function () {
+            //the multi select dropdown
+            var multipleCancelButton = new Choices('[name="TargetLanguages"]', {
+                removeItemButton: true,
+                //searchResultLimit: 5,
+                //renderChoiceLimit: 5
+            });
         });
     </script>
 
