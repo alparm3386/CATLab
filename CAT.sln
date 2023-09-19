@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CAT-main", "CAT-main\CAT-ma
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CAT-OnlineEditor", "CAT-onlineEditor\CAT-OnlineEditor.csproj", "{4AB1BCA8-4B06-481F-A35D-32E820FFC6D4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CAT-main-tests", "CAT-main-tests\CAT-main-tests.csproj", "{9900F8F0-6ECC-4324-BCD7-091AA498DE45}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CAT-main-tests", "CAT-main-tests\CAT-main-tests.csproj", "{9900F8F0-6ECC-4324-BCD7-091AA498DE45}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

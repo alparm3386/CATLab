@@ -45,6 +45,7 @@
     <Folder Include="Controllers\" />
     <Folder Include="Migrations\MainDb\" />
     <Folder Include="Models\DTOs\" />
+    <Folder Include="NewFolder\" />
     <Folder Include="WebUI\Monitoring\src\app\models\" />
     <Folder Include="WebUI\Monitoring\src\app\services\" />
   </ItemGroup>
