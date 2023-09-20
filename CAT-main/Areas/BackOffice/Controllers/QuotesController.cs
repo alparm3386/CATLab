@@ -116,7 +116,11 @@ namespace CAT.Areas.BackOffice.Controllers
                     return RedirectToAction("StoredQuoteDetails", new { id = storedQuoteId });
                 }
                 else
+                {
+                    if (ModelState["ClientId"]?.ValidationState == Microsoft.AspNetCore.Mvc.ModelBinding.ModelValidationState.Invalid)
+                        throw new CATException("Please select a client.");
                     throw new Exception("Invalid model state");
+                }
             }
             catch (Exception ex)
             {

@@ -85,7 +85,7 @@
                 //renderChoiceLimit: 5
             });
 
-            $('#searchInput').on('input', function () {
+            $('#searchInput').on('input', _.throttle(function () {
                 const query = $(this).val();
                 $('input[name="ClientId"]').val(null);
 
@@ -129,7 +129,7 @@
                         console.error("There was an error fetching the autofill results", error);
                     }
                 });
-            });
+            }, 200));
         });
     </script>
 
