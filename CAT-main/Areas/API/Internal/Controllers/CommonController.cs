@@ -1,4 +1,5 @@
 ﻿using CAT.Data;
+using CAT.Models.Entities.Main;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -6,28 +7,39 @@ using Microsoft.EntityFrameworkCore;
 namespace CAT.Areas.API.Internal.Controllers
 {
     [Area("API")]
-    [Route("api/{controller}/{action}")]
+    [Route("api/[controller]")]
     [ApiController]
     //[Authorize(Policy = "AdminsOnly")]
     public class CommonController : ControllerBase
     {
-        private readonly MainDbContext _mainDbContext;
+        private readonly DbContextContainer _dbContextContainer;
 
-        public CommonController(MainDbContext mainDbContext)
+        public CommonController(DbContextContainer dbContextContainer)
         {
-            _mainDbContext = mainDbContext;
+            _dbContextContainer = dbContextContainer;
         }
 
-        [HttpGet]
-        public async Task<IActionResult> GetClientSuggestions(string term)
+        [HttpGet("GetFilteredClients")]
+        public async Task<IActionResult> GetFilteredClients(string term)
         {
             // Query the database based on "term". 
-            var suggestions = await _mainDbContext.Clients.Include(c => c.Company)
+            var clients = await _dbContextContainer.MainContext.Clients.AsNoTracking().Include(c => c.Company)
                 .Where(item => item.Company.Name.Contains(term))
                 .Take(10)
                 .ToListAsync();
 
-            return Ok(suggestions);
+            //join into the users table 
+            clients = (from client in clients
+                             join user in _dbContextContainer.IdentityContext.Users on client.UserId equals user.Id
+                             select new Client
+                             {
+                                 Id = client.Id,
+                                 Company = client.Company,
+                                 CompanyId = client.CompanyId,
+                                 User = user
+                             }).ToList();
+
+            return Ok(clients);
         }
     }
 }

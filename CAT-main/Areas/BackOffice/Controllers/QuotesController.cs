@@ -98,10 +98,9 @@ namespace CAT.Areas.BackOffice.Controllers
                     //using (var transaction = context.Database.BeginTransaction())
                     {
                         //create stored quote if doesn't exists
-                        var clientId = 1;
                         if (model.StoredQuoteId <= 0)
                         {
-                            var stroedQuote = await _quoteService.CreateStoredQuoteAsync(clientId);
+                            var stroedQuote = await _quoteService.CreateStoredQuoteAsync(model.ClientId);
                             storedQuoteId = stroedQuote.Id;
                         }
 

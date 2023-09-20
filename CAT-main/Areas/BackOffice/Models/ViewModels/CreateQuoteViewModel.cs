@@ -8,8 +8,8 @@ namespace CAT.Areas.BackOffice.Models.ViewModels
 {
     public class CreateQuoteViewModel
     {
-        //[Required]
-        //public int ClientId { get; set; }
+        [Required]
+        public int ClientId { get; set; }
 
         public int StoredQuoteId { get; set; }
 
