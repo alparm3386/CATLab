@@ -4,6 +4,7 @@ using CAT.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CAT.Migrations.MainDb
 {
     [DbContext(typeof(MainDbContext))]
-    partial class MainDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230921063221_AllocationsAdded")]
+    partial class AllocationsAdded
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -82,7 +85,7 @@ namespace CAT.Migrations.MainDb
                         .HasColumnType("datetime2");
 
                     b.Property<decimal?>("Fee")
-                        .HasColumnType("decimal(10, 2)");
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<int>("JobId")
                         .HasColumnType("int");
@@ -504,8 +507,8 @@ namespace CAT.Migrations.MainDb
                     b.Property<DateTime>("DateCreated")
                         .HasColumnType("datetime2");
 
-                    b.Property<decimal>("Fee")
-                        .HasColumnType("decimal(10, 2)");
+                    b.Property<double>("Fee")
+                        .HasColumnType("float");
 
                     b.Property<int>("Service")
                         .HasColumnType("int");
@@ -635,8 +638,8 @@ namespace CAT.Migrations.MainDb
                     b.Property<DateTime>("DateCreated")
                         .HasColumnType("datetime2");
 
-                    b.Property<decimal>("Fee")
-                        .HasColumnType("decimal(10, 2)");
+                    b.Property<double>("Fee")
+                        .HasColumnType("float");
 
                     b.Property<int>("Service")
                         .HasColumnType("int");
@@ -683,7 +686,7 @@ namespace CAT.Migrations.MainDb
                         .HasColumnType("int");
 
                     b.Property<decimal?>("Fee")
-                        .HasColumnType("decimal(10, 2)");
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<int>("JobId")
                         .HasColumnType("int");

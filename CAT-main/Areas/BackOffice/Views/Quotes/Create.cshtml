@@ -84,57 +84,10 @@
                 //searchResultLimit: 5,
                 //renderChoiceLimit: 5
             });
-
-            $('#searchInput').on('input', _.throttle(function () {
-                const query = $(this).val();
-                $('input[name="ClientId"]').val(null);
-
-                if (query.length === 0) {
-                    $('#searchDropdown').empty();
-                    return;
-                }
-
-                if (!$(this).val()) {  // Adjust this validation condition as needed
-                    $(this).addClass('is-invalid');
-                } else {
-                    $(this).removeClass('is-invalid');
-                }
-                
-                $.ajax({
-                    url: "/api/Common/GetFilteredClients",
-                    type: 'GET',
-                    data: { term: query },
-                    success: function (data) {
-                        const dropdown = $('#searchDropdown');
-                        dropdown.empty();
-
-                        data.forEach(item => {
-                            const dropdownItem = $('<a class="dropdown-item"></a>').text(item.company.name + " - " + item.user.fullName);
-                            dropdownItem.data(item)
-                            dropdown.append(dropdownItem);
-
-                            dropdownItem.on('click', function () {
-                                $('#searchInput').val($(this).text());
-                                $('input[name="ClientId"]').val($(this).data().id);
-                            });
-                        });
-
-                        if (data.length > 0) {
-                            $('.input-group-append .dropdown-toggle').dropdown('show');
-                        } else {
-                            $('.input-group-append .dropdown-toggle').dropdown('hide');
-                        }
-                    },
-                    error: function (error) {
-                        console.error("There was an error fetching the autofill results", error);
-                    }
-                });
-            }, 200));
         });
     </script>
 
-
-        @{
-            await Html.RenderPartialAsync("_ValidationScriptsPartial");
-        }
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }

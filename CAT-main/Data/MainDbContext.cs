@@ -53,6 +53,8 @@ namespace CAT.Data
 
         public DbSet<ConfigConstant> ConfigConstants { get; set; } = default!;
 
+        public DbSet<Allocation> Allocations { get; set; } = default!;
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             //DocumentFilter indexes

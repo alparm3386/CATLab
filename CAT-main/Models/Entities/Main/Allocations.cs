@@ -3,8 +3,8 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CAT.Models.Entities.Main
 {
-    [Table("WorkflowSteps")]
-    public class WorkflowStep
+    [Table("Allocations")]
+    public class Allocation
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -12,19 +12,18 @@ namespace CAT.Models.Entities.Main
 
         public int JobId { get; set; }
 
-        public int StepOrder { get; set; }
+        public Job Job { get; set; } = default!;
 
         public int TaskId { get; set; }
 
         public int Status { get; set; }
 
-        public DateTime StartDate { get; set; }
-        public DateTime ScheduledDate { get; set; }
+        public DateTime AllocationDate { get; set; }
         public DateTime CompletionDate { get; set; }
 
         [Column(TypeName = "decimal(10, 2)")]
         public decimal? Fee { get; set; }
 
-        public int DocumentId { get; set; }
+        public string ReturnUnsatisfactory { get; set; } = default!;
     }
 }

@@ -1,55 +1,82 @@
 ﻿<div class="input-group">
     <input type="text" class="form-control" id="searchInput" placeholder="Search..." required title="Please select a client.">
-    <div class="input-group-append">
-        <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-toggle="dropdown"></button>
-        <div class="dropdown-menu" id="searchDropdown">
-            <!-- Autofill results will appear here -->
-        </div>
+    <div class="dropdown-menu" id="searchDropdown">
+        <!-- Autofill results will appear here -->
     </div>
 </div>
 
 
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
 
-@section Scripts
-    {
-    <script>
-        $(document).ready(function () {
-            $('#searchInput').on('input', function () {
-                const query = $(this).val();
+<script>
+    $(document).ready(function () {
+        let isDropdownClicked = false;
+        $('#searchInput').attr('autocomplete', 'off');
 
-                if (query.length === 0) {
-                    $('#searchDropdown').empty();
-                    return;
-                }
-
-                $.ajax({
-                    url: '@Url.Action("api/Common/GetFilteredClients", "SearchDropdown")',
-                    type: 'GET',
-                    data: { query: query },
-                    success: function (data) {
-                        const dropdown = $('#searchDropdown');
-                        dropdown.empty();
-
-                        data.forEach(item => {
-                            const dropdownItem = $('<a class="dropdown-item"></a>').text(item);
-                            dropdown.append(dropdownItem);
-
-                            dropdownItem.on('click', function () {
-                                $('#searchInput').val($(this).text());
-                            });
-                        });
-
-                        if (data.length > 0) {
-                            $('.input-group-append .dropdown-toggle').dropdown('show');
-                        } else {
-                            $('.input-group-append .dropdown-toggle').dropdown('hide');
-                        }
-                    },
-                    error: function (error) {
-                        console.error("There was an error fetching the autofill results", error);
+        $('#searchInput').on('focus', function () {
+            $('#searchDropdown').dropdown('show');
+        }).on('blur', function () {
+            // If dropdown was clicked, don't hide
+            if (!isDropdownClicked) {
+                setTimeout(() => {
+                    if (!isDropdownClicked) {
+                        $('#searchDropdown').dropdown('hide');
                     }
-                });
-            });
+                }, 100); // slight delay to handle dropdown item clicks
+            }
+            isDropdownClicked = false; // Reset the flag
         });
-    </script>
-}
+
+        $('#searchDropdown').on('mousedown', function () {
+            isDropdownClicked = true;
+    
+        }); 
+        
+        $('#searchInput').on('input', _.throttle(function () {
+            const query = $(this).val();
+            $('input[name="ClientId"]').val(null);
+
+            if (query.length === 0) {
+                $('#searchDropdown').empty();
+                return;
+            }
+
+            if (!$(this).val()) {  // Adjust this validation condition as needed
+                $(this).addClass('is-invalid');
+            } else {
+                $(this).removeClass('is-invalid');
+            }
+
+            $.ajax({
+                url: "/api/Common/GetFilteredClients",
+                type: 'GET',
+                data: { term: query },
+                success: function (data) {
+                    const dropdown = $('#searchDropdown');
+                    dropdown.empty();
+
+                    data.forEach(item => {
+                        const dropdownItem = $('<a class="dropdown-item"></a>').text(item.company.name + " - " + item.user.fullName);
+                        dropdownItem.data(item)
+                        dropdown.append(dropdownItem);
+
+                        dropdownItem.on('click', function () {
+                            $('#searchInput').val($(this).text());
+                            $('input[name="ClientId"]').val($(this).data().id);
+                        });
+                    });
+
+                    if (data.length > 0) {
+                        $('.input-group-append .dropdown-toggle').dropdown('show');
+                    } else {
+                        $('.input-group-append .dropdown-toggle').dropdown('hide');
+                    }
+                },
+                error: function (error) {
+                    console.error("There was an error fetching the autofill results", error);
+                }
+            });
+        }, 200));
+    });
+</script>
+

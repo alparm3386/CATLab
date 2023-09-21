@@ -29,6 +29,7 @@ namespace CAT.Models.Entities.Main
 
         public bool ClientReview { get; set; }
 
+        [Column(TypeName = "decimal(10, 2)")]
         public double Fee { get; set; }
 
         public int Speed { get; set; }
