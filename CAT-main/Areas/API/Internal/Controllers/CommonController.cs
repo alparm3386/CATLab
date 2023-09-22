@@ -12,6 +12,7 @@ namespace CAT.Areas.API.Internal.Controllers
     //[Authorize(Policy = "AdminsOnly")]
     public class CommonController : ControllerBase
     {
+        private const int AUTOCOMPLETE_LIMIT = 15;
         private readonly DbContextContainer _dbContextContainer;
 
         public CommonController(DbContextContainer dbContextContainer)
@@ -20,12 +21,13 @@ namespace CAT.Areas.API.Internal.Controllers
         }
 
         [HttpGet("GetFilteredClients")]
-        public async Task<IActionResult> GetFilteredClients(string term)
+        public async Task<IActionResult> GetFilteredClients(string term, int? limit)
         {
+            limit = limit ?? AUTOCOMPLETE_LIMIT;
             // Query the database based on "term". 
             var clients = await _dbContextContainer.MainContext.Clients.AsNoTracking().Include(c => c.Company)
                 .Where(item => item.Company.Name.Contains(term))
-                .Take(10)
+                .Take((int)limit)
                 .ToListAsync();
 
             //join into the users table 
@@ -40,6 +42,28 @@ namespace CAT.Areas.API.Internal.Controllers
                              }).ToList();
 
             return Ok(clients);
+        }
+
+        [HttpGet("GetFilteredLinguists")]
+        public async Task<IActionResult> GetFiltereLinguists(string term, int? limit)
+        {
+            limit = limit ?? AUTOCOMPLETE_LIMIT;
+
+            // Optimize by pushing filtering and joining to the database query
+            var linguists = await (from linguist in _dbContextContainer.MainContext.Linguists
+                                   join user in _dbContextContainer.IdentityContext.Users
+                                   on linguist.UserId equals user.Id
+                                   where (user.FirstName + " " + user.LastName).Contains(term)
+                                   select new Linguist
+                                   {
+                                       UserId = user.Id,
+                                       User = user
+                                   })
+                                   .Take(limit.Value)
+                                   .AsNoTracking()
+                                   .ToListAsync();
+
+            return Ok(linguists);
         }
     }
 }

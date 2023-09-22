@@ -19,6 +19,7 @@ using System.Net;
 using System.Security.Claims;
 using Microsoft.Extensions.Options;
 using System.Transactions;
+using CAT.Helpers;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -47,6 +48,7 @@ builder.Services.AddScoped<IDocumentService, DocumentService>();
 builder.Services.AddScoped<IQuoteService, QuoteService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IMonitoringService, MonitoringService>();
+builder.Services.AddScoped<IAdminService, AdminService>();
 builder.Services.AddScoped<IWorkflowService, WorkflowService>();
 builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
 builder.Services.AddSingleton<MainDbContextFactory>();

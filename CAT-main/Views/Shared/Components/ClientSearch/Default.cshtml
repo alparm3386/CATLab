@@ -50,7 +50,7 @@
             $.ajax({
                 url: "/api/Common/GetFilteredClients",
                 type: 'GET',
-                data: { term: query },
+                data: { term: query,  },
                 success: function (data) {
                     const dropdown = $('#searchDropdown');
                     dropdown.empty();
