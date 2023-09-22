@@ -1,0 +1,20 @@
+<div class="container">
+  <div class="row">
+    <div class="col-12 m-toolbox m-4">
+      <form class="d-flex">
+        <input class="form-control me-2" type="text" placeholder="Filter by job or order id">
+        <button class="btn btn-primary" type="button" (click)="onSearchClicked()">Search</button>
+      </form>
+    </div>
+  </div>
+
+  <div class="row">
+    <hr class="col-12 m-4" />
+  </div>
+
+  <div class="row">
+    <div class="col-12 m-results m-4">
+      <div class="m-order bg-secondary bg-gradient bg-opacity-10 border rounded mb-2" app-order *ngFor="let order of monitoringData.orders" [order]="order"></div>
+    </div>
+  </div>
+</div>

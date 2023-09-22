@@ -1,0 +1,13 @@
+<div class="row mb-2">
+  <div class="job-details bg-success bg-gradient bg-opacity-25 col-3">
+    <div class="p-1 mr-1">
+      <div><b>Job Id: </b><a href="/backoffice/monitoring/details?jobId={{job.jobId}}" target="_blank">#{{ job.jobId }}</a></div>
+      <div><b>Source language:</b> {{ job.sourceLanguage }}</div>
+      <div><b>Target language:</b> {{ job.targetLanguage }}</div>
+      <div><b>Words:</b> {{ job.words }}</div>
+    </div>
+  </div>
+  <div class="job-workflow col-9">
+    <app-workflow [workflowSteps]="job.workflowSteps" />
+  </div>
+</div>
