@@ -1,5 +1,10 @@
 ng new appname
 ng serve
+
+//create workspace
+ng new appname --create-application=false
+ng generate application another-appname
+
 ng generate component home --standalone --inline-template
 
 ng build --base-href /Monitoring/dist/monitoring/ --output-hashing=none
