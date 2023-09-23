@@ -145,6 +145,36 @@ namespace CAT.Areas.BackOffice.Controllers
             }
         }
 
+        public async Task<IActionResult> Details(int? id)
+        {
+            try
+            {
+                var tempQuoteId = id ?? -1;
+                var tempQuote = await _quoteService.GetTempQuoteAsync(tempQuoteId);
+
+                if (tempQuote == null)
+                    throw new Exception("Temporary quote not found.");
+
+                //set the ViewData
+                var languages = await _languageService.GetLanguages();
+                ViewData["Languages"] = languages.ToDictionary(l => l.Key, l => l.Value.Name);
+                ViewData["Specialities"] = EnumHelper.EnumToDisplayNamesDictionary<Speciality>();
+
+                return View(tempQuote);
+            }
+            catch (Exception ex)
+            {
+                // set error message here that is displayed in the view
+                if (ex is CATException)
+                    ViewData["ErrorMessage"] = ex.Message;
+                else
+                    ViewData["ErrorMessage"] = "There was an error processing your request. Please try again later.";
+                // Optionally log the error: _logger.LogError(ex, "Error message here");
+
+                return View(new StoredQuote());
+            }
+        }
+
         public async Task<IActionResult> StoredQuoteDetails(int? id)
         {
             try

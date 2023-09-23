@@ -13,5 +13,6 @@ namespace CAT.Services.Common
         public Task<StoredQuote?> GetStoredQuoteAsync(int storedQuoteId, bool withClientDetails);
 
         public IQueryable<StoredQuote> GetStoredQuotes(DateTime from, DateTime to);
+        Task<TempQuote?> GetTempQuoteAsync(int tempQuoteId);
     }
 }

@@ -123,6 +123,16 @@ namespace CAT.Services.Common
             return storedQuote;
         }
 
+        public async Task<TempQuote?> GetTempQuoteAsync(int tempQuoteId)
+        {
+            var tempQuote = await _dbContextContainer!.MainContext!.TempQuotes!
+                .Include(quote => quote.TempDocument)
+                .FirstOrDefaultAsync(quote => quote.Id == tempQuoteId);
+
+ 
+            return tempQuote;
+        }
+
         public async Task DeleteStoredQuoteAsync(StoredQuote storedQuote)
         {
             _dbContextContainer!.MainContext!.StoredQuotes!.Remove(storedQuote);
