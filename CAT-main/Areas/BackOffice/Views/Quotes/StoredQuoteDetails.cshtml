@@ -26,11 +26,7 @@
     <input type="hidden" name="id" value="@Model.Id" />
     @if (Model.OrderId < 0)
     {
-        <a asp-action="Create" asp-controller="Quotes" asp-route-id="@Model.Id">
-            @(
-                Model.Id > 0 ? "Add New" : "Create New"
-                )
-        </a>
+        <a asp-action="Create" asp-controller="Quotes" asp-route-storedQuoteId="@Model.Id">@(Model.Id > 0 ? "Add New" : "Create New")</a>
     }
     <table class="table">
         <thead>

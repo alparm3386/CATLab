@@ -112,6 +112,7 @@ namespace CAT.Areas.BackOffice.Controllers
             try
             {
                 var storedQuoteId = model.StoredQuoteId;
+                ModelState.Remove("Client");
                 if (ModelState.IsValid)
                 {
                     //using (var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled)) //MSDTC
@@ -144,6 +145,11 @@ namespace CAT.Areas.BackOffice.Controllers
             }
             catch (Exception ex)
             {
+                try
+                {
+                    model.Client = await _userService.GetClient(model.ClientId);
+                }
+                catch { }
                 // set error message here that is displayed in the view
                 if (ex is CATException)
                     ViewData["ErrorMessage"] = ex.Message;
