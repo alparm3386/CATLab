@@ -24,10 +24,11 @@ namespace CAT.Areas.BackOffice.Controllers
         private readonly IDocumentService _documentService;
         private readonly IOrderService _orderService;
         private readonly ILanguageService _languageService;
+        private readonly IUserService _userService;
         private readonly IMapper _mapper;
         private readonly ILogger _logger;
 
-        public QuotesController(IConfiguration configuration, IQuoteService quoteService, ILanguageService languageService,
+        public QuotesController(IConfiguration configuration, IUserService userService, IQuoteService quoteService, ILanguageService languageService,
             IDocumentService documentService, IOrderService orderService, IMapper mapper, ILogger<JobService> logger)
         {
             _configuration = configuration;
@@ -35,6 +36,7 @@ namespace CAT.Areas.BackOffice.Controllers
             _documentService = documentService;
             _orderService = orderService;
             _languageService = languageService;
+            _userService = userService;
             _logger = logger;
             _mapper = mapper;
         }
@@ -64,12 +66,30 @@ namespace CAT.Areas.BackOffice.Controllers
             return View(new PaginatedList<StoredQuote>(new List<StoredQuote>(), 0, 0, 1));
         }
 
-        public async Task<IActionResult> Create(int? id)
+        public async Task<IActionResult> Create(int? clientId, int? storedQuoteId)
         {
-            var storedQuoteId = id ?? -1;
-            var createQuoteViewModel = new CreateQuoteViewModel();
-            createQuoteViewModel.StoredQuoteId = storedQuoteId;
+            storedQuoteId = storedQuoteId ?? -1;
+            if (storedQuoteId > 0)
+                clientId = -1;
 
+            var createQuoteViewModel = new CreateQuoteViewModel();
+            createQuoteViewModel.StoredQuoteId = (int)storedQuoteId;
+
+            if (storedQuoteId > 0)
+            {
+                var storedQuote = await _quoteService.GetStoredQuoteAsync((int)storedQuoteId, true);
+                clientId = storedQuote!.ClientId;
+            }
+
+            if (clientId.HasValue && clientId > 0)
+            {
+                createQuoteViewModel.ClientId = (int)clientId;
+                //get the client
+                var client = await _userService.GetClient((int)clientId);
+                createQuoteViewModel.Client = client;
+            }
+
+            //dropdown lists
             var languages = (await _languageService.GetLanguages()).ToDictionary(l => l.Key, l => l.Value.Name);
             createQuoteViewModel.SourceLanguage = 1; //English as selected
             ViewData["SourceLanguages"] = new SelectList(languages, "Key", "Value");

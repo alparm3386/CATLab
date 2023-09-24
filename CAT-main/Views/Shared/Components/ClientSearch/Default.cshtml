@@ -17,11 +17,12 @@
             $('#searchDropdown').dropdown('show');
         }).on('blur', function () {
             // If dropdown was clicked, don't hide
-            if (!isDropdownClicked) {
+            if (true /*!isDropdownClicked*/) {
                 setTimeout(() => {
-                    if (!isDropdownClicked) {
+                    if (true /*!isDropdownClicked*/) {
                         $('#searchDropdown').dropdown('hide');
                     }
+                    $('#searchDropdown').dropdown('hide');
                 }, 100); // slight delay to handle dropdown item clicks
             }
             isDropdownClicked = false; // Reset the flag

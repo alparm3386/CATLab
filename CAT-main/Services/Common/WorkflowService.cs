@@ -18,7 +18,7 @@ namespace CAT.Services.Common
         private readonly ILogger _logger;
 
         public WorkflowService(DbContextContainer dbContextContainer, IConfiguration configuration, IDocumentService documentService,
-            IQuoteService quoteService, IMapper mapper, ILogger<JobService> logger)
+            IQuoteService quoteService, IMapper mapper, ILogger<WorkflowService> logger)
         {
             _dbContextContainer = dbContextContainer;
             _configuration = configuration;

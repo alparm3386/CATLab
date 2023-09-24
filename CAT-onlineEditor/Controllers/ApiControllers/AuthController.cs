@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using CAT.Services;
 using CAT.Areas.Identity.Data;
+using NuGet.Common;
 
 namespace CAT.Controllers.Api
 {
@@ -23,17 +24,24 @@ namespace CAT.Controllers.Api
         [HttpPost("login")]
         public async Task<IActionResult> Login(LoginModel model)
         {
-            var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, false, false);
-
-            if (!result.Succeeded)
+            try
             {
-                return Unauthorized(); // or however you want to handle failed login attempts
+                var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, false, false);
+
+                if (!result.Succeeded)
+                {
+                    return Unauthorized(); // or however you want to handle failed login attempts
+                }
+
+                var user = await _signInManager.UserManager.FindByEmailAsync(model.Email);
+                var token = _jwtService.GenerateJWT(user);
+
+                return Ok(new { Token = token });
             }
-
-            var user = await _signInManager.UserManager.FindByEmailAsync(model.Email);
-            var token = _jwtService.GenerateJWT(user);
-
-            return Ok(new { Token = token });
+            catch (Exception ex)
+            {
+                return Problem(ex.Message);
+            }
 
             //// create the cookie
             //var cookieOptions = new CookieOptions

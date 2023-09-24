@@ -1,5 +1,6 @@
 ﻿using CAT.Enums;
 using CAT.Helpers;
+using CAT.Models.Entities.Main;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -10,6 +11,8 @@ namespace CAT.Areas.BackOffice.Models.ViewModels
     {
         [Required]
         public int ClientId { get; set; }
+
+        public Client Client { get; set; }
 
         public int StoredQuoteId { get; set; }
 
