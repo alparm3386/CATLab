@@ -19,6 +19,6 @@ namespace CAT.Models.Entities.Main
 
         public int Currency { get; set; }
 
-        public float CustomRateToLinguist { get; set; }
+        public float? CustomRateToLinguist { get; set; }
     }
 }
