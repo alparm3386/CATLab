@@ -211,7 +211,7 @@ namespace CAT.Areas.BackOffice.Controllers
 
             //update the stored rate
             var storedLinguistRate = await _contextContainer.MainContext.LinguistRates.Include(cr => cr.Rate).Where(cr => cr.Id == id).AsNoTracking().FirstOrDefaultAsync();
-            storedLinguistRate!.RateToLinguist = linguistRate.RateToLinguist;
+            storedLinguistRate!.CustomRateToLinguist = linguistRate.CustomRateToLinguist;
 
             ModelState.Remove("Linguist");
             ModelState.Remove("Rate");
