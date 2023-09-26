@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using CAT.Areas.Identity.Data;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CAT.Models.Entities.Main
@@ -17,5 +18,11 @@ namespace CAT.Models.Entities.Main
         public int AddressId { get; set; }
 
         public Address Address { get; set; } = default!;
+
+        [Required]
+        public string PMId { get; set; } = default!;
+
+        [NotMapped]
+        public ApplicationUser ProjectManager { get; set; } = default!;
     }
 }

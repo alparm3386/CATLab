@@ -17,7 +17,7 @@ import * as _ from 'underscore';
           type="text" 
           class="form-control" 
           [(ngModel)]="searchTerm" 
-          (input)="searchLinguists()" 
+          (input)="throttledSearch()" 
           placeholder="Search for linguist...">
 
         <div *ngIf="linguists.length" class="dropdown-menu show">
@@ -32,29 +32,28 @@ import * as _ from 'underscore';
 export class LinguistSearchComponent implements OnInit {
   public searchTerm: string = '';
   public linguists: any[] = [];
+  throttledSearch: any;
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {
+    this.throttledSearch = _.throttle(this.searchLinguists, 300);
+  }
 
   ngOnInit(): void { }
 
+
   searchLinguists() {
-    if (!this.searchTerm.trim()) {
+    if (this.searchTerm.trim().length < 3) {
       this.linguists = [];
       return;
     }
 
     // Get the filtered list of linguists from the server
-    this.http.get<any[]>('/api/GetFilteredLinguists', {
+    this.http.get<any[]>('/api/Common/GetFilteredLinguists', {
       params: {
         term: this.searchTerm,
         // Optionally, you can add the 'limit' parameter here.
       }
-    }).pipe(
-      catchError(error => {
-        console.log('Error occurred:', error);
-        return throwError(error); // This re-throws the error so you can handle it further downstream if needed.
-      })
-    ).subscribe(data => {
+    }).subscribe(data => {
       this.linguists = data;
     });
   }
