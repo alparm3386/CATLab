@@ -45,7 +45,7 @@ namespace CAT.Areas.API.Internal.Controllers
         }
 
         [HttpGet("GetFilteredLinguists")]
-        public async Task<IActionResult> GetFiltereLinguists(string term, int? limit)
+        public async Task<IActionResult> GetFilteredLinguists(string term, int? limit)
         {
             limit = limit ?? AUTOCOMPLETE_LIMIT;
 
