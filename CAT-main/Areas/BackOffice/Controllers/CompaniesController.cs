@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using CAT.Models.Entities.Main;
 using CAT.Data;
 using CAT.Areas.Identity.Data;
+using CAT.Services.Common;
 
 namespace CAT.Areas.BackOffice.Controllers
 {
@@ -16,11 +17,13 @@ namespace CAT.Areas.BackOffice.Controllers
     {
         private readonly MainDbContext _context;
         private readonly IdentityDbContext _identityDbContext;
+        private readonly IUserService _userService;
 
-        public CompaniesController(MainDbContext context, IdentityDbContext identityDbContext)
+        public CompaniesController(MainDbContext context, IdentityDbContext identityDbContext, IUserService userService)
         {
             _context = context;
             _identityDbContext = identityDbContext;
+            _userService = userService;
         }
 
         // GET: BackOffice/Companies
@@ -46,8 +49,8 @@ namespace CAT.Areas.BackOffice.Controllers
                 var company = await _context.Companies
                     .Include(c => c.Address)
                     .FirstOrDefaultAsync(c => c.Id == id);
-                var pmUser = await _identityDbContext.Users.Where(u => u.Id == company.PMId).FirstOrDefaultAsync();
-                company.ProjectManager = pmUser;
+                var pmUser = await _identityDbContext.Users.Where(u => u.Id == company!.PMId).FirstOrDefaultAsync();
+                company!.ProjectManager = pmUser!;
 
                 if (company == null)
                     throw new Exception("Not found.");
@@ -63,8 +66,10 @@ namespace CAT.Areas.BackOffice.Controllers
         }
 
         // GET: BackOffice/Companies/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
+            var adminUsers = await _userService.GetUsersInRoleAsync("Admin");
+            ViewData["PMs"] = new SelectList(adminUsers, "Id", "FullName");
             return View();
         }
 
@@ -73,10 +78,11 @@ namespace CAT.Areas.BackOffice.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Address")] Company company)
+        public async Task<IActionResult> Create([Bind("Id,Name,PMId, Address")] Company company)
         {
             try
             {
+                ModelState.Remove("ProjectManager");
                 if (!ModelState.IsValid)
                     throw new Exception("Invalid model state.");
 
@@ -100,6 +106,12 @@ namespace CAT.Areas.BackOffice.Controllers
                 var company = await _context.Companies
                     .Include(c => c.Address)
                     .FirstOrDefaultAsync(c => c.Id == id);
+                var pmUser = await _identityDbContext.Users.Where(u => u.Id == company!.PMId).FirstOrDefaultAsync();
+                company!.ProjectManager = pmUser!;
+
+                var adminUsers = await _userService.GetUsersInRoleAsync("Admin");
+                ViewData["PMs"] = new SelectList(adminUsers, "Id", "FullName");
+
                 if (company == null)
                     throw new Exception("Not found.");
 
@@ -118,7 +130,7 @@ namespace CAT.Areas.BackOffice.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Address")] Company company)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,PMId,Address")] Company company)
         {
             try
             {
@@ -129,6 +141,7 @@ namespace CAT.Areas.BackOffice.Controllers
                 if (storedCompany == null)
                     throw new Exception("Company not found.");
 
+                ModelState.Remove("ProjectManager");
                 if (!ModelState.IsValid)
                     throw new Exception("Invalid model state.");
 
@@ -143,6 +156,7 @@ namespace CAT.Areas.BackOffice.Controllers
                 storedCompany.Address.Country = company.Address.Country;
                 //storedLinguist.Address.Region = linguist.Address.Region;
                 storedCompany.Address.Phone = company.Address.Phone;
+                storedCompany.PMId = company.PMId;
 
                 await _context.SaveChangesAsync();
 
