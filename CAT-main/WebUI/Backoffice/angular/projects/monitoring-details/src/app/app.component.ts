@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { WorkflowComponent } from './components/workflow/workflow.component';
 import { DocumentsComponent } from './components/documents/documents.component';
+import { PeopleComponent } from './components/people/people.component';
 import { DataService } from './services/data.service';
 import { Location } from '@angular/common';
 
@@ -11,7 +12,7 @@ import { Location } from '@angular/common';
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
   imports: [
-    CommonModule, WorkflowComponent, DocumentsComponent
+    CommonModule, WorkflowComponent, DocumentsComponent, PeopleComponent
   ],
 })
 export class AppComponent {
