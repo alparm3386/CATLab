@@ -36,7 +36,7 @@
             </div>
             <div class="form-group">
                 <label>
-                    <input type="checkbox" id="useBaseRate" /> Use base rate
+                    <input type="checkbox" id="useBaseRate" @(Model.CustomRateToLinguist == null ? "checked" : "")/> Use base rate
                 </label>
             </div>
             <div class="form-group">
@@ -60,6 +60,14 @@
 
     <script>
         $(document).ready(function () {
+            // Set the initial state based on checkbox
+            var isChecked = $('#useBaseRate').prop('checked');
+            $('#customRateInput').prop('disabled', isChecked);
+
+            if (isChecked) {
+                $('#customRateInput').removeAttr('required');
+            }
+            
             $('#useBaseRate').change(function () {
                 var isChecked = $(this).prop('checked');
                 $('#customRateInput').prop('disabled', isChecked);
