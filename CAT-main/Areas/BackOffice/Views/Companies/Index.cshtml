@@ -26,9 +26,6 @@
             <th>
                 @Html.DisplayNameFor(model => model.Address.City)
             </th>
-            <th>
-                Project manager
-            </th>
             <th></th>
         </tr>
     </thead>
@@ -41,9 +38,6 @@
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.Address.City)
-                </td>
-                <td>
-                    @item.ProjectManager.FullName
                 </td>
                 <td>
                     <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |

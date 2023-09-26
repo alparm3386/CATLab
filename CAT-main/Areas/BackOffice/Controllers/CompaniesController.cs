@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using CAT.Models.Entities.Main;
 using CAT.Data;
+using CAT.Areas.Identity.Data;
 
 namespace CAT.Areas.BackOffice.Controllers
 {
@@ -14,10 +15,12 @@ namespace CAT.Areas.BackOffice.Controllers
     public class CompaniesController : Controller
     {
         private readonly MainDbContext _context;
+        private readonly IdentityDbContext _identityDbContext;
 
-        public CompaniesController(MainDbContext context)
+        public CompaniesController(MainDbContext context, IdentityDbContext identityDbContext)
         {
             _context = context;
+            _identityDbContext = identityDbContext;
         }
 
         // GET: BackOffice/Companies
@@ -43,6 +46,8 @@ namespace CAT.Areas.BackOffice.Controllers
                 var company = await _context.Companies
                     .Include(c => c.Address)
                     .FirstOrDefaultAsync(c => c.Id == id);
+                var pmUser = await _identityDbContext.Users.Where(u => u.Id == company.PMId).FirstOrDefaultAsync();
+                company.ProjectManager = pmUser;
 
                 if (company == null)
                     throw new Exception("Not found.");
