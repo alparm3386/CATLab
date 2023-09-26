@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using CAT.Areas.Identity.Data;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CAT.Models.Entities.Main
@@ -13,6 +14,10 @@ namespace CAT.Models.Entities.Main
         public int JobId { get; set; }
 
         public Job Job { get; set; } = default!;
+
+        public string UserId { get; set; } = default!;
+
+        public ApplicationUser User { get; set; } = default!;
 
         public int TaskId { get; set; }
 
