@@ -7,10 +7,13 @@ import { LinguistSearchComponent } from '../linguist-search/linguist-search.comp
   standalone: true,
   imports: [CommonModule, LinguistSearchComponent],
   template: `
-    <p>
+    <div>
+      <div class="btn btn-danger btn-lg">
+        <label>Project manager: </label> {{jobData.projectManager}}
+      </div>
       people works!
       <app-linguist-search></app-linguist-search>
-    </p>
+    </div>
   `,
   styleUrls: ['./people.component.scss']
 })

@@ -138,6 +138,9 @@ namespace CAT.Areas.BackOffice.Services
                         .ThenInclude(c => c.Company)
                         .Where(j => j.Id == jobId).FirstOrDefaultAsync();
 
+            //PM
+            var pmUser = await _dbContextContainer.IdentityContext.Users.Where(user => user.Id == job!.Order!.Client.Company.PMId).FirstOrDefaultAsync();
+            job!.Order!.Client.Company.ProjectManager = pmUser!;
 
             //workflow steps
             var workflowSteps = new List<object>();
@@ -185,7 +188,8 @@ namespace CAT.Areas.BackOffice.Services
                 onlineEditorLink = UrlHelper.CreateOnlineEditorUrl(_configuration!["OnlineEditorBaseUrl"]!, job.Id, OEMode.Admin),
                 workflowSteps,
                 companyName = job.Order!.Client.Company.Name,
-                companyId = job.Order!.Client.Company.Id
+                companyId = job.Order!.Client.Company.Id,
+                projectManager = pmUser!.FullName
             };
 
             return jobData;
