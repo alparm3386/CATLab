@@ -2,6 +2,11 @@
   <div class="form-control">
     <label>Project manager: </label> <span class="text-primary"> {{jobData.projectManager}} </span>
   </div>
-  people works!
+  <div *ngIf="jobData.projectManager" class="form-control mt-2">
+    <app-linguist-allocation [jobData]="jobData" task="Translator"></app-linguist-allocation>
+  </div>
+  <div class="form-control mt-2">
+    <app-linguist-allocation [jobData]="jobData" task="Reviser"></app-linguist-allocation>
+  </div>
   <app-linguist-search></app-linguist-search>
 </div>
