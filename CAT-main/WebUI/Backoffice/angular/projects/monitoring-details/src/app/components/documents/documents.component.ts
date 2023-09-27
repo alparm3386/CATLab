@@ -2,7 +2,7 @@ import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { AlertComponent } from '../../../../../cat-common/src/lib/components/alert/alert.component';
+import { AlertComponent } from '../../../../../cat-common/alert/alert.component';
 
 
 @Component({
