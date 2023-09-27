@@ -170,6 +170,10 @@ namespace CAT.Areas.BackOffice.Services
                 documentTypeName = EnumHelper.GetDisplayName((DocumentType)d.DocumentType)
             }).ToList();
 
+            //get the analysys
+            var originalDoc = documents.FirstOrDefault(d => d.documentType == (int)DocumentType.Original);
+            var analysis = await _dbContextContainer.MainContext.Analisys.Where(a => a.DocumentId == originalDoc!.id).ToListAsync();
+
             var jobData = new
             {
                 jobId = job.Id,
@@ -184,6 +188,7 @@ namespace CAT.Areas.BackOffice.Services
                 serviceName = EnumHelper.GetDisplayName((Service)job.Quote.Service),
                 documents,
                 words = job.Quote.Words,
+                analysis = analysis,
                 fee = job.Quote.Fee,
                 onlineEditorLink = UrlHelper.CreateOnlineEditorUrl(_configuration!["OnlineEditorBaseUrl"]!, job.Id, OEMode.Admin),
                 workflowSteps,

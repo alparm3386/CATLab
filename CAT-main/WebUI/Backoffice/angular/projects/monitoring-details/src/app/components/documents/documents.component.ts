@@ -18,14 +18,24 @@ export class DocumentsComponent {
 
   constructor(private modalService: ModalService) { }
 
-  showAlert(message: string): void {
-    const modalRef = this.modalService.show("aaaa");
-  }
-
   rectifyOriginalDocument(event: Event): void {
     event.preventDefault();
-    alert("rectifyOriginalDocument");
-    this.showAlert('This is an alert message.');
+    this.modalService.open(AlertComponent);
+    return;
+
+    const modalRef = this.modalService.confirm("Are you sure?").result.then((result) => {
+      if (result) {
+        // Handle the confirmation (i.e., when user clicked "OK")
+        console.log('User confirmed');
+      } else {
+        // Handle the cancellation (i.e., when user clicked "Cancel" or closed the modal)
+        console.log('User cancelled');
+      }
+    },
+      (reason) => {
+        // Handle the modal dismissal reason. (e.g., click outside, ESC key, etc.)
+        console.log('Dismissed with:', reason);
+      });
     // Your function logic here
     console.log('Rectify original document clicked.');
   }
