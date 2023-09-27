@@ -6,15 +6,7 @@ import { LinguistSearchComponent } from '../linguist-search/linguist-search.comp
   selector: 'app-people',
   standalone: true,
   imports: [CommonModule, LinguistSearchComponent],
-  template: `
-    <div>
-      <div class="btn btn-danger btn-lg">
-        <label>Project manager: </label> {{jobData.projectManager}}
-      </div>
-      people works!
-      <app-linguist-search></app-linguist-search>
-    </div>
-  `,
+  templateUrl: './people.component.html',
   styleUrls: ['./people.component.scss']
 })
 export class PeopleComponent {
