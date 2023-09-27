@@ -1,10 +1,17 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
+import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
-  selector: 'lib-alert',
-  templateUrl: './alert.component.html',
-  styleUrls: ['./alert.component.css']
+  selector: 'app-alert',
+  templateUrl: './alert.component.html'
 })
 export class AlertComponent {
 
+  @Input() message!: string;
+
+  constructor(public activeModal: NgbActiveModal) { }
+
+  close(): void {
+    this.activeModal.close();
+  }
 }
