@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { AlertComponent } from '../../../../../cat-common/alert/alert.component';
+import { ModalService } from '../../../../../cat-common/modal.service';
 
 
 @Component({
@@ -15,11 +16,10 @@ import { AlertComponent } from '../../../../../cat-common/alert/alert.component'
 export class DocumentsComponent {
   @Input() jobData: any;
 
-  constructor(private modalService: NgbModal) { }
+  constructor(private modalService: ModalService) { }
 
   showAlert(message: string): void {
-    const modalRef = this.modalService.open(AlertComponent);
-    modalRef.componentInstance.message = message;
+    const modalRef = this.modalService.show("aaaa");
   }
 
   rectifyOriginalDocument(event: Event): void {
