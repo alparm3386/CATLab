@@ -5,10 +5,10 @@ import { CatCommonModule } from 'cat-common';
 
 @NgModule({
   declarations: [
-    AppComponent, CatCommonModule
+    AppComponent
   ],
   imports: [
-    BrowserModule
+    BrowserModule, CatCommonModule
   ],
   providers: [],
   bootstrap: [AppComponent]
