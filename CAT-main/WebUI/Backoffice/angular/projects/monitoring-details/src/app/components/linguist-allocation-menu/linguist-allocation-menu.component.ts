@@ -1,6 +1,8 @@
 import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ModalService } from '../../../../../cat-common/modal.service';
+import { LinguistAllocationComponent } from '../linguist-allocation/linguist-allocation.component';
+
 
 @Component({
   selector: 'app-linguist-allocation-menu',
@@ -15,15 +17,16 @@ import { ModalService } from '../../../../../cat-common/modal.service';
           ☰
         </button>
         <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-          <li><a class="dropdown-item" href="#">Allocate linguist</a></li>
+          <li><a class="dropdown-item" href="#" (click)=allocateLinguist($event)>Allocate linguist</a></li>
           <li><a class="dropdown-item" href="#" (click)=allocateToYorself($event)>Allocate to yourself</a></li>
-          <li><a class="dropdown-item" href="#">Modify fee</a></li>
+          <li><a class="dropdown-item" href="#" (click)=modifyFee($event)>Modify fee</a></li>
         </ul>
       </div>
     </div>
   `,
   styleUrls: ['./linguist-allocation-menu.component.scss']
 })
+
 export class LinguistAllocationMenuComponent {
   @Input() jobData: any;
   @Input() task: any;
@@ -33,6 +36,24 @@ export class LinguistAllocationMenuComponent {
   allocateToYorself(event: Event): void {
     event.preventDefault();
     this.modalService.confirm("Are you sure that you want to allocate this job to yourself?", "Confirm").result.then((result) => {
+      if (result) {
+        console.log('The user was sure.');
+      }
+    });
+  }
+
+  allocateLinguist(event: Event): void {
+    event.preventDefault();
+    this.modalService.open(LinguistAllocationComponent).result.then((result) => {
+      if (result) {
+        console.log('The user was sure.');
+      }
+    });
+  }
+
+  modifyFee(event: Event): void {
+    event.preventDefault();
+    this.modalService.confirm("Modify fee", "Confirm").result.then((result) => {
       if (result) {
         console.log('The user was sure.');
       }
