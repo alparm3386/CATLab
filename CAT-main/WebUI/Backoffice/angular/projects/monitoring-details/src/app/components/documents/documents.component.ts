@@ -20,10 +20,9 @@ export class DocumentsComponent {
 
   rectifyOriginalDocument(event: Event): void {
     event.preventDefault();
-    this.modalService.open(AlertComponent);
-    return;
-
-    const modalRef = this.modalService.confirm("Are you sure?").result.then((result) => {
+    //this.modalService.alert("<b>My alert</b>");
+    //return;
+    const modalRef = this.modalService.confirm("<b>Are you sure?</b>").result.then((result) => {
       if (result) {
         // Handle the confirmation (i.e., when user clicked "OK")
         console.log('User confirmed');
