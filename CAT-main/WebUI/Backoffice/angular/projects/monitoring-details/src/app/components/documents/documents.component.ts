@@ -4,12 +4,13 @@ import { CommonModule } from '@angular/common';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { AlertComponent } from '../../../../../cat-common/alert/alert.component';
 import { ModalService } from '../../../../../cat-common/modal.service';
+import { AnalysisComponent } from '../analysis/analysis.component';
 
 
 @Component({
   selector: 'app-documents',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, AnalysisComponent],
   templateUrl: './documents.component.html',
   styleUrls: ['./documents.component.scss']
 })
@@ -37,5 +38,17 @@ export class DocumentsComponent {
       });
     // Your function logic here
     console.log('Rectify original document clicked.');
+  }
+
+  uploadDocument(event: Event): void {
+    event.preventDefault();
+    alert("uploadDocument");
+  }
+
+
+  showAnalysis(event: Event): void {
+    event.preventDefault();
+
+    this.modalService.open(AnalysisComponent, { jobData: this.jobData });
   }
 }

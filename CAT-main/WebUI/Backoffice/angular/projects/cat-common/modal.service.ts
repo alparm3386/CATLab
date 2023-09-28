@@ -9,11 +9,17 @@ import { ConfirmComponent } from './confirm/confirm.component';
 })
 
 export class ModalService {
-  open(component: Type<any>) {
+  open(component: Type<any>, inputs?: { [key: string]: any }) {
     const modalRef = this.modalService.open(component);
 
+    if (inputs) {
+      for (const [key, value] of Object.entries(inputs)) {
+        modalRef.componentInstance[key] = value;
+      }
+    }
     return modalRef;
   }
+
   constructor(private modalService: NgbModal) { }
 
   public alert(message: string, title: string = "Alert") {
