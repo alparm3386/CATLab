@@ -32,6 +32,10 @@ export class LinguistAllocationMenuComponent {
 
   allocateToYorself(event: Event): void {
     event.preventDefault();
-    this.modalService.alert("Allocate to yourself.", "Warning");
+    this.modalService.confirm("Are you sure that you want to allocate this job to yourself?", "Confirm").result.then((result) => {
+      if (result) {
+        console.log('The user was sure.');
+      }
+    });
   }
 }
