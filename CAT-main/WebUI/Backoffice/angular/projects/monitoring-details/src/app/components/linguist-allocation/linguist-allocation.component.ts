@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { LinguistSearchComponent } from '../linguist-search/linguist-search.component';
+import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 
 @Component({
@@ -11,5 +12,11 @@ import { LinguistSearchComponent } from '../linguist-search/linguist-search.comp
   styleUrls: ['./linguist-allocation.component.scss']
 })
 export class LinguistAllocationComponent {
+  @Input() jobData: any;
 
+  constructor(public activeModal: NgbActiveModal) { }
+
+  close(): void {
+    this.activeModal.close();
+  }
 }

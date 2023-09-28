@@ -17,5 +17,4 @@ export class AnalysisComponent {
   close(): void {
     this.activeModal.close();
   }
-
 }
