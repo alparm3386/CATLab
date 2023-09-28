@@ -1,0 +1,13 @@
+<div class="autocomplete-container">
+  <input type="text"
+         class="form-control"
+         [(ngModel)]="searchTerm"
+         (input)="throttledSearch()"
+         placeholder="Search for linguist...">
+
+  <div *ngIf="linguists.length" class="dropdown-menu show">
+    <a *ngFor="let linguist of linguists" class="dropdown-item">
+      {{ linguist.User.FirstName }} {{ linguist.User.LastName }}
+    </a>
+  </div>
+</div>

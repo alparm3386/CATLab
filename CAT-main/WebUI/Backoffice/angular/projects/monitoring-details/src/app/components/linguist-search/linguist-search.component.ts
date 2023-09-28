@@ -10,23 +10,7 @@ import * as _ from 'underscore';
   selector: 'app-linguist-search',
   standalone: true,
   imports: [CommonModule, FormsModule],
-  template: `
-      linguist-search works!
-      <div class="autocomplete-container">
-        <input 
-          type="text" 
-          class="form-control" 
-          [(ngModel)]="searchTerm" 
-          (input)="throttledSearch()" 
-          placeholder="Search for linguist...">
-
-        <div *ngIf="linguists.length" class="dropdown-menu show">
-          <a *ngFor="let linguist of linguists" class="dropdown-item">
-            {{ linguist.User.FirstName }} {{ linguist.User.LastName }}
-          </a>
-        </div>
-      </div>
-  `,
+  templateUrl: './linguist-search.component.html',
   styleUrls: ['./linguist-search.component.scss']
 })
 export class LinguistSearchComponent implements OnInit {

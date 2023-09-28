@@ -44,11 +44,15 @@ export class LinguistAllocationMenuComponent {
 
   allocateLinguist(event: Event): void {
     event.preventDefault();
-    this.modalService.open(LinguistAllocationComponent).result.then((result) => {
+    this.modalService.open(LinguistAllocationComponent, { jobData: this.jobData, task: this.task }).result.then((result) => {
       if (result) {
         console.log('The user was sure.');
       }
-    });
+    },
+      (reason) => {
+        // Handle the modal dismissal reason. (e.g., click outside, ESC key, etc.)
+        console.log('Dismissed with:', reason);
+      });
   }
 
   modifyFee(event: Event): void {

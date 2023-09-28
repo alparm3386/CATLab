@@ -13,6 +13,7 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 })
 export class LinguistAllocationComponent {
   @Input() jobData: any;
+  @Input() task: any;
 
   constructor(public activeModal: NgbActiveModal) { }
 
