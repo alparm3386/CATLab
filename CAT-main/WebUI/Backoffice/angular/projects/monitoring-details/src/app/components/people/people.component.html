@@ -3,10 +3,10 @@
     <label>Project manager: </label> <span class="text-primary"> {{jobData.projectManager}} </span>
   </div>
   <div *ngIf="jobData.projectManager" class="form-control mt-2">
-    <app-linguist-allocation [jobData]="jobData" task="Translator"></app-linguist-allocation>
+    <app-linguist-allocation-menu [jobData]="jobData" task="Translator"></app-linguist-allocation-menu>
   </div>
   <div class="form-control mt-2">
-    <app-linguist-allocation [jobData]="jobData" task="Reviser"></app-linguist-allocation>
+    <app-linguist-allocation-menu [jobData]="jobData" task="Reviser"></app-linguist-allocation-menu>
   </div>
   <app-linguist-search></app-linguist-search>
 </div>

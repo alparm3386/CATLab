@@ -1,12 +1,12 @@
 import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { LinguistSearchComponent } from '../linguist-search/linguist-search.component';
-import { LinguistAllocationComponent } from '../linguist-allocation/linguist-allocation.component';
+import { LinguistAllocationMenuComponent } from '../linguist-allocation-menu/linguist-allocation-menu.component';
 
 @Component({
   selector: 'app-people',
   standalone: true,
-  imports: [CommonModule, LinguistSearchComponent, LinguistAllocationComponent],
+  imports: [CommonModule, LinguistSearchComponent, LinguistAllocationMenuComponent],
   templateUrl: './people.component.html',
   styleUrls: ['./people.component.scss']
 })

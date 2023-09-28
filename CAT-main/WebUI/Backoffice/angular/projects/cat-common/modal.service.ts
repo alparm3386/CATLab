@@ -16,16 +16,18 @@ export class ModalService {
   }
   constructor(private modalService: NgbModal) { }
 
-  public alert(message: string) {
+  public alert(message: string, title: string = "Alert") {
     const modalRef = this.modalService.open(AlertComponent);
     modalRef.componentInstance.message = message;
+    modalRef.componentInstance.title = title;
 
     return modalRef;
   }
 
-  public confirm(message: string) {
+  public confirm(message: string, title: string = "Confirm") {
     const modalRef = this.modalService.open(ConfirmComponent);
     modalRef.componentInstance.message = message;
+    modalRef.componentInstance.title = title;
 
     return modalRef;
   }

@@ -9,6 +9,7 @@ import { DomSanitizer, SafeHtml } from '@angular/platform-browser'
 export class AlertComponent {
 
   @Input() message!: string;
+  @Input() title!: string;
 
   constructor(public activeModal: NgbActiveModal, private sanitizer: DomSanitizer) { }
 

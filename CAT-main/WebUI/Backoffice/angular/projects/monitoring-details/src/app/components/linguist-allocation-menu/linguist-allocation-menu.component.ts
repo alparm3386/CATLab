@@ -1,8 +1,9 @@
 import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { ModalService } from '../../../../../cat-common/modal.service';
 
 @Component({
-  selector: 'app-linguist-allocation',
+  selector: 'app-linguist-allocation-menu',
   standalone: true,
   imports: [CommonModule],
   template: `
@@ -15,15 +16,22 @@ import { CommonModule } from '@angular/common';
         </button>
         <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
           <li><a class="dropdown-item" href="#">Allocate linguist</a></li>
-          <li><a class="dropdown-item" href="#">Allocate to yourself</a></li>
+          <li><a class="dropdown-item" href="#" (click)=allocateToYorself($event)>Allocate to yourself</a></li>
           <li><a class="dropdown-item" href="#">Modify fee</a></li>
         </ul>
       </div>
     </div>
   `,
-  styleUrls: ['./linguist-allocation.component.scss']
+  styleUrls: ['./linguist-allocation-menu.component.scss']
 })
-export class LinguistAllocationComponent {
+export class LinguistAllocationMenuComponent {
   @Input() jobData: any;
   @Input() task: any;
+
+  constructor(private modalService: ModalService) { }
+
+  allocateToYorself(event: Event): void {
+    event.preventDefault();
+    this.modalService.alert("Allocate to yourself.", "Warning");
+  }
 }
