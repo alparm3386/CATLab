@@ -5,6 +5,7 @@ import { DocumentsComponent } from './components/documents/documents.component';
 import { PeopleComponent } from './components/people/people.component';
 import { DataService } from './services/data.service';
 import { Location } from '@angular/common';
+import { NgxSpinnerService } from 'ngx-spinner';
 
 @Component({
   standalone: true,
@@ -12,7 +13,7 @@ import { Location } from '@angular/common';
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
   imports: [
-    CommonModule, WorkflowComponent, DocumentsComponent, PeopleComponent 
+    CommonModule, WorkflowComponent, DocumentsComponent, PeopleComponent
   ],
   providers: [],
 })
@@ -35,23 +36,27 @@ export class AppComponent {
     fee: {},
     workflowSteps: [],
     companyName: '',
-   companyId: '',
+    companyId: '',
   };
 
+  public isLoading: boolean = true;
+
   constructor(private location: Location, private dataService: DataService) {
-    this.dataService.data$.subscribe(
-      data => {
-        if (data) {
-          this.jobData = data;
-        }
-      });
   }
 
-    ngOnInit(): void {
-  //  this.route.queryParams.subscribe(params => {
-  //    const idJob = +params['idJob'];
-  //    this.dataService.fetchData(idJob);
-  //  });
+  ngOnInit(): void {
+    //  this.route.queryParams.subscribe(params => {
+    //    const idJob = +params['idJob'];
+    //    this.dataService.fetchData(idJob);
+    //  });
+
+    this.dataService.data$.subscribe(data => {
+      this.isLoading = false;
+      if (data) {
+        this.jobData = data;
+      }
+    });
+    this.isLoading = true;
 
     const currentUrl = this.location.path();
     const urlParams = new URLSearchParams(currentUrl.split('?')[1]);
