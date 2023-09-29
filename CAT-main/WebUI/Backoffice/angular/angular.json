@@ -127,7 +127,8 @@
               "projects/monitoring-details/src/assets"
             ],
             "styles": [
-              "projects/monitoring-details/src/styles.scss"
+              "projects/monitoring-details/src/styles.scss",
+              "node_modules/ngx-spinner/animations/ball-beat.css"
             ],
             "scripts": []
           },
