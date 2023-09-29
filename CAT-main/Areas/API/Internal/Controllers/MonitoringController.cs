@@ -34,7 +34,6 @@ namespace CAT.Areas.API.Internal.Controllers
         public async Task<IActionResult> GetJobData(int jobId)
         {
             var jobData = await _monitoringService.GetJobData(jobId);
-
             return Ok(jobData);
         }
     }
