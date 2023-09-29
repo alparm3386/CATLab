@@ -5,8 +5,9 @@ import { SpinnerComponent } from '../components/spinner/spinner.component';
   providedIn: 'root'
 })
 export class SpinnerService {
-
+ 
   private spinnerComponentRef: any;
+  private isShowing = false;
 
   constructor(
     private componentFactoryResolver: ComponentFactoryResolver,
@@ -15,14 +16,18 @@ export class SpinnerService {
   ) { }
 
   show() {
+    if (this.isShowing)
+      return;
     const factory = this.componentFactoryResolver.resolveComponentFactory(SpinnerComponent);
     this.spinnerComponentRef = factory.create(this.injector);
     this.appRef.attachView(this.spinnerComponentRef.hostView);
     const domElem = (this.spinnerComponentRef.hostView as EmbeddedViewRef<any>).rootNodes[0] as HTMLElement;
     document.body.appendChild(domElem);
+    this.isShowing = true;
   }
 
   hide() {
+    this.isShowing = false;
     if (this.spinnerComponentRef) {
       this.appRef.detachView(this.spinnerComponentRef.hostView);
       this.spinnerComponentRef.destroy();

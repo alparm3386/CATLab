@@ -44,7 +44,7 @@ export class AppComponent {
 
   ngOnInit(): void {
     this.dataService.data$.subscribe(data => {
-      this.spinnerService.show();
+      this.spinnerService.hide();
       if (data) {
         this.jobData = data;
       }
