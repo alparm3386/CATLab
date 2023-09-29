@@ -5,6 +5,7 @@ import { DocumentsComponent } from './components/documents/documents.component';
 import { PeopleComponent } from './components/people/people.component';
 import { DataService } from './services/data.service';
 import { Location } from '@angular/common';
+import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
 
 @Component({
   standalone: true,
@@ -12,8 +13,9 @@ import { Location } from '@angular/common';
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
   imports: [
-    CommonModule, WorkflowComponent, DocumentsComponent, PeopleComponent
+    CommonModule, WorkflowComponent, DocumentsComponent, PeopleComponent, NgxSpinnerModule 
   ],
+  providers: [NgxSpinnerService],
 })
 export class AppComponent {
   title = 'monitoring details';
@@ -37,9 +39,11 @@ export class AppComponent {
    companyId: '',
   };
 
-  constructor(private location: Location, private dataService: DataService) {
+  constructor(private location: Location, private dataService: DataService, private spinnerService: NgxSpinnerService) {
+    spinnerService.show();
     this.dataService.data$.subscribe(
       data => {
+        spinnerService.hide();
         if (data) {
           this.jobData = data;
         }
