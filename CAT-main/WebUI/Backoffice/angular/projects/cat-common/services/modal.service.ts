@@ -1,7 +1,7 @@
 import { Component, Type, Injectable } from "@angular/core";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
-import { AlertComponent } from './alert/alert.component';
-import { ConfirmComponent } from './confirm/confirm.component';
+import { AlertComponent } from "../components/alert/alert.component";
+import { ConfirmComponent } from "../components/confirm/confirm.component";
 
 // modal.service.ts
 @Injectable({

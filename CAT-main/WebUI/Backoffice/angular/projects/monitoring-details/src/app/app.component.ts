@@ -5,7 +5,7 @@ import { DocumentsComponent } from './components/documents/documents.component';
 import { PeopleComponent } from './components/people/people.component';
 import { DataService } from './services/data.service';
 import { Location } from '@angular/common';
-import { NgxSpinnerService } from 'ngx-spinner';
+import { SpinnerService } from '../../../cat-common/services/spinner.service';
 
 @Component({
   standalone: true,
@@ -39,24 +39,17 @@ export class AppComponent {
     companyId: '',
   };
 
-  public isLoading: boolean = true;
-
-  constructor(private location: Location, private dataService: DataService) {
+  constructor(private location: Location, private dataService: DataService, private spinnerService: SpinnerService) {
   }
 
   ngOnInit(): void {
-    //  this.route.queryParams.subscribe(params => {
-    //    const idJob = +params['idJob'];
-    //    this.dataService.fetchData(idJob);
-    //  });
-
     this.dataService.data$.subscribe(data => {
-      this.isLoading = false;
+      this.spinnerService.show();
       if (data) {
         this.jobData = data;
       }
     });
-    this.isLoading = true;
+    this.spinnerService.show();
 
     const currentUrl = this.location.path();
     const urlParams = new URLSearchParams(currentUrl.split('?')[1]);

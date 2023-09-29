@@ -2,9 +2,8 @@ import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { AlertComponent } from '../../../../../cat-common/alert/alert.component';
-import { ModalService } from '../../../../../cat-common/modal.service';
 import { AnalysisComponent } from '../analysis/analysis.component';
+import { ModalService } from '../../../../../cat-common/services/modal.service';
 
 
 @Component({

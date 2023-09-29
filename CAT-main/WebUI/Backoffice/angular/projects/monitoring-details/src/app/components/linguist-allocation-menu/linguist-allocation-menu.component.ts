@@ -1,7 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ModalService } from '../../../../../cat-common/modal.service';
 import { LinguistAllocationComponent } from '../linguist-allocation/linguist-allocation.component';
+import { ModalService } from '../../../../../cat-common/services/modal.service';
 
 
 @Component({
