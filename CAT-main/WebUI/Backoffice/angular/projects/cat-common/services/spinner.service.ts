@@ -1,34 +1,31 @@
-import { Injectable, Renderer2, RendererFactory2 } from '@angular/core';
+import { Injectable, ComponentFactoryResolver, ApplicationRef, Injector, EmbeddedViewRef } from '@angular/core';
+import { SpinnerComponent } from '../components/spinner/spinner.component';
 
 @Injectable({
   providedIn: 'root'
 })
 export class SpinnerService {
 
-  private renderer: Renderer2;
-  private spinnerElement?: HTMLElement;
+  private spinnerComponentRef: any;
 
-  constructor(private rendererFactory: RendererFactory2) {
-    this.renderer = this.rendererFactory.createRenderer(null, null);
-  }
+  constructor(
+    private componentFactoryResolver: ComponentFactoryResolver,
+    private appRef: ApplicationRef,
+    private injector: Injector
+  ) { }
 
   show() {
-    this.spinnerElement = this.renderer.createElement('div');
-
-    // Apply styles and classes for the spinner here
-    this.renderer.addClass(this.spinnerElement, 'spinner-border');
-    this.renderer.setStyle(this.spinnerElement, 'position', 'fixed');
-    this.renderer.setStyle(this.spinnerElement, 'top', '50%');
-    this.renderer.setStyle(this.spinnerElement, 'left', '50%');
-    this.renderer.setStyle(this.spinnerElement, 'z-index', '1000');
-    // ... (add other necessary styles or classes)
-
-    this.renderer.appendChild(document.body, this.spinnerElement);
+    const factory = this.componentFactoryResolver.resolveComponentFactory(SpinnerComponent);
+    this.spinnerComponentRef = factory.create(this.injector);
+    this.appRef.attachView(this.spinnerComponentRef.hostView);
+    const domElem = (this.spinnerComponentRef.hostView as EmbeddedViewRef<any>).rootNodes[0] as HTMLElement;
+    document.body.appendChild(domElem);
   }
 
   hide() {
-    if (this.spinnerElement) {
-      this.renderer.removeChild(document.body, this.spinnerElement);
+    if (this.spinnerComponentRef) {
+      this.appRef.detachView(this.spinnerComponentRef.hostView);
+      this.spinnerComponentRef.destroy();
     }
   }
 }
