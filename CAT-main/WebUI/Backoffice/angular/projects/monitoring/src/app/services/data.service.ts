@@ -14,15 +14,16 @@ export class DataService {
   constructor(private http: HttpClient) { }
 
   fetchData(): void {
-    this.http.get(`${this.apiUrl}/GetMonitoringData`).subscribe(
-      data => {
+    this.http.get(`${this.apiUrl}/GetMonitoringData`).subscribe({
+      next: data => {
         this.dataSubject.next(data);
       },
-      error => {
+      error: error => {
         console.error('Error fetching data:', error);
         this.dataSubject.error(error);
       }
-    );
+      // if you had a 'complete' callback, it would go here.
+    });
   }
 
   postData(data: any): Observable<any> {
