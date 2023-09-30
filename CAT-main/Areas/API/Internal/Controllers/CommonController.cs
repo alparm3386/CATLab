@@ -66,27 +66,28 @@ namespace CAT.Areas.API.Internal.Controllers
                 //                       .ToListAsync();
 
                 //not ideal but ok in this size
-                var linguists = await (from linguist in _dbContextContainer.MainContext.Linguists
-                                       join linguistRates in _dbContextContainer.MainContext.LinguistRates
-                                       on linguist.UserId equals user.Id
-                                       where (user.FirstName + " " + user.LastName).Contains(term)
-                                       select new Linguist
-                                       {
-                                           UserId = user.Id,
-                                           User = user
-                                       })
-                                       .Take(limit.Value)
-                                       .AsNoTracking()
-                                       .ToListAsync();
+                //var linguists = await (from linguist in _dbContextContainer.MainContext.Linguists
+                //                       join linguistRates in _dbContextContainer.MainContext.LinguistRates
+                //                       on linguist.Id equals linguistRates.
+                //                       where (user.FirstName + " " + user.LastName).Contains(term)
+                //                       select new Linguist
+                //                       {
+                //                           UserId = user.Id,
+                //                           User = user
+                //                       })
+                //                       .Take(limit.Value)
+                //                       .AsNoTracking()
+                //                       .ToListAsync();
 
-                var linguists = await _dbContextContainer.MainContext.Linguists
-                                       .Where(l => userIds.Contains(l.UserId))
-                                       .Take(limit.Value)
-                                       .AsNoTracking()
-                                       .ToListAsync();
+                //var linguists = await _dbContextContainer.MainContext.Linguists
+                //                       .Where(l => userIds.Contains(l.UserId))
+                //                       .Take(limit.Value)
+                //                       .AsNoTracking()
+                //                       .ToListAsync();
 
 
-                return Ok(linguists);
+                //return Ok(linguists);
+                return null;
             }
             catch (Exception ex)
             {

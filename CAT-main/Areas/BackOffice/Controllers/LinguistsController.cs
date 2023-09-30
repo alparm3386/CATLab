@@ -48,7 +48,6 @@ namespace CAT.Areas.BackOffice.Controllers
                              {
                                  Id = linguist.Id,
                                  UserId = linguist.UserId,
-                                 LinguistsLanguagePairs = linguist.LinguistsLanguagePairs,
                                  User = user
                              }).ToList();
 
@@ -100,7 +99,6 @@ namespace CAT.Areas.BackOffice.Controllers
             try
             {
                 ModelState.Remove("UserId");
-                ModelState.Remove("LinguistsLanguagePairs");
                 if (ModelState.IsValid)
                 {
                     if (linguist.User.PasswordHash != linguist.User.SecurityStamp)
@@ -198,7 +196,6 @@ namespace CAT.Areas.BackOffice.Controllers
                 var storedUser = await _identityDbContext.Users.Where(u => u.Id == linguist!.UserId).FirstOrDefaultAsync();
 
                 ModelState.Remove("UserId");
-                ModelState.Remove("LinguistsLanguagePairs");
                 if (ModelState.IsValid)
                 {
                     //set the address

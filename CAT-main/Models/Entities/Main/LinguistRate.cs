@@ -11,7 +11,7 @@ namespace CAT.Models.Entities.Main
         public int Id { get; set; }
 
         public int LinguistId { get; set; }
-        public Linguist Linguist { get; set; } = default!;
+        //public Linguist Linguist { get; set; } = default!;
 
         public int RateId { get; set; }
 

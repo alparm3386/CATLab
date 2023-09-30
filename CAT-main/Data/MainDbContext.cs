@@ -43,8 +43,6 @@ namespace CAT.Data
 
         public DbSet<Linguist> Linguists { get; set; } = default!;
 
-        public DbSet<LinguistLanguagePair> LinguistLanguagePairs { get; set; } = default!;
-
         public DbSet<Rate> Rates { get; set; } = default!;
 
         public DbSet<ClientRate> ClientRates { get; set; } = default!;

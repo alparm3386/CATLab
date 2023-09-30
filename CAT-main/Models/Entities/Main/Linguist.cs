@@ -17,7 +17,7 @@ namespace CAT.Models.Entities.Main
         [NotMapped]
         public ApplicationUser User { get; set; } = default!;
 
-        public ICollection<LinguistLanguagePair> LinguistsLanguagePairs { get; set; } = default!;
+        public ICollection<LinguistRate> LinguistRates { get; set; } = default!;
 
         public int AddressId { get; set; }
 
