@@ -4,6 +4,7 @@ import { MonitoringComponent } from './components/monitoring/monitoring.componen
 import { DataService } from './services/data.service';
 import { SpinnerService } from '../../../cat-common/services/spinner.service';
 import { finalize } from 'rxjs';
+import { ModalService } from '../../../cat-common/services/modal.service';
 
 @Component({
   selector: 'app-root',
@@ -19,7 +20,8 @@ export class AppComponent implements OnInit {
   data: any;
   title = 'Monitoring';
 
-  constructor(private dataService: DataService, private spinnerService: SpinnerService) { }
+  constructor(private dataService: DataService, private spinnerService: SpinnerService,
+    private modalService: ModalService) { }
 
   ngOnInit(): void {
     //the spinner
@@ -30,7 +32,7 @@ export class AppComponent implements OnInit {
         }
       },
       error: error => {
-        this.modalService.alert("Failed to retrieve data from the server. Please try again.", "Error")
+        this.modalService.alert("Unable to retrieve data from the server. Please try again.", "Error")
         this.spinnerService.hide();
       },
       complete: () => {

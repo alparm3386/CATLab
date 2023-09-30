@@ -52,7 +52,7 @@ export class AppComponent {
         }
       },
       error: error => {
-        this.modalService.alert("Failed to retrieve data from the server. Please try again.", "Error")
+        this.modalService.alert("Unable to retrieve data from the server. Please try again.", "Error")
         this.spinnerService.hide();
       },
       complete: () => {

@@ -1,10 +1,16 @@
-import { Component, OnInit, NgModule } from '@angular/core';
+import { Component, OnInit, NgModule, Input } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
-import { catchError } from 'rxjs/operators';
-import { throwError } from 'rxjs';
 import * as _ from 'underscore';
+import { ModalService } from '../../../../../cat-common/services/modal.service';
+
+export interface LinguistDetails {
+  sourceLang: number;
+  targetLang: number;
+  speciality: number;
+  task: number;
+}
 
 @Component({
   selector: 'app-linguist-search',
@@ -14,11 +20,14 @@ import * as _ from 'underscore';
   styleUrls: ['./linguist-search.component.scss']
 })
 export class LinguistSearchComponent implements OnInit {
+
+  @Input() linguistDetails?: LinguistDetails;
+
   public searchTerm: string = '';
   public linguists: any[] = [];
   throttledSearch: any;
 
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient, private modalService: ModalService) {
     this.throttledSearch = _.throttle(this.searchLinguists, 300);
   }
 
@@ -37,8 +46,14 @@ export class LinguistSearchComponent implements OnInit {
         term: this.searchTerm,
         // Optionally, you can add the 'limit' parameter here.
       }
-    }).subscribe(data => {
-      this.linguists = data;
-    });
+    }).subscribe({
+        next: data => {
+            this.linguists = data;
+          },
+      error: error => {
+        this.modalService.alert("Unable to retrieve linguists from the server. Please try again later.", "Error");
+          //this.dataSubject.error(error);
+        }
+      });
   }
 }
