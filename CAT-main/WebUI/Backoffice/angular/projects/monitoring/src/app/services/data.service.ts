@@ -19,7 +19,9 @@ export class DataService {
         this.dataSubject.next(data);
       },
       error: error => {
-        console.error('Error fetching data:', error);
+        this.dataSubject.error(error);
+        //console.error('Error fetching data:', error);
+        //this.dataSubject.complete();
         // Optionally, you can push the error to a new subject or handle it differently
         // this.errorSubject.next(error);
         // But for this case, just log it without pushing it to dataSubject.

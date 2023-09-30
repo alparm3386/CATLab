@@ -6,6 +6,7 @@ import { PeopleComponent } from './components/people/people.component';
 import { DataService } from './services/data.service';
 import { Location } from '@angular/common';
 import { SpinnerService } from '../../../cat-common/services/spinner.service';
+import { ModalService } from '../../../cat-common/services/modal.service';
 
 @Component({
   standalone: true,
@@ -39,14 +40,23 @@ export class AppComponent {
     companyId: '',
   };
 
-  constructor(private location: Location, private dataService: DataService, private spinnerService: SpinnerService) {
+  constructor(private location: Location, private dataService: DataService, private spinnerService: SpinnerService,
+    private modalService: ModalService) {
   }
 
   ngOnInit(): void {
-    this.dataService.data$.subscribe(data => {
-      this.spinnerService.hide();
-      if (data) {
-        this.jobData = data;
+    this.dataService.data$.subscribe({
+      next: data => {
+        if (data) {
+          this.jobData = data;
+        }
+      },
+      error: error => {
+        this.modalService.alert("Failed to retrieve data from the server. Please try again.", "Error")
+        this.spinnerService.hide();
+      },
+      complete: () => {
+        this.spinnerService.hide();
       }
     });
     this.spinnerService.show();

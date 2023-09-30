@@ -30,7 +30,7 @@ export class AppComponent implements OnInit {
         }
       },
       error: error => {
-        console.error('Error in app.component:', error);
+        this.modalService.alert("Failed to retrieve data from the server. Please try again.", "Error")
         this.spinnerService.hide();
       },
       complete: () => {

@@ -14,15 +14,23 @@ export class DataService {
   constructor(private http: HttpClient) { }
 
   fetchData(jobId: any): void {
-    this.http.get(`${this.apiUrl}/GetJobData?jobId=` + jobId).subscribe(
-      data => {
+    this.http.get(`${this.apiUrl}/GetJobData?jobId=` + jobId).subscribe({
+      next: data => {
         this.dataSubject.next(data);
       },
-      error => {
-        console.error('Error fetching data:', error);
+      error: error => {
         this.dataSubject.error(error);
+        //console.error('Error fetching data:', error);
+        //this.dataSubject.complete();
+        // Optionally, you can push the error to a new subject or handle it differently
+        // this.errorSubject.next(error);
+        // But for this case, just log it without pushing it to dataSubject.
+      },
+      complete: () => {
+        this.dataSubject.complete();
+        // handle completion if necessary
       }
-    );
+    });
   }
 
   postData(data: any): Observable<any> {
