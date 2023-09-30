@@ -20,11 +20,17 @@ export class DataService {
       },
       error: error => {
         console.error('Error fetching data:', error);
-        this.dataSubject.error(error);
+        // Optionally, you can push the error to a new subject or handle it differently
+        // this.errorSubject.next(error);
+        // But for this case, just log it without pushing it to dataSubject.
+      },
+      complete: () => {
+        this.dataSubject.complete();
+        // handle completion if necessary
       }
-      // if you had a 'complete' callback, it would go here.
     });
   }
+
 
   postData(data: any): Observable<any> {
     return this.http.post(`${this.apiUrl}/GetMonitoringData`, data);
