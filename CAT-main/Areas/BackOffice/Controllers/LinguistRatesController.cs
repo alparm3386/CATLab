@@ -59,7 +59,8 @@ namespace CAT.Areas.BackOffice.Controllers
                 ViewData["linguistName"] = user!.FullName;
 
                 //get the rates
-                var ratesQuery = _contextContainer.MainContext.LinguistRates.Include(cr => cr.Rate).AsNoTracking();
+                var ratesQuery = _contextContainer.MainContext.LinguistRates
+                    .AsNoTracking().Include(lr => lr.Rate).Where(lr => lr.LinguistId == linguistId);
                 if (sourceLanguageFilter.HasValue && sourceLanguageFilter > 0)
                     ratesQuery = ratesQuery.Where(cr => cr.Rate.SourceLanguageId == sourceLanguageFilter.Value);
                 if (targetLanguageFilter.HasValue && targetLanguageFilter > 0)
