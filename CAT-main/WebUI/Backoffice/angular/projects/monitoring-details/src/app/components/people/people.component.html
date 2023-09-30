@@ -3,9 +3,9 @@
     <label>Project manager: </label> <span class="text-primary"> {{jobData.projectManager}} </span>
   </div>
   <div *ngIf="jobData.projectManager" class="form-control mt-2">
-    <app-linguist-allocation-menu [jobData]="jobData" task="Translator"></app-linguist-allocation-menu>
+    <app-linguist-allocation-menu [jobData]="jobData" [allocation]="{task: 3, description: 'Translator'}"></app-linguist-allocation-menu>
   </div>
   <div class="form-control mt-2">
-    <app-linguist-allocation-menu [jobData]="jobData" task="Reviser"></app-linguist-allocation-menu>
+    <app-linguist-allocation-menu [jobData]="jobData" [allocation]="{task: 4, description: 'Reviser'}"></app-linguist-allocation-menu>
   </div>
 </div>

@@ -10,7 +10,7 @@ import { ModalService } from '../../../../../cat-common/services/modal.service';
   imports: [CommonModule],
   template: `
     <div class="d-flex">
-      <label> {{ task }}: </label> <span class="text-primary ms-2"> {{jobData.projectManager}} </span>
+      <label> {{ allocation.description }}: </label> <span class="text-primary ms-2"> {{jobData.projectManager}} </span>
       <!-- Dropdown Menu -->
       <div class="dropdown ms-auto">
         <button class="btn dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
@@ -29,9 +29,13 @@ import { ModalService } from '../../../../../cat-common/services/modal.service';
 
 export class LinguistAllocationMenuComponent {
   @Input() jobData: any;
-  @Input() task: any;
+  @Input() allocation: any;
 
   constructor(private modalService: ModalService) { }
+
+  ngOnInit(): void {
+    console.log(this.allocation);
+  }
 
   allocateToYorself(event: Event): void {
     event.preventDefault();
@@ -44,7 +48,7 @@ export class LinguistAllocationMenuComponent {
 
   allocateLinguist(event: Event): void {
     event.preventDefault();
-    this.modalService.open(LinguistAllocationComponent, { jobData: this.jobData, task: this.task }).result.then((result) => {
+    this.modalService.open(LinguistAllocationComponent, { jobData: this.jobData, allocation: this.allocation }).result.then((result) => {
       if (result) {
         console.log('The user was sure.');
       }

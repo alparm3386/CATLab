@@ -12,7 +12,7 @@
 
   <div *ngIf="linguists.length" class="dropdown-menuu show">
     <a *ngFor="let linguist of linguists" class="dropdown-itemm">
-      {{ linguist.User.FirstName }} {{ linguist.User.LastName }}
+      {{ linguist.user.fullName }}
     </a>
   </div>
 </div>

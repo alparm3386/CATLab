@@ -1,11 +1,11 @@
 <div class="modal-header">
-  <h4 class="modal-title">{{ task }} allocation</h4>
+  <h4 class="modal-title">{{ allocation.description }} allocation</h4>
   <button type="button" class="btn btn-outline-secondary btn-sm" aria-label="Close" (click)="close()">
     <span aria-hidden="true">&times;</span>
   </button>
 </div>
 <div class="modal-body">
-  <app-linguist-search></app-linguist-search>
+  <app-linguist-search [linguistSearchParam]="linguistSearchParam"></app-linguist-search>
 </div>
 <div class="modal-footer">
   <button type="button" class="btn btn-outline-warning" (click)="close()">Close</button>

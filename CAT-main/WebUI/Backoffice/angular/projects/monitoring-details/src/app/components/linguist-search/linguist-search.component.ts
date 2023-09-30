@@ -5,7 +5,7 @@ import { HttpClient } from '@angular/common/http';
 import * as _ from 'underscore';
 import { ModalService } from '../../../../../cat-common/services/modal.service';
 
-export interface LinguistDetails {
+export interface LinguistSearchParam {
   sourceLang: number;
   targetLang: number;
   speciality: number;
@@ -21,7 +21,7 @@ export interface LinguistDetails {
 })
 export class LinguistSearchComponent implements OnInit {
 
-  @Input() linguistSearchParam?: LinguistDetails;
+  @Input() linguistSearchParam?: LinguistSearchParam;
 
   public searchTerm: string = '';
   public linguists: any[] = [];
@@ -44,16 +44,16 @@ export class LinguistSearchComponent implements OnInit {
   }
 
   getLinguists() {
+    if (!this.linguistSearchParam)
+      return;
     // Get the filtered list of linguists from the server
     this.isLoading = true;
     this.http.get<any[]>('/api/Common/GetFilteredLinguists', {
       params: {
-        term: "", //this.searchTerm,
-        sourceLanguageId: this.linguistSearchParam?.sourceLang ?? -1,
-        targetLanguageId: this.linguistSearchParam?.targetLang ?? -1,
-        speciality: this.linguistSearchParam?.speciality ?? -1,
-        task: this.linguistSearchParam?.task ?? -1,
-        limit: -1
+        sourceLanguageId: this.linguistSearchParam!.sourceLang,
+        targetLanguageId: this.linguistSearchParam!.targetLang,
+        speciality: this.linguistSearchParam!.speciality,
+        task: this.linguistSearchParam!.task
       }
     }).subscribe({
       next: data => {
