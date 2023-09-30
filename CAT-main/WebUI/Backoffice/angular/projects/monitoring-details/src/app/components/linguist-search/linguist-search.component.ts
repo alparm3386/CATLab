@@ -21,39 +21,50 @@ export interface LinguistDetails {
 })
 export class LinguistSearchComponent implements OnInit {
 
-  @Input() linguistDetails?: LinguistDetails;
+  @Input() linguistSearchParam?: LinguistDetails;
 
   public searchTerm: string = '';
   public linguists: any[] = [];
-  throttledSearch: any;
+  public throttledSearch: any;
+  public isLoading: boolean = false;
 
   constructor(private http: HttpClient, private modalService: ModalService) {
     this.throttledSearch = _.throttle(this.searchLinguists, 300);
   }
 
-  ngOnInit(): void { }
-
+  ngOnInit(): void {
+    this.getLinguists();
+  }
 
   searchLinguists() {
     if (this.searchTerm.trim().length < 3) {
       this.linguists = [];
       return;
     }
+  }
 
+  getLinguists() {
     // Get the filtered list of linguists from the server
+    this.isLoading = true;
     this.http.get<any[]>('/api/Common/GetFilteredLinguists', {
       params: {
-        term: this.searchTerm,
-        // Optionally, you can add the 'limit' parameter here.
+        term: "", //this.searchTerm,
+        sourceLanguageId: this.linguistSearchParam?.sourceLang ?? -1,
+        targetLanguageId: this.linguistSearchParam?.targetLang ?? -1,
+        speciality: this.linguistSearchParam?.speciality ?? -1,
+        task: this.linguistSearchParam?.task ?? -1,
+        limit: -1
       }
     }).subscribe({
-        next: data => {
-            this.linguists = data;
-          },
+      next: data => {
+        this.isLoading = false;
+        this.linguists = data;
+      },
       error: error => {
+        this.isLoading = false;
         this.modalService.alert("Unable to retrieve linguists from the server. Please try again later.", "Error");
-          //this.dataSubject.error(error);
-        }
-      });
+        //this.dataSubject.error(error);
+      }
+    });
   }
 }

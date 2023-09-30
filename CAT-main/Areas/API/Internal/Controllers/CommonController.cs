@@ -45,26 +45,53 @@ namespace CAT.Areas.API.Internal.Controllers
         }
 
         [HttpGet("GetFilteredLinguists")]
-        public async Task<IActionResult> GetFilteredLinguists(string term, int? sourceLanguageId, int? targetLanguageId, 
+        public async Task<IActionResult> GetFilteredLinguists(string? term, int? sourceLanguageId, int? targetLanguageId, 
             int? speciality, int? task, int? limit)
         {
-            limit = limit ?? AUTOCOMPLETE_LIMIT;
+            try
+            {
+                //limit = limit ?? AUTOCOMPLETE_LIMIT;
+                // Optimize by pushing filtering and joining to the database query
+                //var linguists = await (from linguist in _dbContextContainer.MainContext.Linguists
+                //                       join user in _dbContextContainer.IdentityContext.Users
+                //                       on linguist.UserId equals user.Id
+                //                       where (user.FirstName + " " + user.LastName).Contains(term)
+                //                       select new Linguist
+                //                       {
+                //                           UserId = user.Id,
+                //                           User = user
+                //                       })
+                //                       .Take(limit.Value)
+                //                       .AsNoTracking()
+                //                       .ToListAsync();
 
-            // Optimize by pushing filtering and joining to the database query
-            var linguists = await (from linguist in _dbContextContainer.MainContext.Linguists
-                                   join user in _dbContextContainer.IdentityContext.Users
-                                   on linguist.UserId equals user.Id
-                                   where (user.FirstName + " " + user.LastName).Contains(term)
-                                   select new Linguist
-                                   {
-                                       UserId = user.Id,
-                                       User = user
-                                   })
-                                   .Take(limit.Value)
-                                   .AsNoTracking()
-                                   .ToListAsync();
+                //not ideal but ok in this size
+                var linguists = await (from linguist in _dbContextContainer.MainContext.Linguists
+                                       join linguistRates in _dbContextContainer.MainContext.LinguistRates
+                                       on linguist.UserId equals user.Id
+                                       where (user.FirstName + " " + user.LastName).Contains(term)
+                                       select new Linguist
+                                       {
+                                           UserId = user.Id,
+                                           User = user
+                                       })
+                                       .Take(limit.Value)
+                                       .AsNoTracking()
+                                       .ToListAsync();
 
-            return Ok(linguists);
+                var linguists = await _dbContextContainer.MainContext.Linguists
+                                       .Where(l => userIds.Contains(l.UserId))
+                                       .Take(limit.Value)
+                                       .AsNoTracking()
+                                       .ToListAsync();
+
+
+                return Ok(linguists);
+            }
+            catch (Exception ex)
+            {
+                return Problem(ex.Message);
+            }
         }
     }
 }

@@ -5,8 +5,13 @@
          (input)="throttledSearch()"
          placeholder="Search for linguist...">
 
-  <div *ngIf="linguists.length" class="dropdown-menu show">
-    <a *ngFor="let linguist of linguists" class="dropdown-item">
+  <div *ngIf="isLoading" class="spinner text-warning">
+    Loading...
+    <!-- You can replace "Loading..." with an actual spinner element or image -->
+  </div>
+
+  <div *ngIf="linguists.length" class="dropdown-menuu show">
+    <a *ngFor="let linguist of linguists" class="dropdown-itemm">
       {{ linguist.User.FirstName }} {{ linguist.User.LastName }}
     </a>
   </div>
