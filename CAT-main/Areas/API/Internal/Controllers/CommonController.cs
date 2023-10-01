@@ -44,8 +44,8 @@ namespace CAT.Areas.API.Internal.Controllers
             return Ok(clients);
         }
 
-        [HttpGet("GetFilteredLinguists")]
-        public async Task<IActionResult> GetFilteredLinguists(int sourceLanguageId, int targetLanguageId, 
+        [HttpGet("GetLinguists")]
+        public async Task<IActionResult> GetLinguists(int sourceLanguageId, int targetLanguageId, 
             int speciality, int task)
         {
             try

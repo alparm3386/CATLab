@@ -42,7 +42,7 @@ export class LinguistAllocationComponent {
   getLinguists(): void {
     // Get the filtered list of linguists from the server
     this.isLoading = true;
-    this.http.get<any[]>('/api/Common/GetFilteredLinguists', {
+    this.http.get<any[]>('/api/Common/GetLinguists', {
       params: {
         sourceLanguageId: this.jobData.sourceLanguage,
         targetLanguageId: this.jobData.targetLanguage,
