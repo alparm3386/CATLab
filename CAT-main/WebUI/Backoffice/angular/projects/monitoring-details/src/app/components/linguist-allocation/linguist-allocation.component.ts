@@ -62,6 +62,16 @@ export class LinguistAllocationComponent {
     });
   }
 
+  allocateLinguist(linguist: any): void {
+    this.modalService.confirm("Are you sure that you want to allocate " + linguist.user.fullName + "?", "Allocate")
+      .result.then((result) => {
+        if (result) {
+          console.log(result);
+        }
+        console.log(result);
+        this.activeModal.close();
+      });
+  }
 
   close(): void {
     this.activeModal.close();
