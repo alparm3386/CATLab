@@ -3,6 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { HttpClient } from '@angular/common/http';
+import * as _ from 'underscore';
 import { ModalService } from '../../../../../cat-common/services/modal.service';
 
 
@@ -19,24 +20,26 @@ export class LinguistAllocationComponent {
 
   public searchTerm: string = '';
   public linguists: any[] = [];
-  public throttledSearch: any;
+  public filteredLinguists: any[] = [];
   public isLoading: boolean = false;
+  public throttledSearch: any;
 
   constructor(private http: HttpClient, public activeModal: NgbActiveModal, private modalService: ModalService) {
+    this.throttledSearch = _.throttle(this.searchLinguists.bind(this), 300);
   }
 
   ngOnInit(): void {
     this.getLinguists();
   }
 
-  searchLinguists() {
+  searchLinguists(): void {
     if (this.searchTerm.trim().length < 3) {
       this.linguists = [];
       return;
     }
   }
 
-  getLinguists() {
+  getLinguists(): void {
     // Get the filtered list of linguists from the server
     this.isLoading = true;
     this.http.get<any[]>('/api/Common/GetFilteredLinguists', {
