@@ -169,7 +169,7 @@ namespace CAT.Areas.BackOffice.Controllers
                 // set error message here that is displayed in the view
                 string error = ex.Message;
                 if (ex is not CATException)
-                    ViewData["ErrorMessage"] = "There was an error processing your request. Please try again later.";
+                    error = "There was an error processing your request. Please try again later.";
                 // Optionally log the error: _logger.LogError(ex, "Error message here");
                 TempData["ErrorMessage"] = error;
                 return RedirectToAction(nameof(Create), new { linguistId });
