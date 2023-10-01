@@ -1,3 +1,19 @@
-.hover-container:hover .allocate-button {
-  display: inline-block !important; /* !important is used to override Bootstrap's d-none */
+.hover-container {
+  /* other styles */
+  /* Use flex */
+  display: flex;
+  flex-direction: row;
+  align-items: center; /* Vertically center the button */
+
+  .content-left {
+    flex-grow: 1; /* Allow content on left to grow */
+  }
+
+  .allocate-button {
+    display: none;
+  }
+
+  &:hover .allocate-button {
+    display: block;
+  }
 }

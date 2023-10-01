@@ -19,11 +19,24 @@
     </div>
 
     <div *ngIf="linguists.length" class="mt-3">
-      <div *ngFor="let linguist of linguists" class="d-flex justify-content-between align-items-center hover-container text-primary">
-        {{ linguist.user.fullName }}
-        <button class="btn btn-warning allocate-button d-none">Allocate</button>
+      <div *ngFor="let linguist of linguists"
+           class="hover-container text-primary mb-2">
+
+        <!-- Left section: Linguist name and aggregates -->
+        <div class="content-left">
+          <div>{{ linguist.user.fullName }}</div>
+          <div class="small text-secondary-emphasis">
+            <b>total jobs:</b> 112
+            <b>Total words:</b> 32
+            <b>roles:</b> translator, reviser
+          </div>
+        </div>
+
+        <!-- Right section: Allocate button -->
+        <button class="btn btn-warning allocate-button">Allocate</button>
       </div>
     </div>
+
   </div>
 </div>
 <div class="modal-footer">
