@@ -11,6 +11,7 @@ using CAT.Helpers;
 using CAT.Enums;
 using Task = CAT.Enums.Task;
 using CAT.Infrastructure;
+using Microsoft.IdentityModel.Tokens;
 
 namespace CAT.Areas.BackOffice.Controllers
 {
@@ -47,6 +48,9 @@ namespace CAT.Areas.BackOffice.Controllers
                 ViewData["TargetLanguageFilter"] = targetLanguageFilter ?? -1;
                 ViewData["specialityFilter"] = specialityFilter ?? -1;
                 ViewData["taskFilter"] = taskFilter ?? -1;
+
+                if (!linguistId.HasValue && ViewData["linguistId"] != null)
+                    linguistId = int.Parse(ViewData["linguistId"]!.ToString()!); //not ideal
 
                 //get the linguist
                 var linguist = _contextContainer.MainContext.Linguists.Where(c => c.Id == linguistId).AsNoTracking().FirstOrDefault();
@@ -93,6 +97,10 @@ namespace CAT.Areas.BackOffice.Controllers
         {
             try
             {
+                //set the error message is there was problem in the previous request.
+                if (TempData["ErrorMessage"] != null)
+                    ViewData["ErrorMessage"] = TempData["ErrorMessage"]!.ToString();
+
                 //get the linguist
                 var linguist = _contextContainer.MainContext.Linguists.Where(c => c.Id == linguistId).AsNoTracking().FirstOrDefault();
                 if (linguist == null)
@@ -159,20 +167,12 @@ namespace CAT.Areas.BackOffice.Controllers
             catch (Exception ex)
             {
                 // set error message here that is displayed in the view
-                if (ex is CATException)
-                    ViewData["ErrorMessage"] = ex.Message;
-                else
+                string error = ex.Message;
+                if (ex is not CATException)
                     ViewData["ErrorMessage"] = "There was an error processing your request. Please try again later.";
                 // Optionally log the error: _logger.LogError(ex, "Error message here");
-
-                var languages = await _contextContainer.MainContext.Languages.ToDictionaryAsync(l => l.Id, l => l.Name);
-                ViewData["Languages"] = new SelectList(languages, "Key", "Value");
-                ViewData["Specialities"] = new SelectList(EnumHelper.EnumToDisplayNamesDictionary<Speciality>(), "Key", "Value");
-
-                ViewData["linguistId"] = linguistId;
-                ViewData["linguistName"] = "";
-
-                return View();
+                TempData["ErrorMessage"] = error;
+                return RedirectToAction(nameof(Create), new { linguistId });
             }
         }
 
