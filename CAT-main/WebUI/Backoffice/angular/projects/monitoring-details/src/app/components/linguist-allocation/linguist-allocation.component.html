@@ -12,9 +12,10 @@
            (input)="throttledSearch()"
            placeholder="Search for linguist...">
 
-    <div *ngIf="isLoading" class="spinner text-warning">
-      Loading...
-      <!-- You can replace "Loading..." with an actual spinner element or image -->
+    <div *ngIf="isLoading" class="mt-3 d-flex flex-column justify-content-center align-items-center text-warning">
+      <div class="spinner-border" role="status">
+      </div>
+      <div class="">Loading...</div>
     </div>
 
     <div *ngIf="linguists.length" class="mt-3">

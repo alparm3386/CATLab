@@ -1,15 +1,3 @@
-.autocomplete-container {
-  position: relative;
-}
-
-.dropdown-menu {
-  position: absolute;
-  top: 100%;
-  left: 0;
-  width: 100%;
-  z-index: 1000;
-}
-
 .hover-container:hover .allocate-button {
   display: inline-block !important; /* !important is used to override Bootstrap's d-none */
 }
