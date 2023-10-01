@@ -1,19 +1,37 @@
 .hover-container {
-  /* other styles */
-  /* Use flex */
   display: flex;
   flex-direction: row;
-  align-items: center; /* Vertically center the button */
+  align-items: center;
+  position: relative; /* This makes sure the button positions relative to this container */
+  padding-right: 80px; /* This ensures there's space for the absolute positioned button */
+}
 
-  .content-left {
-    flex-grow: 1; /* Allow content on left to grow */
-  }
+.profile-image-container {
+  margin-right: 10px;
+  width: 40px;
+  height: 40px;
+  overflow: hidden;
+  border-radius: 50%;
+}
 
-  .allocate-button {
-    display: none;
-  }
+.profile-image-container img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
 
-  &:hover .allocate-button {
-    display: block;
-  }
+.content-left {
+  flex-grow: 1;
+}
+
+.allocate-button {
+  display: none;
+  position: absolute; /* This positions the button */
+  top: 50%; /* These two lines center the button vertically */
+  transform: translateY(-50%);
+  right: 10px; /* Distance from the right edge of the container */
+}
+
+.hover-container:hover .allocate-button {
+  display: block;
 }

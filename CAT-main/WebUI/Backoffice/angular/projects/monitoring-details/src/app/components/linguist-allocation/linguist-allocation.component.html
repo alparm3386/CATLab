@@ -22,18 +22,24 @@
       <div *ngFor="let linguist of linguists"
            class="hover-container text-primary mb-2">
 
-        <!-- Left section: Linguist name and aggregates -->
+        <!-- Profile Image -->
+        <div class="profile-image-container">
+          <img src="https://i.etsystatic.com/23039547/r/il/dd83b9/3822890746/il_570xN.3822890746_rhvd.jpg" alt="Profile Image">
+          <!--<img [src]="linguist.user.profileImageUrl" alt="Profile Image">-->
+        </div>
+
+        <!-- Content: Linguist name and aggregates -->
         <div class="content-left">
           <div>{{ linguist.user.fullName }}</div>
           <div class="small text-secondary-emphasis">
             <b>total jobs:</b> 112
-            <b>Total words:</b> 32
+            <b>total words:</b> 32
             <b>roles:</b> translator, reviser
           </div>
         </div>
 
         <!-- Right section: Allocate button -->
-        <button class="btn btn-warning allocate-button" (click)="allocateLinguist(linguist)" >Allocate</button>
+        <button class="btn btn-warning allocate-button" (click)="allocateLinguist(linguist)">Allocate</button>
       </div>
     </div>
 
