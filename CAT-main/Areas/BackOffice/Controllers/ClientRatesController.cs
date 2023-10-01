@@ -56,7 +56,8 @@ namespace CAT.Areas.BackOffice.Controllers
                 ViewData["CompanyName"] = company.Name;
 
                 //get the rates
-                var ratesQuery = _context.ClientRates.Include(cr => cr.Rate).AsNoTracking();
+                var ratesQuery = _context.ClientRates.AsNoTracking().Include(cr => cr.Rate)
+                    .Where(cr => cr.CompanyId == companyId);
                 if (sourceLanguageFilter.HasValue && sourceLanguageFilter > 0)
                     ratesQuery = ratesQuery.Where(cr => cr.Rate.SourceLanguageId == sourceLanguageFilter.Value);
                 if (targetLanguageFilter.HasValue && targetLanguageFilter > 0)
@@ -89,6 +90,10 @@ namespace CAT.Areas.BackOffice.Controllers
         {
             try
             {
+                //set the error message is there was problem in the previous request.
+                if (TempData["ErrorMessage"] != null)
+                    ViewData["ErrorMessage"] = TempData["ErrorMessage"]!.ToString();
+
                 //get the company
                 var company = _context.Companies.Where(c => c.Id == companyId).AsNoTracking().FirstOrDefault();
                 if (company == null)
@@ -150,20 +155,12 @@ namespace CAT.Areas.BackOffice.Controllers
             catch (Exception ex)
             {
                 // set error message here that is displayed in the view
-                if (ex is CATException)
-                    ViewData["ErrorMessage"] = ex.Message;
-                else
-                    ViewData["ErrorMessage"] = "There was an error processing your request. Please try again later.";
+                string error = ex.Message;
+                if (ex is not CATException)
+                    error = "There was an error processing your request. Please try again later.";
                 // Optionally log the error: _logger.LogError(ex, "Error message here");
-
-                var languages = await _context.Languages.ToDictionaryAsync(l => l.Id, l => l.Name);
-                ViewData["Languages"] = new SelectList(languages, "Key", "Value");
-                ViewData["Specialities"] = new SelectList(EnumHelper.EnumToDisplayNamesDictionary<Speciality>(), "Key", "Value");
-
-                ViewData["CompanyId"] = companyId;
-                ViewData["CompanyName"] = "";
-
-                return View();
+                TempData["ErrorMessage"] = error;
+                return RedirectToAction(nameof(Create), new { companyId });
             }
         }
 

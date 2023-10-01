@@ -45,7 +45,7 @@
             <input type="submit" value="Go" class="btn btn-primary" />
         </div>
         <div class="col-auto">
-            <a asp-action="Index" class="btn btn-link">Back to Full List</a>
+            <a asp-controller="Companies" asp-action="Details" asp-route-Id="@ViewBag.CompanyId" class="btn btn-link">Back to details</a>
         </div>
     </div>
 </form>
