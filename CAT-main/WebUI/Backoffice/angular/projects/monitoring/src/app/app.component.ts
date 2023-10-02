@@ -42,6 +42,6 @@ export class AppComponent implements OnInit {
     this.spinnerService.show();
 
     //get the data from the server
-    this.dataService.fetchData();
+    this.dataService.getJobData();
   }
 }

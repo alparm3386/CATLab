@@ -63,7 +63,8 @@ export class LinguistAllocationComponent {
   }
 
   allocateLinguist(linguist: any): void {
-    this.modalService.confirm("Are you sure that you want to allocate " + linguist.user.fullName + "?", "Allocate")
+    this.modalService.confirm("Are you sure that you want to allocate " + linguist.user.fullName + "?",
+      "Allocate " + this.allocation.description)
       .result.then((result) => {
         if (result) {
           console.log(result);

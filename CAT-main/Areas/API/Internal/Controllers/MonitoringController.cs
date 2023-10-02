@@ -36,5 +36,12 @@ namespace CAT.Areas.API.Internal.Controllers
             var jobData = await _monitoringService.GetJobData(jobId);
             return Ok(jobData);
         }
+
+        [HttpPost("AllocateLinguist")]
+        public async Task<IActionResult> AllocateLinguist(int jobId, int task, string userId)
+        {
+            //var jobData = await _monitoringService.GetJobData(jobId);
+            return Ok("Allocated");
+        }
     }
 }

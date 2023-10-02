@@ -13,7 +13,7 @@ export class DataService {
 
   constructor(private http: HttpClient) { }
 
-  fetchData(jobId: any): void {
+  getJobData(jobId: any): void {
     this.http.get(`${this.apiUrl}/GetJobData?jobId=` + jobId).subscribe({
       next: data => {
         this.dataSubject.next(data);

@@ -65,6 +65,6 @@ export class AppComponent {
     const urlParams = new URLSearchParams(currentUrl.split('?')[1]);
     const jobId = +urlParams.get('jobId')! || -1;
 
-    this.dataService.fetchData(jobId);
+    this.dataService.getJobData(jobId);
   }
 }
