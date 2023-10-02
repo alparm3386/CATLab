@@ -1,11 +1,11 @@
 import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { LinguistAllocationMenuComponent } from '../linguist-allocation-menu/linguist-allocation-menu.component';
+import { TaskAllocationComponent } from '../task-allocation/task-allocation.component';
 
 @Component({
   selector: 'app-people',
   standalone: true,
-  imports: [CommonModule, LinguistAllocationMenuComponent],
+  imports: [CommonModule, TaskAllocationComponent],
   templateUrl: './people.component.html',
   styleUrls: ['./people.component.scss']
 })

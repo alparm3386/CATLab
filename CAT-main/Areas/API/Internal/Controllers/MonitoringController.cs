@@ -1,4 +1,5 @@
 ﻿using CAT.Areas.BackOffice.Services;
+using CAT.Infrastructure;
 using CAT.Models.Entities.Main;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -55,6 +56,9 @@ namespace CAT.Areas.API.Internal.Controllers
             }
             catch (Exception ex)
             {
+                if (ex is CATException)
+                    return Problem(ex.Message);
+
                 return Problem("Server error");
             }
         }

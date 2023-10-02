@@ -5,29 +5,14 @@ import { ModalService } from '../../../../../cat-common/services/modal.service';
 
 
 @Component({
-  selector: 'app-linguist-allocation-menu',
+  selector: 'app-task-allocation',
   standalone: true,
   imports: [CommonModule],
-  template: `
-    <div class="d-flex">
-      <label> {{ allocation.description }}: </label> <span class="text-primary ms-2"> {{jobData.projectManager}} </span>
-      <!-- Dropdown Menu -->
-      <div class="dropdown ms-auto">
-        <button class="btn dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
-          ☰
-        </button>
-        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-          <li><a class="dropdown-item" href="#" (click)=allocateLinguist($event)>Allocate linguist</a></li>
-          <li><a class="dropdown-item" href="#" (click)=allocateToYorself($event)>Allocate to yourself</a></li>
-          <li><a class="dropdown-item" href="#" (click)=modifyFee($event)>Modify fee</a></li>
-        </ul>
-      </div>
-    </div>
-  `,
-  styleUrls: ['./linguist-allocation-menu.component.scss']
+  templateUrl: `./task-allocation.component.html`,
+  styleUrls: ['./task-allocation.component.scss']
 })
 
-export class LinguistAllocationMenuComponent {
+export class TaskAllocationComponent {
   @Input() jobData: any;
   @Input() allocation: any;
 

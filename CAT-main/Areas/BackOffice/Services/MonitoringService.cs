@@ -2,6 +2,7 @@
 using CAT.Data;
 using CAT.Enums;
 using CAT.Helpers;
+using CAT.Infrastructure;
 using CAT.Models.Entities.Main;
 using CAT.Services.Common;
 using Microsoft.CodeAnalysis;
@@ -217,7 +218,7 @@ namespace CAT.Areas.BackOffice.Services
                     .Where(a => a.JobId == jobId && a.TaskId == (int)task && !a.ReturnUnsatisfactory).FirstOrDefaultAsync();
 
                 if (allocatedTask != null)
-                    throw new Exception("The job is already allocated.");
+                    throw new CATException("The job is already allocated.");
 
                 //create the allocation
                 var allocation = new Allocation()
