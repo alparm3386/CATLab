@@ -6,6 +6,7 @@ import { HttpClient } from '@angular/common/http';
 import * as _ from 'underscore';
 import { ModalService } from '../../../../../cat-common/services/modal.service';
 import { DataService } from '../../services/data.service';
+import { TaskDisplayName } from '../../../../../cat-common/enums/task.enum';
 
 
 @Component({
@@ -17,7 +18,7 @@ import { DataService } from '../../services/data.service';
 })
 export class LinguistAllocationComponent {
   @Input() jobData: any;
-  @Input() allocation: any;
+  @Input() task: any;
 
   public searchTerm: string = '';
   public linguists: any[] = [];
@@ -45,7 +46,7 @@ export class LinguistAllocationComponent {
       sourceLanguageId: this.jobData.sourceLanguage,
       targetLanguageId: this.jobData.targetLanguage,
       speciality: this.jobData.speciality,
-      task: this.allocation.task
+      task: this.task
     }
 
     // Get the list of linguists from the server
@@ -65,11 +66,11 @@ export class LinguistAllocationComponent {
 
   allocateLinguist(linguist: any): void {
     this.modalService.confirm(`Are you sure that you want to allocate ${linguist.user.fullName}?`,
-      `Allocate ${this.allocation.description}`)
+      `Allocate ${this.getTaskDisplayName(this.task)}`)
       .result.then((result) => {
         if (result) {
           this.isLoading = true; // Start the loader before the async operation.
-          this.dataService.allocateJob(this.jobData.jobId, this.allocation.task, linguist.user.id).subscribe({
+          this.dataService.allocateJob(this.jobData.jobId, this.task, linguist.user.id).subscribe({
             next: data => {
               this.isLoading = false;
               this.modalService.alert(`${linguist.user.fullName} is allocated to the job #${this.jobData.jobId}`, "Allocation");
@@ -82,6 +83,10 @@ export class LinguistAllocationComponent {
           });
         }
       });
+  }
+
+  getTaskDisplayName(taskId: number): string {
+    return TaskDisplayName[taskId];
   }
 
   close(): void {

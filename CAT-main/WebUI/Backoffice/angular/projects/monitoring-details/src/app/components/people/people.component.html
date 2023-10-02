@@ -3,9 +3,9 @@
     <label>Project manager: </label> <span class="text-primary"> {{jobData.projectManager}} </span>
   </div>
   <div *ngIf="hasTask(TaskEnum.Translation)" class="form-control mt-2">
-    <app-task-allocation [jobData]="jobData" [allocation]="{task: TaskEnum.Translation, description: 'Translator'}"></app-task-allocation>
+    <app-task-allocation [jobData]="jobData" [task]="TaskEnum.Translation"></app-task-allocation>
   </div>
   <div *ngIf="hasTask(TaskEnum.Revision)" class="form-control mt-2">
-    <app-task-allocation [jobData]="jobData" [allocation]="{task: TaskEnum.Revision, description: 'Reviser'}"></app-task-allocation>
+    <app-task-allocation [jobData]="jobData" [task]="TaskEnum.Revision"></app-task-allocation>
   </div>
 </div>

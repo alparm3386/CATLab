@@ -2,6 +2,7 @@ import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { LinguistAllocationComponent } from '../linguist-allocation/linguist-allocation.component';
 import { ModalService } from '../../../../../cat-common/services/modal.service';
+import { TaskDisplayName } from '../../../../../cat-common/enums/task.enum';
 
 
 @Component({
@@ -14,12 +15,12 @@ import { ModalService } from '../../../../../cat-common/services/modal.service';
 
 export class TaskAllocationComponent {
   @Input() jobData: any;
-  @Input() allocation: any;
+  @Input() task: any;
 
   constructor(private modalService: ModalService) { }
 
   ngOnInit(): void {
-    console.log(this.allocation);
+    console.log(this.task);
   }
 
   allocateToYorself(event: Event): void {
@@ -33,7 +34,7 @@ export class TaskAllocationComponent {
 
   allocateLinguist(event: Event): void {
     event.preventDefault();
-    this.modalService.open(LinguistAllocationComponent, { jobData: this.jobData, allocation: this.allocation }).result.then((result) => {
+    this.modalService.open(LinguistAllocationComponent, { jobData: this.jobData, task: this.task }).result.then((result) => {
       if (result) {
         console.log('The user was sure.');
       }
@@ -51,5 +52,9 @@ export class TaskAllocationComponent {
         console.log('The user was sure.');
       }
     });
+  }
+
+  getTaskDisplayName(taskId: number): string {
+    return TaskDisplayName[taskId];
   }
 }
