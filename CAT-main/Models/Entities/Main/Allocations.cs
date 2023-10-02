@@ -1,4 +1,5 @@
 ﻿using CAT.Areas.Identity.Data;
+using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -17,6 +18,7 @@ namespace CAT.Models.Entities.Main
 
         public string UserId { get; set; } = default!;
 
+        [NotMapped]
         public ApplicationUser User { get; set; } = default!;
 
         public int TaskId { get; set; }
@@ -32,7 +34,5 @@ namespace CAT.Models.Entities.Main
         public bool ReturnUnsatisfactory { get; set; }
 
         public string? AdminComment { get; set; } = default!;
-
-        public int WorkflowStepId { get; set; }
     }
 }

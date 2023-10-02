@@ -85,6 +85,12 @@ namespace CAT.Data
                 .WithMany() // If there is no collection navigation property on Address
                 .OnDelete(DeleteBehavior.Restrict);  // Prevents cascading delete
 
+            //Allocations
+            modelBuilder.Entity<Allocation>()
+                    .HasIndex(e => e.JobId);
+            modelBuilder.Entity<Allocation>()
+                    .HasIndex(e => e.UserId);
+
             ////TempQuote Fee
             //modelBuilder.Entity<TempQuote>()
             //   .Property(e => e.Fee)
