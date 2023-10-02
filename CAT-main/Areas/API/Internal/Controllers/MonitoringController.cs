@@ -1,4 +1,5 @@
-﻿using CAT.Services.Common;
+﻿using CAT.Areas.BackOffice.Services;
+using CAT.Models.Entities.Main;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -46,8 +47,16 @@ namespace CAT.Areas.API.Internal.Controllers
         [HttpPost("AllocateJob")]
         public async Task<IActionResult> AllocateJob([FromBody] AllocationParams allocationParams)
         {
-            //var jobData = await _monitoringService.GetJobData(jobId);
-            return Ok(new { Message = "Allocated" });
+            try
+            {
+                await _monitoringService.AllocatJob(allocationParams.JobId, (Enums.Task)allocationParams.Task, allocationParams.UserId);
+
+                return Ok(new { Message = "Allocated" });
+            }
+            catch (Exception ex)
+            {
+                return Problem("Server error");
+            }
         }
     }
 }

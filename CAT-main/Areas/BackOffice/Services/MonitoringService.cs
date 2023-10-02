@@ -2,6 +2,7 @@
 using CAT.Data;
 using CAT.Enums;
 using CAT.Helpers;
+using CAT.Models.Entities.Main;
 using CAT.Services.Common;
 using Microsoft.CodeAnalysis;
 using Microsoft.Data.SqlClient;
@@ -198,6 +199,35 @@ namespace CAT.Areas.BackOffice.Services
             };
 
             return jobData;
+        }
+
+        public async System.Threading.Tasks.Task AllocatJob(int jobId, Task task, string userId)
+        {
+            try
+            {
+                //create the allocation
+                var allocation = new Allocation()
+                {
+                    Status = 0,
+                    Fee = 1,
+                    UserId = userId,
+                    JobId = jobId,
+                    TaskId = (int)task,
+                    ReturnUnsatisfactory = false,
+                    AllocationDate = DateTime.Now,
+                    CompletionDate = null
+                    //WorkflowStepId = ???
+                };
+
+                //save the allocation
+                _dbContextContainer.MainContext.Allocations.Add(allocation);
+                await _dbContextContainer.MainContext.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("AllocatJob ERROR:" + ex.Message);
+                throw;
+            }
         }
     }
 }

@@ -24,11 +24,15 @@ namespace CAT.Models.Entities.Main
         public int Status { get; set; }
 
         public DateTime AllocationDate { get; set; }
-        public DateTime CompletionDate { get; set; }
+        public DateTime? CompletionDate { get; set; }
 
         [Column(TypeName = "decimal(10, 2)")]
         public decimal? Fee { get; set; }
 
-        public string ReturnUnsatisfactory { get; set; } = default!;
+        public bool ReturnUnsatisfactory { get; set; }
+
+        public string? AdminComment { get; set; } = default!;
+
+        public int WorkflowStepId { get; set; }
     }
 }
