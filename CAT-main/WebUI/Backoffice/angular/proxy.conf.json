@@ -4,5 +4,11 @@
     "secure": false,
     "logLevel": "debug",
     "changeOrigin": true
+  },
+  "/backoffice/*": {
+    "target": "https://localhost:7096",
+    "secure": false,
+    "logLevel": "debug",
+    "changeOrigin": true
   }
 }

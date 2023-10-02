@@ -4,6 +4,7 @@ import { LinguistAllocationComponent } from '../linguist-allocation/linguist-all
 import { ModalService } from '../../../../../cat-common/services/modal.service';
 import { TaskDisplayName } from '../../../../../cat-common/enums/task.enum';
 import { DataService } from '../../services/data.service';
+import * as _ from 'underscore';
 
 
 @Component({
@@ -18,10 +19,15 @@ export class TaskAllocationComponent {
   @Input() jobData: any;
   @Input() task: any;
 
-  constructor(private dataService: DataService, private modalService: ModalService) { }
+  public allocation: any;
+
+  constructor(private dataService: DataService, private modalService: ModalService) {
+  }
 
   ngOnInit(): void {
-    console.log(this.task);
+    this.allocation = _.find(this.jobData.allocations, allocation => {
+      return allocation.taskId == this.task && !allocation.returnUnsatisfactory;
+    });
   }
 
   allocateToYorself(event: Event): void {
@@ -65,7 +71,7 @@ export class TaskAllocationComponent {
     });
   }
 
-  getTaskDisplayName(taskId: number): string {
+  getDisplayNameForTask(taskId: number): string {
     return TaskDisplayName[taskId];
   }
 }

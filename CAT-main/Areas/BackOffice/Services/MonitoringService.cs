@@ -186,7 +186,22 @@ namespace CAT.Areas.BackOffice.Services
 
             //get the allocations
             var allocations = await _dbContextContainer.MainContext.Allocations.AsNoTracking()
+                .Include(a => a.Linguist)
                 .Where(a => a.JobId == jobId).ToListAsync();
+
+
+            //join into the users table 
+            var joinedAllocations = (from allocation in allocations
+                                           join user in _dbContextContainer.IdentityContext.Users
+                                           on allocation.UserId equals user.Id
+                                           select new { Allocation = allocation, User = user })
+                                         .ToList();
+            //update the allocations with the user
+            allocations = joinedAllocations.Select(j =>
+            {
+                j.Allocation.Linguist.User = j.User;
+                return j.Allocation;
+            }).ToList();
 
             var jobData = new
             {
@@ -229,7 +244,6 @@ namespace CAT.Areas.BackOffice.Services
                 //create the allocation
                 var allocation = new Allocation()
                 {
-                    Status = 0,
                     Fee = 1,
                     UserId = userId,
                     JobId = jobId,

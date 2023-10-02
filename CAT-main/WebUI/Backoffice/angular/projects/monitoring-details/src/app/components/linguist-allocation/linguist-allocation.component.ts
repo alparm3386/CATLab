@@ -66,7 +66,7 @@ export class LinguistAllocationComponent {
 
   allocateLinguist(linguist: any): void {
     this.modalService.confirm(`Are you sure that you want to allocate ${linguist.user.fullName}?`,
-      `Allocate ${this.getTaskDisplayName(this.task)}`)
+      `Allocate ${this.getDisplayNameForTask(this.task)}`)
       .result.then((result) => {
         if (result) {
           this.isLoading = true; // Start the loader before the async operation.
@@ -85,7 +85,7 @@ export class LinguistAllocationComponent {
       });
   }
 
-  getTaskDisplayName(taskId: number): string {
+  getDisplayNameForTask(taskId: number): string {
     return TaskDisplayName[taskId];
   }
 

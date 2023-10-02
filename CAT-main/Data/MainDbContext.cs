@@ -91,6 +91,15 @@ namespace CAT.Data
             modelBuilder.Entity<Allocation>()
                     .HasIndex(e => e.UserId);
 
+            modelBuilder.Entity<Linguist>()
+                .HasAlternateKey(l => l.UserId);  // Setting up an alternate key based on UserId in Linguist
+
+            modelBuilder.Entity<Allocation>()
+                .HasOne(a => a.Linguist) // This specifies that the Allocation entity has one related Linguist.
+                .WithMany()             // This specifies that a Linguist can be related to many Allocations.
+                .HasForeignKey(a => a.UserId) // This specifies which property in the Allocation entity is the foreign key for this relationship.
+                .HasPrincipalKey(l => l.UserId);  // This targets the alternate key you just set up
+
             ////TempQuote Fee
             //modelBuilder.Entity<TempQuote>()
             //   .Property(e => e.Fee)

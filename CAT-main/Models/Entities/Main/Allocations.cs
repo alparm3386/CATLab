@@ -18,12 +18,9 @@ namespace CAT.Models.Entities.Main
 
         public string UserId { get; set; } = default!;
 
-        [NotMapped]
-        public ApplicationUser User { get; set; } = default!;
+        public Linguist Linguist { get; set; } = default!;
 
         public int TaskId { get; set; }
-
-        public int Status { get; set; }
 
         public DateTime AllocationDate { get; set; }
         public DateTime? CompletionDate { get; set; }

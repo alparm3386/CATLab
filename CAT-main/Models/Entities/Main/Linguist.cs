@@ -22,6 +22,5 @@ namespace CAT.Models.Entities.Main
         public int AddressId { get; set; }
 
         public Address Address { get; set; } = default!;
-
     }
 }
