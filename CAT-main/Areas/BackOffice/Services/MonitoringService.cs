@@ -174,7 +174,12 @@ namespace CAT.Areas.BackOffice.Services
 
             //get the analysys
             var originalDoc = documents.FirstOrDefault(d => d.documentType == (int)DocumentType.Original);
-            var analysis = await _dbContextContainer.MainContext.Analisys.Where(a => a.DocumentId == originalDoc!.id).ToListAsync();
+            var analysis = await _dbContextContainer.MainContext.Analisys.AsNoTracking()
+                .Where(a => a.DocumentId == originalDoc!.id).ToListAsync();
+
+            //get the allocations
+            var allocations = await _dbContextContainer.MainContext.Allocations.AsNoTracking()
+                .Where(a => a.JobId == jobId).ToListAsync();
 
             var jobData = new
             {
@@ -196,7 +201,8 @@ namespace CAT.Areas.BackOffice.Services
                 workflowSteps,
                 companyName = job.Order!.Client.Company.Name,
                 companyId = job.Order!.Client.Company.Id,
-                projectManager = pmUser!.FullName
+                projectManager = pmUser!.FullName,
+                allocations = allocations
             };
 
             return jobData;

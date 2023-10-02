@@ -25,6 +25,6 @@ namespace CAT.Models.Entities.Main
         [Column(TypeName = "decimal(10, 2)")]
         public decimal? Fee { get; set; }
 
-        public int DocumentId { get; set; }
+        public int? DocumentId { get; set; } = default!;
     }
 }
