@@ -12,7 +12,7 @@
     <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
       <li *ngIf="!allocation"><a class="dropdown-item" href="#" (click)=allocateLinguist($event)>Allocate linguist</a></li>
       <li *ngIf="!allocation"><a class="dropdown-item" href="#" (click)=allocateToYorself($event)>Allocate to yourself</a></li>
-      <li *ngIf="allocation"><a class="dropdown-item" href="#" (click)=allocateLinguist($event)>Dellocate linguist</a></li>
+      <li *ngIf="allocation"><a class="dropdown-item" href="#" (click)=deallocateLinguist($event)>Dellocate linguist</a></li>
       <li><a class="dropdown-item" href="#" (click)=modifyFee($event)>Modify fee</a></li>
     </ul>
   </div>
