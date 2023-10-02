@@ -8,6 +8,7 @@ using CAT.Services.Common;
 using Microsoft.CodeAnalysis;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Immutable;
 using System.Data;
 using System.Dynamic;
 using System.Xml.Linq;
@@ -146,20 +147,25 @@ namespace CAT.Areas.BackOffice.Services
             job!.Order!.Client.Company.ProjectManager = pmUser!;
 
             //workflow steps
-            var workflowSteps = new List<object>();
+            var workflowSteps = new List<dynamic>();
             foreach (var dsWorkflowStep in job!.WorkflowSteps!)
             {
                 var workflowStep = new
                 {
-                    task = ((Task)dsWorkflowStep.TaskId).GetDisplayName(),
+                    //task = ((Task)dsWorkflowStep.TaskId).GetDisplayName(),
+                    task = dsWorkflowStep.TaskId,
                     status = dsWorkflowStep.Status,
                     startDate = dsWorkflowStep.StartDate,
                     scheduledDate = dsWorkflowStep.ScheduledDate,
                     completionDate = dsWorkflowStep.CompletionDate,
-                    fee = dsWorkflowStep.Fee
+                    fee = dsWorkflowStep.Fee,
+                    stepOrder = dsWorkflowStep.StepOrder
                 };
                 workflowSteps.Add(workflowStep);
             }
+
+            //sort the workflow steps
+            workflowSteps = workflowSteps.OrderBy(ws => ws.stepOrder).ToList();
 
             //get the documents for the job
             var dsDocuments = await _dbContextContainer.MainContext.Documents.Where(d => d.JobId == jobId).ToListAsync();
