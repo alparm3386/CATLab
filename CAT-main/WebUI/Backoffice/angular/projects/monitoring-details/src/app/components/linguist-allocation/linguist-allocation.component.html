@@ -24,8 +24,8 @@
 
         <!-- Profile Image -->
         <div class="profile-image-container">
-          <img src="https://i.etsystatic.com/23039547/r/il/dd83b9/3822890746/il_570xN.3822890746_rhvd.jpg" alt="Profile Image">
-          <!--<img [src]="linguist.user.profileImageUrl" alt="Profile Image">-->
+          <!--<img src="https://i.etsystatic.com/23039547/r/il/dd83b9/3822890746/il_570xN.3822890746_rhvd.jpg" alt="Profile Image">-->
+          <img [src]="'/api/common/GetProfilePicture/' + linguist.user.id" alt="Profile Image">
         </div>
 
         <!-- Content: Linguist name and aggregates -->

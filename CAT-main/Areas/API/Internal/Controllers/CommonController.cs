@@ -14,10 +14,12 @@ namespace CAT.Areas.API.Internal.Controllers
     {
         private const int AUTOCOMPLETE_LIMIT = 15;
         private readonly DbContextContainer _dbContextContainer;
+        private readonly IConfiguration _configuration;
 
-        public CommonController(DbContextContainer dbContextContainer)
+        public CommonController(DbContextContainer dbContextContainer, IConfiguration configuration)
         {
             _dbContextContainer = dbContextContainer;
+            _configuration = configuration;
         }
 
         [HttpGet("GetFilteredClients")]
@@ -73,6 +75,26 @@ namespace CAT.Areas.API.Internal.Controllers
             catch (Exception ex)
             {
                 return Problem(ex.Message);
+            }
+        }
+
+        [Route("GetProfilePicture/{userId}")]
+        [HttpGet]
+        public IActionResult GetProfilePicture(string userId)
+        {
+            try
+            {
+                string mimeType = "image/jpeg";
+                var avatarFolder = _configuration["Avatar"];
+                var imagePath = Path.Combine(avatarFolder!, userId + ".jpeg");
+                if (!System.IO.File.Exists(imagePath))
+                    imagePath = Path.Combine(avatarFolder!, "default.jpeg");
+                var imageBytes = System.IO.File.ReadAllBytes(imagePath);
+                return new FileContentResult(imageBytes, mimeType);
+            }
+            catch (Exception ex)
+            {
+                return Problem("System error");
             }
         }
     }
