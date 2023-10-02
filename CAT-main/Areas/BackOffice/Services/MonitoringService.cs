@@ -215,7 +215,7 @@ namespace CAT.Areas.BackOffice.Services
             return jobData;
         }
 
-        public async System.Threading.Tasks.Task AllocatJob(int jobId, Task task, string userId)
+        public async System.Threading.Tasks.Task AllocateJob(int jobId, Task task, string userId)
         {
             try
             {
@@ -239,6 +239,31 @@ namespace CAT.Areas.BackOffice.Services
                     CompletionDate = null
                     //WorkflowStepId = ???
                 };
+
+                //save the allocation
+                _dbContextContainer.MainContext.Allocations.Add(allocation);
+                await _dbContextContainer.MainContext.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("AllocatJob ERROR:" + ex.Message);
+                throw;
+            }
+        }
+
+        public async System.Threading.Tasks.Task DeallocateJob(int jobId, Task task, string comment)
+        {
+            try
+            {
+                //check if the task is available
+                var allocation = await _dbContextContainer.MainContext.Allocations
+                    .Where(a => a.JobId == jobId && a.TaskId == (int)task && !a.ReturnUnsatisfactory).FirstOrDefaultAsync();
+
+                if (allocation == null)
+                    throw new CATException("The job is not allocated.");
+
+                allocation.AdminComment = comment;
+                allocation.ReturnUnsatisfactory = true;
 
                 //save the allocation
                 _dbContextContainer.MainContext.Allocations.Add(allocation);

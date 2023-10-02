@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { LinguistAllocationComponent } from '../linguist-allocation/linguist-allocation.component';
 import { ModalService } from '../../../../../cat-common/services/modal.service';
 import { TaskDisplayName } from '../../../../../cat-common/enums/task.enum';
+import { DataService } from '../../services/data.service';
 
 
 @Component({
@@ -17,7 +18,7 @@ export class TaskAllocationComponent {
   @Input() jobData: any;
   @Input() task: any;
 
-  constructor(private modalService: ModalService) { }
+  constructor(private dataService: DataService, private modalService: ModalService) { }
 
   ngOnInit(): void {
     console.log(this.task);
@@ -27,7 +28,17 @@ export class TaskAllocationComponent {
     event.preventDefault();
     this.modalService.confirm("Are you sure that you want to allocate this job to yourself?", "Confirm").result.then((result) => {
       if (result) {
-        console.log('The user was sure.');
+      //  this.dataService.allocateJob(this.jobData.jobId, this.task, linguist.user.id).subscribe({
+      //    next: data => {
+      //      this.isLoading = false;
+      //      this.modalService.alert(`${linguist.user.fullName} is allocated to the job #${this.jobData.jobId}`, "Allocation");
+      //      this.activeModal.close();
+      //    },
+      //    error: error => {
+      //      this.isLoading = false;
+      //      this.modalService.alert(`There was an error allocating ${linguist.user.fullName} to the job #${this.jobData.jobId}`, "Error");
+      //    }
+      //  });
       }
     });
   }

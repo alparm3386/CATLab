@@ -39,18 +39,30 @@ namespace CAT.Areas.API.Internal.Controllers
             return Ok(jobData);
         }
 
-        public class AllocationParams
-        {
-            public int JobId { get; set; }
-            public int Task { get; set; }
-            public string UserId { get; set; } = default!;
-        }
         [HttpPost("AllocateJob")]
-        public async Task<IActionResult> AllocateJob([FromBody] AllocationParams allocationParams)
+        public async Task<IActionResult> AllocateJob(int jobId, int task, string userId)
         {
             try
             {
-                await _monitoringService.AllocatJob(allocationParams.JobId, (Enums.Task)allocationParams.Task, allocationParams.UserId);
+                await _monitoringService.AllocateJob(jobId, (Enums.Task)task, userId);
+
+                return Ok(new { Message = "Allocated" });
+            }
+            catch (Exception ex)
+            {
+                if (ex is CATException)
+                    return Problem(ex.Message);
+
+                return Problem("Server error");
+            }
+        }
+
+        [HttpPost("DeallocateJob")]
+        public async Task<IActionResult> DeallocateJob(int jobId, int task, string comment)
+        {
+            try
+            {
+                await _monitoringService.DeallocateJob(jobId, (Enums.Task)task, comment);
 
                 return Ok(new { Message = "Allocated" });
             }

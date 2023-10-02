@@ -45,6 +45,6 @@ export class DataService {
   }
 
   allocateJob(jobId: number, task: number, userId: string) {
-    return this.http.post(`${this.apiUrl}/AllocateJob`, { jobId, task, userId });
+    return this.http.post(`${this.apiUrl}/AllocateJob?jobId=${jobId}&task=${task}&userId=${userId}`, {});
   }
 }
