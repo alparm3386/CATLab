@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Data;
 using System.Dynamic;
 using System.Xml.Linq;
+using Xunit.Sdk;
 using Task = CAT.Enums.Task;
 
 namespace CAT.Areas.BackOffice.Services
@@ -205,6 +206,13 @@ namespace CAT.Areas.BackOffice.Services
         {
             try
             {
+                //check if the task is available
+                var allocatedTask = await _dbContextContainer.MainContext.Allocations
+                    .Where(a => a.JobId == jobId && a.TaskId == (int)task && !a.ReturnUnsatisfactory).FirstOrDefaultAsync();
+
+                if (allocatedTask != null)
+                    throw new Exception("The job is already allocated.");
+
                 //create the allocation
                 var allocation = new Allocation()
                 {
