@@ -64,14 +64,23 @@ export class LinguistAllocationComponent {
   }
 
   allocateLinguist(linguist: any): void {
-    this.modalService.confirm("Are you sure that you want to allocate " + linguist.user.fullName + "?",
-      "Allocate " + this.allocation.description)
+    this.modalService.confirm(`Are you sure that you want to allocate ${linguist.user.fullName}?`,
+      `Allocate ${this.allocation.description}`)
       .result.then((result) => {
         if (result) {
-          console.log(result);
+          this.isLoading = true; // Start the loader before the async operation.
+          this.dataService.allocateJob(this.jobData.jobId, this.allocation.task, linguist.user.id).subscribe({
+            next: data => {
+              this.isLoading = false;
+              this.modalService.alert(`${linguist.user.fullName} is allocated to the job #${this.jobData.jobId}`, "Allocation");
+              this.activeModal.close();
+            },
+            error: error => {
+              this.isLoading = false;
+              this.modalService.alert(`There was an error allocating ${linguist.user.fullName} to the job #${this.jobData.jobId}`, "Error");
+            }
+          });
         }
-        console.log(result);
-        this.activeModal.close();
       });
   }
 

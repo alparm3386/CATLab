@@ -43,4 +43,8 @@ export class DataService {
       params: searchParams
     });
   }
+
+  allocateJob(jobId: number, task: number, userId: string) {
+    return this.http.post(`${this.apiUrl}/AllocateJob`, { jobId, task, userId });
+  }
 }

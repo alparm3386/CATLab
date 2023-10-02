@@ -37,11 +37,17 @@ namespace CAT.Areas.API.Internal.Controllers
             return Ok(jobData);
         }
 
-        [HttpPost("AllocateLinguist")]
-        public async Task<IActionResult> AllocateLinguist(int jobId, int task, string userId)
+        public class AllocationParams
+        {
+            public int JobId { get; set; }
+            public int Task { get; set; }
+            public string UserId { get; set; } = default!;
+        }
+        [HttpPost("AllocateJob")]
+        public async Task<IActionResult> AllocateJob([FromBody] AllocationParams allocationParams)
         {
             //var jobData = await _monitoringService.GetJobData(jobId);
-            return Ok("Allocated");
+            return Ok(new { Message = "Allocated" });
         }
     }
 }
