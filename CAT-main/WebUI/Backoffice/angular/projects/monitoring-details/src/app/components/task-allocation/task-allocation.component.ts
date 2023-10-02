@@ -5,6 +5,7 @@ import { ModalService } from '../../../../../cat-common/services/modal.service';
 import { TaskDisplayName } from '../../../../../cat-common/enums/task.enum';
 import { DataService } from '../../services/data.service';
 import * as _ from 'underscore';
+import { LinguistDeallocationComponent } from '../linguist-deallocation/linguist-deallocation.component';
 
 
 @Component({
@@ -64,7 +65,7 @@ export class TaskAllocationComponent {
 
   deallocateLinguist(event: Event): void {
     event.preventDefault();
-    this.modalService.open(LinguistAllocationComponent, { jobData: this.jobData, task: this.task }).result.then((result) => {
+    this.modalService.open(LinguistDeallocationComponent, { jobData: this.jobData, task: this.task }).result.then((result) => {
       if (result) {
         console.log('The user was sure.');
       }

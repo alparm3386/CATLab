@@ -230,7 +230,7 @@ namespace CAT.Areas.BackOffice.Services
             return jobData;
         }
 
-        public async System.Threading.Tasks.Task AllocateJob(int jobId, Task task, string userId)
+        public async System.Threading.Tasks.Task AllocateJob(int jobId, Task task, string userId, string allocatorUserId)
         {
             try
             {
@@ -250,8 +250,8 @@ namespace CAT.Areas.BackOffice.Services
                     TaskId = (int)task,
                     ReturnUnsatisfactory = false,
                     AllocationDate = DateTime.Now,
-                    CompletionDate = null
-                    //WorkflowStepId = ???
+                    AllocatedBy = allocatorUserId,
+                    DeallocationDate = null
                 };
 
                 //save the allocation
@@ -265,7 +265,7 @@ namespace CAT.Areas.BackOffice.Services
             }
         }
 
-        public async System.Threading.Tasks.Task DeallocateJob(int jobId, Task task, string comment)
+        public async System.Threading.Tasks.Task DeallocateJob(int jobId, string userId, Task task, string deallocationReason)
         {
             try
             {
@@ -276,11 +276,12 @@ namespace CAT.Areas.BackOffice.Services
                 if (allocation == null)
                     throw new CATException("The job is not allocated.");
 
-                allocation.AdminComment = comment;
+                allocation.AdminComment = deallocationReason;
+                allocation.DeallocatedBy = userId;
+                allocation.DeallocationDate = DateTime.Now;
                 allocation.ReturnUnsatisfactory = true;
 
                 //save the allocation
-                _dbContextContainer.MainContext.Allocations.Add(allocation);
                 await _dbContextContainer.MainContext.SaveChangesAsync();
             }
             catch (Exception ex)

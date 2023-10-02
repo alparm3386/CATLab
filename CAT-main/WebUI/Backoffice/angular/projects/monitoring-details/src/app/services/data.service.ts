@@ -47,4 +47,8 @@ export class DataService {
   allocateJob(jobId: number, task: number, userId: string) {
     return this.http.post(`${this.apiUrl}/AllocateJob?jobId=${jobId}&task=${task}&userId=${userId}`, {});
   }
+
+  deallocateJob(jobId: number, task: number, deallocationReason: string) {
+    return this.http.post(`${this.apiUrl}/DeallocateJob?jobId=${jobId}&task=${task}&deallocationReason=${deallocationReason}`, {});
+  }
 }

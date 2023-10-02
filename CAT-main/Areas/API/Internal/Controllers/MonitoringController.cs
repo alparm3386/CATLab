@@ -4,6 +4,7 @@ using CAT.Models.Entities.Main;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace CAT.Areas.API.Internal.Controllers
@@ -44,7 +45,10 @@ namespace CAT.Areas.API.Internal.Controllers
         {
             try
             {
-                await _monitoringService.AllocateJob(jobId, (Enums.Task)task, userId);
+                var allocatorUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                if (allocatorUserId == null)
+                    allocatorUserId = new Guid().ToString();
+                await _monitoringService.AllocateJob(jobId, (Enums.Task)task, userId, allocatorUserId);
 
                 return Ok(new { Message = "Allocated" });
             }
@@ -58,11 +62,15 @@ namespace CAT.Areas.API.Internal.Controllers
         }
 
         [HttpPost("DeallocateJob")]
-        public async Task<IActionResult> DeallocateJob(int jobId, int task, string comment)
+        public async Task<IActionResult> DeallocateJob(int jobId, int task, string deallocationReason)
         {
             try
             {
-                await _monitoringService.DeallocateJob(jobId, (Enums.Task)task, comment);
+                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                if (userId == null)
+                    userId = new Guid().ToString();
+
+                await _monitoringService.DeallocateJob(jobId, userId, (Enums.Task)task, deallocationReason);
 
                 return Ok(new { Message = "Allocated" });
             }

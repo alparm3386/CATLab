@@ -23,7 +23,12 @@ namespace CAT.Models.Entities.Main
         public int TaskId { get; set; }
 
         public DateTime AllocationDate { get; set; }
-        public DateTime? CompletionDate { get; set; }
+
+        public string? AllocatedBy { get; set; } = default!;
+
+        public DateTime? DeallocationDate { get; set; }
+
+        public string? DeallocatedBy { get; set; } = default!;
 
         [Column(TypeName = "decimal(10, 2)")]
         public decimal? Fee { get; set; }

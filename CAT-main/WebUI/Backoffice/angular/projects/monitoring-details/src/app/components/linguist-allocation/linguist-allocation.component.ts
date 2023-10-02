@@ -25,6 +25,8 @@ export class LinguistAllocationComponent {
   public filteredLinguists: any[] = [];
   public isLoading: boolean = false;
   public throttledSearch: any;
+  public taskName: string = '';
+
 
   constructor(private dataService: DataService, public activeModal: NgbActiveModal, private modalService: ModalService) {
     this.throttledSearch = _.throttle(this.searchLinguists.bind(this), 300);
@@ -32,6 +34,7 @@ export class LinguistAllocationComponent {
 
   ngOnInit(): void {
     this.getLinguists();
+    this.taskName = TaskDisplayName[this.task];
   }
 
   searchLinguists(): void {
@@ -66,14 +69,17 @@ export class LinguistAllocationComponent {
 
   allocateLinguist(linguist: any): void {
     this.modalService.confirm(`Are you sure that you want to allocate ${linguist.user.fullName}?`,
-      `Allocate ${this.getDisplayNameForTask(this.task)}`)
+      `Allocate ${this.taskName}`)
       .result.then((result) => {
         if (result) {
           this.isLoading = true; // Start the loader before the async operation.
           this.dataService.allocateJob(this.jobData.jobId, this.task, linguist.user.id).subscribe({
             next: data => {
               this.isLoading = false;
-              this.modalService.alert(`${linguist.user.fullName} is allocated to the job #${this.jobData.jobId}`, "Allocation");
+              this.modalService.alert(`${linguist.user.fullName} is allocated to the job #${this.jobData.jobId}`, "Allocation").result.then(() => {
+                // Refresh the whole page
+                window.location.reload();
+              });
               this.activeModal.close();
             },
             error: error => {
@@ -83,10 +89,6 @@ export class LinguistAllocationComponent {
           });
         }
       });
-  }
-
-  getDisplayNameForTask(taskId: number): string {
-    return TaskDisplayName[taskId];
   }
 
   close(): void {
