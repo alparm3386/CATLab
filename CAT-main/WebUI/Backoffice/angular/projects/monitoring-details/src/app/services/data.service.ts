@@ -37,5 +37,10 @@ export class DataService {
     return this.http.post(`${this.apiUrl}/GetJobData`, data);
   }
 
-  // Add more methods as needed for PUT, DELETE, etc.
+  getLinguists(searchParams: any): Observable<any[]> {
+    // Get the filtered list of linguists from the server
+    return this.http.get<any[]>('/api/Common/GetLinguists', {
+      params: searchParams
+    });
+  }
 }
