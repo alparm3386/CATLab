@@ -70,12 +70,90 @@ namespace CAT.Services.Common
                     workflowStep = CreateWorkflowStep(job, workflowStep, Task.End);
                     workflowSteps.Add(workflowStep);
                 }
-                else if (service == (int)Service.TranslationWithRevision)
+                else if (service == (int)Service.AIWithRevision)
                 {
                     //AI process
                     var workflowStep = CreateWorkflowStep(job, null!, Task.AIProcess);
                     workflowSteps.Add(workflowStep);
-                    //human revision
+                    //revision
+                    workflowStep = CreateWorkflowStep(job, workflowStep, Task.Revision);
+                    workflowSteps.Add(workflowStep);
+
+                    //client review
+                    if (job.Quote.ClientReview)
+                    {
+                        workflowStep = CreateWorkflowStep(job, workflowStep, Task.ClientReview);
+                        workflowSteps.Add(workflowStep);
+                    }
+
+                    //job completed
+                    workflowStep = CreateWorkflowStep(job, workflowStep, Task.Completed);
+                    workflowSteps.Add(workflowStep);
+
+                    //credit linguists
+                    workflowStep = CreateWorkflowStep(job, workflowStep, Task.CreditLinguists);
+                    workflowSteps.Add(workflowStep);
+
+                    //billing
+                    workflowStep = CreateWorkflowStep(job, workflowStep, Task.Billing);
+                    workflowSteps.Add(workflowStep);
+
+                    //delivery
+                    workflowStep = CreateWorkflowStep(job, workflowStep, Task.Delivery);
+                    workflowSteps.Add(workflowStep);
+
+                    //end
+                    workflowStep = CreateWorkflowStep(job, workflowStep, Task.End);
+                    workflowSteps.Add(workflowStep);
+                }
+                else if (service == (int)Service.AIWithTranslationAndRevision)
+                {
+                    //AI process
+                    var workflowStep = CreateWorkflowStep(job, null!, Task.AIProcess);
+                    workflowSteps.Add(workflowStep);
+
+                    //translation
+                    workflowStep = CreateWorkflowStep(job, workflowStep, Task.Translation);
+                    workflowSteps.Add(workflowStep);
+
+                    //revision
+                    workflowStep = CreateWorkflowStep(job, workflowStep, Task.Revision);
+                    workflowSteps.Add(workflowStep);
+
+                    //client review
+                    if (job.Quote.ClientReview)
+                    {
+                        workflowStep = CreateWorkflowStep(job, workflowStep, Task.ClientReview);
+                        workflowSteps.Add(workflowStep);
+                    }
+
+                    //job completed
+                    workflowStep = CreateWorkflowStep(job, workflowStep, Task.Completed);
+                    workflowSteps.Add(workflowStep);
+
+                    //credit linguists
+                    workflowStep = CreateWorkflowStep(job, workflowStep, Task.CreditLinguists);
+                    workflowSteps.Add(workflowStep);
+
+                    //billing
+                    workflowStep = CreateWorkflowStep(job, workflowStep, Task.Billing);
+                    workflowSteps.Add(workflowStep);
+
+                    //delivery
+                    workflowStep = CreateWorkflowStep(job, workflowStep, Task.Delivery);
+                    workflowSteps.Add(workflowStep);
+
+                    //end
+                    workflowStep = CreateWorkflowStep(job, workflowStep, Task.End);
+                    workflowSteps.Add(workflowStep);
+                }
+                else if (service == (int)Service.TranslationWithRevision)
+                {
+                    //translation
+                    workflowStep = CreateWorkflowStep(job, workflowStep, Task.Translation);
+                    workflowSteps.Add(workflowStep);
+
+                    //revision
                     workflowStep = CreateWorkflowStep(job, workflowStep, Task.Revision);
                     workflowSteps.Add(workflowStep);
 
