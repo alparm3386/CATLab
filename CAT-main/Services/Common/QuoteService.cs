@@ -146,7 +146,8 @@ namespace CAT.Services.Common
                 .ThenInclude(c => c.Company)
                 .Include(sq => sq.TempQuotes)
                 .ThenInclude(tq => tq.TempDocument)
-                .Where(quote => quote.DateCreated >= from && quote.DateCreated <= to);
+                .Where(quote => quote.DateCreated >= from && quote.DateCreated <= to)
+                .OrderByDescending(sq => sq.DateCreated);  // Order by DateCreated descending;
         }
 
         public async Task<Quote> CreateQuoteFromTempQuoteAsync(int tempQuoteId)

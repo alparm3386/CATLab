@@ -80,7 +80,11 @@ namespace CAT.Enums
         [Display(Name = "AI process")]
         AI = 1,
         [Display(Name = "AI with revision")]
-        AIWithRevision = 2
+        AIWithRevision = 2,
+        [Display(Name = "AI with translation and revision")]
+        AIWithTranslationAndRevision = 3,
+        [Display(Name = "Translation with revision")]
+        TranslationWithRevision = 4
     }
 
     public enum ServiceSpeed
