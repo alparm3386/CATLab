@@ -97,7 +97,7 @@ namespace CAT.Areas.BackOffice.Controllers
             ViewData["TargetLanguages"] = new SelectList(languages, "Key", "Value");
 
             ViewData["Specialities"] = new SelectList(EnumHelper.EnumToDisplayNamesDictionary<Speciality>(), "Key", "Value");
-            ViewData["Services"] = new SelectList(EnumHelper.EnumToDisplayNamesDictionary<ServiceType>(), "Key", "Value");
+            ViewData["Services"] = new SelectList(EnumHelper.EnumToDisplayNamesDictionary<Service>(), "Key", "Value");
             var filters = new Dictionary<int, string> { { -1, "Not selected" } };//.Concat(languages).ToDictionary(pair => pair.Key, pair => pair.Value);
 
             ViewData["Filters"] = new SelectList(filters, "Key", "Value");
@@ -163,7 +163,7 @@ namespace CAT.Areas.BackOffice.Controllers
                 ViewData["TargetLanguages"] = new SelectList(languages, "Key", "Value");
 
                 ViewData["Specialities"] = new SelectList(EnumHelper.EnumToDisplayNamesDictionary<Speciality>(), "Key", "Value");
-                ViewData["Services"] = new SelectList(EnumHelper.EnumToDisplayNamesDictionary<ServiceType>(), "Key", "Value");
+                ViewData["Services"] = new SelectList(EnumHelper.EnumToDisplayNamesDictionary<Service>(), "Key", "Value");
                 var filters = new Dictionary<int, string> { { -1, "Not selected" } };//.Concat(languages).ToDictionary(pair => pair.Key, pair => pair.Value);
                 ViewData["Filters"] = new SelectList(filters, "Key", "Value");
 
@@ -215,6 +215,7 @@ namespace CAT.Areas.BackOffice.Controllers
                 var languages = await _languageService.GetLanguages();
                 ViewData["Languages"] = languages.ToDictionary(l => l.Key, l => l.Value.Name);
                 ViewData["Specialities"] = EnumHelper.EnumToDisplayNamesDictionary<Speciality>();
+                ViewData["Services"] = EnumHelper.EnumToDisplayNamesDictionary<Service>();
 
                 return View(storedQuote);
             }

@@ -80,7 +80,7 @@
                             @(((CAT.Enums.ServiceSpeed)item.Speed).ToString())
                         </td>
                         <td>
-                            @(((CAT.Enums.Service)item.Service).ToString())
+                            @ViewBag.Services[item.Service]
                         </td>
                         <td>
                             @(item.ClientReview.ToString())

@@ -70,7 +70,7 @@ namespace CAT.Services.Common
                     workflowStep = CreateWorkflowStep(job, workflowStep, Task.End);
                     workflowSteps.Add(workflowStep);
                 }
-                else if (service == (int)Service.AIWithHumanRevision)
+                else if (service == (int)Service.TranslationWithRevision)
                 {
                     //AI process
                     var workflowStep = CreateWorkflowStep(job, null!, Task.AIProcess);

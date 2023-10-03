@@ -73,7 +73,7 @@ namespace CAT.Enums
         WithGlobalTM
     }
 
-    public enum ServiceType
+    public enum Service
     {
         //[Display(Name = "Unknown")]
         //Unknown = -1,
@@ -104,13 +104,5 @@ namespace CAT.Enums
         Marketing = 2,
         [Display(Name = "Technical")]
         Technical = 3
-    }
-
-    public enum Service
-    {
-        [Display(Name = "AI")]
-        AI = 1,
-        [Display(Name = "AI with human revision")]
-        AIWithHumanRevision
     }
 }
