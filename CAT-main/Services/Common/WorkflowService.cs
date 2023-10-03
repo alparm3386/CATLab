@@ -150,7 +150,7 @@ namespace CAT.Services.Common
                 else if (service == (int)Service.TranslationWithRevision)
                 {
                     //translation
-                    workflowStep = CreateWorkflowStep(job, workflowStep, Task.Translation);
+                    var workflowStep = CreateWorkflowStep(job, null!, Task.Translation);
                     workflowSteps.Add(workflowStep);
 
                     //revision

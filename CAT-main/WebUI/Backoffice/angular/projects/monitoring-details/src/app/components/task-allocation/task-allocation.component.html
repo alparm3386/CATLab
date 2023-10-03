@@ -1,9 +1,6 @@
 
 <div class="d-flex">
   <label> {{ getDisplayNameForTask(task) }}: </label>
-  <span class="text-primary ms-2" *ngIf="allocation">
-    <a href="{{'/backoffice/linguists/details/' + allocation?.linguist.id}}" target="_blank">{{ allocation?.linguist.user.fullName }}</a>
-  </span>
   <!-- Dropdown Menu -->
   <div class="dropdown ms-auto">
     <button class="btn dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
@@ -16,4 +13,21 @@
       <li><a class="dropdown-item" href="#" (click)=modifyFee($event)>Modify fee</a></li>
     </ul>
   </div>
+</div>
+<div class="text-primary ms-2 d-flex" *ngIf="allocation">
+  <!-- Profile Image -->
+  <div class="profile-image-container">
+    <img [src]="'/api/common/GetProfilePicture/' + allocation?.linguist.user.id" alt="Profile Image">
+  </div>
+
+  <!-- Content: Linguist name and aggregates -->
+  <div class="content-left">
+    <div><a href="{{'/backoffice/linguists/details/' + allocation?.linguist.id}}" target="_blank">{{ allocation?.linguist.user.fullName }}</a></div>
+    <div class="small text-secondary-emphasis">
+      <b>total jobs:</b> 112
+      <b>total words:</b> 32
+      <b>roles:</b> translator, reviser
+    </div>
+  </div>
+
 </div>
