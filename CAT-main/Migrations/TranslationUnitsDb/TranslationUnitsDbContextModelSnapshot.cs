@@ -3,7 +3,6 @@ using System;
 using CAT.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -18,9 +17,7 @@ namespace CAT.Migrations.TranslationUnitsDb
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("ProductVersion", "7.0.10")
-                .HasAnnotation("Relational:MaxIdentifierLength", 128);
-
-            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+                .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
             modelBuilder.Entity("CAT.Models.Entities.TranslationUnits.TranslationUnit", b =>
                 {
@@ -28,13 +25,11 @@ namespace CAT.Migrations.TranslationUnitsDb
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
                     b.Property<string>("context")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("longtext");
 
                     b.Property<DateTime>("dateUpdated")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<int>("idJob")
                         .HasColumnType("int");
@@ -43,13 +38,13 @@ namespace CAT.Migrations.TranslationUnitsDb
                         .HasColumnType("int");
 
                     b.Property<string>("source")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("longtext");
 
                     b.Property<long>("status")
                         .HasColumnType("bigint");
 
                     b.Property<string>("target")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("longtext");
 
                     b.Property<int>("tuid")
                         .HasColumnType("int");

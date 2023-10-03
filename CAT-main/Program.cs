@@ -28,18 +28,17 @@ using Microsoft.Extensions.Configuration;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-var identityConnectionString = builder.Configuration.GetConnectionString("IdentityDbConnection") ?? throw new InvalidOperationException("Connection string 'IdentityDbConnection' not found.");
+var identityConnectionString = builder.Configuration.GetConnectionString("IdentityDbConnection");
 builder.Services.AddDbContext<IdentityDbContext>(options =>
-    options.UseSqlServer(identityConnectionString));
-var mainConnectionString = builder.Configuration.GetConnectionString("MainDbConnection") ?? throw new InvalidOperationException("Connection string 'MainDbConnection' not found.");
+    options.UseMySql(identityConnectionString, new MySqlServerVersion(new Version(8, 0, 34))));
+var mainConnectionString = builder.Configuration.GetConnectionString("MainDbConnection");
 builder.Services.AddDbContext<MainDbContext>(options =>
-    options.UseSqlServer(mainConnectionString));
-var translationUnitsConnectionString = builder.Configuration.GetConnectionString("TranslationUnitsDbConnection") ?? throw new InvalidOperationException("Connection string 'TranslationUnitsDbConnection' not found.");
+    options.UseMySql(mainConnectionString, new MySqlServerVersion(new Version(8, 0, 34))));
+var translationUnitsConnectionString = builder.Configuration.GetConnectionString("TranslationUnitsDbConnection");
 builder.Services.AddDbContext<TranslationUnitsDbContext>(options =>
-    options.UseSqlServer(translationUnitsConnectionString));
+    options.UseMySql(translationUnitsConnectionString, new MySqlServerVersion(new Version(8, 0, 34))));
 
 builder.Services.AddTransient<DbContextContainer>();
-
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 // Add services to the container.

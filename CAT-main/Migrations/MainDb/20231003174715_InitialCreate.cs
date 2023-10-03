@@ -1,4 +1,5 @@
 ﻿using System;
+using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
@@ -11,24 +12,35 @@ namespace CAT.Migrations.MainDb
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.AlterDatabase()
+                .Annotation("MySql:CharSet", "utf8mb4");
+
             migrationBuilder.CreateTable(
                 name: "Addresses",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Line1 = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
-                    Line2 = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: true),
-                    City = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    PostalCode = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: false),
-                    Country = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    Region = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
-                    Phone = table.Column<string>(type: "nvarchar(15)", maxLength: 15, nullable: true)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    Line1 = table.Column<string>(type: "varchar(200)", maxLength: 200, nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Line2 = table.Column<string>(type: "varchar(200)", maxLength: 200, nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    City = table.Column<string>(type: "varchar(100)", maxLength: 100, nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    PostalCode = table.Column<string>(type: "varchar(10)", maxLength: 10, nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Country = table.Column<string>(type: "varchar(50)", maxLength: 50, nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Region = table.Column<string>(type: "varchar(50)", maxLength: 50, nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Phone = table.Column<string>(type: "varchar(15)", maxLength: 15, nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4")
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Addresses", x => x.Id);
-                });
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
                 name: "Analysis",
@@ -51,21 +63,25 @@ namespace CAT.Migrations.MainDb
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Analysis", x => new { x.DocumentId, x.Type, x.SourceLanguage, x.TargetLanguage, x.Speciality });
-                });
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
                 name: "ConfigConstants",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Key = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Value = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    Key = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Value = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4")
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_ConfigConstants", x => x.Id);
-                });
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
                 name: "DocumentFilters",
@@ -76,118 +92,139 @@ namespace CAT.Migrations.MainDb
                 },
                 constraints: table =>
                 {
-                });
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
                 name: "Documents",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     JobId = table.Column<int>(type: "int", nullable: false),
                     DocumentType = table.Column<int>(type: "int", nullable: false),
-                    OriginalFileName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    FileName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    MD5Hash = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    OriginalFileName = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    FileName = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    MD5Hash = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4")
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Documents", x => x.Id);
-                });
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
                 name: "Filters",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    ProfileId = table.Column<int>(type: "int", nullable: false),
-                    FilterName = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    CompanyId = table.Column<int>(type: "int", nullable: false),
+                    FilterName = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    FileTypes = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4")
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Filters", x => x.Id);
-                });
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
                 name: "Languages",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ISO639_1 = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    Name = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    ISO639_1 = table.Column<string>(type: "varchar(255)", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4")
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Languages", x => x.Id);
-                });
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
                 name: "Quotes",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    DateCreated = table.Column<DateTime>(type: "datetime2", nullable: false),
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    DateCreated = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     SourceLanguage = table.Column<int>(type: "int", nullable: false),
                     TargetLanguage = table.Column<int>(type: "int", nullable: false),
                     Speciality = table.Column<int>(type: "int", nullable: false),
                     Service = table.Column<int>(type: "int", nullable: false),
-                    ClientReview = table.Column<bool>(type: "bit", nullable: false),
+                    ClientReview = table.Column<bool>(type: "tinyint(1)", nullable: false),
                     Words = table.Column<int>(type: "int", nullable: false),
-                    Fee = table.Column<double>(type: "float", nullable: false),
+                    Fee = table.Column<decimal>(type: "decimal(10,2)", nullable: false),
                     Speed = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Quotes", x => x.Id);
-                });
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
                 name: "Rates",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     SourceLanguageId = table.Column<int>(type: "int", nullable: false),
                     TargetLanguageId = table.Column<int>(type: "int", nullable: false),
                     Speciality = table.Column<int>(type: "int", nullable: false),
                     Task = table.Column<int>(type: "int", nullable: false),
-                    RateToClient = table.Column<float>(type: "real", nullable: false),
-                    RateToLinguist = table.Column<float>(type: "real", nullable: false)
+                    RateToClient = table.Column<float>(type: "float", nullable: false),
+                    RateToLinguist = table.Column<float>(type: "float", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Rates", x => x.Id);
-                });
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
                 name: "TempDocuments",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     DocumentType = table.Column<int>(type: "int", nullable: false),
-                    OriginalFileName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    FileName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    MD5Hash = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    OriginalFileName = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    FileName = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    MD5Hash = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
                     FilterId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_TempDocuments", x => x.Id);
-                });
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
                 name: "Companies",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     CompanyGroupId = table.Column<int>(type: "int", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    AddressId = table.Column<int>(type: "int", nullable: false)
+                    Name = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    AddressId = table.Column<int>(type: "int", nullable: false),
+                    PMId = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4")
                 },
                 constraints: table =>
                 {
@@ -198,38 +235,42 @@ namespace CAT.Migrations.MainDb
                         principalTable: "Addresses",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
-                });
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
                 name: "Linguists",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    UserId = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    UserId = table.Column<string>(type: "varchar(50)", maxLength: 50, nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
                     AddressId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Linguists", x => x.Id);
+                    table.UniqueConstraint("AK_Linguists_UserId", x => x.UserId);
                     table.ForeignKey(
                         name: "FK_Linguists_Addresses_AddressId",
                         column: x => x.AddressId,
                         principalTable: "Addresses",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
-                });
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
                 name: "ClientRates",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     CompanyId = table.Column<int>(type: "int", nullable: false),
                     RateId = table.Column<int>(type: "int", nullable: false),
                     Currency = table.Column<int>(type: "int", nullable: false),
-                    RateToClient = table.Column<float>(type: "real", nullable: false)
+                    RateToClient = table.Column<float>(type: "float", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -246,16 +287,18 @@ namespace CAT.Migrations.MainDb
                         principalTable: "Rates",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
-                });
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
                 name: "Clients",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     CompanyId = table.Column<int>(type: "int", nullable: false),
-                    UserId = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    UserId = table.Column<string>(type: "varchar(50)", maxLength: 50, nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
                     AddressId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
@@ -273,41 +316,19 @@ namespace CAT.Migrations.MainDb
                         principalTable: "Companies",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "LinguistLanguagePairs",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    SourceLanguage = table.Column<int>(type: "int", nullable: false),
-                    TargetLanguage = table.Column<int>(type: "int", nullable: false),
-                    Speciality = table.Column<int>(type: "int", nullable: false),
-                    Roles = table.Column<int>(type: "int", nullable: false),
-                    Comments = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    LinguistId = table.Column<int>(type: "int", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_LinguistLanguagePairs", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_LinguistLanguagePairs_Linguists_LinguistId",
-                        column: x => x.LinguistId,
-                        principalTable: "Linguists",
-                        principalColumn: "Id");
-                });
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
                 name: "LinguistRates",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     LinguistId = table.Column<int>(type: "int", nullable: false),
                     RateId = table.Column<int>(type: "int", nullable: false),
                     Currency = table.Column<int>(type: "int", nullable: false),
-                    RateToLinguist = table.Column<float>(type: "real", nullable: false)
+                    CustomRateToLinguist = table.Column<float>(type: "float", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -324,16 +345,17 @@ namespace CAT.Migrations.MainDb
                         principalTable: "Rates",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
-                });
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
                 name: "Orders",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     ClientId = table.Column<int>(type: "int", nullable: false),
-                    DateCreated = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    DateCreated = table.Column<DateTime>(type: "datetime(6)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -344,15 +366,16 @@ namespace CAT.Migrations.MainDb
                         principalTable: "Clients",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
-                });
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
                 name: "StoredQuotes",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    DateCreated = table.Column<DateTime>(type: "datetime2", nullable: true),
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    DateCreated = table.Column<DateTime>(type: "datetime(6)", nullable: true),
                     ClientId = table.Column<int>(type: "int", nullable: false),
                     OrderId = table.Column<int>(type: "int", nullable: true)
                 },
@@ -365,19 +388,20 @@ namespace CAT.Migrations.MainDb
                         principalTable: "Clients",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
-                });
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
                 name: "Jobs",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     OrderId = table.Column<int>(type: "int", nullable: false),
                     QuoteId = table.Column<int>(type: "int", nullable: false),
                     SourceDocumentId = table.Column<int>(type: "int", nullable: false),
                     FinalDocumentId = table.Column<int>(type: "int", nullable: false),
-                    DateProcessed = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    DateProcessed = table.Column<DateTime>(type: "datetime(6)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -394,25 +418,27 @@ namespace CAT.Migrations.MainDb
                         principalTable: "Quotes",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
-                });
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
                 name: "TempQuotes",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     StoredQuoteId = table.Column<int>(type: "int", nullable: false),
-                    DateCreated = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    DateCreated = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     TempDocumentId = table.Column<int>(type: "int", nullable: false),
                     SourceLanguage = table.Column<int>(type: "int", nullable: false),
                     TargetLanguage = table.Column<int>(type: "int", nullable: false),
                     SpecialityId = table.Column<int>(type: "int", nullable: false),
                     Service = table.Column<int>(type: "int", nullable: false),
-                    ClientReview = table.Column<bool>(type: "bit", nullable: false),
-                    Fee = table.Column<double>(type: "float", nullable: false),
+                    ClientReview = table.Column<bool>(type: "tinyint(1)", nullable: false),
+                    Fee = table.Column<decimal>(type: "decimal(10,2)", nullable: false),
                     Speed = table.Column<int>(type: "int", nullable: false),
-                    Analysis = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    Analysis = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4")
                 },
                 constraints: table =>
                 {
@@ -429,23 +455,63 @@ namespace CAT.Migrations.MainDb
                         principalTable: "TempDocuments",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
-                });
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "Allocations",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    JobId = table.Column<int>(type: "int", nullable: false),
+                    UserId = table.Column<string>(type: "varchar(50)", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    TaskId = table.Column<int>(type: "int", nullable: false),
+                    AllocationDate = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    AllocatedBy = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    DeallocationDate = table.Column<DateTime>(type: "datetime(6)", nullable: true),
+                    DeallocatedBy = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Fee = table.Column<decimal>(type: "decimal(10,2)", nullable: true),
+                    ReturnUnsatisfactory = table.Column<bool>(type: "tinyint(1)", nullable: false),
+                    AdminComment = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Allocations", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Allocations_Jobs_JobId",
+                        column: x => x.JobId,
+                        principalTable: "Jobs",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Allocations_Linguists_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Linguists",
+                        principalColumn: "UserId",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
                 name: "WorkflowSteps",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     JobId = table.Column<int>(type: "int", nullable: false),
                     StepOrder = table.Column<int>(type: "int", nullable: false),
                     TaskId = table.Column<int>(type: "int", nullable: false),
                     Status = table.Column<int>(type: "int", nullable: false),
-                    StartDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ScheduledDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    CompletionDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Fee = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
-                    DocumentId = table.Column<int>(type: "int", nullable: false)
+                    StartDate = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    ScheduledDate = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    CompletionDate = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    Fee = table.Column<decimal>(type: "decimal(10,2)", nullable: true),
+                    DocumentId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -456,10 +522,21 @@ namespace CAT.Migrations.MainDb
                         principalTable: "Jobs",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
-                });
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Analysis_DocumentId_Type_SourceLanguage_TargetLanguage_Speciality",
+                name: "IX_Allocations_JobId",
+                table: "Allocations",
+                column: "JobId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Allocations_UserId",
+                table: "Allocations",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Analysis_DocumentId_Type_SourceLanguage_TargetLanguage_Speci~",
                 table: "Analysis",
                 columns: new[] { "DocumentId", "Type", "SourceLanguage", "TargetLanguage", "Speciality" });
 
@@ -471,8 +548,7 @@ namespace CAT.Migrations.MainDb
             migrationBuilder.CreateIndex(
                 name: "IX_ClientRates_RateId",
                 table: "ClientRates",
-                column: "RateId",
-                unique: true);
+                column: "RateId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Clients_AddressId",
@@ -512,11 +588,6 @@ namespace CAT.Migrations.MainDb
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_LinguistLanguagePairs_LinguistId",
-                table: "LinguistLanguagePairs",
-                column: "LinguistId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_LinguistRates_LinguistId",
                 table: "LinguistRates",
                 column: "LinguistId");
@@ -524,8 +595,7 @@ namespace CAT.Migrations.MainDb
             migrationBuilder.CreateIndex(
                 name: "IX_LinguistRates_RateId",
                 table: "LinguistRates",
-                column: "RateId",
-                unique: true);
+                column: "RateId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Linguists_AddressId",
@@ -568,6 +638,9 @@ namespace CAT.Migrations.MainDb
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
+                name: "Allocations");
+
+            migrationBuilder.DropTable(
                 name: "Analysis");
 
             migrationBuilder.DropTable(
@@ -587,9 +660,6 @@ namespace CAT.Migrations.MainDb
 
             migrationBuilder.DropTable(
                 name: "Languages");
-
-            migrationBuilder.DropTable(
-                name: "LinguistLanguagePairs");
 
             migrationBuilder.DropTable(
                 name: "LinguistRates");
