@@ -50,7 +50,14 @@
                         @Html.DisplayFor(modelItem => storedQuote.DateCreated)
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => storedQuote.OrderId)
+                        @if (@storedQuote.OrderId > 0)
+                        {
+                            <a href="/BackOffice/Monitoring?orderId=@storedQuote.OrderId" target="_blank">@storedQuote.OrderId</a>
+                        }
+                        else
+                        {
+                            @:N/A
+                        }
                     </td>
                     <td>
                         £@Html.DisplayFor(modelItem => storedQuote.Fee)
