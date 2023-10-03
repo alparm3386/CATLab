@@ -120,6 +120,10 @@ builder.Services.AddTransient<IEmailSender, SmtpEmailSender>();
 
 var app = builder.Build();
 
+//hangfire
+app.UseHangfireDashboard();
+app.UseHangfireServer();
+
 //EnsureRoleCreated(app).Wait();
 
 if (app.Environment.IsDevelopment())
