@@ -1,6 +1,7 @@
 ﻿using CAT.Areas.BackOffice.Services;
 using CAT.Infrastructure;
 using CAT.Models.Entities.Main;
+using Hangfire;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -33,9 +34,18 @@ namespace CAT.Areas.API.Internal.Controllers
             return Ok(monitoringData);
         }
 
+        [System.ComponentModel.DisplayName("MethodWithParameters yyy {0}")]
+        public void MethodWithParameters(string message)
+        {
+            Console.WriteLine(message);
+        }
+
         [HttpGet("GetJobData")]
         public async Task<IActionResult> GetJobData(int jobId)
         {
+            string param = "Hello from Hangfire!";
+            BackgroundJob.Enqueue(() => MethodWithParameters(param));
+
             var jobData = await _monitoringService.GetJobData(jobId);
             return Ok(jobData);
         }

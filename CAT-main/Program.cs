@@ -20,6 +20,10 @@ using System.Security.Claims;
 using Microsoft.Extensions.Options;
 using System.Transactions;
 using CAT.Helpers;
+using Hangfire;
+using Hangfire.MySql;
+using System.Configuration;
+using Microsoft.Extensions.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -58,6 +62,15 @@ builder.Services.AddSingleton<ILanguageService, LanguageService>();
 //builder.Services.AddSingleton<ConstantRepository>();
 builder.Services.AddControllersWithViews().AddRazorRuntimeCompilation();
 builder.Services.AddAntiforgery(options => options.HeaderName = "XSRF-TOKEN");
+
+// Configure Hangfire services
+builder.Services.AddHangfire(config => config
+    .UseStorage(new MySqlStorage(builder.Configuration.GetConnectionString("HangfireConnection"), new MySqlStorageOptions()
+    {
+    })));
+
+builder.Services.AddHangfireServer();
+
 
 builder.Services.TryAddEnumerable(new[]
     {
