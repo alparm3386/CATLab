@@ -6,6 +6,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>aspnet-CAT-40b194ac-7a29-45ce-9b68-031725d1ca6e</UserSecretsId>
     <RootNamespace>CAT</RootNamespace>
+    <OutputType>Exe</OutputType>
   </PropertyGroup>
 
   <ItemGroup>

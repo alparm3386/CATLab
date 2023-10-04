@@ -1,0 +1,20 @@
+# syntax=docker/dockerfile:1
+
+# Use the .NET SDK as a base image for building the project
+FROM mcr.microsoft.com/dotnet/sdk:7.0 as build-env
+WORKDIR /app
+
+# Copy the .csproj file and restore any dependencies (via dotnet restore)
+COPY *.csproj .
+RUN dotnet restore
+
+# Publish the application to the /publish directory in Release configuration
+COPY . .
+RUN dotnet publish -c Release -o /publish
+
+# Use the .NET runtime image for running the application
+FROM mcr.microsoft.com/dotnet/aspnet:7.0 as runtime
+WORKDIR /app
+COPY --from=build-env /publish .
+EXPOSE 80
+ENTRYPOINT ["dotnet", "CAT-main.dll"]
