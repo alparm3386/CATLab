@@ -50,22 +50,25 @@
     <Folder Include="Migrations\MainDb\" />
     <Folder Include="Migrations\TranslationUnitsDb\" />
     <Folder Include="Models\DTOs\" />
-    <Folder Include="NewFolder\" />
   </ItemGroup>
   <ItemGroup>
   	<Compile Include="**\*.csccc" Exclude="WebUI\**\*.*" />
 	</ItemGroup>
   <ItemGroup>
     <Compile Remove="Areas\LinguistPortal\**" />
+    <Compile Remove="NewFolder\**" />
     <Compile Remove="WebUI\Backoffice\angular\projects\cat-common\NewFolder\**" />
     <Compile Remove="WebUI\Monitoring\**" />
     <Content Remove="Areas\LinguistPortal\**" />
+    <Content Remove="NewFolder\**" />
     <Content Remove="WebUI\Backoffice\angular\projects\cat-common\NewFolder\**" />
     <Content Remove="WebUI\Monitoring\**" />
     <EmbeddedResource Remove="Areas\LinguistPortal\**" />
+    <EmbeddedResource Remove="NewFolder\**" />
     <EmbeddedResource Remove="WebUI\Backoffice\angular\projects\cat-common\NewFolder\**" />
     <EmbeddedResource Remove="WebUI\Monitoring\**" />
     <None Remove="Areas\LinguistPortal\**" />
+    <None Remove="NewFolder\**" />
     <None Remove="WebUI\Backoffice\angular\projects\cat-common\NewFolder\**" />
     <None Remove="WebUI\Monitoring\**" />
   </ItemGroup>

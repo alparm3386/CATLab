@@ -21,8 +21,11 @@ namespace CAT.Data
         public DbSet<Address> Addresses { get; set; } = default!;
 
         public DbSet<Job> Jobs { get; set; } = default!;
+        
         public DbSet<Document> Documents { get; set; } = default!;
+        
         public DbSet<DocumentFilter> DocumentFilters { get; set; } = default!;
+        
         public DbSet<Filter> Filters { get; set; } = default!;
 
         public DbSet<Analysis> Analisys { get; set; } = default!;
@@ -57,9 +60,7 @@ namespace CAT.Data
         {
             //DocumentFilter indexes
             modelBuilder.Entity<DocumentFilter>()
-                .HasNoKey()
-                .HasIndex(p => new { p.DocumentId, p.FilterId })
-                .IsUnique();
+                .HasIndex(p => new { p.DocumentId, p.FilterId });
 
             //Analysis index
             modelBuilder.Entity<Analysis>()

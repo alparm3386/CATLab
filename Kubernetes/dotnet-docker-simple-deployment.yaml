@@ -1,0 +1,17 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dotnet-docker-simple
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: dotnet-docker-simple
+  template:
+    metadata:
+      labels:
+        app: dotnet-docker-simple
+    spec:
+      containers:
+      - name: dotnet-container
+        image: dotnet-docker-simplee:latest
