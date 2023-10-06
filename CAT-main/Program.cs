@@ -24,6 +24,7 @@ using Hangfire;
 using Hangfire.MySql;
 using System.Configuration;
 using Microsoft.Extensions.Configuration;
+using Microsoft.AspNetCore.DataProtection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -61,6 +62,9 @@ builder.Services.AddSingleton<ILanguageService, LanguageService>();
 //builder.Services.AddSingleton<ConstantRepository>();
 builder.Services.AddControllersWithViews().AddRazorRuntimeCompilation();
 builder.Services.AddAntiforgery(options => options.HeaderName = "XSRF-TOKEN");
+builder.Services.AddDataProtection()
+    .PersistKeysToFileSystem(new DirectoryInfo("/app/keys"));
+
 
 // Configure Hangfire services
 builder.Services.AddHangfire(config => config

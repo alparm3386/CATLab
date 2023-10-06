@@ -10,7 +10,7 @@ RUN dotnet restore
 
 # Publish the application to the /publish directory in Release configuration
 COPY . .
-RUN dotnet publish -c Release -o /publish
+RUN dotnet publish -c Debug -o /publish
 
 # Use the .NET runtime image for running the application
 FROM mcr.microsoft.com/dotnet/aspnet:7.0 as runtime
