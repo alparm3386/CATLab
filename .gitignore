@@ -19,3 +19,10 @@ obj
 /CAT-main/WebUI/Backoffice/angular/dist
 /CAT-main/WebUI/Backoffice/angular/node_modules
 
+.metadata
+/Java/Okapi master/filter plugins/target
+/Java/Okapi master/okapi service/target
+.classpath
+.project
+.settings
+/Java/Okapi master/okapi test/target
