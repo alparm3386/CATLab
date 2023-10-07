@@ -1,0 +1,362 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <option name="USE_RELEASE_OPTION" value="false" />
+    <annotationProcessing>
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="okapi-step-codeshandling" />
+        <module name="okapi-connector-google" />
+        <module name="okapi-filter-tmx" />
+        <module name="okapi-lib-segmentation-ui" />
+        <module name="okapi-step-segmentation" />
+        <module name="okapi-connector-globalsight" />
+        <module name="okapi-filter-transifex-ui" />
+        <module name="okapi test" />
+        <module name="okapi-filter-abstractmarkup" />
+        <module name="okapi-step-formatconversion" />
+        <module name="okapi-connector-tda" />
+        <module name="okapi-core-ui" />
+        <module name="okapi-filter-markdown" />
+        <module name="okapi-connector-apertium" />
+        <module name="filter plugins" />
+        <module name="okapi-lib-xliff2" />
+        <module name="okapi-connector-googleautoml" />
+        <module name="build-logback" />
+        <module name="okapi-core" />
+        <module name="okapi-connector-microsoft" />
+        <module name="okapi-step-translationcomparison" />
+        <module name="okapi-application-checkmate" />
+        <module name="okapi-step-rainbowkit" />
+        <module name="okapi-filter-archive" />
+        <module name="okapi-filter-table" />
+        <module name="okapi-step-diffleverage" />
+        <module name="okapi-step-repetitionanalysis" />
+        <module name="okapi-application-ratel" />
+        <module name="okapi-filter-icml" />
+        <module name="okapi-filter-ttx" />
+        <module name="okapi-filter-pdf" />
+        <module name="okapi-filter-sdlpackage" />
+        <module name="okapi-step-generatesimpletm" />
+        <module name="okapi-connector-mmt" />
+        <module name="OkapiService" />
+        <module name="okapi-filter-mosestext" />
+        <module name="okapi-filter-xmlstream" />
+        <module name="okapi-filter-rainbowkit" />
+        <module name="okapi-filter-openxml-ui" />
+        <module name="okapi-filter-rainbowkit-ui" />
+        <module name="okapi-filter-txml" />
+        <module name="okapi-step-uriconversion" />
+        <module name="okapi-filter-rtf" />
+        <module name="okapi-step-leveraging" />
+        <module name="okapi-step-scopingreport" />
+        <module name="okapi-filter-po" />
+        <module name="okapi-connector-simpletm" />
+        <module name="okapi-application-rainbow" />
+        <module name="okapi-filter-properties" />
+        <module name="okapi-step-leveraging-ui" />
+        <module name="okapi-connector-pensieve" />
+        <module name="okapi-lib-search" />
+        <module name="okapi-step-encodingconversion" />
+        <module name="okapi-filter-transifex" />
+        <module name="okapi-filter-idml" />
+        <module name="okapi-tm-simpletm" />
+        <module name="okapi-connector-crosslanguage" />
+        <module name="okapi-filter-mif" />
+        <module name="okapi-step-qualitycheck" />
+        <module name="okapi-filter-transtable" />
+        <module name="okapi-step-xliffsplitter" />
+        <module name="okapi-step-moses" />
+        <module name="okapi-filter-properties-ui" />
+        <module name="okapi-step-searchandreplace-ui" />
+        <module name="okapi-application-logger" />
+        <module name="okapi-step-xsltransform-ui" />
+        <module name="okapi-it-pensieve" />
+        <module name="okapi-filter-ts-ui" />
+        <module name="okapi-step-imagemodification" />
+        <module name="okapi-step-fullwidthconversion" />
+        <module name="okapi-step-enrycher" />
+        <module name="okapi-step-segmentation-ui" />
+        <module name="okapi-lib-transifex" />
+        <module name="okapi-filter-tex" />
+        <module name="okapi-step-common" />
+        <module name="okapi-it-applications" />
+        <module name="okapi-step-termextraction" />
+        <module name="okapi-filter-json" />
+        <module name="okapi-connector-kantan" />
+        <module name="okapi-step-rainbowkit-ui" />
+        <module name="okapi-filter-xliff" />
+        <module name="okapi-lib-translation" />
+        <module name="okapi-filter-openoffice-ui" />
+        <module name="okapi-ui-harness" />
+        <module name="okapi-step-textmodification-ui" />
+        <module name="okapi-step-inconsistencycheck" />
+        <module name="okapi-lib-verification-ui" />
+        <module name="okapi-step-msbatchtranslation" />
+        <module name="okapi-filter-mif-ui" />
+        <module name="okapi-filter-plaintext-ui" />
+        <module name="okapi-lib-reporting" />
+        <module name="okapi-filter-po-ui" />
+        <module name="okapi-filter-html" />
+        <module name="okapi-filter-wiki" />
+        <module name="okapi-step-tokenization" />
+        <module name="okapi-step-fullwidthconversion-ui" />
+        <module name="okapi-lib-preprocessing" />
+        <module name="okapi-application-serval" />
+        <module name="okapi-lib-terminology" />
+        <module name="okapi-step-terminology-leveraging" />
+        <module name="okapi-filter-multiparsers" />
+        <module name="okapi-filter-openoffice" />
+        <module name="okapi-step-textmodification" />
+        <module name="okapi-filter-php" />
+        <module name="okapi-step-bomconversion" />
+        <module name="okapi-example-05" />
+        <module name="okapi-example-04" />
+        <module name="okapi-example-03" />
+        <module name="okapi-example-02" />
+        <module name="okapi-step-xmlvalidation" />
+        <module name="okapi-example-01" />
+        <module name="okapi-step-rtfconversion" />
+        <module name="okapi-filter-yaml" />
+        <module name="okapi-filter-pensieve" />
+        <module name="okapi-step-xsltransform" />
+        <module name="okapi-lib-translation-ui" />
+        <module name="okapi-connector-translatetoolkit" />
+        <module name="okapi-lib-ui" />
+        <module name="okapi-example-07" />
+        <module name="okapi-example-06" />
+        <module name="okapi-filter-markdown-ui" />
+        <module name="okapi-connector-promt" />
+        <module name="okapi-connector-lingo24" />
+        <module name="okapi-step-wordcount" />
+        <module name="okapi-connector-mymemory" />
+        <module name="okapi-filter-json-ui" />
+        <module name="okapi-filter-ts" />
+        <module name="okapi-step-encodingconversion-ui" />
+        <module name="okapi-tm-pensieve" />
+        <module name="okapi-step-uriconversion-ui" />
+        <module name="okapi-step-ttxsplitter" />
+        <module name="okapi-step-linebreakconversion" />
+        <module name="okapi-step-tradosutils" />
+        <module name="okapi-step-cleanup" />
+        <module name="okapi-step-bomconversion-ui" />
+        <module name="okapi-step-charlisting" />
+        <module name="okapi-step-aligner" />
+        <module name="okapi-step-whitespacecorrection" />
+        <module name="okapi-filter-dtd" />
+        <module name="okapi-filter-regex" />
+        <module name="okapi-step-copyormove" />
+        <module name="okapi-filter-doxygen" />
+        <module name="okapi-lib-merge" />
+        <module name="okapi-filter-xliff-ui" />
+        <module name="okapi-filter-vignette" />
+        <module name="okapi-lib-verification" />
+        <module name="okapi-connector-deepl" />
+        <module name="okapi-filter-abstractmarkup-ui" />
+        <module name="okapi-connector-moses" />
+        <module name="okapi-filter-xini" />
+        <module name="okapi-filter-plaintext" />
+        <module name="okapi-filter-openxml" />
+        <module name="okapi-step-idbasedaligner" />
+        <module name="okapi-filter-regex-ui" />
+        <module name="okapi-filter-table-ui" />
+        <module name="okapi-step-searchandreplace" />
+        <module name="filterPlugins" />
+        <module name="okapi-lib-segmentation" />
+        <module name="okapi-step-external-command" />
+        <module name="okapi-it-okapi" />
+        <module name="okapi-lib" />
+        <module name="okapi-connector-bifile" />
+        <module name="okapi-application-tikal" />
+        <module name="okapi-filter-xliff2" />
+        <module name="okapi-filter-its" />
+        <module name="okapi-filter-autoxliff" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel target="8">
+      <module name="build-applications" target="1.8" />
+      <module name="build-connectors" target="1.8" />
+      <module name="build-examples" target="1.8" />
+      <module name="build-filters" target="1.8" />
+      <module name="build-filters-ui" target="1.8" />
+      <module name="build-libraries" target="1.8" />
+      <module name="build-libraries-ui" target="1.8" />
+      <module name="build-logback" target="1.8" />
+      <module name="build-okapi" target="1.8" />
+      <module name="build-okapi-it" target="1.8" />
+      <module name="build-okapi-root" target="1.8" />
+      <module name="build-okapi-superpom" target="1.8" />
+      <module name="build-okapi-ui" target="1.8" />
+      <module name="build-steps" target="1.8" />
+      <module name="build-steps-ui" target="1.8" />
+      <module name="build-test-utilities" target="1.8" />
+      <module name="build-tm" target="1.8" />
+      <module name="filterPlugins" target="1.8" />
+      <module name="okapi test" target="14" />
+      <module name="okapi-application-checkmate" target="1.8" />
+      <module name="okapi-application-logger" target="1.8" />
+      <module name="okapi-application-rainbow" target="1.8" />
+      <module name="okapi-application-ratel" target="1.8" />
+      <module name="okapi-application-serval" target="1.8" />
+      <module name="okapi-application-tikal" target="1.8" />
+      <module name="okapi-connector-apertium" target="1.8" />
+      <module name="okapi-connector-bifile" target="1.8" />
+      <module name="okapi-connector-crosslanguage" target="1.8" />
+      <module name="okapi-connector-deepl" target="1.8" />
+      <module name="okapi-connector-globalsight" target="1.8" />
+      <module name="okapi-connector-google" target="1.8" />
+      <module name="okapi-connector-googleautoml" target="1.8" />
+      <module name="okapi-connector-kantan" target="1.8" />
+      <module name="okapi-connector-lingo24" target="1.8" />
+      <module name="okapi-connector-microsoft" target="1.8" />
+      <module name="okapi-connector-mmt" target="1.8" />
+      <module name="okapi-connector-moses" target="1.8" />
+      <module name="okapi-connector-mymemory" target="1.8" />
+      <module name="okapi-connector-pensieve" target="1.8" />
+      <module name="okapi-connector-promt" target="1.8" />
+      <module name="okapi-connector-simpletm" target="1.8" />
+      <module name="okapi-connector-tda" target="1.8" />
+      <module name="okapi-connector-translatetoolkit" target="1.8" />
+      <module name="okapi-core" target="1.8" />
+      <module name="okapi-core-ui" target="1.8" />
+      <module name="okapi-example-01" target="1.8" />
+      <module name="okapi-example-02" target="1.8" />
+      <module name="okapi-example-03" target="1.8" />
+      <module name="okapi-example-04" target="1.8" />
+      <module name="okapi-example-05" target="1.8" />
+      <module name="okapi-example-06" target="1.8" />
+      <module name="okapi-example-07" target="1.8" />
+      <module name="okapi-filter-abstractmarkup" target="1.8" />
+      <module name="okapi-filter-abstractmarkup-ui" target="1.8" />
+      <module name="okapi-filter-archive" target="1.8" />
+      <module name="okapi-filter-autoxliff" target="1.8" />
+      <module name="okapi-filter-doxygen" target="1.8" />
+      <module name="okapi-filter-dtd" target="1.8" />
+      <module name="okapi-filter-html" target="1.8" />
+      <module name="okapi-filter-icml" target="1.8" />
+      <module name="okapi-filter-idml" target="1.8" />
+      <module name="okapi-filter-its" target="1.8" />
+      <module name="okapi-filter-json" target="1.8" />
+      <module name="okapi-filter-json-ui" target="1.8" />
+      <module name="okapi-filter-markdown" target="1.8" />
+      <module name="okapi-filter-markdown-ui" target="1.8" />
+      <module name="okapi-filter-mif" target="1.8" />
+      <module name="okapi-filter-mif-ui" target="1.8" />
+      <module name="okapi-filter-mosestext" target="1.8" />
+      <module name="okapi-filter-multiparsers" target="1.8" />
+      <module name="okapi-filter-openoffice" target="1.8" />
+      <module name="okapi-filter-openoffice-ui" target="1.8" />
+      <module name="okapi-filter-openxml" target="1.8" />
+      <module name="okapi-filter-openxml-ui" target="1.8" />
+      <module name="okapi-filter-pdf" target="1.8" />
+      <module name="okapi-filter-pensieve" target="1.8" />
+      <module name="okapi-filter-php" target="1.8" />
+      <module name="okapi-filter-plaintext" target="1.8" />
+      <module name="okapi-filter-plaintext-ui" target="1.8" />
+      <module name="okapi-filter-po" target="1.8" />
+      <module name="okapi-filter-po-ui" target="1.8" />
+      <module name="okapi-filter-properties" target="1.8" />
+      <module name="okapi-filter-properties-ui" target="1.8" />
+      <module name="okapi-filter-rainbowkit" target="1.8" />
+      <module name="okapi-filter-rainbowkit-ui" target="1.8" />
+      <module name="okapi-filter-regex" target="1.8" />
+      <module name="okapi-filter-regex-ui" target="1.8" />
+      <module name="okapi-filter-rtf" target="1.8" />
+      <module name="okapi-filter-sdlpackage" target="1.8" />
+      <module name="okapi-filter-table" target="1.8" />
+      <module name="okapi-filter-table-ui" target="1.8" />
+      <module name="okapi-filter-tex" target="1.8" />
+      <module name="okapi-filter-tmx" target="1.8" />
+      <module name="okapi-filter-transifex" target="1.8" />
+      <module name="okapi-filter-transifex-ui" target="1.8" />
+      <module name="okapi-filter-transtable" target="1.8" />
+      <module name="okapi-filter-ts" target="1.8" />
+      <module name="okapi-filter-ts-ui" target="1.8" />
+      <module name="okapi-filter-ttx" target="1.8" />
+      <module name="okapi-filter-txml" target="1.8" />
+      <module name="okapi-filter-vignette" target="1.8" />
+      <module name="okapi-filter-wiki" target="1.8" />
+      <module name="okapi-filter-xini" target="1.8" />
+      <module name="okapi-filter-xliff" target="1.8" />
+      <module name="okapi-filter-xliff-ui" target="1.8" />
+      <module name="okapi-filter-xliff2" target="1.8" />
+      <module name="okapi-filter-xmlstream" target="1.8" />
+      <module name="okapi-filter-yaml" target="1.8" />
+      <module name="okapi-it-applications" target="1.8" />
+      <module name="okapi-it-okapi" target="1.8" />
+      <module name="okapi-it-pensieve" target="1.8" />
+      <module name="okapi-lib" target="1.8" />
+      <module name="okapi-lib-merge" target="1.8" />
+      <module name="okapi-lib-preprocessing" target="1.8" />
+      <module name="okapi-lib-reporting" target="1.8" />
+      <module name="okapi-lib-search" target="1.8" />
+      <module name="okapi-lib-segmentation" target="1.8" />
+      <module name="okapi-lib-segmentation-ui" target="1.8" />
+      <module name="okapi-lib-terminology" target="1.8" />
+      <module name="okapi-lib-transifex" target="1.8" />
+      <module name="okapi-lib-translation" target="1.8" />
+      <module name="okapi-lib-translation-ui" target="1.8" />
+      <module name="okapi-lib-ui" target="1.8" />
+      <module name="okapi-lib-verification" target="1.8" />
+      <module name="okapi-lib-verification-ui" target="1.8" />
+      <module name="okapi-lib-xliff2" target="1.8" />
+      <module name="okapi-step-aligner" target="1.8" />
+      <module name="okapi-step-bomconversion" target="1.8" />
+      <module name="okapi-step-bomconversion-ui" target="1.8" />
+      <module name="okapi-step-charlisting" target="1.8" />
+      <module name="okapi-step-cleanup" target="1.8" />
+      <module name="okapi-step-codeshandling" target="1.8" />
+      <module name="okapi-step-common" target="1.8" />
+      <module name="okapi-step-copyormove" target="1.8" />
+      <module name="okapi-step-diffleverage" target="1.8" />
+      <module name="okapi-step-encodingconversion" target="1.8" />
+      <module name="okapi-step-encodingconversion-ui" target="1.8" />
+      <module name="okapi-step-enrycher" target="1.8" />
+      <module name="okapi-step-external-command" target="1.8" />
+      <module name="okapi-step-formatconversion" target="1.8" />
+      <module name="okapi-step-fullwidthconversion" target="1.8" />
+      <module name="okapi-step-fullwidthconversion-ui" target="1.8" />
+      <module name="okapi-step-generatesimpletm" target="1.8" />
+      <module name="okapi-step-idbasedaligner" target="1.8" />
+      <module name="okapi-step-imagemodification" target="1.8" />
+      <module name="okapi-step-inconsistencycheck" target="1.8" />
+      <module name="okapi-step-leveraging" target="1.8" />
+      <module name="okapi-step-leveraging-ui" target="1.8" />
+      <module name="okapi-step-linebreakconversion" target="1.8" />
+      <module name="okapi-step-moses" target="1.8" />
+      <module name="okapi-step-msbatchtranslation" target="1.8" />
+      <module name="okapi-step-qualitycheck" target="1.8" />
+      <module name="okapi-step-rainbowkit" target="1.8" />
+      <module name="okapi-step-rainbowkit-ui" target="1.8" />
+      <module name="okapi-step-repetitionanalysis" target="1.8" />
+      <module name="okapi-step-rtfconversion" target="1.8" />
+      <module name="okapi-step-scopingreport" target="1.8" />
+      <module name="okapi-step-searchandreplace" target="1.8" />
+      <module name="okapi-step-searchandreplace-ui" target="1.8" />
+      <module name="okapi-step-segmentation" target="1.8" />
+      <module name="okapi-step-segmentation-ui" target="1.8" />
+      <module name="okapi-step-termextraction" target="1.8" />
+      <module name="okapi-step-terminology-leveraging" target="1.8" />
+      <module name="okapi-step-textmodification" target="1.8" />
+      <module name="okapi-step-textmodification-ui" target="1.8" />
+      <module name="okapi-step-tokenization" target="1.8" />
+      <module name="okapi-step-tradosutils" target="1.8" />
+      <module name="okapi-step-translationcomparison" target="1.8" />
+      <module name="okapi-step-ttxsplitter" target="1.8" />
+      <module name="okapi-step-uriconversion" target="1.8" />
+      <module name="okapi-step-uriconversion-ui" target="1.8" />
+      <module name="okapi-step-whitespacecorrection" target="1.8" />
+      <module name="okapi-step-wordcount" target="1.8" />
+      <module name="okapi-step-xliffsplitter" target="1.8" />
+      <module name="okapi-step-xmlvalidation" target="1.8" />
+      <module name="okapi-step-xsltransform" target="1.8" />
+      <module name="okapi-step-xsltransform-ui" target="1.8" />
+      <module name="okapi-tm-pensieve" target="1.8" />
+      <module name="okapi-tm-simpletm" target="1.8" />
+      <module name="okapi-ui-harness" target="1.8" />
+      <module name="OkapiService" target="14" />
+    </bytecodeTargetLevel>
+  </component>
+</project>

@@ -1,0 +1,14 @@
+okapi/okapi/connectors/pensieve/src/main/java/net/sf/okapi/connectors/pensieve/PensieveTMConnector.java
+okapi/okapi/core/src/main/java/net/sf/okapi/common/Util.java
+okapi/okapi/filters/pensieve/src/main/java/net/sf/okapi/filters/pensieve/PensieveFilterWriter.java
+okapi/okapi/filters/tmx/src/main/java/net/sf/okapi/filters/tmx/TmxFilter.java
+okapi/okapi/filters/tmx/src/main/java/net/sf/okapi/filters/tmx/TmxUtils.java
+okapi/okapi/tikal/src/main/java/net/sf/okapi/applications/tikal/Main.java
+okapi/core/src/main/java/net/sf/okapi/common/filterwriter/XliffWriter.java
+
+CAT/Okapi master/okapi/okapi/filters/openxml/src/main/java/net/sf/okapi/filters/openxml/WordDocument.java
+CAT/Okapi master/okapi service/src/com/tm/okapi/utils/Logging.java
+CAT/Okapi master/okapi/okapi/libraries/lib-segmentation/src/main/java/net/sf/okapi/lib/segmentation/SRXSegmenter.java
+CAT/Okapi master/okapi/okapi/filters/openxml/src/main/java/net/sf/okapi/filters/openxml/TextUnitMapper.java
+CAT/Okapi master/okapi/okapi/core/src/main/java/net/sf/okapi/common/skeleton/GenericSkeletonWriter.java
+CAT/Okapi master/okapi/okapi/filters/its/src/main/java/net/sf/okapi/filters/its/ITSFilter.java
