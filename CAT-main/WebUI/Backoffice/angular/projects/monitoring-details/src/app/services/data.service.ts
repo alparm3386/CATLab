@@ -7,7 +7,7 @@ import { Observable, BehaviorSubject } from 'rxjs';
 })
 export class DataService {
 
-  private apiUrl = 'https://localhost:7096/api/Monitoring';
+  private apiUrl = '/api/Monitoring';
   private dataSubject = new BehaviorSubject<any>(null);
   public data$ = this.dataSubject.asObservable();
 
