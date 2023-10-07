@@ -1,0 +1,28 @@
+﻿# syntax=docker/dockerfile:1
+
+# Use the .NET SDK as a base image for building and running the project
+FROM mcr.microsoft.com/dotnet/sdk:7.0
+WORKDIR /app
+
+# Copy the .csproj file and restore any dependencies (via dotnet restore)
+COPY *.csproj .
+RUN dotnet restore
+
+# Copy the rest of the application and the necessary assets
+COPY . .
+COPY WebUI/Backoffice/angular/dist/monitoring/runtime.js /app/WebUI/runtime.js
+COPY WebUI/Backoffice/angular/dist/monitoring /app/WebUI/
+COPY WebUI/Backoffice/angular/dist/monitoring-details /app/WebUI/
+
+# Publish the application to the /app/publish directory
+RUN dotnet publish -c Debug -o /app/publish
+
+# Set the working directory to the published directory
+WORKDIR /app/publish
+
+# Expose necessary ports
+EXPOSE 80
+EXPOSE 443
+
+# Set the entry point
+ENTRYPOINT ["dotnet", "CAT-main.dll"]

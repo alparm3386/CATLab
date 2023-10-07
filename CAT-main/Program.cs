@@ -25,6 +25,7 @@ using Hangfire.MySql;
 using System.Configuration;
 using Microsoft.Extensions.Configuration;
 using Microsoft.AspNetCore.DataProtection;
+using NuGet.Protocol;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -62,8 +63,10 @@ builder.Services.AddSingleton<ILanguageService, LanguageService>();
 //builder.Services.AddSingleton<ConstantRepository>();
 builder.Services.AddControllersWithViews().AddRazorRuntimeCompilation();
 builder.Services.AddAntiforgery(options => options.HeaderName = "XSRF-TOKEN");
-builder.Services.AddDataProtection()
-    .PersistKeysToFileSystem(new DirectoryInfo("/app/keys"));
+
+var keyLocation = builder.Configuration.GetValue<string>("KeyStoragePath");
+var dataProtectionBuilder = builder.Services.AddDataProtection().PersistKeysToFileSystem(new DirectoryInfo(keyLocation!));
+
 
 
 // Configure Hangfire services
@@ -121,6 +124,9 @@ builder.Logging.AddProvider(new Log4NetLoggerProvider("log4net.config"));
 
 builder.Services.AddTransient<IEmailSender, SmtpEmailSender>();
 
+//use lowercase urls
+//builder.Services.AddRouting(options => options.LowercaseUrls = true);
+
 var app = builder.Build();
 
 //hangfire
@@ -153,7 +159,7 @@ else
     app.UseHsts();
 }
 
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 
 app.UseStaticFiles(new StaticFileOptions
 {

@@ -15,3 +15,7 @@ obj
 /Contents
 .vs
 /.vs/CAT/v17/*.suo
+/CAT-main/WebUI/Backoffice/angular/.angular
+/CAT-main/WebUI/Backoffice/angular/dist
+/CAT-main/WebUI/Backoffice/angular/node_modules
+
