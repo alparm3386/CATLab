@@ -1,0 +1,562 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:okp="okapi-framework:xliff-extensions" xmlns:its="http://www.w3.org/2005/11/its" xmlns:itsxlf="http://www.w3.org/ns/its-xliff/" its:version="2.0">
+<file original="unknown" source-language="en" target-language="fr" datatype="x-text/plain" okp:inputEncoding="UTF-8">
+<body>
+<trans-unit id="1" xml:space="preserve">
+<source xml:lang="en">Biden to nominate Janet Yellen as US treasury secretary</source>
+<seg-source><mrk mid="0" mtype="seg" status="tmNotStarted">Biden to nominate Janet Yellen as US treasury secretary</mrk></seg-source>
+<target xml:lang="fr"><mrk mid="0" mtype="seg"></mrk></target>
+</trans-unit>
+<trans-unit id="2" xml:space="preserve">
+<source xml:lang="en">Published</source>
+<seg-source><mrk mid="0" mtype="seg" status="tmPreTranslated:100">Published</mrk></seg-source>
+<target xml:lang="fr"><mrk mid="0" mtype="seg">Imprimée FR 2</mrk></target>
+</trans-unit>
+<trans-unit id="3" xml:space="preserve">
+<source xml:lang="en">1 hour ago</source>
+<seg-source><mrk mid="0" mtype="seg" status="tmPreTranslated:101">1 hour ago</mrk></seg-source>
+<target xml:lang="fr"><mrk mid="0" mtype="seg">Il y a 1 heure proofreading</mrk></target>
+</trans-unit>
+<trans-unit id="4" xml:space="preserve">
+<source xml:lang="en">Share</source>
+<seg-source><mrk mid="0" mtype="seg" status="tmPreTranslated:100">Share</mrk></seg-source>
+<target xml:lang="fr"><mrk mid="0" mtype="seg">Partager</mrk></target>
+</trans-unit>
+<trans-unit id="5" xml:space="preserve">
+<source xml:lang="en">IMAGE COPYRIGHTREUTERS</source>
+<seg-source><mrk mid="0" mtype="seg" status="tmNotStarted">IMAGE COPYRIGHTREUTERS</mrk></seg-source>
+<target xml:lang="fr"><mrk mid="0" mtype="seg"></mrk></target>
+</trans-unit>
+<trans-unit id="6" xml:space="preserve">
+<source xml:lang="en">image captionJanet Yellen's appointment needs to be confirmed by the Senate</source>
+<seg-source><mrk mid="0" mtype="seg" status="tmNotStarted">image captionJanet Yellen's appointment needs to be confirmed by the Senate</mrk></seg-source>
+<target xml:lang="fr"><mrk mid="0" mtype="seg"></mrk></target>
+</trans-unit>
+<trans-unit id="7" xml:space="preserve">
+<source xml:lang="en">US President-elect Joe Biden has named ex-Federal Reserve chair Janet Yellen as his nominee for treasury secretary.</source>
+<seg-source><mrk mid="0" mtype="seg" status="tmPreTranslated:100">US President-elect Joe Biden has named ex-Federal Reserve chair Janet Yellen as his nominee for treasury secretary.</mrk></seg-source>
+<target xml:lang="fr"><mrk mid="0" mtype="seg">Joe Biden, président élu des États-Unis, a nommé Janet Yellen, ex-présidente de la Réserve fédérale, comme sa candidate au poste de secrétaire au Trésor.</mrk></target>
+</trans-unit>
+<trans-unit id="8" xml:space="preserve">
+<source xml:lang="en">If confirmed by the Senate, she would be the first woman ever to hold the post.</source>
+<seg-source><mrk mid="0" mtype="seg" status="tmNotStarted">If confirmed by the Senate, she would be the first woman ever to hold the post.</mrk></seg-source>
+<target xml:lang="fr"><mrk mid="0" mtype="seg"></mrk></target>
+</trans-unit>
+<trans-unit id="9" xml:space="preserve">
+<source xml:lang="en">She was among several women chosen for top economic positions. The Biden transition team said others were set to break racial barriers if confirmed.</source>
+<seg-source><mrk mid="0" mtype="seg" status="tmPreTranslated:100">She was among several women chosen for top economic positions. </mrk><mrk mid="1" mtype="seg" status="tmPreTranslated:101">The Biden transition team said others were set to break racial barriers if confirmed.</mrk></seg-source>
+<target xml:lang="fr"><mrk mid="0" mtype="seg">Elle a été parmi plusieurs femmes choisies pour des postes économiques de haut niveau. </mrk><mrk mid="1" mtype="seg">L'équipe de transition de Biden a déclaré que d'autres étaient prêts à briser les barrières raciales si elles étaient confirmées.</mrk></target>
+</trans-unit>
+<trans-unit id="10" xml:space="preserve">
+<source xml:lang="en">Mr Biden has pledged to build a diverse administration. He earlier appointed an all-female senior press team.</source>
+<seg-source><mrk mid="0" mtype="seg" status="tmPreTranslated:101">Mr Biden has pledged to build a diverse administration. </mrk><mrk mid="1" mtype="seg" status="tmPreTranslated:101">He earlier appointed an all-female senior press team.</mrk></seg-source>
+<target xml:lang="fr"><mrk mid="0" mtype="seg">M. Biden s'est engagé à construire une administration diversifiée. </mrk><mrk mid="1" mtype="seg">Il a plus tôt nommé une équipe de presse senior entièrement féminine.</mrk></target>
+</trans-unit>
+<trans-unit id="11" xml:space="preserve">
+<source xml:lang="en">Mr Biden's transition team said his picks for senior economic roles would help "lift America out of the current economic downturn and build back better".</source>
+<seg-source><mrk mid="0" mtype="seg" status="tmPreTranslated:101">Mr Biden's transition team said his picks for senior economic roles would help "lift America out of the current economic downturn and build back better".</mrk></seg-source>
+<target xml:lang="fr"><mrk mid="0" mtype="seg">L'équipe de transition de M. Biden a déclaré que ses choix pour des rôles économiques de haut niveau aideraient « à sortir l'Amérique du ralentissement économique actuel et à reconstruire en mieux ».</mrk></target>
+</trans-unit>
+<trans-unit id="12" xml:space="preserve">
+<source xml:lang="en">Mr Biden has also announced the formation of a Presidential Inaugural Committee ahead of his swearing-in on 20 January. The committee will be responsible for organising inauguration-related activities.</source>
+<seg-source><mrk mid="0" mtype="seg" status="tmPreTranslated:101">Mr Biden has also announced the formation of a Presidential Inaugural Committee ahead of his swearing-in on 20 January. </mrk><mrk mid="1" mtype="seg" status="tmPreTranslated:101">The committee will be responsible for organising inauguration-related activities.</mrk></seg-source>
+<target xml:lang="fr"><mrk mid="0" mtype="seg">M. Biden a également annoncé la formation d'un comité d'investiture présidentiel avant sa prestation de serment, le 20 janvier. </mrk><mrk mid="1" mtype="seg">Le comité sera chargé d'organiser les activités liées à l'inauguration.</mrk></target>
+</trans-unit>
+<trans-unit id="13" xml:space="preserve">
+<source xml:lang="en">Who is Janet Yellen?</source>
+<seg-source><mrk mid="0" mtype="seg" status="tmPreTranslated:100">Who is Janet Yellen?</mrk></seg-source>
+<target xml:lang="fr"><mrk mid="0" mtype="seg">Qui est Janet Yellen ?</mrk></target>
+</trans-unit>
+<trans-unit id="14" xml:space="preserve">
+<source xml:lang="en">Ms Yellen had been�widely tipped for the nomination in media reports prior to Monday's announcement.</source>
+<seg-source><mrk mid="0" mtype="seg" status="tmNotStarted">Ms Yellen had been�widely tipped for the nomination in media reports prior to Monday's announcement.</mrk></seg-source>
+<target xml:lang="fr"><mrk mid="0" mtype="seg"></mrk></target>
+</trans-unit>
+<trans-unit id="15" xml:space="preserve">
+<source xml:lang="en">The 74-year-old economist has served as head of America's central bank and as a top economics adviser to former President Bill Clinton.</source>
+<seg-source><mrk mid="0" mtype="seg" status="tmPreTranslated:100">The 74-year-old economist has served as head of America's central bank and as a top economics adviser to former President Bill Clinton.</mrk></seg-source>
+<target xml:lang="fr"><mrk mid="0" mtype="seg">L&amp;apos;économiste de 74 ans a été à la tête de la banque centrale américaine et l&amp;apos;un des principaux conseillers économiques de l&amp;apos;ancien président Bill Clinton.</mrk></target>
+</trans-unit>
+<trans-unit id="16" xml:space="preserve">
+<source xml:lang="en">She is credited with helping steer the economic recovery after the 2007 financial crisis and ensuing recession.</source>
+<seg-source><mrk mid="0" mtype="seg" status="tmPreTranslated:101">She is credited with helping steer the economic recovery after the 2007 financial crisis and ensuing recession.</mrk></seg-source>
+<target xml:lang="fr"><mrk mid="0" mtype="seg">On lui attribue le mérite d'avoir contribué à orienter la reprise économique après la crise financière de 2007 et la récession qui a suivi.</mrk></target>
+</trans-unit>
+<trans-unit id="17" xml:space="preserve">
+<source xml:lang="en">As chair of the US Federal Reserve, Ms Yellen was known for focusing more attention on the impact of the bank's policies on workers and the costs of America's rising inequality.</source>
+<seg-source><mrk mid="0" mtype="seg" status="tmPreTranslated:101">As chair of the US Federal Reserve, Ms Yellen was known for focusing more attention on the impact of the bank's policies on workers and the costs of America's rising inequality.</mrk></seg-source>
+<target xml:lang="fr"><mrk mid="0" mtype="seg">En tant que présidente de la Réserve fédérale américaine, Mme Yellen était connue pour accorder plus d'attention à l'impact des politiques de la banque sur les travailleurs et aux coûts de l'augmentation des inégalités en Amérique.</mrk></target>
+</trans-unit>
+<trans-unit id="18" xml:space="preserve">
+<source xml:lang="en">Donald Trump bucked Washington tradition when he opted not to appoint Ms Yellen to a second four-year term at the Fed. Starting with Bill Clinton in the 1990s, presidents kept on bank leaders appointed by their predecessors in an effort to de-politicise the bank.</source>
+<seg-source><mrk mid="0" mtype="seg" status="tmPreTranslated:101">Donald Trump bucked Washington tradition when he opted not to appoint Ms Yellen to a second four-year term at the Fed. </mrk><mrk mid="1" mtype="seg" status="tmPreTranslated:101">Starting with Bill Clinton in the 1990s, presidents kept on bank leaders appointed by their predecessors in an effort to de-politicise the bank.</mrk></seg-source>
+<target xml:lang="fr"><mrk mid="0" mtype="seg">Donald Trump a suivi la tradition de Washington en choisissant de ne pas nommer Mme Yellen pour un second mandat de quatre ans à la Fed. </mrk><mrk mid="1" mtype="seg">En commençant par Bill Clinton dans les années 1990, les présidents ont maintenu les dirigeants des banques nommés par leurs prédécesseurs dans un effort pour dépolitiser la banque.</mrk></target>
+</trans-unit>
+<trans-unit id="19" xml:space="preserve">
+<source xml:lang="en">Since leaving the bank in 2018, Ms Yellen has spoken out about climate change and the need for Washington to do more to shield the US economy from the impact of the coronavirus pandemic.</source>
+<seg-source><mrk mid="0" mtype="seg" status="tmPreTranslated:101">Since leaving the bank in 2018, Ms Yellen has spoken out about climate change and the need for Washington to do more to shield the US economy from the impact of the coronavirus pandemic.</mrk></seg-source>
+<target xml:lang="fr"><mrk mid="0" mtype="seg">Depuis son départ de la banque en 2018, Mme Yellen s&amp;apos;est exprimée sur le changement climatique et sur la nécessité pour Washington d&amp;apos;en faire plus pour protéger l&amp;apos;économie américaine de l&amp;apos;impact de la pandémie de coronavirus.</mrk></target>
+</trans-unit>
+<trans-unit id="20" xml:space="preserve">
+<source xml:lang="en">In a tweet following Monday's announcement, Ms Yellen said: "We face great challenges as a country right now. To recover, we must restore the American dream - a society where each person can rise to their potential and dream even bigger for their children.</source>
+<seg-source><mrk mid="0" mtype="seg" status="tmPreTranslated:101">In a tweet following Monday's announcement, Ms Yellen said: "We face great challenges as a country right now. </mrk><mrk mid="1" mtype="seg" status="tmPreTranslated:101">To recover, we must restore the American dream - a society where each person can rise to their potential and dream even bigger for their children.</mrk></seg-source>
+<target xml:lang="fr"><mrk mid="0" mtype="seg">Dans un tweet suivant l&amp;apos;annonce de lundi, Mme Yellen a déclaré : « Nous sommes confrontés à de grands défis en tant que pays en ce moment. </mrk><mrk mid="1" mtype="seg">Pour se rétablir, nous devons restaurer le rêve américain - une société où chaque personne peut s&amp;apos;élever à son plein potentiel et rêver encore plus pour ses enfants.</mrk></target>
+</trans-unit>
+<trans-unit id="21" xml:space="preserve">
+<source xml:lang="en">"As Treasury Secretary, I will work every day towards rebuilding that dream for all."</source>
+<seg-source><mrk mid="0" mtype="seg" status="tmPreTranslated:101">"As Treasury Secretary, I will work every day towards rebuilding that dream for all."</mrk></seg-source>
+<target xml:lang="fr"><mrk mid="0" mtype="seg">« En tant que secrétaire au Trésor, je travaillerai tous les jours à reconstruire ce rêve pour tous.»</mrk></target>
+</trans-unit>
+<trans-unit id="22" xml:space="preserve">
+<source xml:lang="en">What about the other names?</source>
+<seg-source><mrk mid="0" mtype="seg" status="tmPreTranslated:101">What about the other names?</mrk></seg-source>
+<target xml:lang="fr"><mrk mid="0" mtype="seg">Qu'en est-il des autres noms ?</mrk></target>
+</trans-unit>
+<trans-unit id="23" xml:space="preserve">
+<source xml:lang="en">The Biden transition team said the senior economic team is set to include "several historic trailblazers".</source>
+<seg-source><mrk mid="0" mtype="seg" status="tmPreTranslated:101">The Biden transition team said the senior economic team is set to include "several historic trailblazers".</mrk></seg-source>
+<target xml:lang="fr"><mrk mid="0" mtype="seg">L'équipe de transition de Biden a déclaré que l'équipe économique senior est sur le point d'inclure "plusieurs pionniers historiques".</mrk></target>
+</trans-unit>
+<trans-unit id="24" xml:space="preserve">
+<source xml:lang="en">Picks include former Obama administration official Wally Adeyemo as deputy treasury secretary and economist Cecilia Rouse as chair of the Council of Economic Advisers. If confirmed, Mr Biden's team said both would be the first African Americans in those roles.</source>
+<seg-source><mrk mid="0" mtype="seg" status="tmPreTranslated:101">Picks include former Obama administration official Wally Adeyemo as deputy treasury secretary and economist Cecilia Rouse as chair of the Council of Economic Advisers. </mrk><mrk mid="1" mtype="seg" status="tmPreTranslated:101">If confirmed, Mr Biden's team said both would be the first African Americans in those roles.</mrk></seg-source>
+<target xml:lang="fr"><mrk mid="0" mtype="seg">Parmi les candidats retenus, on compte l'ancien fonctionnaire de l'administration Obama, Wally Adeyemo, en tant que secrétaire adjoint au Trésor et l'économiste Cecilia Rouse, en tant que présidente du Conseil des conseillers économiques. </mrk><mrk mid="1" mtype="seg">Si cela était confirmé, l'équipe de M. Biden a déclaré que les deux pays seraient les premiers Afro-Américains à assumer ces rôles.</mrk></target>
+</trans-unit>
+<trans-unit id="25" xml:space="preserve">
+<source xml:lang="en">Mr Biden will nominate Neera Tanden, who worked with the Obama administration on the creation of Obamacare, to head the Office of Management and Budget. If confirmed, she would be the first woman of colour and first South Asian American to lead the agency.</source>
+<seg-source><mrk mid="0" mtype="seg" status="tmPreTranslated:101">Mr Biden will nominate Neera Tanden, who worked with the Obama administration on the creation of Obamacare, to head the Office of Management and Budget. </mrk><mrk mid="1" mtype="seg" status="tmPreTranslated:100">If confirmed, she would be the first woman of colour and first South Asian American to lead the agency.</mrk></seg-source>
+<target xml:lang="fr"><mrk mid="0" mtype="seg">M. Biden nommera Neera Tanden, qui a travaillé avec l'administration Obama sur la création d'Obamacare, à la tête de l'Office de la gestion et du budget. </mrk><mrk mid="1" mtype="seg">Si elle est confirmée, elle sera la première femme de couleur et la première Sud-Américaine à diriger l&amp;apos;agence.</mrk></target>
+</trans-unit>
+<trans-unit id="26" xml:space="preserve">
+<source xml:lang="en">IMAGE COPYRIGHTREUTERS</source>
+<seg-source><mrk mid="0" mtype="seg" status="tmNotStarted">IMAGE COPYRIGHTREUTERS</mrk></seg-source>
+<target xml:lang="fr"><mrk mid="0" mtype="seg"></mrk></target>
+</trans-unit>
+<trans-unit id="27" xml:space="preserve">
+<source xml:lang="en">image captionNeera Tanden's social media comments have drawn controversy</source>
+<seg-source><mrk mid="0" mtype="seg" status="tmNotStarted">image captionNeera Tanden's social media comments have drawn controversy</mrk></seg-source>
+<target xml:lang="fr"><mrk mid="0" mtype="seg"></mrk></target>
+</trans-unit>
+<trans-unit id="28" xml:space="preserve">
+<source xml:lang="en">But she is likely to be the hardest confirmation fight in the Senate.</source>
+<seg-source><mrk mid="0" mtype="seg" status="tmPreTranslated:100">But she is likely to be the hardest confirmation fight in the Senate.</mrk></seg-source>
+<target xml:lang="fr"><mrk mid="0" mtype="seg">Mais il est probable qu'elle soit le combat de confirmation le plus dur au Sénat.</mrk></target>
+</trans-unit>
+<trans-unit id="29" xml:space="preserve">
+<source xml:lang="en">Neera Tanden pick draws controversy</source>
+<seg-source><mrk mid="0" mtype="seg" status="tmPreTranslated:101">Neera Tanden pick draws controversy</mrk></seg-source>
+<target xml:lang="fr"><mrk mid="0" mtype="seg">Le choix de Neera Tanden soulève la controverse</mrk></target>
+</trans-unit>
+<trans-unit id="30" xml:space="preserve">
+<source xml:lang="en">Joe Biden might have his first big presidential appointment fight on his hands.</source>
+<seg-source><mrk mid="0" mtype="seg" status="tmPreTranslated:101">Joe Biden might have his first big presidential appointment fight on his hands.</mrk></seg-source>
+<target xml:lang="fr"><mrk mid="0" mtype="seg">Joe Biden pourrait avoir son premier grand combat de nomination présidentielle sur ses mains.</mrk></target>
+</trans-unit>
+<trans-unit id="31" xml:space="preserve">
+<source xml:lang="en">The president-elect's choice of Neera Tanden, a long-time Democratic operative, to be his White House budget office director - which requires Senate confirmation - is getting sharp attacks from the left and the right.</source>
+<seg-source><mrk mid="0" mtype="seg" status="tmPreTranslated:101">The president-elect's choice of Neera Tanden, a long-time Democratic operative, to be his White House budget office director - which requires Senate confirmation - is getting sharp attacks from the left and the right.</mrk></seg-source>
+<target xml:lang="fr"><mrk mid="0" mtype="seg">Le choix du président élu de Neera Tanden, un membre démocrate de longue date, pour être son directeur du bureau du budget de la Maison-Blanche - ce qui nécessite la confirmation du Sénat - est attaqué violemment par la gauche et la droite.</mrk></target>
+</trans-unit>
+<trans-unit id="32" xml:space="preserve">
+<source xml:lang="en">Grass-roots liberals don't like Tanden because of her outspoken criticism of the party's progressive movement and its standard-bearer, former presidential hopeful Bernie Sanders. Conservatives don't like her because of her personal jabs at their leaders.</source>
+<seg-source><mrk mid="0" mtype="seg" status="tmPreTranslated:101">Grass-roots liberals don't like Tanden because of her outspoken criticism of the party's progressive movement and its standard-bearer, former presidential hopeful Bernie Sanders. </mrk><mrk mid="1" mtype="seg" status="tmPreTranslated:101">Conservatives don't like her because of her personal jabs at their leaders.</mrk></seg-source>
+<target xml:lang="fr"><mrk mid="0" mtype="seg">Les libéraux de base n'aiment pas Tanden à cause de ses critiques franches du mouvement progressiste du parti et de son porte-drapeau, l'ancien espoir présidentiel Bernie Sanders. </mrk><mrk mid="1" mtype="seg">Les conservateurs ne l'aiment pas à cause de ses attaques personnelles contre leurs dirigeants.</mrk></target>
+</trans-unit>
+<trans-unit id="33" xml:space="preserve">
+<source xml:lang="en">And Tanden's views are well-documented, given that some of her most incendiary comments came on social media.</source>
+<seg-source><mrk mid="0" mtype="seg" status="tmPreTranslated:101">And Tanden's views are well-documented, given that some of her most incendiary comments came on social media.</mrk></seg-source>
+<target xml:lang="fr"><mrk mid="0" mtype="seg">Et les opinions de Tanden sont bien documentées, étant donné que certains de ses commentaires les plus incendiaires ont été publiés sur les réseaux sociaux.</mrk></target>
+</trans-unit>
+<trans-unit id="34" xml:space="preserve">
+<source xml:lang="en">Concern about problematic tweets might seem quaint after four years of Donald Trump's presidency, of course. And the Senate's 2018 confirmation of Ric Grenell - a notorious Twitter provocateur - to be Trump's ambassador to Germany suggests that inflammatory social media posts are not by themselves disqualifying.</source>
+<seg-source><mrk mid="0" mtype="seg" status="tmPreTranslated:101">Concern about problematic tweets might seem quaint after four years of Donald Trump's presidency, of course. </mrk><mrk mid="1" mtype="seg" status="tmPreTranslated:101">And the Senate's 2018 confirmation of Ric Grenell - a notorious Twitter provocateur - to be Trump's ambassador to Germany suggests that inflammatory social media posts are not by themselves disqualifying.</mrk></seg-source>
+<target xml:lang="fr"><mrk mid="0" mtype="seg">Les inquiétudes suscitées par les tweets problématiques pourraient sembler pittoresques après quatre ans de présidence de Donald Trump, bien sûr. </mrk><mrk mid="1" mtype="seg">Et la confirmation par le Sénat, en 2018, de Ric Grenell - un célèbre provocateur de Twitter - d'être l'ambassadeur de Trump en Allemagne suggère que les messages incendiaires sur les réseaux sociaux ne sont pas en soi disqualifiants.</mrk></target>
+</trans-unit>
+<trans-unit id="35" xml:space="preserve">
+<source xml:lang="en">Grenell, however, had a Republican majority supporting his nomination. Pending the outcome of Georgia's Senate races, Biden could face a chamber controlled by the opposition - and a left flank disinclined to help.</source>
+<seg-source><mrk mid="0" mtype="seg" status="tmPreTranslated:101">Grenell, however, had a Republican majority supporting his nomination. </mrk><mrk mid="1" mtype="seg" status="tmPreTranslated:101">Pending the outcome of Georgia's Senate races, Biden could face a chamber controlled by the opposition - and a left flank disinclined to help.</mrk></seg-source>
+<target xml:lang="fr"><mrk mid="0" mtype="seg">Cependant, Grenell avait une majorité républicaine en faveur de sa nomination. </mrk><mrk mid="1" mtype="seg">En attendant le résultat des courses au Sénat en Géorgie, Biden pourrait faire face à une chambre contrôlée par l'opposition - et un flanc gauche peu enclin à aider.</mrk></target>
+</trans-unit>
+<trans-unit id="36" xml:space="preserve">
+<source xml:lang="en">Biden has touted his ability to work with the Senate to get things done. If he wants Tanden, this will be an early test of his skills.</source>
+<seg-source><mrk mid="0" mtype="seg" status="tmPreTranslated:101">Biden has touted his ability to work with the Senate to get things done. </mrk><mrk mid="1" mtype="seg" status="tmPreTranslated:101">If he wants Tanden, this will be an early test of his skills.</mrk></seg-source>
+<target xml:lang="fr"><mrk mid="0" mtype="seg">M. Biden a fait valoir sa capacité de travailler avec le Sénat pour faire avancer les choses. </mrk><mrk mid="1" mtype="seg">S'il veut Tanden, ce sera un test précoce de ses compétences.</mrk></target>
+</trans-unit>
+<trans-unit id="37" xml:space="preserve">
+<source xml:lang="en">You might be interested in:</source>
+<seg-source><mrk mid="0" mtype="seg" status="tmPreTranslated:100">You might be interested in:</mrk></seg-source>
+<target xml:lang="fr"><mrk mid="0" mtype="seg">Vous pourriez être intéressé par :</mrk></target>
+</trans-unit>
+<trans-unit id="38" xml:space="preserve">
+<source xml:lang="en">Biden to nominate Janet Yellen as US treasury secretary</source>
+<seg-source><mrk mid="0" mtype="seg" status="tmNotStarted">Biden to nominate Janet Yellen as US treasury secretary</mrk></seg-source>
+<target xml:lang="fr"><mrk mid="0" mtype="seg"></mrk></target>
+</trans-unit>
+<trans-unit id="39" xml:space="preserve">
+<source xml:lang="en">Published</source>
+<seg-source><mrk mid="0" mtype="seg" status="tmPreTranslated:100">Published</mrk></seg-source>
+<target xml:lang="fr"><mrk mid="0" mtype="seg">Imprimée FR 2</mrk></target>
+</trans-unit>
+<trans-unit id="40" xml:space="preserve">
+<source xml:lang="en">1 hour ago</source>
+<seg-source><mrk mid="0" mtype="seg" status="tmPreTranslated:101">1 hour ago</mrk></seg-source>
+<target xml:lang="fr"><mrk mid="0" mtype="seg">Il y a 1 heure proofreading</mrk></target>
+</trans-unit>
+<trans-unit id="41" xml:space="preserve">
+<source xml:lang="en">Share</source>
+<seg-source><mrk mid="0" mtype="seg" status="tmPreTranslated:100">Share</mrk></seg-source>
+<target xml:lang="fr"><mrk mid="0" mtype="seg">Partager</mrk></target>
+</trans-unit>
+<trans-unit id="42" xml:space="preserve">
+<source xml:lang="en">IMAGE COPYRIGHTREUTERS</source>
+<seg-source><mrk mid="0" mtype="seg" status="tmNotStarted">IMAGE COPYRIGHTREUTERS</mrk></seg-source>
+<target xml:lang="fr"><mrk mid="0" mtype="seg"></mrk></target>
+</trans-unit>
+<trans-unit id="43" xml:space="preserve">
+<source xml:lang="en">image captionJanet Yellen's appointment needs to be confirmed by the Senate</source>
+<seg-source><mrk mid="0" mtype="seg" status="tmNotStarted">image captionJanet Yellen's appointment needs to be confirmed by the Senate</mrk></seg-source>
+<target xml:lang="fr"><mrk mid="0" mtype="seg"></mrk></target>
+</trans-unit>
+<trans-unit id="44" xml:space="preserve">
+<source xml:lang="en">US President-elect Joe Biden has named ex-Federal Reserve chair Janet Yellen as his nominee for treasury secretary.</source>
+<seg-source><mrk mid="0" mtype="seg" status="tmPreTranslated:100">US President-elect Joe Biden has named ex-Federal Reserve chair Janet Yellen as his nominee for treasury secretary.</mrk></seg-source>
+<target xml:lang="fr"><mrk mid="0" mtype="seg">Joe Biden, président élu des États-Unis, a nommé Janet Yellen, ex-présidente de la Réserve fédérale, comme sa candidate au poste de secrétaire au Trésor.</mrk></target>
+</trans-unit>
+<trans-unit id="45" xml:space="preserve">
+<source xml:lang="en">If confirmed by the Senate, she would be the first woman ever to hold the post.</source>
+<seg-source><mrk mid="0" mtype="seg" status="tmNotStarted">If confirmed by the Senate, she would be the first woman ever to hold the post.</mrk></seg-source>
+<target xml:lang="fr"><mrk mid="0" mtype="seg"></mrk></target>
+</trans-unit>
+<trans-unit id="46" xml:space="preserve">
+<source xml:lang="en">She was among several women chosen for top economic positions. The Biden transition team said others were set to break racial barriers if confirmed.</source>
+<seg-source><mrk mid="0" mtype="seg" status="tmPreTranslated:100">She was among several women chosen for top economic positions. </mrk><mrk mid="1" mtype="seg" status="tmPreTranslated:101">The Biden transition team said others were set to break racial barriers if confirmed.</mrk></seg-source>
+<target xml:lang="fr"><mrk mid="0" mtype="seg">Elle a été parmi plusieurs femmes choisies pour des postes économiques de haut niveau. </mrk><mrk mid="1" mtype="seg">L'équipe de transition de Biden a déclaré que d'autres étaient prêts à briser les barrières raciales si elles étaient confirmées.</mrk></target>
+</trans-unit>
+<trans-unit id="47" xml:space="preserve">
+<source xml:lang="en">Mr Biden has pledged to build a diverse administration. He earlier appointed an all-female senior press team.</source>
+<seg-source><mrk mid="0" mtype="seg" status="tmPreTranslated:101">Mr Biden has pledged to build a diverse administration. </mrk><mrk mid="1" mtype="seg" status="tmPreTranslated:101">He earlier appointed an all-female senior press team.</mrk></seg-source>
+<target xml:lang="fr"><mrk mid="0" mtype="seg">M. Biden s'est engagé à construire une administration diversifiée. </mrk><mrk mid="1" mtype="seg">Il a plus tôt nommé une équipe de presse senior entièrement féminine.</mrk></target>
+</trans-unit>
+<trans-unit id="48" xml:space="preserve">
+<source xml:lang="en">Mr Biden's transition team said his picks for senior economic roles would help "lift America out of the current economic downturn and build back better".</source>
+<seg-source><mrk mid="0" mtype="seg" status="tmPreTranslated:101">Mr Biden's transition team said his picks for senior economic roles would help "lift America out of the current economic downturn and build back better".</mrk></seg-source>
+<target xml:lang="fr"><mrk mid="0" mtype="seg">L'équipe de transition de M. Biden a déclaré que ses choix pour des rôles économiques de haut niveau aideraient « à sortir l'Amérique du ralentissement économique actuel et à reconstruire en mieux ».</mrk></target>
+</trans-unit>
+<trans-unit id="49" xml:space="preserve">
+<source xml:lang="en">Mr Biden has also announced the formation of a Presidential Inaugural Committee ahead of his swearing-in on 20 January. The committee will be responsible for organising inauguration-related activities.</source>
+<seg-source><mrk mid="0" mtype="seg" status="tmPreTranslated:101">Mr Biden has also announced the formation of a Presidential Inaugural Committee ahead of his swearing-in on 20 January. </mrk><mrk mid="1" mtype="seg" status="tmPreTranslated:101">The committee will be responsible for organising inauguration-related activities.</mrk></seg-source>
+<target xml:lang="fr"><mrk mid="0" mtype="seg">M. Biden a également annoncé la formation d'un comité d'investiture présidentiel avant sa prestation de serment, le 20 janvier. </mrk><mrk mid="1" mtype="seg">Le comité sera chargé d'organiser les activités liées à l'inauguration.</mrk></target>
+</trans-unit>
+<trans-unit id="50" xml:space="preserve">
+<source xml:lang="en">Who is Janet Yellen?</source>
+<seg-source><mrk mid="0" mtype="seg" status="tmPreTranslated:100">Who is Janet Yellen?</mrk></seg-source>
+<target xml:lang="fr"><mrk mid="0" mtype="seg">Qui est Janet Yellen ?</mrk></target>
+</trans-unit>
+<trans-unit id="51" xml:space="preserve">
+<source xml:lang="en">Ms Yellen had been�widely tipped for the nomination in media reports prior to Monday's announcement.</source>
+<seg-source><mrk mid="0" mtype="seg" status="tmNotStarted">Ms Yellen had been�widely tipped for the nomination in media reports prior to Monday's announcement.</mrk></seg-source>
+<target xml:lang="fr"><mrk mid="0" mtype="seg"></mrk></target>
+</trans-unit>
+<trans-unit id="52" xml:space="preserve">
+<source xml:lang="en">The 74-year-old economist has served as head of America's central bank and as a top economics adviser to former President Bill Clinton.</source>
+<seg-source><mrk mid="0" mtype="seg" status="tmPreTranslated:100">The 74-year-old economist has served as head of America's central bank and as a top economics adviser to former President Bill Clinton.</mrk></seg-source>
+<target xml:lang="fr"><mrk mid="0" mtype="seg">L&amp;apos;économiste de 74 ans a été à la tête de la banque centrale américaine et l&amp;apos;un des principaux conseillers économiques de l&amp;apos;ancien président Bill Clinton.</mrk></target>
+</trans-unit>
+<trans-unit id="53" xml:space="preserve">
+<source xml:lang="en">She is credited with helping steer the economic recovery after the 2007 financial crisis and ensuing recession.</source>
+<seg-source><mrk mid="0" mtype="seg" status="tmPreTranslated:101">She is credited with helping steer the economic recovery after the 2007 financial crisis and ensuing recession.</mrk></seg-source>
+<target xml:lang="fr"><mrk mid="0" mtype="seg">On lui attribue le mérite d'avoir contribué à orienter la reprise économique après la crise financière de 2007 et la récession qui a suivi.</mrk></target>
+</trans-unit>
+<trans-unit id="54" xml:space="preserve">
+<source xml:lang="en">As chair of the US Federal Reserve, Ms Yellen was known for focusing more attention on the impact of the bank's policies on workers and the costs of America's rising inequality.</source>
+<seg-source><mrk mid="0" mtype="seg" status="tmPreTranslated:101">As chair of the US Federal Reserve, Ms Yellen was known for focusing more attention on the impact of the bank's policies on workers and the costs of America's rising inequality.</mrk></seg-source>
+<target xml:lang="fr"><mrk mid="0" mtype="seg">En tant que présidente de la Réserve fédérale américaine, Mme Yellen était connue pour accorder plus d'attention à l'impact des politiques de la banque sur les travailleurs et aux coûts de l'augmentation des inégalités en Amérique.</mrk></target>
+</trans-unit>
+<trans-unit id="55" xml:space="preserve">
+<source xml:lang="en">Donald Trump bucked Washington tradition when he opted not to appoint Ms Yellen to a second four-year term at the Fed. Starting with Bill Clinton in the 1990s, presidents kept on bank leaders appointed by their predecessors in an effort to de-politicise the bank.</source>
+<seg-source><mrk mid="0" mtype="seg" status="tmPreTranslated:101">Donald Trump bucked Washington tradition when he opted not to appoint Ms Yellen to a second four-year term at the Fed. </mrk><mrk mid="1" mtype="seg" status="tmPreTranslated:101">Starting with Bill Clinton in the 1990s, presidents kept on bank leaders appointed by their predecessors in an effort to de-politicise the bank.</mrk></seg-source>
+<target xml:lang="fr"><mrk mid="0" mtype="seg">Donald Trump a suivi la tradition de Washington en choisissant de ne pas nommer Mme Yellen pour un second mandat de quatre ans à la Fed. </mrk><mrk mid="1" mtype="seg">En commençant par Bill Clinton dans les années 1990, les présidents ont maintenu les dirigeants des banques nommés par leurs prédécesseurs dans un effort pour dépolitiser la banque.</mrk></target>
+</trans-unit>
+<trans-unit id="56" xml:space="preserve">
+<source xml:lang="en">Since leaving the bank in 2018, Ms Yellen has spoken out about climate change and the need for Washington to do more to shield the US economy from the impact of the coronavirus pandemic.</source>
+<seg-source><mrk mid="0" mtype="seg" status="tmPreTranslated:101">Since leaving the bank in 2018, Ms Yellen has spoken out about climate change and the need for Washington to do more to shield the US economy from the impact of the coronavirus pandemic.</mrk></seg-source>
+<target xml:lang="fr"><mrk mid="0" mtype="seg">Depuis son départ de la banque en 2018, Mme Yellen s&amp;apos;est exprimée sur le changement climatique et sur la nécessité pour Washington d&amp;apos;en faire plus pour protéger l&amp;apos;économie américaine de l&amp;apos;impact de la pandémie de coronavirus.</mrk></target>
+</trans-unit>
+<trans-unit id="57" xml:space="preserve">
+<source xml:lang="en">In a tweet following Monday's announcement, Ms Yellen said: "We face great challenges as a country right now. To recover, we must restore the American dream - a society where each person can rise to their potential and dream even bigger for their children.</source>
+<seg-source><mrk mid="0" mtype="seg" status="tmPreTranslated:101">In a tweet following Monday's announcement, Ms Yellen said: "We face great challenges as a country right now. </mrk><mrk mid="1" mtype="seg" status="tmPreTranslated:101">To recover, we must restore the American dream - a society where each person can rise to their potential and dream even bigger for their children.</mrk></seg-source>
+<target xml:lang="fr"><mrk mid="0" mtype="seg">Dans un tweet suivant l&amp;apos;annonce de lundi, Mme Yellen a déclaré : « Nous sommes confrontés à de grands défis en tant que pays en ce moment. </mrk><mrk mid="1" mtype="seg">Pour se rétablir, nous devons restaurer le rêve américain - une société où chaque personne peut s&amp;apos;élever à son plein potentiel et rêver encore plus pour ses enfants.</mrk></target>
+</trans-unit>
+<trans-unit id="58" xml:space="preserve">
+<source xml:lang="en">"As Treasury Secretary, I will work every day towards rebuilding that dream for all."</source>
+<seg-source><mrk mid="0" mtype="seg" status="tmPreTranslated:101">"As Treasury Secretary, I will work every day towards rebuilding that dream for all."</mrk></seg-source>
+<target xml:lang="fr"><mrk mid="0" mtype="seg">« En tant que secrétaire au Trésor, je travaillerai tous les jours à reconstruire ce rêve pour tous.»</mrk></target>
+</trans-unit>
+<trans-unit id="59" xml:space="preserve">
+<source xml:lang="en">What about the other names?</source>
+<seg-source><mrk mid="0" mtype="seg" status="tmPreTranslated:101">What about the other names?</mrk></seg-source>
+<target xml:lang="fr"><mrk mid="0" mtype="seg">Qu'en est-il des autres noms ?</mrk></target>
+</trans-unit>
+<trans-unit id="60" xml:space="preserve">
+<source xml:lang="en">The Biden transition team said the senior economic team is set to include "several historic trailblazers".</source>
+<seg-source><mrk mid="0" mtype="seg" status="tmPreTranslated:101">The Biden transition team said the senior economic team is set to include "several historic trailblazers".</mrk></seg-source>
+<target xml:lang="fr"><mrk mid="0" mtype="seg">L'équipe de transition de Biden a déclaré que l'équipe économique senior est sur le point d'inclure "plusieurs pionniers historiques".</mrk></target>
+</trans-unit>
+<trans-unit id="61" xml:space="preserve">
+<source xml:lang="en">Picks include former Obama administration official Wally Adeyemo as deputy treasury secretary and economist Cecilia Rouse as chair of the Council of Economic Advisers. If confirmed, Mr Biden's team said both would be the first African Americans in those roles.</source>
+<seg-source><mrk mid="0" mtype="seg" status="tmPreTranslated:101">Picks include former Obama administration official Wally Adeyemo as deputy treasury secretary and economist Cecilia Rouse as chair of the Council of Economic Advisers. </mrk><mrk mid="1" mtype="seg" status="tmPreTranslated:101">If confirmed, Mr Biden's team said both would be the first African Americans in those roles.</mrk></seg-source>
+<target xml:lang="fr"><mrk mid="0" mtype="seg">Parmi les candidats retenus, on compte l'ancien fonctionnaire de l'administration Obama, Wally Adeyemo, en tant que secrétaire adjoint au Trésor et l'économiste Cecilia Rouse, en tant que présidente du Conseil des conseillers économiques. </mrk><mrk mid="1" mtype="seg">Si cela était confirmé, l'équipe de M. Biden a déclaré que les deux pays seraient les premiers Afro-Américains à assumer ces rôles.</mrk></target>
+</trans-unit>
+<trans-unit id="62" xml:space="preserve">
+<source xml:lang="en">Mr Biden will nominate Neera Tanden, who worked with the Obama administration on the creation of Obamacare, to head the Office of Management and Budget. If confirmed, she would be the first woman of colour and first South Asian American to lead the agency.</source>
+<seg-source><mrk mid="0" mtype="seg" status="tmPreTranslated:101">Mr Biden will nominate Neera Tanden, who worked with the Obama administration on the creation of Obamacare, to head the Office of Management and Budget. </mrk><mrk mid="1" mtype="seg" status="tmPreTranslated:100">If confirmed, she would be the first woman of colour and first South Asian American to lead the agency.</mrk></seg-source>
+<target xml:lang="fr"><mrk mid="0" mtype="seg">M. Biden nommera Neera Tanden, qui a travaillé avec l'administration Obama sur la création d'Obamacare, à la tête de l'Office de la gestion et du budget. </mrk><mrk mid="1" mtype="seg">Si elle est confirmée, elle sera la première femme de couleur et la première Sud-Américaine à diriger l&amp;apos;agence.</mrk></target>
+</trans-unit>
+<trans-unit id="63" xml:space="preserve">
+<source xml:lang="en">IMAGE COPYRIGHTREUTERS</source>
+<seg-source><mrk mid="0" mtype="seg" status="tmNotStarted">IMAGE COPYRIGHTREUTERS</mrk></seg-source>
+<target xml:lang="fr"><mrk mid="0" mtype="seg"></mrk></target>
+</trans-unit>
+<trans-unit id="64" xml:space="preserve">
+<source xml:lang="en">image captionNeera Tanden's social media comments have drawn controversy</source>
+<seg-source><mrk mid="0" mtype="seg" status="tmNotStarted">image captionNeera Tanden's social media comments have drawn controversy</mrk></seg-source>
+<target xml:lang="fr"><mrk mid="0" mtype="seg"></mrk></target>
+</trans-unit>
+<trans-unit id="65" xml:space="preserve">
+<source xml:lang="en">But she is likely to be the hardest confirmation fight in the Senate.</source>
+<seg-source><mrk mid="0" mtype="seg" status="tmPreTranslated:100">But she is likely to be the hardest confirmation fight in the Senate.</mrk></seg-source>
+<target xml:lang="fr"><mrk mid="0" mtype="seg">Mais il est probable qu'elle soit le combat de confirmation le plus dur au Sénat.</mrk></target>
+</trans-unit>
+<trans-unit id="66" xml:space="preserve">
+<source xml:lang="en">Neera Tanden pick draws controversy</source>
+<seg-source><mrk mid="0" mtype="seg" status="tmPreTranslated:101">Neera Tanden pick draws controversy</mrk></seg-source>
+<target xml:lang="fr"><mrk mid="0" mtype="seg">Le choix de Neera Tanden soulève la controverse</mrk></target>
+</trans-unit>
+<trans-unit id="67" xml:space="preserve">
+<source xml:lang="en">Joe Biden might have his first big presidential appointment fight on his hands.</source>
+<seg-source><mrk mid="0" mtype="seg" status="tmPreTranslated:101">Joe Biden might have his first big presidential appointment fight on his hands.</mrk></seg-source>
+<target xml:lang="fr"><mrk mid="0" mtype="seg">Joe Biden pourrait avoir son premier grand combat de nomination présidentielle sur ses mains.</mrk></target>
+</trans-unit>
+<trans-unit id="68" xml:space="preserve">
+<source xml:lang="en">The president-elect's choice of Neera Tanden, a long-time Democratic operative, to be his White House budget office director - which requires Senate confirmation - is getting sharp attacks from the left and the right.</source>
+<seg-source><mrk mid="0" mtype="seg" status="tmPreTranslated:101">The president-elect's choice of Neera Tanden, a long-time Democratic operative, to be his White House budget office director - which requires Senate confirmation - is getting sharp attacks from the left and the right.</mrk></seg-source>
+<target xml:lang="fr"><mrk mid="0" mtype="seg">Le choix du président élu de Neera Tanden, un membre démocrate de longue date, pour être son directeur du bureau du budget de la Maison-Blanche - ce qui nécessite la confirmation du Sénat - est attaqué violemment par la gauche et la droite.</mrk></target>
+</trans-unit>
+<trans-unit id="69" xml:space="preserve">
+<source xml:lang="en">Grass-roots liberals don't like Tanden because of her outspoken criticism of the party's progressive movement and its standard-bearer, former presidential hopeful Bernie Sanders. Conservatives don't like her because of her personal jabs at their leaders.</source>
+<seg-source><mrk mid="0" mtype="seg" status="tmPreTranslated:101">Grass-roots liberals don't like Tanden because of her outspoken criticism of the party's progressive movement and its standard-bearer, former presidential hopeful Bernie Sanders. </mrk><mrk mid="1" mtype="seg" status="tmPreTranslated:101">Conservatives don't like her because of her personal jabs at their leaders.</mrk></seg-source>
+<target xml:lang="fr"><mrk mid="0" mtype="seg">Les libéraux de base n'aiment pas Tanden à cause de ses critiques franches du mouvement progressiste du parti et de son porte-drapeau, l'ancien espoir présidentiel Bernie Sanders. </mrk><mrk mid="1" mtype="seg">Les conservateurs ne l'aiment pas à cause de ses attaques personnelles contre leurs dirigeants.</mrk></target>
+</trans-unit>
+<trans-unit id="70" xml:space="preserve">
+<source xml:lang="en">And Tanden's views are well-documented, given that some of her most incendiary comments came on social media.</source>
+<seg-source><mrk mid="0" mtype="seg" status="tmPreTranslated:101">And Tanden's views are well-documented, given that some of her most incendiary comments came on social media.</mrk></seg-source>
+<target xml:lang="fr"><mrk mid="0" mtype="seg">Et les opinions de Tanden sont bien documentées, étant donné que certains de ses commentaires les plus incendiaires ont été publiés sur les réseaux sociaux.</mrk></target>
+</trans-unit>
+<trans-unit id="71" xml:space="preserve">
+<source xml:lang="en">Concern about problematic tweets might seem quaint after four years of Donald Trump's presidency, of course. And the Senate's 2018 confirmation of Ric Grenell - a notorious Twitter provocateur - to be Trump's ambassador to Germany suggests that inflammatory social media posts are not by themselves disqualifying.</source>
+<seg-source><mrk mid="0" mtype="seg" status="tmPreTranslated:101">Concern about problematic tweets might seem quaint after four years of Donald Trump's presidency, of course. </mrk><mrk mid="1" mtype="seg" status="tmPreTranslated:101">And the Senate's 2018 confirmation of Ric Grenell - a notorious Twitter provocateur - to be Trump's ambassador to Germany suggests that inflammatory social media posts are not by themselves disqualifying.</mrk></seg-source>
+<target xml:lang="fr"><mrk mid="0" mtype="seg">Les inquiétudes suscitées par les tweets problématiques pourraient sembler pittoresques après quatre ans de présidence de Donald Trump, bien sûr. </mrk><mrk mid="1" mtype="seg">Et la confirmation par le Sénat, en 2018, de Ric Grenell - un célèbre provocateur de Twitter - d'être l'ambassadeur de Trump en Allemagne suggère que les messages incendiaires sur les réseaux sociaux ne sont pas en soi disqualifiants.</mrk></target>
+</trans-unit>
+<trans-unit id="72" xml:space="preserve">
+<source xml:lang="en">Grenell, however, had a Republican majority supporting his nomination. Pending the outcome of Georgia's Senate races, Biden could face a chamber controlled by the opposition - and a left flank disinclined to help.</source>
+<seg-source><mrk mid="0" mtype="seg" status="tmPreTranslated:101">Grenell, however, had a Republican majority supporting his nomination. </mrk><mrk mid="1" mtype="seg" status="tmPreTranslated:101">Pending the outcome of Georgia's Senate races, Biden could face a chamber controlled by the opposition - and a left flank disinclined to help.</mrk></seg-source>
+<target xml:lang="fr"><mrk mid="0" mtype="seg">Cependant, Grenell avait une majorité républicaine en faveur de sa nomination. </mrk><mrk mid="1" mtype="seg">En attendant le résultat des courses au Sénat en Géorgie, Biden pourrait faire face à une chambre contrôlée par l'opposition - et un flanc gauche peu enclin à aider.</mrk></target>
+</trans-unit>
+<trans-unit id="73" xml:space="preserve">
+<source xml:lang="en">Biden has touted his ability to work with the Senate to get things done. If he wants Tanden, this will be an early test of his skills.</source>
+<seg-source><mrk mid="0" mtype="seg" status="tmPreTranslated:101">Biden has touted his ability to work with the Senate to get things done. </mrk><mrk mid="1" mtype="seg" status="tmPreTranslated:101">If he wants Tanden, this will be an early test of his skills.</mrk></seg-source>
+<target xml:lang="fr"><mrk mid="0" mtype="seg">M. Biden a fait valoir sa capacité de travailler avec le Sénat pour faire avancer les choses. </mrk><mrk mid="1" mtype="seg">S'il veut Tanden, ce sera un test précoce de ses compétences.</mrk></target>
+</trans-unit>
+<trans-unit id="74" xml:space="preserve">
+<source xml:lang="en">You might be interested in:</source>
+<seg-source><mrk mid="0" mtype="seg" status="tmPreTranslated:100">You might be interested in:</mrk></seg-source>
+<target xml:lang="fr"><mrk mid="0" mtype="seg">Vous pourriez être intéressé par :</mrk></target>
+</trans-unit>
+<trans-unit id="75" xml:space="preserve">
+<source xml:lang="en">Biden to nominate Janet Yellen as US treasury secretary</source>
+<seg-source><mrk mid="0" mtype="seg" status="tmNotStarted">Biden to nominate Janet Yellen as US treasury secretary</mrk></seg-source>
+<target xml:lang="fr"><mrk mid="0" mtype="seg"></mrk></target>
+</trans-unit>
+<trans-unit id="76" xml:space="preserve">
+<source xml:lang="en">Published</source>
+<seg-source><mrk mid="0" mtype="seg" status="tmPreTranslated:100">Published</mrk></seg-source>
+<target xml:lang="fr"><mrk mid="0" mtype="seg">Imprimée FR 2</mrk></target>
+</trans-unit>
+<trans-unit id="77" xml:space="preserve">
+<source xml:lang="en">1 hour ago</source>
+<seg-source><mrk mid="0" mtype="seg" status="tmPreTranslated:101">1 hour ago</mrk></seg-source>
+<target xml:lang="fr"><mrk mid="0" mtype="seg">Il y a 1 heure proofreading</mrk></target>
+</trans-unit>
+<trans-unit id="78" xml:space="preserve">
+<source xml:lang="en">Share</source>
+<seg-source><mrk mid="0" mtype="seg" status="tmPreTranslated:100">Share</mrk></seg-source>
+<target xml:lang="fr"><mrk mid="0" mtype="seg">Partager</mrk></target>
+</trans-unit>
+<trans-unit id="79" xml:space="preserve">
+<source xml:lang="en">IMAGE COPYRIGHTREUTERS</source>
+<seg-source><mrk mid="0" mtype="seg" status="tmNotStarted">IMAGE COPYRIGHTREUTERS</mrk></seg-source>
+<target xml:lang="fr"><mrk mid="0" mtype="seg"></mrk></target>
+</trans-unit>
+<trans-unit id="80" xml:space="preserve">
+<source xml:lang="en">image captionJanet Yellen's appointment needs to be confirmed by the Senate</source>
+<seg-source><mrk mid="0" mtype="seg" status="tmNotStarted">image captionJanet Yellen's appointment needs to be confirmed by the Senate</mrk></seg-source>
+<target xml:lang="fr"><mrk mid="0" mtype="seg"></mrk></target>
+</trans-unit>
+<trans-unit id="81" xml:space="preserve">
+<source xml:lang="en">US President-elect Joe Biden has named ex-Federal Reserve chair Janet Yellen as his nominee for treasury secretary.</source>
+<seg-source><mrk mid="0" mtype="seg" status="tmPreTranslated:100">US President-elect Joe Biden has named ex-Federal Reserve chair Janet Yellen as his nominee for treasury secretary.</mrk></seg-source>
+<target xml:lang="fr"><mrk mid="0" mtype="seg">Joe Biden, président élu des États-Unis, a nommé Janet Yellen, ex-présidente de la Réserve fédérale, comme sa candidate au poste de secrétaire au Trésor.</mrk></target>
+</trans-unit>
+<trans-unit id="82" xml:space="preserve">
+<source xml:lang="en">If confirmed by the Senate, she would be the first woman ever to hold the post.</source>
+<seg-source><mrk mid="0" mtype="seg" status="tmNotStarted">If confirmed by the Senate, she would be the first woman ever to hold the post.</mrk></seg-source>
+<target xml:lang="fr"><mrk mid="0" mtype="seg"></mrk></target>
+</trans-unit>
+<trans-unit id="83" xml:space="preserve">
+<source xml:lang="en">She was among several women chosen for top economic positions. The Biden transition team said others were set to break racial barriers if confirmed.</source>
+<seg-source><mrk mid="0" mtype="seg" status="tmPreTranslated:100">She was among several women chosen for top economic positions. </mrk><mrk mid="1" mtype="seg" status="tmPreTranslated:101">The Biden transition team said others were set to break racial barriers if confirmed.</mrk></seg-source>
+<target xml:lang="fr"><mrk mid="0" mtype="seg">Elle a été parmi plusieurs femmes choisies pour des postes économiques de haut niveau. </mrk><mrk mid="1" mtype="seg">L'équipe de transition de Biden a déclaré que d'autres étaient prêts à briser les barrières raciales si elles étaient confirmées.</mrk></target>
+</trans-unit>
+<trans-unit id="84" xml:space="preserve">
+<source xml:lang="en">Mr Biden has pledged to build a diverse administration. He earlier appointed an all-female senior press team.</source>
+<seg-source><mrk mid="0" mtype="seg" status="tmPreTranslated:101">Mr Biden has pledged to build a diverse administration. </mrk><mrk mid="1" mtype="seg" status="tmPreTranslated:101">He earlier appointed an all-female senior press team.</mrk></seg-source>
+<target xml:lang="fr"><mrk mid="0" mtype="seg">M. Biden s'est engagé à construire une administration diversifiée. </mrk><mrk mid="1" mtype="seg">Il a plus tôt nommé une équipe de presse senior entièrement féminine.</mrk></target>
+</trans-unit>
+<trans-unit id="85" xml:space="preserve">
+<source xml:lang="en">Mr Biden's transition team said his picks for senior economic roles would help "lift America out of the current economic downturn and build back better".</source>
+<seg-source><mrk mid="0" mtype="seg" status="tmPreTranslated:101">Mr Biden's transition team said his picks for senior economic roles would help "lift America out of the current economic downturn and build back better".</mrk></seg-source>
+<target xml:lang="fr"><mrk mid="0" mtype="seg">L'équipe de transition de M. Biden a déclaré que ses choix pour des rôles économiques de haut niveau aideraient « à sortir l'Amérique du ralentissement économique actuel et à reconstruire en mieux ».</mrk></target>
+</trans-unit>
+<trans-unit id="86" xml:space="preserve">
+<source xml:lang="en">Mr Biden has also announced the formation of a Presidential Inaugural Committee ahead of his swearing-in on 20 January. The committee will be responsible for organising inauguration-related activities.</source>
+<seg-source><mrk mid="0" mtype="seg" status="tmPreTranslated:101">Mr Biden has also announced the formation of a Presidential Inaugural Committee ahead of his swearing-in on 20 January. </mrk><mrk mid="1" mtype="seg" status="tmPreTranslated:101">The committee will be responsible for organising inauguration-related activities.</mrk></seg-source>
+<target xml:lang="fr"><mrk mid="0" mtype="seg">M. Biden a également annoncé la formation d'un comité d'investiture présidentiel avant sa prestation de serment, le 20 janvier. </mrk><mrk mid="1" mtype="seg">Le comité sera chargé d'organiser les activités liées à l'inauguration.</mrk></target>
+</trans-unit>
+<trans-unit id="87" xml:space="preserve">
+<source xml:lang="en">Who is Janet Yellen?</source>
+<seg-source><mrk mid="0" mtype="seg" status="tmPreTranslated:100">Who is Janet Yellen?</mrk></seg-source>
+<target xml:lang="fr"><mrk mid="0" mtype="seg">Qui est Janet Yellen ?</mrk></target>
+</trans-unit>
+<trans-unit id="88" xml:space="preserve">
+<source xml:lang="en">Ms Yellen had been�widely tipped for the nomination in media reports prior to Monday's announcement.</source>
+<seg-source><mrk mid="0" mtype="seg" status="tmNotStarted">Ms Yellen had been�widely tipped for the nomination in media reports prior to Monday's announcement.</mrk></seg-source>
+<target xml:lang="fr"><mrk mid="0" mtype="seg"></mrk></target>
+</trans-unit>
+<trans-unit id="89" xml:space="preserve">
+<source xml:lang="en">The 74-year-old economist has served as head of America's central bank and as a top economics adviser to former President Bill Clinton.</source>
+<seg-source><mrk mid="0" mtype="seg" status="tmPreTranslated:100">The 74-year-old economist has served as head of America's central bank and as a top economics adviser to former President Bill Clinton.</mrk></seg-source>
+<target xml:lang="fr"><mrk mid="0" mtype="seg">L&amp;apos;économiste de 74 ans a été à la tête de la banque centrale américaine et l&amp;apos;un des principaux conseillers économiques de l&amp;apos;ancien président Bill Clinton.</mrk></target>
+</trans-unit>
+<trans-unit id="90" xml:space="preserve">
+<source xml:lang="en">She is credited with helping steer the economic recovery after the 2007 financial crisis and ensuing recession.</source>
+<seg-source><mrk mid="0" mtype="seg" status="tmPreTranslated:101">She is credited with helping steer the economic recovery after the 2007 financial crisis and ensuing recession.</mrk></seg-source>
+<target xml:lang="fr"><mrk mid="0" mtype="seg">On lui attribue le mérite d'avoir contribué à orienter la reprise économique après la crise financière de 2007 et la récession qui a suivi.</mrk></target>
+</trans-unit>
+<trans-unit id="91" xml:space="preserve">
+<source xml:lang="en">As chair of the US Federal Reserve, Ms Yellen was known for focusing more attention on the impact of the bank's policies on workers and the costs of America's rising inequality.</source>
+<seg-source><mrk mid="0" mtype="seg" status="tmPreTranslated:101">As chair of the US Federal Reserve, Ms Yellen was known for focusing more attention on the impact of the bank's policies on workers and the costs of America's rising inequality.</mrk></seg-source>
+<target xml:lang="fr"><mrk mid="0" mtype="seg">En tant que présidente de la Réserve fédérale américaine, Mme Yellen était connue pour accorder plus d'attention à l'impact des politiques de la banque sur les travailleurs et aux coûts de l'augmentation des inégalités en Amérique.</mrk></target>
+</trans-unit>
+<trans-unit id="92" xml:space="preserve">
+<source xml:lang="en">Donald Trump bucked Washington tradition when he opted not to appoint Ms Yellen to a second four-year term at the Fed. Starting with Bill Clinton in the 1990s, presidents kept on bank leaders appointed by their predecessors in an effort to de-politicise the bank.</source>
+<seg-source><mrk mid="0" mtype="seg" status="tmPreTranslated:101">Donald Trump bucked Washington tradition when he opted not to appoint Ms Yellen to a second four-year term at the Fed. </mrk><mrk mid="1" mtype="seg" status="tmPreTranslated:101">Starting with Bill Clinton in the 1990s, presidents kept on bank leaders appointed by their predecessors in an effort to de-politicise the bank.</mrk></seg-source>
+<target xml:lang="fr"><mrk mid="0" mtype="seg">Donald Trump a suivi la tradition de Washington en choisissant de ne pas nommer Mme Yellen pour un second mandat de quatre ans à la Fed. </mrk><mrk mid="1" mtype="seg">En commençant par Bill Clinton dans les années 1990, les présidents ont maintenu les dirigeants des banques nommés par leurs prédécesseurs dans un effort pour dépolitiser la banque.</mrk></target>
+</trans-unit>
+<trans-unit id="93" xml:space="preserve">
+<source xml:lang="en">Since leaving the bank in 2018, Ms Yellen has spoken out about climate change and the need for Washington to do more to shield the US economy from the impact of the coronavirus pandemic.</source>
+<seg-source><mrk mid="0" mtype="seg" status="tmPreTranslated:101">Since leaving the bank in 2018, Ms Yellen has spoken out about climate change and the need for Washington to do more to shield the US economy from the impact of the coronavirus pandemic.</mrk></seg-source>
+<target xml:lang="fr"><mrk mid="0" mtype="seg">Depuis son départ de la banque en 2018, Mme Yellen s&amp;apos;est exprimée sur le changement climatique et sur la nécessité pour Washington d&amp;apos;en faire plus pour protéger l&amp;apos;économie américaine de l&amp;apos;impact de la pandémie de coronavirus.</mrk></target>
+</trans-unit>
+<trans-unit id="94" xml:space="preserve">
+<source xml:lang="en">In a tweet following Monday's announcement, Ms Yellen said: "We face great challenges as a country right now. To recover, we must restore the American dream - a society where each person can rise to their potential and dream even bigger for their children.</source>
+<seg-source><mrk mid="0" mtype="seg" status="tmPreTranslated:101">In a tweet following Monday's announcement, Ms Yellen said: "We face great challenges as a country right now. </mrk><mrk mid="1" mtype="seg" status="tmPreTranslated:101">To recover, we must restore the American dream - a society where each person can rise to their potential and dream even bigger for their children.</mrk></seg-source>
+<target xml:lang="fr"><mrk mid="0" mtype="seg">Dans un tweet suivant l&amp;apos;annonce de lundi, Mme Yellen a déclaré : « Nous sommes confrontés à de grands défis en tant que pays en ce moment. </mrk><mrk mid="1" mtype="seg">Pour se rétablir, nous devons restaurer le rêve américain - une société où chaque personne peut s&amp;apos;élever à son plein potentiel et rêver encore plus pour ses enfants.</mrk></target>
+</trans-unit>
+<trans-unit id="95" xml:space="preserve">
+<source xml:lang="en">"As Treasury Secretary, I will work every day towards rebuilding that dream for all."</source>
+<seg-source><mrk mid="0" mtype="seg" status="tmPreTranslated:101">"As Treasury Secretary, I will work every day towards rebuilding that dream for all."</mrk></seg-source>
+<target xml:lang="fr"><mrk mid="0" mtype="seg">« En tant que secrétaire au Trésor, je travaillerai tous les jours à reconstruire ce rêve pour tous.»</mrk></target>
+</trans-unit>
+<trans-unit id="96" xml:space="preserve">
+<source xml:lang="en">What about the other names?</source>
+<seg-source><mrk mid="0" mtype="seg" status="tmPreTranslated:101">What about the other names?</mrk></seg-source>
+<target xml:lang="fr"><mrk mid="0" mtype="seg">Qu'en est-il des autres noms ?</mrk></target>
+</trans-unit>
+<trans-unit id="97" xml:space="preserve">
+<source xml:lang="en">The Biden transition team said the senior economic team is set to include "several historic trailblazers".</source>
+<seg-source><mrk mid="0" mtype="seg" status="tmPreTranslated:101">The Biden transition team said the senior economic team is set to include "several historic trailblazers".</mrk></seg-source>
+<target xml:lang="fr"><mrk mid="0" mtype="seg">L'équipe de transition de Biden a déclaré que l'équipe économique senior est sur le point d'inclure "plusieurs pionniers historiques".</mrk></target>
+</trans-unit>
+<trans-unit id="98" xml:space="preserve">
+<source xml:lang="en">Picks include former Obama administration official Wally Adeyemo as deputy treasury secretary and economist Cecilia Rouse as chair of the Council of Economic Advisers. If confirmed, Mr Biden's team said both would be the first African Americans in those roles.</source>
+<seg-source><mrk mid="0" mtype="seg" status="tmPreTranslated:101">Picks include former Obama administration official Wally Adeyemo as deputy treasury secretary and economist Cecilia Rouse as chair of the Council of Economic Advisers. </mrk><mrk mid="1" mtype="seg" status="tmPreTranslated:101">If confirmed, Mr Biden's team said both would be the first African Americans in those roles.</mrk></seg-source>
+<target xml:lang="fr"><mrk mid="0" mtype="seg">Parmi les candidats retenus, on compte l'ancien fonctionnaire de l'administration Obama, Wally Adeyemo, en tant que secrétaire adjoint au Trésor et l'économiste Cecilia Rouse, en tant que présidente du Conseil des conseillers économiques. </mrk><mrk mid="1" mtype="seg">Si cela était confirmé, l'équipe de M. Biden a déclaré que les deux pays seraient les premiers Afro-Américains à assumer ces rôles.</mrk></target>
+</trans-unit>
+<trans-unit id="99" xml:space="preserve">
+<source xml:lang="en">Mr Biden will nominate Neera Tanden, who worked with the Obama administration on the creation of Obamacare, to head the Office of Management and Budget. If confirmed, she would be the first woman of colour and first South Asian American to lead the agency.</source>
+<seg-source><mrk mid="0" mtype="seg" status="tmPreTranslated:101">Mr Biden will nominate Neera Tanden, who worked with the Obama administration on the creation of Obamacare, to head the Office of Management and Budget. </mrk><mrk mid="1" mtype="seg" status="tmPreTranslated:100">If confirmed, she would be the first woman of colour and first South Asian American to lead the agency.</mrk></seg-source>
+<target xml:lang="fr"><mrk mid="0" mtype="seg">M. Biden nommera Neera Tanden, qui a travaillé avec l'administration Obama sur la création d'Obamacare, à la tête de l'Office de la gestion et du budget. </mrk><mrk mid="1" mtype="seg">Si elle est confirmée, elle sera la première femme de couleur et la première Sud-Américaine à diriger l&amp;apos;agence.</mrk></target>
+</trans-unit>
+<trans-unit id="100" xml:space="preserve">
+<source xml:lang="en">IMAGE COPYRIGHTREUTERS</source>
+<seg-source><mrk mid="0" mtype="seg" status="tmNotStarted">IMAGE COPYRIGHTREUTERS</mrk></seg-source>
+<target xml:lang="fr"><mrk mid="0" mtype="seg"></mrk></target>
+</trans-unit>
+<trans-unit id="101" xml:space="preserve">
+<source xml:lang="en">image captionNeera Tanden's social media comments have drawn controversy</source>
+<seg-source><mrk mid="0" mtype="seg" status="tmNotStarted">image captionNeera Tanden's social media comments have drawn controversy</mrk></seg-source>
+<target xml:lang="fr"><mrk mid="0" mtype="seg"></mrk></target>
+</trans-unit>
+<trans-unit id="102" xml:space="preserve">
+<source xml:lang="en">But she is likely to be the hardest confirmation fight in the Senate.</source>
+<seg-source><mrk mid="0" mtype="seg" status="tmPreTranslated:100">But she is likely to be the hardest confirmation fight in the Senate.</mrk></seg-source>
+<target xml:lang="fr"><mrk mid="0" mtype="seg">Mais il est probable qu'elle soit le combat de confirmation le plus dur au Sénat.</mrk></target>
+</trans-unit>
+<trans-unit id="103" xml:space="preserve">
+<source xml:lang="en">Neera Tanden pick draws controversy</source>
+<seg-source><mrk mid="0" mtype="seg" status="tmPreTranslated:101">Neera Tanden pick draws controversy</mrk></seg-source>
+<target xml:lang="fr"><mrk mid="0" mtype="seg">Le choix de Neera Tanden soulève la controverse</mrk></target>
+</trans-unit>
+<trans-unit id="104" xml:space="preserve">
+<source xml:lang="en">Joe Biden might have his first big presidential appointment fight on his hands.</source>
+<seg-source><mrk mid="0" mtype="seg" status="tmPreTranslated:101">Joe Biden might have his first big presidential appointment fight on his hands.</mrk></seg-source>
+<target xml:lang="fr"><mrk mid="0" mtype="seg">Joe Biden pourrait avoir son premier grand combat de nomination présidentielle sur ses mains.</mrk></target>
+</trans-unit>
+<trans-unit id="105" xml:space="preserve">
+<source xml:lang="en">The president-elect's choice of Neera Tanden, a long-time Democratic operative, to be his White House budget office director - which requires Senate confirmation - is getting sharp attacks from the left and the right.</source>
+<seg-source><mrk mid="0" mtype="seg" status="tmPreTranslated:101">The president-elect's choice of Neera Tanden, a long-time Democratic operative, to be his White House budget office director - which requires Senate confirmation - is getting sharp attacks from the left and the right.</mrk></seg-source>
+<target xml:lang="fr"><mrk mid="0" mtype="seg">Le choix du président élu de Neera Tanden, un membre démocrate de longue date, pour être son directeur du bureau du budget de la Maison-Blanche - ce qui nécessite la confirmation du Sénat - est attaqué violemment par la gauche et la droite.</mrk></target>
+</trans-unit>
+<trans-unit id="106" xml:space="preserve">
+<source xml:lang="en">Grass-roots liberals don't like Tanden because of her outspoken criticism of the party's progressive movement and its standard-bearer, former presidential hopeful Bernie Sanders. Conservatives don't like her because of her personal jabs at their leaders.</source>
+<seg-source><mrk mid="0" mtype="seg" status="tmPreTranslated:101">Grass-roots liberals don't like Tanden because of her outspoken criticism of the party's progressive movement and its standard-bearer, former presidential hopeful Bernie Sanders. </mrk><mrk mid="1" mtype="seg" status="tmPreTranslated:101">Conservatives don't like her because of her personal jabs at their leaders.</mrk></seg-source>
+<target xml:lang="fr"><mrk mid="0" mtype="seg">Les libéraux de base n'aiment pas Tanden à cause de ses critiques franches du mouvement progressiste du parti et de son porte-drapeau, l'ancien espoir présidentiel Bernie Sanders. </mrk><mrk mid="1" mtype="seg">Les conservateurs ne l'aiment pas à cause de ses attaques personnelles contre leurs dirigeants.</mrk></target>
+</trans-unit>
+<trans-unit id="107" xml:space="preserve">
+<source xml:lang="en">And Tanden's views are well-documented, given that some of her most incendiary comments came on social media.</source>
+<seg-source><mrk mid="0" mtype="seg" status="tmPreTranslated:101">And Tanden's views are well-documented, given that some of her most incendiary comments came on social media.</mrk></seg-source>
+<target xml:lang="fr"><mrk mid="0" mtype="seg">Et les opinions de Tanden sont bien documentées, étant donné que certains de ses commentaires les plus incendiaires ont été publiés sur les réseaux sociaux.</mrk></target>
+</trans-unit>
+<trans-unit id="108" xml:space="preserve">
+<source xml:lang="en">Concern about problematic tweets might seem quaint after four years of Donald Trump's presidency, of course. And the Senate's 2018 confirmation of Ric Grenell - a notorious Twitter provocateur - to be Trump's ambassador to Germany suggests that inflammatory social media posts are not by themselves disqualifying.</source>
+<seg-source><mrk mid="0" mtype="seg" status="tmPreTranslated:101">Concern about problematic tweets might seem quaint after four years of Donald Trump's presidency, of course. </mrk><mrk mid="1" mtype="seg" status="tmPreTranslated:101">And the Senate's 2018 confirmation of Ric Grenell - a notorious Twitter provocateur - to be Trump's ambassador to Germany suggests that inflammatory social media posts are not by themselves disqualifying.</mrk></seg-source>
+<target xml:lang="fr"><mrk mid="0" mtype="seg">Les inquiétudes suscitées par les tweets problématiques pourraient sembler pittoresques après quatre ans de présidence de Donald Trump, bien sûr. </mrk><mrk mid="1" mtype="seg">Et la confirmation par le Sénat, en 2018, de Ric Grenell - un célèbre provocateur de Twitter - d'être l'ambassadeur de Trump en Allemagne suggère que les messages incendiaires sur les réseaux sociaux ne sont pas en soi disqualifiants.</mrk></target>
+</trans-unit>
+<trans-unit id="109" xml:space="preserve">
+<source xml:lang="en">Grenell, however, had a Republican majority supporting his nomination. Pending the outcome of Georgia's Senate races, Biden could face a chamber controlled by the opposition - and a left flank disinclined to help.</source>
+<seg-source><mrk mid="0" mtype="seg" status="tmPreTranslated:101">Grenell, however, had a Republican majority supporting his nomination. </mrk><mrk mid="1" mtype="seg" status="tmPreTranslated:101">Pending the outcome of Georgia's Senate races, Biden could face a chamber controlled by the opposition - and a left flank disinclined to help.</mrk></seg-source>
+<target xml:lang="fr"><mrk mid="0" mtype="seg">Cependant, Grenell avait une majorité républicaine en faveur de sa nomination. </mrk><mrk mid="1" mtype="seg">En attendant le résultat des courses au Sénat en Géorgie, Biden pourrait faire face à une chambre contrôlée par l'opposition - et un flanc gauche peu enclin à aider.</mrk></target>
+</trans-unit>
+<trans-unit id="110" xml:space="preserve">
+<source xml:lang="en">Biden has touted his ability to work with the Senate to get things done. If he wants Tanden, this will be an early test of his skills.</source>
+<seg-source><mrk mid="0" mtype="seg" status="tmPreTranslated:101">Biden has touted his ability to work with the Senate to get things done. </mrk><mrk mid="1" mtype="seg" status="tmPreTranslated:101">If he wants Tanden, this will be an early test of his skills.</mrk></seg-source>
+<target xml:lang="fr"><mrk mid="0" mtype="seg">M. Biden a fait valoir sa capacité de travailler avec le Sénat pour faire avancer les choses. </mrk><mrk mid="1" mtype="seg">S'il veut Tanden, ce sera un test précoce de ses compétences.</mrk></target>
+</trans-unit>
+<trans-unit id="111" xml:space="preserve">
+<source xml:lang="en">You might be interested in:</source>
+<seg-source><mrk mid="0" mtype="seg" status="tmPreTranslated:101">You might be interested in:</mrk></seg-source>
+<target xml:lang="fr"><mrk mid="0" mtype="seg">Vous pourriez être intéressé par :</mrk></target>
+</trans-unit>
+</body>
+</file>
+</xliff>

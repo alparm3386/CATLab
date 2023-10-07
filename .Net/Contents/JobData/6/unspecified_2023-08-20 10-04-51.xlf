@@ -1,0 +1,61 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:okp="okapi-framework:xliff-extensions" xmlns:its="http://www.w3.org/2005/11/its" xmlns:itsxlf="http://www.w3.org/ns/its-xliff/" its:version="2.0">
+<file original="word/document.xml" source-language="en" target-language="fr" datatype="x-undefined" okp:inputEncoding="UTF-8">
+<body>
+<trans-unit id="NFDBB2FA9-tu1" xml:space="preserve">
+<source xml:lang="en">Test<bpt id="1" ctype="x-bold;color:3F3F42;">&lt;run1&gt;</bpt> 1. <ept id="1">&lt;/run1&gt;</ept><bpt id="2" ctype="x-bold;color:FF0000;">&lt;run2&gt;</bpt>Test <ept id="2">&lt;/run2&gt;</ept><bpt id="3" ctype="x-bold;color:3F3F42;">&lt;run3&gt;</bpt>2. <ept id="3">&lt;/run3&gt;</ept><bpt id="4" ctype="x-bold;color:00B050;">&lt;run4&gt;</bpt>Test <ept id="4">&lt;/run4&gt;</ept><bpt id="5" ctype="x-bold;color:3F3F42;">&lt;run5&gt;</bpt>3.<ept id="5">&lt;/run5&gt;</ept></source>
+<seg-source><mrk mid="0" mtype="seg" status="ManuallyConfirmed">Test<bpt id="1" ctype="x-bold;color:3F3F42;">&lt;run1&gt;</bpt> 1. <ept id="1">&lt;/run1&gt;</ept></mrk><mrk mid="1" mtype="seg" status="ManuallyConfirmed"><bpt id="2" ctype="x-bold;color:FF0000;">&lt;run2&gt;</bpt>Test <ept id="2">&lt;/run2&gt;</ept><bpt id="3" ctype="x-bold;color:3F3F42;">&lt;run3&gt;</bpt>2. <ept id="3">&lt;/run3&gt;</ept></mrk><mrk mid="2" mtype="seg" status="ManuallyConfirmed"><bpt id="4" ctype="x-bold;color:00B050;">&lt;run4&gt;</bpt>Test <ept id="4">&lt;/run4&gt;</ept><bpt id="5" ctype="x-bold;color:3F3F42;">&lt;run5&gt;</bpt>3.<ept id="5">&lt;/run5&gt;</ept></mrk></seg-source>
+<target xml:lang="fr"><mrk mid="0" mtype="seg">Test<bpt id="1" ctype="x-bold;color:3F3F42;">&lt;run1&gt;</bpt> 1. <ept id="1">&lt;/run1&gt;</ept></mrk><mrk mid="1" mtype="seg"><bpt id="2" ctype="x-bold;color:FF0000;">&lt;run2&gt;</bpt>Test <ept id="2">&lt;/run2&gt;</ept><bpt id="3" ctype="x-bold;color:3F3F42;">&lt;run3&gt;</bpt>2. <ept id="3">&lt;/run3&gt;</ept></mrk><mrk mid="2" mtype="seg"><bpt id="4" ctype="x-bold;color:00B050;">&lt;run4&gt;</bpt>Test <ept id="4">&lt;/run4&gt;</ept><bpt id="5" ctype="x-bold;color:3F3F42;">&lt;run5&gt;</bpt>3.<ept id="5">&lt;/run5&gt;</ept></mrk></target>
+</trans-unit>
+<trans-unit id="NFDBB2FA9-tu2" xml:space="preserve">
+<source xml:lang="en"><bpt id="1" ctype="x-bold;color:3F3F42;">&lt;run1&gt;</bpt>Biden to nominate<ept id="1">&lt;/run1&gt;</ept> <bpt id="2" ctype="x-color:00B050;">&lt;run2&gt;</bpt>Janet Yellen<ept id="2">&lt;/run2&gt;</ept> as US treasury secretary ds</source>
+<seg-source><mrk mid="0" mtype="seg" status="ManuallyConfirmed"><bpt id="1" ctype="x-bold;color:3F3F42;">&lt;run1&gt;</bpt>Biden to nominate<ept id="1">&lt;/run1&gt;</ept> <bpt id="2" ctype="x-color:00B050;">&lt;run2&gt;</bpt>Janet Yellen<ept id="2">&lt;/run2&gt;</ept> as US treasury secretary ds</mrk></seg-source>
+<target xml:lang="fr"><mrk mid="0" mtype="seg"><bpt id="1" ctype="x-bold;color:3F3F42;">&lt;run1&gt;</bpt>Biden doit nommer<ept id="1">&lt;/run1&gt;</ept> <bpt id="2" ctype="x-color:00B050;">&lt;run2&gt;</bpt>Janet Yellen<ept id="2">&lt;/run2&gt;</ept> secrétaire au Trésor des États-Unis ds</mrk></target>
+</trans-unit>
+<trans-unit id="NFDBB2FA9-tu3" xml:space="preserve">
+<source xml:lang="en">Published </source>
+<seg-source><mrk mid="0" mtype="seg" status="ManuallyConfirmed">Published </mrk></seg-source>
+<target xml:lang="fr"><mrk mid="0" mtype="seg">Publié </mrk></target>
+</trans-unit>
+<trans-unit id="NFDBB2FA9-tu4" xml:space="preserve">
+<source xml:lang="en">1 hour ago</source>
+<seg-source><mrk mid="0" mtype="seg" status="ManuallyConfirmed">1 hour ago</mrk></seg-source>
+<target xml:lang="fr"><mrk mid="0" mtype="seg">Il y a 1 heure</mrk></target>
+</trans-unit>
+<trans-unit id="NFDBB2FA9-tu5" xml:space="preserve">
+<source xml:lang="en">Share</source>
+<seg-source><mrk mid="0" mtype="seg" status="ManuallyConfirmed">Share</mrk></seg-source>
+<target xml:lang="fr"><mrk mid="0" mtype="seg">Partager</mrk></target>
+</trans-unit>
+<trans-unit id="NFDBB2FA9-tu6" xml:space="preserve">
+<source xml:lang="en"><bpt id="1" ctype="x-caps;color:EEEEEE;highlight:3F3F42;">&lt;run1&gt;</bpt>IMAGE COPYRIGHTREUTERS 3<ept id="1">&lt;/run1&gt;</ept></source>
+<seg-source><mrk mid="0" mtype="seg" status="ManuallyConfirmed"><bpt id="1" ctype="x-caps;color:EEEEEE;highlight:3F3F42;">&lt;run1&gt;</bpt>IMAGE COPYRIGHTREUTERS 3<ept id="1">&lt;/run1&gt;</ept></mrk></seg-source>
+<target xml:lang="fr"><mrk mid="0" mtype="seg"><bpt id="1" ctype="x-caps;color:EEEEEE;highlight:3F3F42;">&lt;run1&gt;</bpt>COPYRIGHTREUTEURS D'IMAGE 3<ept id="1">&lt;/run1&gt;</ept></mrk></target>
+</trans-unit>
+<trans-unit id="NFDBB2FA9-tu7" xml:space="preserve">
+<source xml:lang="en"><bpt id="1" ctype="x-color:3F3F42;">&lt;run1&gt;</bpt>image caption<ept id="1">&lt;/run1&gt;</ept>Janet Yellen's appointment needs to be confirmed by the Senate</source>
+<seg-source><mrk mid="0" mtype="seg" status="ManuallyConfirmed"><bpt id="1" ctype="x-color:3F3F42;">&lt;run1&gt;</bpt>image caption<ept id="1">&lt;/run1&gt;</ept>Janet Yellen's appointment needs to be confirmed by the Senate</mrk></seg-source>
+<target xml:lang="fr"><mrk mid="0" mtype="seg"><bpt id="1" ctype="x-color:3F3F42;">&lt;run1&gt;</bpt> légende de l'image <ept id="1">&lt;/run1&gt;</ept> La nomination de Janet Yellen doit être confirmée par le Sénat</mrk></target>
+</trans-unit>
+<trans-unit id="NFDBB2FA9-tu8" xml:space="preserve">
+<source xml:lang="en">US President-elect Joe Biden has named ex-Federal Reserve chair Janet Yellen as his nominee for treasury secretary 44444.</source>
+<seg-source><mrk mid="0" mtype="seg" status="ManuallyConfirmed">US President-elect Joe Biden has named ex-Federal Reserve chair Janet Yellen as his nominee for treasury secretary 44444.</mrk></seg-source>
+<target xml:lang="fr"><mrk mid="0" mtype="seg">Le président élu des États-Unis, Joe Biden, a nommé l'ancienne présidente de la Réserve fédérale, Janet Yellen, au poste de secrétaire au Trésor 44444.</mrk></target>
+</trans-unit>
+<trans-unit id="NFDBB2FA9-tu9" xml:space="preserve">
+<source xml:lang="en">If confirmed by the Senate<it id="1" ctype="x-color:3F3F42;" pos="open">&lt;run1&gt;</it>, she would be the first woman ever to hold the post2. She was among several women chosen for top economic positions2. The Biden transition team said others were set to break racial barriers if confirmed2. Mr Biden has pledged to 33 build a diverse administration 333. He earlier appointed an all 444.<it id="1" ctype="x-color:3F3F42;" pos="close">&lt;/run1&gt;</it></source>
+<seg-source><mrk mid="0" mtype="seg" status="ManuallyConfirmed">If confirmed by the Senate<it id="1" ctype="x-color:3F3F42;" pos="open">&lt;run1&gt;</it>, she would be the first woman ever to hold the post2. </mrk><mrk mid="1" mtype="seg" status="ManuallyConfirmed">She was among several women chosen for top economic positions2. </mrk><mrk mid="2" mtype="seg" status="ManuallyConfirmed">The Biden transition team said others were set to break racial barriers if confirmed2. </mrk><mrk mid="3" mtype="seg" status="ManuallyConfirmed">Mr Biden has pledged to 33 build a diverse administration 333. </mrk><mrk mid="4" mtype="seg" status="ManuallyConfirmed">He earlier appointed an all 444.<it id="1" ctype="x-color:3F3F42;" pos="close">&lt;/run1&gt;</it></mrk></seg-source>
+<target xml:lang="fr"><mrk mid="0" mtype="seg">Si elle est confirmée par le Sénat, elle serait la première femme à occuper ce poste2. </mrk><mrk mid="1" mtype="seg">Elle faisait partie de plusieurs femmes choisies pour occuper des postes économiques de haut niveau2. </mrk><mrk mid="2" mtype="seg">L'équipe de transition de Biden a déclaré que d'autres étaient prêts à briser les barrières raciales si elles étaient confirmées2. </mrk><mrk mid="3" mtype="seg">M. Biden s'est engagé à 33 construire une administration diversifiée 333. </mrk><mrk mid="4" mtype="seg">Il a précédemment nommé un All 444.</mrk></target>
+</trans-unit>
+<trans-unit id="NFDBB2FA9-tu10" xml:space="preserve">
+<source xml:lang="en">She was among several women chosen for top economic positions244. Dummy text.</source>
+<seg-source><mrk mid="0" mtype="seg" status="ManuallyConfirmed">She was among several women chosen for top economic positions244. </mrk><mrk mid="1" mtype="seg" status="ManuallyConfirmed">Dummy text.</mrk></seg-source>
+<target xml:lang="fr"><mrk mid="0" mtype="seg">Elle faisait partie de plusieurs femmes choisies pour occuper des postes économiques de haut niveau244. </mrk><mrk mid="1" mtype="seg">Texte factice.</mrk></target>
+</trans-unit>
+</body>
+</file>
+<file original="word/settings.xml" source-language="en" target-language="fr" datatype="x-undefined" okp:inputEncoding="UTF-8">
+<body>
+</body>
+</file>
+</xliff>

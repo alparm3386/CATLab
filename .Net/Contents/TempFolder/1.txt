@@ -1,0 +1,23 @@
+﻿                    SegmentXml segXml = new SegmentXml();
+                    Segment source = segXml.Xml2Segment("<seg>" + tmEntry.sourceSegment + "</seg>");
+                    Segment target = segXml.Xml2Segment("<seg>" + tmEntry.targetSegment + "</seg>");
+                    Segment preceding = null;
+                    if (tmEntry.precedingSegment != null && tmEntry.precedingSegment.Length > 0)
+                        preceding = segXml.Xml2Segment("<seg>" + tmEntry.precedingSegment + "</seg>");
+                    Segment following = null;
+                    if (tmEntry.followingSegment != null && tmEntry.followingSegment.Length > 0)
+                        following = segXml.Xml2Segment("<seg>" + tmEntry.followingSegment + "</seg>");
+
+                    MemoQ.TranslationMemory.Common.TMEntry tme = new MemoQ.TranslationMemory.Common.TMEntry(source, target, false, true,
+                        Roles.None, DateTime.UtcNow, tmEntry.user, new TMEntryInfo(), preceding, following, tmEntry.contextId);
+                    tme.UserName = tmEntry.user;
+                    tme.CreatingUser = tmEntry.user;
+                    tme.Document = tmEntry.document;
+
+                    AddEntryParams item = new AddEntryParams
+                    {
+                        Entry = tme,
+                    };
+
+                    byte[] addEntryParamsBytes = ByteBuffer.CompactSaveAndGetBytes(item);
+                    stmm.AddEntry(tmGuid, addEntryParamsBytes);
