@@ -1,0 +1,3 @@
+[submodule "Java/Okapi master/okapi"]
+	path = Java/Okapi master/okapi
+	url = https://bitbucket.org/okapiframework/okapi.git
