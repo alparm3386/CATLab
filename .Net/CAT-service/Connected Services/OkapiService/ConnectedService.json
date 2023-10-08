@@ -1,0 +1,35 @@
+{
+  "ExtendedData": {
+    "inputs": [
+      "http://10.0.20.55:8080/OkapiService/services/OkapiService?wsdl"
+    ],
+    "collectionTypes": [
+      "System.Array",
+      "System.Collections.Generic.Dictionary`2"
+    ],
+    "namespaceMappings": [
+      "*, OkapiService"
+    ],
+    "references": [
+      "Google.Protobuf, {Google.Protobuf, 3.21.5}",
+      "Grpc.AspNetCore.Server, {Grpc.AspNetCore.Server, 2.49.0}",
+      "Grpc.AspNetCore.Server.ClientFactory, {Grpc.AspNetCore.Server.ClientFactory, 2.49.0}",
+      "Grpc.Core.Api, {Grpc.Core.Api, 2.49.0}",
+      "Grpc.Net.Client, {Grpc.Net.Client, 2.49.0}",
+      "Grpc.Net.ClientFactory, {Grpc.Net.ClientFactory, 2.49.0}",
+      "Grpc.Net.Common, {Grpc.Net.Common, 2.49.0}",
+      "Microsoft.Extensions.Configuration, {Microsoft.Extensions.Configuration, 3.0.3}",
+      "Microsoft.Extensions.Configuration.Abstractions, {Microsoft.Extensions.Configuration.Abstractions, 3.0.3}",
+      "Microsoft.Extensions.Configuration.Binder, {Microsoft.Extensions.Configuration.Binder, 3.0.3}",
+      "Microsoft.Extensions.DependencyInjection, {Microsoft.Extensions.DependencyInjection, 3.0.3}",
+      "Microsoft.Extensions.DependencyInjection.Abstractions, {Microsoft.Extensions.DependencyInjection.Abstractions, 3.0.3}",
+      "Microsoft.Extensions.Http, {Microsoft.Extensions.Http, 3.0.3}",
+      "Microsoft.Extensions.Logging, {Microsoft.Extensions.Logging, 3.0.3}",
+      "Microsoft.Extensions.Logging.Abstractions, {Microsoft.Extensions.Logging.Abstractions, 3.0.3}",
+      "Microsoft.Extensions.Options, {Microsoft.Extensions.Options, 3.0.3}",
+      "Microsoft.Extensions.Primitives, {Microsoft.Extensions.Primitives, 3.0.3}"
+    ],
+    "targetFramework": "net7.0",
+    "typeReuseMode": "All"
+  }
+}

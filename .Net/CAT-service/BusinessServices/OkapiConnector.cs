@@ -1,6 +1,5 @@
 ﻿using cat.utils;
-using CATService.OkapiService;
-using Newtonsoft.Json;
+using OkapiService;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -15,7 +14,7 @@ using System.Threading;
 using System.Transactions;
 using System.Xml;
 
-namespace okapi
+namespace CAT.BusinessServices
 {
     /// <summary>
     /// OkapiConnector
@@ -23,25 +22,23 @@ namespace okapi
     public class OkapiConnector
     {
         private BasicHttpBinding _binding;
-        private static Logger logger = new Logger();
+        private ILogger _logger;
+        private readonly IConfiguration _configuration;
 
         /// <summary>
         /// OkapiConnector
         /// </summary>
         /// <param name="iServer"></param>
-        public OkapiConnector()
+        public OkapiConnector(IConfiguration configuration, ILogger<OkapiConnector> logger)
         {
             _binding = GetOkapiServiceBinding();
+            _configuration = configuration;
+            _logger = logger;
         }
 
-        private EndpointAddress GetOkapiServiceEndpoint(bool bFailover)
+        private EndpointAddress GetOkapiServiceEndpoint()
         {
-            var endPointAddr = "";
-
-            if (!bFailover)
-                endPointAddr = "http://" + ConfigurationSettings.AppSettings["OkapiServer"] + ":8080/OkapiService/services/OkapiService";
-            else
-                endPointAddr = "http://" + ConfigurationSettings.AppSettings["OkapiFailoverServer"] + ":8080/OkapiService/services/OkapiService";
+            var endPointAddr = "http://" + _configuration["OkapiServer"] + ":8080/OkapiService/services/OkapiService";
 
             //create the endpoint address for the 
             return new EndpointAddress(endPointAddr);
@@ -61,28 +58,14 @@ namespace okapi
             httpBinding.OpenTimeout = new TimeSpan(0, 30, 0);
             httpBinding.ReceiveTimeout = new TimeSpan(0, 10, 0);
             httpBinding.SendTimeout = new TimeSpan(0, 30, 0);
-            //httpBinding.TransactionFlow = false;
-            //httpBinding.TransferMode = TransferMode.Buffered;
-            //httpBinding.TransactionProtocol = TransactionProtocol.OleTransactions;
-            httpBinding.HostNameComparisonMode = HostNameComparisonMode.StrongWildcard;
-            //httpBinding.ListenBacklog = 200;
             httpBinding.MaxBufferPoolSize = 524288 * 100;
             httpBinding.MaxBufferSize = 16384 * 100000;
             httpBinding.MaxReceivedMessageSize = 16384 * 100000;
-            //httpBinding.MaxConnections = 100;
             httpBinding.ReaderQuotas.MaxDepth = 32;
             httpBinding.ReaderQuotas.MaxStringContentLength = 8192 * 100000;
             httpBinding.ReaderQuotas.MaxArrayLength = 16384 * 1000;
             httpBinding.ReaderQuotas.MaxBytesPerRead = 4096 * 100;
             httpBinding.ReaderQuotas.MaxNameTableCharCount = 16384 * 10000;
-            //httpBinding.ReliableSession.Ordered = true;
-            //httpBinding.ReliableSession.InactivityTimeout = new TimeSpan(0, 10, 0);
-            //httpBinding.ReliableSession.Enabled = false;
-            //httpBinding.Security.Mode = BasicHttpSecurityMode.None;
-
-            //tcpBinding.Security.Transport.ClientCredentialType = TcpClientCredentialType.None;
-            //tcpBinding.Security.Transport.ProtectionLevel = System.Net.Security.ProtectionLevel.EncryptAndSign;
-            //tcpBinding.Security.Message.ClientCredentialType = MessageCredentialType.None;
 
             return httpBinding;
         }
@@ -94,7 +77,7 @@ namespace okapi
         public IOkapiService GetOkapiService()
         {
             ChannelFactory<IOkapiService> channelFactory =
-                new ChannelFactory<IOkapiService>(_binding, GetOkapiServiceEndpoint(false));
+                new ChannelFactory<IOkapiService>(_binding, GetOkapiServiceEndpoint());
 
             foreach (OperationDescription op in channelFactory.Endpoint.Contract.Operations)
             {
@@ -114,7 +97,7 @@ namespace okapi
         public IOkapiService GetOkapiService(bool bFailover)
         {
             ChannelFactory<IOkapiService> channelFactory =
-                new ChannelFactory<IOkapiService>(_binding, GetOkapiServiceEndpoint(bFailover));
+                new ChannelFactory<IOkapiService>(_binding, GetOkapiServiceEndpoint());
 
             foreach (OperationDescription op in channelFactory.Endpoint.Contract.Operations)
             {
@@ -133,27 +116,15 @@ namespace okapi
             {
                 //the client
                 var okapiClient = GetOkapiService();
-                String sXliffContent = okapiClient.createXliff(new createXliffRequest(sFileName, fileContent, sFilterName, filterContent, sourceLang,
-                    targetLang, null)).createXliffReturn;
+                String sXliffContent = okapiClient.createXliffAsync(new createXliffRequest(sFileName, fileContent, sFilterName, filterContent, sourceLang,
+                    targetLang, null)).Result.createXliffReturn;
 
                 return sXliffContent;
             }
             catch (Exception ex)
             {
-                logger.Log("Okapi service.log", "ERROR: CreateXliffFromDocument -> endpoint default " + ex.ToString());
-                //re-try on the failover server
-                try
-                {
-                    var okapiClient = GetOkapiService(true);
-                    String sXliffContent = okapiClient.createXliff(new createXliffRequest(sFileName, fileContent, sFilterName, filterContent, sourceLang,
-                        targetLang, null)).createXliffReturn;
-                    return sXliffContent;
-                }
-                catch (Exception exFailover)
-                {
-                    logger.Log("Okapi service.log", "ERROR: CreateXliffFromDocument -> endpoint failover " + exFailover.ToString());
-                    throw ex;
-                }
+                _logger.LogError("Okapi service -> ERROR: CreateXliffFromDocument -> endpoint default " + ex.ToString());
+                throw;
             }
         }
 
@@ -164,28 +135,16 @@ namespace okapi
             {
                 //the client
                 var okapiClient = GetOkapiService();
-                var bytes = okapiClient.createDocumentFromXliff(new createDocumentFromXliffRequest(sFileName, fileContent, sFilterName, filterContent, sourceLangISO639_1,
-                    targetLangISO639_1, sXliffContent)).createDocumentFromXliffReturn;
+                var bytes = okapiClient.createDocumentFromXliffAsync(new createDocumentFromXliffRequest(sFileName, fileContent, sFilterName, filterContent, sourceLangISO639_1,
+                    targetLangISO639_1, sXliffContent)).Result.createDocumentFromXliffReturn;
 
                 return bytes;
             }
             catch (Exception ex)
             {
-                logger.Log("Okapi service.log", "ERROR: CreateDocumentFromXliff -> endpoint default " + ex.ToString());
+                _logger.LogError("Okapi service.log -> ERROR: CreateDocumentFromXliff -> endpoint default " + ex.ToString());
                 //re-try on the failover server
-                try
-                {
-                    var okapiClient = GetOkapiService(true);
-                    var bytes = okapiClient.createDocumentFromXliff(new createDocumentFromXliffRequest(sFileName, fileContent, sFilterName, filterContent, sourceLangISO639_1,
-                        targetLangISO639_1, sXliffContent)).createDocumentFromXliffReturn;
-
-                    return bytes;
-                }
-                catch (Exception exFailover)
-                {
-                    logger.Log("Okapi service.log", "ERROR: CreateDocumentFromXliff -> endpoint failover " + exFailover.ToString());
-                    throw ex;
-                }
+                throw;
             }
         }
 

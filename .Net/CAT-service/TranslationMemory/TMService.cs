@@ -1,7 +1,6 @@
-﻿using cat.service;
-using cat.utils;
+﻿using cat.utils;
+using CAT.BusinessServices;
 using CAT.Models;
-using CATService.Backup;
 using CATService.Utils;
 using Lucene.Net.Index;
 using Lucene.Net.Search;
@@ -24,7 +23,7 @@ using System.Transactions;
 using System.Xml;
 using utils;
 
-namespace CAT.tm
+namespace CAT.TM
 {
     class TMService
     {
@@ -32,12 +31,12 @@ namespace CAT.tm
         private static readonly int TmWriterIdleTimeout = 20; //minutes
         private static readonly int MaxConnectionPoolSize = 40;
         private static Dictionary<String, TMConnector> TmConnectionPool = new Dictionary<String, TMConnector>();
-        private static readonly String RepositoryFolder = System.Configuration.ConfigurationSettings.AppSettings["TMPath"];
+        private static readonly String RepositoryFolder;
         private OkapiConnector okapiConnector = new OkapiConnector();
         private static readonly int NGramLength = 4;
         private static Dictionary<int, String> specialities = new Dictionary<int, String>();
         private readonly IConfiguration _configuration;
-        private readonly ICATConnector _catConnector;
+        private readonly CATConnector _catConnector;
         private readonly ILogger _logger;
 
         static TMService()
@@ -53,7 +52,7 @@ namespace CAT.tm
             }
         }
 
-        public TMService(IConfiguration configuration, ILogger<TMService> logger, ICATConnector catConnector)
+        public TMService(IConfiguration configuration, ILogger<TMService> logger, CATConnector catConnector)
         {
             _configuration = configuration;
             _logger = logger;
