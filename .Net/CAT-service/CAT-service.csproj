@@ -12,7 +12,15 @@
 
   <ItemGroup>
     <PackageReference Include="Grpc.AspNetCore" Version="2.49.0" />
-    <PackageReference Include="Lucene.Net" Version="4.8.0-beta00016" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Lucene.Net">
+      <HintPath>..\Lucene.Net\src\Lucene.Net\bin\Release\net6.0\Lucene.Net.dll</HintPath>
+    </Reference>
+    <Reference Include="Lucene.Net.Analysis.Common">
+      <HintPath>..\Lucene.Net\src\Lucene.Net.Analysis.Common\bin\Release\net6.0\Lucene.Net.Analysis.Common.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
 <PropertyGroup>
