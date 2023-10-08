@@ -11,7 +11,7 @@ using System.Web;
 using System.Xml.Linq;
 using utils;
 
-namespace CAT.TM
+namespace CAT.BusinessServices
 {
     public class DataStorage : IDataStorage
     {

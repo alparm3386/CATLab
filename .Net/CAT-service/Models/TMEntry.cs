@@ -3,8 +3,8 @@ namespace CAT.Models
     public class TMEntry
     {
         public int id;
-        public String source;
-        public String target;
-        public String metadata;
+        public String source = default!;
+        public String target = default!;
+        public String metadata = default!;
     }
 }

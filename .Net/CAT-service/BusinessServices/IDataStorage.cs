@@ -1,7 +1,7 @@
 ﻿using okapi.resource;
 using System.Data;
 
-namespace CAT.TM
+namespace CAT.BusinessServices
 {
     public interface IDataStorage
     {
