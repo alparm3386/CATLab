@@ -7,6 +7,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddGrpc();
+builder.Logging.AddProvider(new Log4NetLoggerProvider("log4net.config"));
 
 var app = builder.Build();
 

@@ -16,7 +16,7 @@ using utils;
 using Directory = Lucene.Net.Store.Directory;
 using Document = Lucene.Net.Documents.Document;
 
-namespace CAT.TM
+namespace cat.tm
 {
     /**
 	 * Used to write, delete and update the index.
