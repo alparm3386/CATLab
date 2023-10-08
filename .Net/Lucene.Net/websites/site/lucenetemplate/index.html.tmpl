@@ -1,0 +1,80 @@
+﻿{{!Copyright (c) Microsoft. All rights reserved. Licensed under the MIT license. See LICENSE file in the project root for full license information.}}
+{{!include(/^styles/.*/)}}
+{{!include(/^fonts/.*/)}}
+{{!include(favicon.ico)}}
+{{!include(logo.svg)}}
+<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html lang="en">
+  {{>partials/head-content}}
+  <body id="homepage" data-spy="scroll" data-target="#affix">
+  <span id="forkongithub"><a href="https://github.com/apache/lucenenet" target="_blank">Fork me on GitHub</a></span>
+    <div id="wrapper">
+      <header>
+        {{>partials/navbar}}
+      </header>
+      <section id="intro" class="home-section">
+        <div class="container">
+          <h1 class="text-center">Lucene.NET is a high performance search library for .NET</h1>
+          <div class="row">
+              <div class="nuget-well col-xs-8 col-xs-offset-2 col-lg-6 col-lg-offset-3">
+                  dotnet add package Lucene.Net --prerelease
+              </div>
+          </div>
+          <div class="row">
+              <div class="text-center project-links">
+                  <a href="https://github.com/apache/lucenenet" target="_blank" >
+                      <i class="fa fa-github"></i>
+                  </a>
+                  <a href="http://mail-archives.apache.org/mod_mbox/lucenenet-dev/" target="_blank">
+                      <i class="fa fa-envelope-o"></i>
+                  </a>
+                  <a href="https://stackoverflow.com/questions/tagged/lucene.net" target="_blank">
+                      <i class="fa fa-stack-overflow"></i>
+                  </a>
+                  <a href="download/download.html">
+                      <i class="fa fa-download" target="_blank"></i>
+                  </a>
+              </div>
+          </div>
+        </div>
+      </section>
+{{>partials/home-quick-start}}
+      <section class="home-section">
+        <div class="container">
+          <div class="row">
+            <div class="col-md-12">
+              {{{conceptual}}}
+            </div>
+          </div>
+        </div>
+      </section>
+      <section class="home-section books">
+        <div class="container">
+          <div class="row">
+            <h2 id="books" class="text-center">Popular Books</h2>
+
+            <div class="row">
+              <div class="col-xs-12 col-md-6">
+                <a href="https://www.amazon.com/Instant-Lucene-NET-Michael-Heydt/dp/1782165940" target="_blank"><img src="https://images-na.ssl-images-amazon.com/images/I/51ovFeqMwBL.jpg" /></a>
+              </div>
+              <div class="col-xs-12 col-md-6">
+                <a href="https://www.amazon.com/Lucene-4-Cookbook-Edwood-Ng/dp/1782162283/" target="_blank"><img src="https://images-na.ssl-images-amazon.com/images/I/51uIsUPhaeL.jpg"></a>
+              </div>
+            </div>
+            
+            
+    
+          </div>
+        </div>
+      </section>
+      <section class="home-section">
+        <div class="container">
+          <div class="row"></div>
+        </div>
+      </section>
+      {{>partials/footer}}
+    </div>
+    {{>partials/scripts}}
+  </body>
+</html>

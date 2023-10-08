@@ -1,0 +1,18 @@
+﻿- name: Community Links
+  href: community-links.md
+- name: Mailing Lists
+  href: mailing-lists.md
+- name: Source Code
+  href: source.md
+- name: Issue Tracker
+  href: issue-tracker.md
+- name: Website & Docs
+  href: documentation.md
+- name: Current status
+  href: current-status.md
+- name: Making a release
+  href: make-release.md
+- name: How to Setup Java Debugging
+  href: how-to-setup-java-lucene-debugging.md
+- name: Wiki
+  href: wiki.md
