@@ -765,7 +765,7 @@ namespace CAT.TM
                             String sStartingWhiteSpaces = Regex.Match(segmentNode.InnerXml, @"^\s*").Value;
                             String sEndingWhiteSpaces = Regex.Match(segmentNode.InnerXml, @"\s*$").Value;
                             //the translation
-                            var tmMatch = GetExactMatch(aTMAssignments, source, prev, next);
+                            var tmMatch = GetExactMatch(aTMAssignments, source, prev!, next!);
                             //set the translation
                             if (tmMatch != null && tmMatch.quality >= 100)
                             {
@@ -1062,7 +1062,7 @@ namespace CAT.TM
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine(ex.ToString());
-                throw ex;
+                throw;
             }
         }
 
@@ -1302,10 +1302,10 @@ namespace CAT.TM
                         var target = CATUtils.TmxSegmentToTextFragmentSimple(tmEntry.target.Trim());
                         //the context
                         var metadata = JsonConvert.DeserializeObject<Dictionary<String, String>>(tmEntry.metadata);
-                        var context = CalculateContextHashFromMetadata(metadata);
+                        var context = CalculateContextHashFromMetadata(metadata!);
 
                         String idUser = "";
-                        metadata.TryGetValue("user", out idUser);
+                        metadata!.TryGetValue("user", out idUser!);
                         int speciality = 0;
                         if (metadata.ContainsKey("speciality"))
                             int.TryParse(metadata["speciality"], out speciality);
@@ -1313,7 +1313,7 @@ namespace CAT.TM
                         if (metadata.ContainsKey("idTranslation"))
                             int.TryParse(metadata["idTranslation"], out idTranslation);
                         //insert into SQL server
-                        var dsResult = _dataStorage.InsertTMEntry(tmPath, source, target, context.ToString(), idUser, speciality, idTranslation,
+                        var dsResult = _dataStorage.InsertTMEntry(tmPath, source, target, context.ToString(), idUser!, speciality, idTranslation,
                             DateTime.Now, DateTime.Now, (metadata.ContainsKey("metadata")? metadata["metadata"] : ""));
                         //var dsResult = _dataStorage.InsertTMEntry(tmPath, source, target, context.ToString(), idUser, speciality, idTranslation,
                         //    DateTime.Now, DateTime.Now, ""); //[AM:29/09/2023] hotfix
@@ -1708,7 +1708,7 @@ namespace CAT.TM
             catch (Exception ex)
             {
                 _logger.LogError("TMEntries.log", "ERROR: TM name -> " + tmPath + "\n\n" + ex.ToString());
-                throw ex;
+                throw;
             }
         }
 
@@ -1912,7 +1912,7 @@ namespace CAT.TM
             catch (Exception ex)
             {
                 _logger.LogError("TMEntries.log", "ERROR: ReindexTM TM name -> " + tmId + "\n\n" + ex.ToString());
-                throw ex;
+                throw;
             }
         }
 
@@ -1938,7 +1938,7 @@ namespace CAT.TM
             catch (Exception ex)
             {
                 _logger.LogError("TMEntries.log", "ERROR: shrinkDatabase TM name -> " + tmPath + "\n\n" + ex.ToString());
-                throw ex;
+                throw;
             }
         }
 
@@ -2005,7 +2005,7 @@ namespace CAT.TM
             catch (Exception ex)
             {
                 _logger.LogError("TMEntries.log", "ERROR: shrinkDatabase TM name -> " + tmPath + "\n\n" + ex.ToString());
-                throw ex;
+                throw;
             }
         }
 

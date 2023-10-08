@@ -17,6 +17,7 @@
 
   <ItemGroup>
     <PackageReference Include="Grpc.AspNetCore" Version="2.49.0" />
+    <PackageReference Include="icu.net" Version="2.9.0" />
     <PackageReference Include="J2N" Version="2.0.0" />
     <PackageReference Include="log4net" Version="2.0.15" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
@@ -28,9 +29,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Reference Include="icu.net">
-      <HintPath>icu.net.dll</HintPath>
-    </Reference>
     <Reference Include="Lucene.Net">
       <HintPath>..\Lucene.Net\src\Lucene.Net\bin\Release\net6.0\Lucene.Net.dll</HintPath>
     </Reference>
@@ -44,7 +42,11 @@
     <Folder Include="Models\" />
   </ItemGroup>
 
-<PropertyGroup>
+  <PropertyGroup>
     <RootNamespace>CAT</RootNamespace>
-</PropertyGroup>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <TypeScriptCompileBlocked>true</TypeScriptCompileBlocked>
+  </PropertyGroup>
 </Project>
