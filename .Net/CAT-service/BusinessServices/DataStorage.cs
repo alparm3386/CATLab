@@ -16,13 +16,13 @@ namespace CAT.TM
 {
     public class DataStorage : IDataStorage
     {
-        private static String _termbasesConnectionString;
-        private static String __translationMemoriesConnectionString;
-        private static String _translationsConnectionString;
+        private String _termbasesConnectionString;
+        private String __translationMemoriesConnectionString;
+        private String _translationsConnectionString;
 
-        public static String _tmRepository;
-        private static readonly Logger logger = new Logger();
-        private static readonly Dictionary<String, String> _sqlCommands = new Dictionary<String, String>();
+        public String _tmRepository;
+        private ILogger _logger;
+        private readonly Dictionary<String, String> _sqlCommands = new Dictionary<String, String>();
 
         private IConfiguration _configuration;
 
@@ -33,7 +33,7 @@ namespace CAT.TM
         }
 
         #region Translation memory
-        private static DBParams GetDBParams(String tmPath)
+        private DBParams GetDBParams(String tmPath)
         {
             var aPathElements = tmPath.Split('/');
             var dbName = aPathElements[0];
@@ -48,15 +48,16 @@ namespace CAT.TM
             return dbParams;
         }
 
-        public DataStorage(IConfiguration configuration)
+        public DataStorage(IConfiguration configuration, ILogger logger)
         {
-            _termbasesConnectionString = _configuration["TermbasesConnectionString"];
-            __translationMemoriesConnectionString = _configuration["_translationMemoriesConnectionString"];
-            _translationsConnectionString = _configuration["TranslationsConnectionString"];
+            _termbasesConnectionString = _configuration!["TermbasesConnectionString"]!;
+            __translationMemoriesConnectionString = _configuration["_translationMemoriesConnectionString"]!;
+            _translationsConnectionString = _configuration["TranslationsConnectionString"]!;
 
-            _tmRepository = _configuration["TMPath"];
+            _tmRepository = _configuration["TMPath"]!;
 
             _configuration = configuration;
+            _logger = logger;
             //load the sql commands
 
             var resourceDir = _configuration["Resources"];

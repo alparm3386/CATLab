@@ -1,4 +1,4 @@
-﻿namespace CAT.Models
+﻿namespace CAT.TM
 {
     public class TMConnector
     {

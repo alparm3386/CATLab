@@ -5,19 +5,25 @@ using System.Net;
 using System.Net.Mail;
 using System.Web;
 
-namespace cat.utils
+namespace CAT.BusinessServices
 {
-    public class EmailHelper
+    public class EmailService
     {
-        private static Logger logger = new Logger();
-        public static void SendDebugEmail(String msg, String subject, String to)
+        private ILogger _logger;
+
+        public EmailService(ILogger logger)
         {
-            String from = "Errors@toppandigital.com";
+            _logger = logger;
+        }
+
+        public void SendDebugEmail(string msg, string subject, string to)
+        {
+            string from = "Errors@toppandigital.com";
             //other tweaks goes here.
             SendEmail(from, to, msg, subject);
         }
 
-        public static void SendEmail(String from, String to, String msg, String subject)
+        public void SendEmail(string from, string to, string msg, string subject)
         {
             try
             {
@@ -40,8 +46,8 @@ namespace cat.utils
                     //from
                     message.From = new MailAddress(from, from);
                     //to
-                    String[] aTo = to.Split(';');
-                    foreach (String toAddr in aTo)
+                    string[] aTo = to.Split(';');
+                    foreach (string toAddr in aTo)
                         message.To.Add(new MailAddress(toAddr));
                     //Subject
                     message.Subject = subject;
@@ -55,7 +61,7 @@ namespace cat.utils
             }
             catch (Exception ex)
             {
-                logger.Log("Email errors.log", "Failed to send email: " + ex + "\nsubject: " + subject + "\nmsg: " + msg);
+                _logger.LogError("Email errors.log", "Failed to send email: " + ex + "\nsubject: " + subject + "\nmsg: " + msg);
             }
         }
     }

@@ -21,25 +21,4 @@ namespace utils
 				return value.ToString();
 		}
 	}
-
-	public static class JavaExtensions
-	{
-		//public static List<T> ToList<T>(this java.util.List list)
-		//{
-		//	var aItems = list.toArray(new Object[list.size()]);
-		//	var aTItems = Array.ConvertAll(aItems, item => (T)item);
-		//	var outList = new List<T>(aTItems);
-
-		//	return outList;
-		//}
-
-		//public static HashSet<T> ToHashSet<T>(this java.util.Set set)
-		//{
-		//	var aItems = set.toArray(new Object[set.size()]);
-		//	var aTItems = Array.ConvertAll(aItems, item => (T)item);
-		//	var outList = new HashSet<T>(aTItems);
-
-		//	return outList;
-		//}
-	}
 }

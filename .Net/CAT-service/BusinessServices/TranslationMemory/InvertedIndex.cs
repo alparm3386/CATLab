@@ -98,8 +98,6 @@ namespace cat.tm
                 // TODO Auto-generated catch block
                 throw ex;
             }
-
-            return null;
         }
 
         public List<String> GetUniqueTermsFromIndex()
@@ -128,8 +126,8 @@ namespace cat.tm
             // do the indexing
             foreach (String term in terms)
             {
-                List<int> docIds = null;
-                invertedIndex.TryGetValue(term, out docIds);
+                List<int> docIds;
+                invertedIndex.TryGetValue(term, out docIds!);
                 if (docIds == null)
                 {
                     List<int> lstIds = new List<int>();

@@ -16,19 +16,19 @@ using utils;
 using Directory = Lucene.Net.Store.Directory;
 using Document = Lucene.Net.Documents.Document;
 
-namespace cat.tm
+namespace CAT.TM
 {
     /**
 	 * Used to write, delete and update the index.
 	 */
     public class TMWriter
     {
-        private readonly String ID_FIELD = "ID";
-        private readonly String SOURCE_FIELD = "SOURCE";
-        private readonly int N_GRAM_LEN = 4;
+        private readonly String IdField = "ID";
+        private readonly String SourceField = "SOURCE";
+        private readonly int NGramLength = 4;
         private IndexWriter indexWriter;
         private int maxVersions = 5;
-        private Logger logger = new Logger();
+        private ILogger _logger;
 
         /**
          * Creates a TMWriter
@@ -36,12 +36,14 @@ namespace cat.tm
          * @param indexDirectory   - the Lucene Directory implementation of choice.
          * @throws IOException if the indexDirectory can not load
          */
-        public TMWriter(Directory indexDirectory, bool createNewTmIndex)
+        public TMWriter(Directory indexDirectory, bool createNewTmIndex, ILogger logger)
         {
-            IndexWriterConfig conf = new IndexWriterConfig(Lucene.Net.Util.LuceneVersion.LUCENE_48, new NgramAnalyzer(N_GRAM_LEN));
+            IndexWriterConfig conf = new IndexWriterConfig(Lucene.Net.Util.LuceneVersion.LUCENE_48, new NgramAnalyzer(NGramLength));
             conf.OpenMode = createNewTmIndex ? OpenMode.CREATE : OpenMode.APPEND;
             conf.Similarity = new DefaultSimilarity(); //new BooleanSimilarity();
             indexWriter = new IndexWriter(indexDirectory, conf);
+
+            _logger = logger;
         }
 
         /**
@@ -57,7 +59,7 @@ namespace cat.tm
             }
             catch (Exception ex)
             {
-                throw ex; // To change body of catch statement use File | Settings | File Templates.
+                throw; // To change body of catch statement use File | Settings | File Templates.
             }
             finally
             {
@@ -67,7 +69,7 @@ namespace cat.tm
                 }
                 catch (IOException ignored)
                 {
-                    logger.Warn("Exception closing Pensieve IndexWriter." + ignored.ToString()); //$NON-NLS-1$
+                    _logger.LogWarning("Exception closing Pensieve IndexWriter." + ignored.ToString()); //$NON-NLS-1$
                 }
             }
         }
@@ -83,7 +85,7 @@ namespace cat.tm
             }
             catch (Exception ex)
             {
-                throw ex;
+                throw;
             }
         }
 
@@ -128,7 +130,7 @@ namespace cat.tm
                 //NumericUtils.Int32ToPrefixCoded(tuid, 0, bytes);
                 //indexWriter.DeleteDocuments(new Term(ID_FIELD, bytes));
 
-                var term = new Term(ID_FIELD, tuid.ToString());
+                var term = new Term(IdField, tuid.ToString());
                 indexWriter.DeleteDocuments(term);
                 //indexWriter.Commit();
             }
@@ -167,7 +169,7 @@ namespace cat.tm
             fieldType.IsIndexed = true;
             fieldType.StoreTermVectors = false;
             fieldType.IsTokenized = false;
-            doc.Add(new Field(ID_FIELD, id.ToString(), fieldType)); //it tokenizes the Int32Field for some reason
+            doc.Add(new Field(IdField, id.ToString(), fieldType)); //it tokenizes the Int32Field for some reason
 
             //source
             fieldType = new FieldType();
@@ -179,10 +181,10 @@ namespace cat.tm
             var text = source.GetText(); //index the plain text only
 
             //we index the short texts too
-            if (text.Length <= N_GRAM_LEN)
+            if (text.Length <= NGramLength)
             {
                 text = text.Replace("  ", " ");
-                text = text.PadRight(N_GRAM_LEN, '$');
+                text = text.PadRight(NGramLength, '$');
             }
             doc.Add(new Field(TranslationUnitField.SOURCE.ToString(), text, fieldType));
             var stringTerms = CATUtils.GetTermsFromText(text);
