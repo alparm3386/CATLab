@@ -1,6 +1,7 @@
-﻿using cat.service;
-using cat.utils;
-using CATService.Backup;
+﻿using cat.utils;
+using CAT.BusinessServices;
+using CAT.Enums;
+using CAT.Models;
 using CATService.Utils;
 using Lucene.Net.Index;
 using Lucene.Net.Search;
@@ -20,75 +21,59 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Transactions;
-using System.Web.Configuration;
 using System.Xml;
 using utils;
 using static Lucene.Net.Util.Packed.PackedInt32s;
 using Constants = cat.utils.Constants;
 
-namespace cat.tm
+namespace CAT.TM
 {
-    class TMProvider
+    class TMService
     {
-        private class TMConnector
+        private Object TMLock = new Object();
+        private readonly int TMWriterIdleTimeout = 20; //minutes
+        private readonly int MaxTmConnectionPoolSize = 40;
+        private Dictionary<String, TMConnector> TMConnectionPool = new Dictionary<String, TMConnector>();
+        private readonly String RepositoryFolder = System.Configuration.ConfigurationSettings.AppSettings["TMPath"];
+        private ILogger _logger;
+        private IDataStorage _dataStorage;
+        private IOkapiConnector _okapiConnector;
+        private readonly int NGramLength = 4;
+        private Dictionary<int, String>  specialities = new Dictionary<int, String>();
+
+        public TMService(IOkapiConnector okapiConnector, IDataStorage dataStorage, ILogger logger)
         {
-            public TMWriter tmWriter;
-            public String tmPath;
-            public DateTime created;
-            public DateTime lastAccess;
+            _okapiConnector = okapiConnector;
+            _dataStorage = dataStorage;
+            _logger = logger;
         }
 
-        private static Object TM_LOCK = new Object();
-        private static int TM_WRITER_IDLE_TIMEOUT = 20; //minutes
-        private static int MAX_TM_CONNECTION_POOL_SIZE = 40;
-        private static Dictionary<String, TMConnector> TM_CONNECTION_POOL = new Dictionary<String, TMConnector>();
-        private static String REPOSITORY_FOLDER = System.Configuration.ConfigurationSettings.AppSettings["TMPath"];
-        private static Logger logger = new Logger();
-        private static BackupConnector backupClient = new BackupConnector();
-        private static DBFactory dbFactory = new DBFactory();
-        private OkapiConnector okapiConnector = new OkapiConnector();
-        private readonly int N_GRAM_LEN = 4;
-        private static Dictionary<int, String>  specialities = new Dictionary<int, String>();
-
-        static TMProvider()
+        private String GetSourceIndexDirectory(String tmId)
         {
-            // Initialization code for static members
-
-            //load the specialities only one time
-            var dbFactory = new DBFactory();
-            var dsSpecialities = dbFactory.GetSpecialities();
-            foreach (DataRow row in dsSpecialities.Tables[0].Rows)
-            {
-                specialities.Add((int)row["specialityID"], row["description"].ToString().ToLower());
-            }
-        }
-
-        private static String GetSourceIndexDirectory(String tmPath)
-        {
-            var tmName = tmPath.Split('/')[1];
-            var tmDir = GetTMDirectory(tmPath);
+            var tmName = tmId.Split('/')[1];
+            var tmDir = GetTMDirectory(tmId);
             var sourceIndexDir = Path.Combine(tmDir, "source indexes" + "/" + tmName);
 
             return sourceIndexDir;
         }
 
-        private static String GetTMName(String tmPath)
+        private String GetTMName(String tmId)
         {
-            var tmName = tmPath.Split('/')[1];
+            var tmName = tmId.Split('/')[1];
             return tmName;
         }
 
-        private static String GetTMDirectory(String tmPath)
+        private String GetTMDirectory(String tmId)
         {
-            var parent = tmPath.Split('/')[0];
-            var tmDir = Path.Combine(REPOSITORY_FOLDER, parent);
+            var parent = tmId.Split('/')[0];
+            var tmDir = Path.Combine(RepositoryFolder, parent);
 
             return tmDir;
         }
 
-        private static String GetDatabaseName(String tmPath)
+        private static String GetDatabaseName(String tmId)
         {
-            return tmPath.Split('/')[0];
+            return tmId.Split('/')[0];
         }
 
         /// <summary>
@@ -96,39 +81,36 @@ namespace cat.tm
         /// </summary>
         /// <param name="tmPath"></param>
         /// <returns></returns>
-        public void CreateTM(String tmPath)
+        public void CreateTM(String tmId)
         {
             try
             {
                 //check if the TM Exists
-                if (TMExists(tmPath))
+                if (TMExists(tmId))
                     return;
 
                 //check the TM directory
-                var tmDir = GetTMDirectory(tmPath);
+                var tmDir = GetTMDirectory(tmId);
                 if (!System.IO.Directory.Exists(tmDir))
                     System.IO.Directory.CreateDirectory(tmDir);
 
                 //create the SQL repository
-                dbFactory.CreateTranslationMemory(tmPath);
+                _dataStorage.CreateTranslationMemory(tmId);
 
                 //create the lucene repository
-                var sourceIndexDirectory = GetSourceIndexDirectory(tmPath);
+                var sourceIndexDirectory = GetSourceIndexDirectory(tmId);
                 if (!System.IO.Directory.Exists(sourceIndexDirectory))
                 {
                     System.IO.Directory.CreateDirectory(sourceIndexDirectory);
-                    var tmWriter = TmWriterFactory.CreateFileBasedTmWriter(sourceIndexDirectory, true);
+                    var tmWriter = TmWriterFactory.CreateFileBasedTmWriter(sourceIndexDirectory, true, _logger);
                     tmWriter.Commit();
                     tmWriter.Close();
                 }
-
-                //backup
-                backupClient.CreateTM(tmPath);
             }
             catch (Exception ex)
             {
-                logger.Log("TMErrors.log", "ERROR: CreateTM -> TM name: " + tmPath + "\n" + ex.ToString());
-                throw ex;
+                _logger.LogError("ERROR: CreateTM -> TM name: " + tmId + "\n" + ex.ToString());
+                throw;
             }
         }
 
@@ -137,19 +119,19 @@ namespace cat.tm
         /// </summary>
         /// <param name="sTMName"></param>
         /// <returns></returns>
-        public bool TMExists(String tmPath)
+        public bool TMExists(String tmId)
         {
             //the TM directory
-            var tmDir = GetTMDirectory(tmPath);
+            var tmDir = GetTMDirectory(tmId);
             if (!System.IO.Directory.Exists(tmDir))
                 return false;
 
             //the TM table
-            if (!dbFactory.TMExists(tmPath))
+            if (!_dataStorage.TMExists(tmId))
                 return false;
 
             //the source index directory
-            var sourceIndexDirectory = GetSourceIndexDirectory(tmPath);
+            var sourceIndexDirectory = GetSourceIndexDirectory(tmId);
             if (!System.IO.Directory.Exists(sourceIndexDirectory))
                 return false;
 
@@ -167,36 +149,36 @@ namespace cat.tm
         /// <param name="aTargetLangsISO639_1"></param>
         /// <param name="aTMAssignments"></param>
         /// <returns></returns>
-        public Statistics[] GetStatisticsForDocument(String sFileName, byte[] fileContent, String sFilterName, byte[] filterContent, String sourceLangISO639_1,
-        String[] aTargetLangsISO639_1, TMAssignment[] aTMAssignments)
+        public Statistics[] GetStatisticsForDocument(String sFileName, byte[] fileContent, String sFilterName, byte[] filterContent, 
+            String sourceLangISO639_1, String[] aTargetLangsISO639_1, TMAssignment[] aTMAssignments)
         {
             long lStart = CATUtils.CurrentTimeMillis();
             //convert the document to xliff
-            var sXliffContent = okapiConnector.CreateXliffFromDocument(sFileName, fileContent, sFilterName, filterContent, sourceLangISO639_1, "fr"); //we can use a dummy language here
+            var sXliffContent = _okapiConnector.CreateXliffFromDocument(sFileName, fileContent, sFilterName, filterContent, sourceLangISO639_1, "fr"); //we can use a dummy language here
 
             //get the text fragments
             var tmpXliff = new XmlDocument();
             tmpXliff.LoadXml(sXliffContent);
             XmlNamespaceManager xmlnsmgr = new XmlNamespaceManager(tmpXliff.NameTable);
-            xmlnsmgr.AddNamespace("x", tmpXliff.DocumentElement.NamespaceURI);
+            xmlnsmgr.AddNamespace("x", tmpXliff!.DocumentElement.NamespaceURI);
 
             var lstTranslationUnits = new List<TranslationUnit>();
             var tus = tmpXliff.GetElementsByTagName("trans-unit");
             for (int i = 0; i < tus.Count; i++)
             {
-                var tu = (XmlElement)tus[i]; // check the segmentation
+                var tu = (XmlElement)tus![i]!; // check the segmentation
                 if (tu.Attributes["translate"]?.Value.ToLower() == "no")
                     continue; //skip non-translatables
-                XmlNodeList segmentNodes = null;
-                var ssNode = tu["seg-source"];
+                XmlNodeList segmentNodes;
+                var ssNode = tu["seg-source"]!;
                 if (ssNode == null)
-                    segmentNodes = tu.SelectNodes("x:source", xmlnsmgr);
+                    segmentNodes = tu!.SelectNodes("x:source", xmlnsmgr);
                 else
-                    segmentNodes = ssNode.SelectNodes("x:mrk", xmlnsmgr);
+                    segmentNodes = ssNode!.SelectNodes("x:mrk", xmlnsmgr);
                 for (int j = 0; j < segmentNodes.Count; j++)
                 {
                     var segmentNode = (XmlElement)segmentNodes[j]; // the source segment
-                    if (segmentNode.Attributes["translate"]?.Value.ToLower() == "no")
+                    if (segmentNode!.Attributes["translate"]?.Value.ToLower() == "no")
                         continue; //skip non-translatables
 
                     var sourceText = segmentNode.InnerXml.Trim();
@@ -211,7 +193,6 @@ namespace cat.tm
             //set the contexts
             for (int i = 0; i < lstTranslationUnits.Count; i++)
             {
-                var tu = lstTranslationUnits[i];
                 String prev = "";
                 String next = "";
                 if (i != 0)
@@ -233,7 +214,7 @@ namespace cat.tm
                     var lstTmpTMs = new List<TMAssignment>();
                     foreach (var tmAssignment in aTMAssignments)
                     {
-                        var tmInfo = GetTMInfo(tmAssignment.tmPath, false);
+                        var tmInfo = GetTMInfo(tmAssignment.id, false);
                         if (tmInfo.langFrom.ToLower() == sourceLangISO639_1.ToLower() && tmInfo.langTo.ToLower() == sTargetLang.ToLower())
                             lstTmpTMs.Add(tmAssignment);
                     }
@@ -249,10 +230,10 @@ namespace cat.tm
             }
 
             long lElapsed = CATUtils.CurrentTimeMillis() - lStart;
-            logger.Log("Statistics.log", $"{sFileName}  -> {lElapsed}ms");
-            //logger.Log("Benchmark.log", DateTime.Now.ToString("yyyy-MM-dd HH:mm") + "\tGetStatisticsForDocument\t" + lElapsed 
+            //_logger.LogError("GetStatisticsForDocument: { sFileName}  -> {lElapsed}ms", sFileName, lElapsed);
+            //_logger.LogError("Benchmark.log", DateTime.Now.ToString("yyyy-MM-dd HH:mm") + "\tGetStatisticsForDocument\t" + lElapsed 
             //    + "\t" + sFileName + "\t" + sourceLangISO639_1 + "_" + String.Join(",", aTargetLangsISO639_1) + "_" + 
-            //    String.Join(",", Array.ConvertAll(aTMAssignments, o => o.tmPath)));
+            //    String.Join(",", Array.ConvertAll(aTMAssignments, o => o.id)));
 
             return lstStats.ToArray();
         }
@@ -275,7 +256,6 @@ namespace cat.tm
                 var maxDocs = 0;
                 var scoreCntr = 0;
                 var loopCntr1 = 0;
-                var CUT_OFF_RATIO = 1;
                 var ROUGH_CUTOFF = 0.5;
                 String searchFieldName = "SOURCE";
                 // inverted index on source
@@ -306,7 +286,7 @@ namespace cat.tm
                     dtQuery.Rows.Add(i, codedText, CATUtils.djb2hash(codedText), tu.context);
                     if (idx > 0)
                     {
-                        scores.Add(scores[idx - 1].cloneAsRepetition());
+                        scores.Add(scores[idx - 1].CloneAsRepetition());
                         continue;
                     }
                     else
@@ -344,11 +324,11 @@ namespace cat.tm
                             {
                                 try
                                 {
-                                    dsContexts = dbFactory.CheckIncontextMatches(tmAssignment.tmPath, dtQuery);
+                                    dsContexts = _dataStorage.CheckIncontextMatches(tmAssignment.id, dtQuery);
                                 }
                                 catch (Exception ex)
                                 {
-                                    logger.Log("Statistics.log", "ERROR: CheckIncontextMatches -> " + ex.ToString());
+                                    _logger.LogError("Statistics.log", "ERROR: CheckIncontextMatches -> " + ex.ToString());
                                 }
                             });
                             contextCheckThread.Start();
@@ -358,7 +338,7 @@ namespace cat.tm
                         //var dir = FSDirectory.Open(new DirectoryInfo(tmDirectory));
                         // var RAMDir = new MMapDirectory(tmDirectory);
                         //var reader = DirectoryReader.Open(dir);
-                        var tmWriter = GetTMWriter(tmAssignment.tmPath);
+                        var tmWriter = GetTMWriter(tmAssignment.id);
                         var reader = tmWriter.IndexWriter.GetReader(false);
 
                         var lstTermNums = new List<int>();
@@ -497,8 +477,6 @@ namespace cat.tm
                                             //check if the speciality exists in the specilities list
                                             if (lstSpecialities[docId].Contains(speciality))
                                                 maxScore = quality;
-                                            else if (tmAssignment.penaltyForOtherSpecialities > 0)
-                                                maxScore = quality - tmAssignment.penaltyForOtherSpecialities;
                                         }
                                         else
                                         {
@@ -534,7 +512,7 @@ namespace cat.tm
 
                         System.Diagnostics.Debug.WriteLine("lookup: " + (CATUtils.CurrentTimeMillis() - t1) + "ms.");
                         //System.Diagnostics.Debug.WriteLine("loopCntr1: " + loopCntr1 + " maxDocs: " + maxDocs + " scoreCntr: " + scoreCntr);
-                        //logger.Log("Penalties.log", tmAssignment.tmPath + " -> " + tmAssignment.penalty);
+                        //_logger.LogError("Penalties.log", tmAssignment.id + " -> " + tmAssignment.penalty);
                     }
                 }
 
@@ -565,9 +543,9 @@ namespace cat.tm
             }
             catch (Exception ex)
             {
-                logger.Log("Statistics.log", "ERROR: " + ex.ToString());
+                _logger.LogError("Statistics.log", "ERROR: " + ex.ToString());
                 System.Diagnostics.Debug.WriteLine(ex.ToString());
-                throw ex;
+                throw;
             }
         }
 
@@ -589,13 +567,13 @@ namespace cat.tm
             //pre-process the document
             //fileContent = DocumentProcessor.PreprocessDocument(sFilterName, fileContent);
 
-            var sXliffContent = okapiConnector.CreateXliffFromDocument(sFileName, fileContent, sFilterName,
+            var sXliffContent = _okapiConnector.CreateXliffFromDocument(sFileName, fileContent, sFilterName,
                 filterContent, sourceLangISO639_1, targetLangISO639_1);
 
             var sPreTranslatedXliff = PreTranslateXliff(sXliffContent, sourceLangISO639_1, targetLangISO639_1, aTMAssignments, 100);
             long lElapsed = CATUtils.CurrentTimeMillis() - lStart;
-            //logger.Log("Benchmark.log", DateTime.Now.ToString("yyyy-MM-dd HH:mm") + "\tCreateXliff\t" + lElapsed
-            //    + "\t" + sFileName + "\t" + sourceLangISO639_1 + "_" + targetLangISO639_1 + String.Join(",", Array.ConvertAll(aTMAssignments, o => o.tmPath)));
+            //_logger.LogError("Benchmark.log", DateTime.Now.ToString("yyyy-MM-dd HH:mm") + "\tCreateXliff\t" + lElapsed
+            //    + "\t" + sFileName + "\t" + sourceLangISO639_1 + "_" + targetLangISO639_1 + String.Join(",", Array.ConvertAll(aTMAssignments, o => o.id)));
 
             return sPreTranslatedXliff;
         }
@@ -604,7 +582,7 @@ namespace cat.tm
             String sourceLangISO639_1, String targetLangISO639_1, String sXliffContent)
         {
             long lStart = CATUtils.CurrentTimeMillis();
-            byte[] aBytes = okapiConnector.CreateDocumentFromXliff(sFileName, fileContent, sFilterName, filterContent,
+            byte[] aBytes = _okapiConnector.CreateDocumentFromXliff(sFileName, fileContent, sFilterName, filterContent,
                 sourceLangISO639_1, targetLangISO639_1, sXliffContent);
             var sExt = Path.GetExtension(sFileName).ToLower();
             if (sExt == ".mqxliff")
@@ -616,7 +594,7 @@ namespace cat.tm
             }
 
             //long lElapsed = CATUtils.CurrentTimeMillis() - lStart;
-            //logger.Log("Benchmark.log", DateTime.Now.ToString("yyyy-MM-dd HH:mm") + "\tCreateDocumentFromXliff\t" + lElapsed
+            //_logger.LogError("Benchmark.log", DateTime.Now.ToString("yyyy-MM-dd HH:mm") + "\tCreateDocumentFromXliff\t" + lElapsed
             //    + "\t" + sFileName + "\t" + sourceLangISO639_1 + "_" + targetLangISO639_1);
             return aBytes;
         }
@@ -644,7 +622,7 @@ namespace cat.tm
             var context = CATUtils.djb2hash(prevCoded + nextCoded);
             foreach (var tmAssignment in aTmAssignments)
             {
-                var dsExactMatches = dbFactory.GetExactMatchesBySource(tmAssignment.tmPath, sourceCoded);
+                var dsExactMatches = _dataStorage.GetExactMatchesBySource(tmAssignment.id, sourceCoded);
                 if (dsExactMatches == null)
                     continue;
                 if (dtExactMatches == null)
@@ -700,7 +678,7 @@ namespace cat.tm
                     var lstTmpTMs = new List<TMAssignment>();
                     foreach (var tmAssignment in aTMAssignments)
                     {
-                        var tmInfo = GetTMInfo(tmAssignment.tmPath, false);
+                        var tmInfo = GetTMInfo(tmAssignment.id, false);
                         if (tmInfo.langFrom?.ToLower() == langFrom_ISO639_1?.ToLower() && tmInfo.langTo?.ToLower() == langTo_ISO639_1?.ToLower())
                             lstTmpTMs.Add(tmAssignment);
                     }
@@ -829,7 +807,7 @@ namespace cat.tm
             }
             catch (Exception ex)
             {
-                logger.Log("PreTranslate.log", "ERROR: " + ex.ToString());
+                _logger.LogError("PreTranslate.log", "ERROR: " + ex.ToString());
                 throw new Exception(ex.Message);
             }
             finally
@@ -843,11 +821,11 @@ namespace cat.tm
         /// <param name="sTMName"></param>
         /// <param name="fullInfo"></param>
         /// <returns></returns>
-        public TMInfo GetTMInfo(String tmPath, bool fullInfo)
+        public TMInfo GetTMInfo(String id, bool fullInfo)
         {
             try
             {
-                var tmName = GetTMName(tmPath);
+                var tmName = GetTMName(id);
                 var tmInfo = new TMInfo();
                 //get the languages from the TM name
                 Match m = null;
@@ -875,7 +853,7 @@ namespace cat.tm
                 var langFrom_ISO639_1 = m.Groups[2].Value;
                 var lagngTo_ISO639_1 = m.Groups[3].Value;
 
-                tmInfo.tmPath = tmPath;
+                tmInfo.id = id;
                 tmInfo.langFrom = langFrom_ISO639_1;
                 tmInfo.langTo = lagngTo_ISO639_1;
 
@@ -884,7 +862,7 @@ namespace cat.tm
                 {
                     //last access
                     DateTime lastAccess = DateTime.MinValue;
-                    var aFilePaths = System.IO.Directory.GetFiles(GetSourceIndexDirectory(tmPath));
+                    var aFilePaths = System.IO.Directory.GetFiles(GetSourceIndexDirectory(id));
                     foreach (String sFilePath in aFilePaths)
                     {
                         var tmpLastAccess = File.GetLastWriteTime(sFilePath);
@@ -895,14 +873,14 @@ namespace cat.tm
                     tmInfo.lastAccess = lastAccess;
 
                     //the entry numbers
-                    tmInfo.entryNumber = dbFactory.GetTMEntriesNumber(tmPath);
+                    tmInfo.entryNumber = _dataStorage.GetTMEntriesNumber(id);
                 }
 
                 return tmInfo;
             }
             catch (Exception ex)
             {
-                logger.Log("TMEntries.log", "ERROR: " + ex.ToString());
+                _logger.LogError("TMEntries.log", "ERROR: " + ex.ToString());
                 throw new Exception(ex.Message);
             }
         }
@@ -954,7 +932,7 @@ namespace cat.tm
                     var bUseSpeciality = tmAssignment.speciality >= 0;
                     String speciality = "," + tmAssignment.speciality.ToString() + ","; //not too nice but ok
                     //get the connector
-                    var tmWriter = GetTMWriter(tmAssignment.tmPath);
+                    var tmWriter = GetTMWriter(tmAssignment.id);
                     var reader = tmWriter.IndexWriter.GetReader(false); // No benefit of OpenIfChanged
 
                     //the unique terms
@@ -1022,13 +1000,7 @@ namespace cat.tm
 
                             if (bUseSpeciality)
                             {
-                                if (tmAssignment.penaltyForOtherSpecialities > 0)
-                                {
-                                    //check if the speciality exists in the specilities list
-                                    if (!specialities[docId].Contains(speciality))
-                                        quality -= tmAssignment.penaltyForOtherSpecialities;
-                                }
-                                else if (!specialities[docId].Contains(speciality))
+                                if (!specialities[docId].Contains(speciality))
                                     continue;
                             }
 
@@ -1047,18 +1019,18 @@ namespace cat.tm
                     {
                         var doc = reader.Document(tmHit.Key);
                         int idSource = int.Parse(doc.GetField("ID").GetStringValue());
-                        var dsTMEntries = dbFactory.GetTMEntriesBySourceIds(tmAssignment.tmPath, new int[] { idSource }); //we could do it faster
+                        var dsTMEntries = _dataStorage.GetTMEntriesBySourceIds(tmAssignment.id, new int[] { idSource }); //we could do it faster
                         var aTMEntries = dsTMEntries.Tables[0].Rows;
                         foreach (DataRow tmEntry in aTMEntries)
                         {
                             var tmMatch = new TMMatch();
                             var matchSourceCoded = (String)tmEntry["source"];
-                            tmMatch.id = tmEntry["id"].ToString();
+                            tmMatch.id = tmEntry!["id"]!.ToString();
                             tmMatch.source = CATUtils.TextFragmentToTmx(new TextFragment(matchSourceCoded));
                             tmMatch.target = CATUtils.TextFragmentToTmx(new TextFragment((String)tmEntry["target"]));
                             tmMatch.quality = (int)tmHit.Value;
-                            tmMatch.origin = tmAssignment.tmPath;
-                            tmMatch.metadata = GetMetaData(tmEntry, tmAssignment.tmPath);
+                            tmMatch.origin = tmAssignment.id;
+                            tmMatch.metadata = GetMetaData(tmEntry, tmAssignment.id);
                             if (tmMatch.quality == 100)
                             {
                                 if (context.ToString() == (String)tmEntry["context"])
@@ -1083,7 +1055,7 @@ namespace cat.tm
                 //System.Diagnostics.Debug.WriteLine("Loops:" + loopCntr + " scores: " + scoreCntr);
 
                 long lElapsed = CATUtils.CurrentTimeMillis() - lStart;
-                //logger.Log("Benchmark.log", DateTime.Now.ToString("yyyy-MM-dd HH:mm") + "\tGetTMEntries\t" + lElapsed);
+                //_logger.LogError("Benchmark.log", DateTime.Now.ToString("yyyy-MM-dd HH:mm") + "\tGetTMEntries\t" + lElapsed);
 
                 return lstTMMatches.ToArray();
             }
@@ -1104,7 +1076,7 @@ namespace cat.tm
         /// <param name="bNumericEquivalenve"></param>
         /// <param name="nLimit"></param>
         /// <returns></returns>
-        public TMEntry[] Concordance(String[] aTMPaths, String sSourceText, String sTargetText, bool bCaseSensitive, int maxHits)
+        public TMEntry[] Concordance(String[] tmIds, String sSourceText, String sTargetText, bool bCaseSensitive, int maxHits)
         {
             try
             {
@@ -1113,9 +1085,9 @@ namespace cat.tm
                 //search in target
                 if (sTargetText != null && sTargetText.Length > 0)
                 {
-                    foreach (var tmPath in aTMPaths)
+                    foreach (var tmId in tmIds)
                     {
-                        var dsTMEntries = dbFactory.GetTMEntriesByTargetText(tmPath, sTargetText);
+                        var dsTMEntries = _dataStorage.GetTMEntriesByTargetText(tmId, sTargetText);
                         var aTMEntries = dsTMEntries.Tables[0].Rows;
                         foreach (DataRow tmEntry in aTMEntries)
                         {
@@ -1124,7 +1096,7 @@ namespace cat.tm
                             tmpTmEntry.id = (int)tmEntry["id"];
                             tmpTmEntry.source = CATUtils.TextFragmentToTmx(new TextFragment(matchSourceCoded));
                             tmpTmEntry.target = CATUtils.TextFragmentToTmx(new TextFragment((String)tmEntry["target"]));
-                            tmpTmEntry.metadata = GetMetaData(tmEntry, tmPath);
+                            tmpTmEntry.metadata = GetMetaData(tmEntry, tmId);
                             lstTMMatches.Add(tmpTmEntry);
                         }
                     }
@@ -1133,13 +1105,13 @@ namespace cat.tm
                     return lstTMMatches.ToArray();
                 }
 
-                if (sSourceText.Length < N_GRAM_LEN)
+                if (sSourceText.Length < NGramLength)
                 {
                     sSourceText = sSourceText.PadLeft(sSourceText.Length + 1);
-                    if (sSourceText.Length < N_GRAM_LEN)
+                    if (sSourceText.Length < NGramLength)
                         sSourceText = sSourceText.PadRight(sSourceText.Length + 1);
-                    if (sSourceText.Length < N_GRAM_LEN)
-                        sSourceText = sSourceText.PadLeft(N_GRAM_LEN);
+                    if (sSourceText.Length < NGramLength)
+                        sSourceText = sSourceText.PadLeft(NGramLength);
                 }
 
                 //search in source
@@ -1147,10 +1119,10 @@ namespace cat.tm
                 var scoreCntr = 0;
                 var ROUGH_CUTOFF = 0.5;
                 //we need the source as TextFragment
-                foreach (var tmPath in aTMPaths)
+                foreach (var tmId in tmIds)
                 {
                     //get the connector
-                    var tmWriter = GetTMWriter(tmPath);
+                    var tmWriter = GetTMWriter(tmId);
                     var reader = tmWriter.IndexWriter.GetReader(false); // No benefit of OpenIfChanged
 
                     //the unique terms
@@ -1221,7 +1193,7 @@ namespace cat.tm
 
                     if (lstSourceIds.Count > 0)
                     {
-                        var dsTMEntries = dbFactory.GetTMEntriesBySourceIds(tmPath, lstSourceIds.ToArray());
+                        var dsTMEntries = _dataStorage.GetTMEntriesBySourceIds(tmId, lstSourceIds.ToArray());
                         var aTMEntries = dsTMEntries.Tables[0].Rows;
                         foreach (DataRow tmEntry in aTMEntries)
                         {
@@ -1230,7 +1202,7 @@ namespace cat.tm
                             tmpTmEntry.id = (int)tmEntry["id"];
                             tmpTmEntry.source = CATUtils.TextFragmentToTmx(new TextFragment(matchSourceCoded));
                             tmpTmEntry.target = CATUtils.TextFragmentToTmx(new TextFragment((String)tmEntry["target"]));
-                            tmpTmEntry.metadata = GetMetaData(tmEntry, tmPath);
+                            tmpTmEntry.metadata = GetMetaData(tmEntry, tmId);
                             lstTMMatches.Add(tmpTmEntry);
                         }
                     }
@@ -1341,9 +1313,9 @@ namespace cat.tm
                         if (metadata.ContainsKey("idTranslation"))
                             int.TryParse(metadata["idTranslation"], out idTranslation);
                         //insert into SQL server
-                        var dsResult = dbFactory.InsertTMEntry(tmPath, source, target, context.ToString(), idUser, speciality, idTranslation,
+                        var dsResult = _dataStorage.InsertTMEntry(tmPath, source, target, context.ToString(), idUser, speciality, idTranslation,
                             DateTime.Now, DateTime.Now, (metadata.ContainsKey("metadata")? metadata["metadata"] : ""));
-                        //var dsResult = dbFactory.InsertTMEntry(tmPath, source, target, context.ToString(), idUser, speciality, idTranslation,
+                        //var dsResult = _dataStorage.InsertTMEntry(tmPath, source, target, context.ToString(), idUser, speciality, idTranslation,
                         //    DateTime.Now, DateTime.Now, ""); //[AM:29/09/2023] hotfix
                         var rowResult = dsResult.Tables[0].Rows[0];
                         var id = (int)rowResult["idSource"];
@@ -1371,21 +1343,13 @@ namespace cat.tm
 
                 long lElapsed = CATUtils.CurrentTimeMillis() - start;
                 System.Diagnostics.Debug.WriteLine("AddTMEntries: " + (CATUtils.CurrentTimeMillis() - start) + ".ms");
-                /*if (tmEntries.Length == 1)
-                    logger.Log("Benchmark.log", DateTime.Now.ToString("yyyy-MM-dd HH:mm") + "\tAddTMEntry\t" + lElapsed);
-                else
-                    logger.Log("Benchmark.log", DateTime.Now.ToString("yyyy-MM-dd HH:mm") + "\tAddTMEntries\t" + lElapsed + "\t" + tmEntries.Length);
-                */
-
-                //backup
-                backupClient.AddTMEntries(tmPath, tmEntries);
 
                 return itemsAfter - itemsBefore;
             }
             catch (Exception ex)
             {
-                logger.Log("TMEntries.log", "ERROR: AddTMEntries TM name -> " + tmPath + "\n\n" + ex.ToString());
-                throw ex;
+                _logger.LogError("TMEntries.log", "ERROR: AddTMEntries TM name -> " + tmPath + "\n\n" + ex.ToString());
+                throw;
             }
             finally
             {
@@ -1417,7 +1381,7 @@ namespace cat.tm
                 using (tuTransaction)
                 {
                     //delete the entry from the SQL database
-                    var luceneId = dbFactory.DeleteTMEntry(tmPath, idEntry);
+                    var luceneId = _dataStorage.DeleteTMEntry(tmPath, idEntry);
                     if (luceneId >= 0)
                     {
                         var tmWriter = GetTMWriter(tmPath);
@@ -1433,7 +1397,7 @@ namespace cat.tm
             }
             catch (Exception ex)
             {
-                logger.Log("TMEntries.log", "ERROR: DeleteTMEntry TM name -> " + tmPath + "\n\n" + ex.ToString());
+                _logger.LogError("TMEntries.log", "ERROR: DeleteTMEntry TM name -> " + tmPath + "\n\n" + ex.ToString());
                 throw ex;
             }
             finally
@@ -1456,15 +1420,13 @@ namespace cat.tm
                 if (!TMExists(tmPath))
                     throw new Exception("The TM doesn't exist.");
 
-                dbFactory.UpdateTMEntry(tmPath, idEntry, fieldsToUpdate);
+                _dataStorage.UpdateTMEntry(tmPath, idEntry, fieldsToUpdate);
                 System.Diagnostics.Debug.WriteLine("UpdateTMEntry: " + (CATUtils.CurrentTimeMillis() - start) + ".ms");
-                //backup
-                backupClient.UpdateTMEntry(tmPath, idEntry, fieldsToUpdate);
             }
             catch (Exception ex)
             {
-                logger.Log("TMEntries.log", "ERROR: UpdateTMEntry, TM name -> " + tmPath + "\n\n" + ex.ToString());
-                throw ex;
+                _logger.LogError("TMEntries.log", "ERROR: UpdateTMEntry, TM name -> " + tmPath + "\n\n" + ex.ToString());
+                throw;
             }
             finally
             {
@@ -1508,7 +1470,7 @@ namespace cat.tm
                 transactionOptions.Timeout = TransactionManager.MaximumTimeout;
 
                 var tmWriter = GetTMWriter(tmPath);
-                itemsBefore = itemsAfter = dbFactory.GetTMEntriesNumber(tmPath);
+                itemsBefore = itemsAfter = _dataStorage.GetTMEntriesNumber(tmPath);
 
                 //the TransactionManager.MaximumTimeout is 10 minutes. We need to use transaction blocks.
                 var swTimeout = new Stopwatch();
@@ -1601,7 +1563,7 @@ namespace cat.tm
                                 if (metadataExtension.ContainsKey(tuProp.Attributes["type"].Value))
                                 {
                                     metadataExtension[tuProp.Attributes["type"].Value] = tuProp.InnerText;
-                                    logger.Log("TMEntries.log", tuProp.Attributes["type"].Value.ToString() + " " + tuProp.InnerText);
+                                    _logger.LogError("TMEntries.log", tuProp.Attributes["type"].Value.ToString() + " " + tuProp.InnerText);
                                 }
                                 else
                                     metadataExtension.Add(tuProp.Attributes["type"].Value, tuProp.InnerText);
@@ -1670,7 +1632,7 @@ namespace cat.tm
                                 }
                                 catch (Exception ex)
                                 {
-                                    logger.Log("TMEntries.log", "ERROR: TM name -> " + tmPath + "\nsource: " + tmEntry.source + "\ntargt: " +
+                                    _logger.LogError("TMEntries.log", "ERROR: TM name -> " + tmPath + "\nsource: " + tmEntry.source + "\ntargt: " +
                                         tmEntry.target + "\n\n" + ex.Message);
                                     continue;
                                 }
@@ -1683,7 +1645,7 @@ namespace cat.tm
 
                                 //insert into SQL server
                                 var extensionData = JsonConvert.SerializeObject(metadataExtension);
-                                var dsResult = dbFactory.InsertTMEntry(tmPath, source, target, context.ToString(), sUser, tuSpeciality, idTranslation, 
+                                var dsResult = _dataStorage.InsertTMEntry(tmPath, source, target, context.ToString(), sUser, tuSpeciality, idTranslation, 
                                     dateCreated, dateModified, extensionData);
                                 var rowResult = dsResult.Tables[0].Rows[0];
                                 var id = (int)rowResult["idSource"];
@@ -1731,24 +1693,21 @@ namespace cat.tm
 
                 //shrink the sql database
                 ShrinkTM(tmPath);
-                //dbFactory.shrinkDatabase(tmPath);
+                //_dataStorage.shrinkDatabase(tmPath);
                 //tmWriter.IndexWriter.MaybeMerge();
 
                 //the items after the import
-                itemsAfter = dbFactory.GetTMEntriesNumber(tmPath);
+                itemsAfter = _dataStorage.GetTMEntriesNumber(tmPath);
 
                 var ret = new TMImportResult();
                 ret.allItems = itemsAfter;
                 ret.importedItems = itemsAfter - itemsBefore;
 
-                //backup
-                backupClient.ImportTmx(tmPath, sSourceLangIso639_1, sTargetLangIso639_1, sTMXContent, sUser, speciality);
-
                 return ret;
             }
             catch (Exception ex)
             {
-                logger.Log("TMEntries.log", "ERROR: TM name -> " + tmPath + "\n\n" + ex.ToString());
+                _logger.LogError("TMEntries.log", "ERROR: TM name -> " + tmPath + "\n\n" + ex.ToString());
                 throw ex;
             }
         }
@@ -1760,7 +1719,7 @@ namespace cat.tm
         public TMInfo[] GetTMList(bool bFullInfo)
         {
             var lstTMInfo = new List<TMInfo>();
-            var aDirs = System.IO.Directory.GetDirectories(REPOSITORY_FOLDER, "*", SearchOption.AllDirectories);
+            var aDirs = System.IO.Directory.GetDirectories(RepositoryFolder, "*", SearchOption.AllDirectories);
             foreach (String sDir in aDirs)
             {
                 var tmDir = Path.GetFileName(sDir);
@@ -1784,7 +1743,7 @@ namespace cat.tm
         public TMInfo[] GetTMListFromDatabase(String dbName)
         {
             //get the TM tables from the database
-            var dsTMNames = dbFactory.GetTMListFromDatabase(dbName);
+            var dsTMNames = _dataStorage.GetTMListFromDatabase(dbName);
             var lstTMInfo = new List<TMInfo>();
             foreach (DataRow tmRow in dsTMNames.Tables[0].Rows)
             {
@@ -1805,10 +1764,10 @@ namespace cat.tm
         {
             var activeWriters = new Dictionary<String, String>();
             //get the TM writers
-            foreach (var key in TM_CONNECTION_POOL.Keys)
+            foreach (var key in TMConnectionPool.Keys)
             {
-                String sTmWriter = "Created: " + TM_CONNECTION_POOL[key].created.ToString() +
-                    " Last access: " + TM_CONNECTION_POOL[key].lastAccess.ToString();
+                String sTmWriter = "Created: " + TMConnectionPool[key].created.ToString() +
+                    " Last access: " + TMConnectionPool[key].lastAccess.ToString();
                 activeWriters.Add(key, sTmWriter);
             }
 
@@ -1819,60 +1778,60 @@ namespace cat.tm
         /// </summary>
         /// <param name="sTMName"></param>
         /// <returns></returns>
-        private TMWriter GetTMWriter(String tmPath)
+        private TMWriter GetTMWriter(String tmId)
         {
-            lock (TM_LOCK)
+            lock (TMLock)
             {
                 try
                 {
                     TMWriter tmWriter = null;
-                    var sourceIndexDir = GetSourceIndexDirectory(tmPath);
+                    var sourceIndexDir = GetSourceIndexDirectory(tmId);
                     // check if there is open connection
-                    if (TM_CONNECTION_POOL.ContainsKey(tmPath))
+                    if (TMConnectionPool.ContainsKey(tmId))
                     {
-                        var tmWriterContainer = TM_CONNECTION_POOL[tmPath];
+                        var tmWriterContainer = TMConnectionPool[tmId];
                         tmWriterContainer.lastAccess = DateTime.Now;
                         tmWriter = tmWriterContainer.tmWriter;
                     }
                     else
                     {
-                        TM_CONNECTION_POOL = TM_CONNECTION_POOL.OrderBy(x => x.Value.lastAccess).ToDictionary(x => x.Key, x => x.Value);
+                        TMConnectionPool = TMConnectionPool.OrderBy(x => x.Value.lastAccess).ToDictionary(x => x.Key, x => x.Value);
                         var keysToRemove = new HashSet<String>();
                         //kick out the connectors that older than 20 minutes
-                        foreach (var key in TM_CONNECTION_POOL.Keys)
+                        foreach (var key in TMConnectionPool.Keys)
                         {
-                            if (TM_CONNECTION_POOL[key].lastAccess < DateTime.Now.AddMinutes(-1 * TM_WRITER_IDLE_TIMEOUT))
-                                keysToRemove.Add(TM_CONNECTION_POOL.Keys.First());
+                            if (TMConnectionPool[key].lastAccess < DateTime.Now.AddMinutes(-1 * TMWriterIdleTimeout))
+                                keysToRemove.Add(TMConnectionPool.Keys.First());
                         }
                         //kick out the oldest writer
-                        if (TM_CONNECTION_POOL.Count - keysToRemove.Count >= MAX_TM_CONNECTION_POOL_SIZE)
-                            keysToRemove.Add(TM_CONNECTION_POOL.Keys.First());
+                        if (TMConnectionPool.Count - keysToRemove.Count >= MaxTmConnectionPoolSize)
+                            keysToRemove.Add(TMConnectionPool.Keys.First());
 
                         foreach (var key in keysToRemove)
                         {
-                            try { TM_CONNECTION_POOL[key].tmWriter.Close(); } catch (Exception ex) { }
-                            TM_CONNECTION_POOL.Remove(key);
+                            try { TMConnectionPool[key].tmWriter.Close(); } catch (Exception) { }
+                            TMConnectionPool.Remove(key);
                         }
 
                         // create new connection
-                        tmWriter = TmWriterFactory.CreateFileBasedTmWriter(sourceIndexDir, false);
+                        tmWriter = TmWriterFactory.CreateFileBasedTmWriter(sourceIndexDir, false, _logger);
                         TMConnector tmConnector = new TMConnector();
-                        tmConnector.tmPath = tmPath;
+                        tmConnector.id = tmId;
                         tmConnector.tmWriter = tmWriter;
                         tmConnector.created = DateTime.Now;
                         tmConnector.lastAccess = DateTime.Now;
 
-                        TM_CONNECTION_POOL.Add(tmPath, tmConnector);
+                        TMConnectionPool.Add(tmId, tmConnector);
 
                         //set database last access
-                        dbFactory.SetDatabaseLastAccess(GetDatabaseName(tmPath));
+                        _dataStorage.SetDatabaseLastAccess(GetDatabaseName(tmId));
                     }
 
                     return tmWriter;
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
-                    throw ex;
+                    throw;
                 }
             }
         }
@@ -1883,36 +1842,36 @@ namespace cat.tm
         /// <param name="sTMName"></param>
         /// <param name="index"></param>
         /// <returns></returns>
-        public int ReindexTM(String tmPath, TMIndex index)
+        public int ReindexTM(String tmId, TMIndex index)
         {
             try
             {
                 if (index == TMIndex.Source || index == TMIndex.Both) //the source index
                 {
                     //get the data for the source
-                    var dsIndexData = dbFactory.GetSourceIndexData(tmPath);
+                    var dsIndexData = _dataStorage.GetSourceIndexData(tmId);
                     var indexData = dsIndexData.Tables[0].Rows;
                     //the TM writer
-                    var sourceIndexDir = GetSourceIndexDirectory(tmPath);
-                    var tmRoot = GetTMDirectory(tmPath);
+                    var sourceIndexDir = GetSourceIndexDirectory(tmId);
+                    var tmRoot = GetTMDirectory(tmId);
                     if (!System.IO.Directory.Exists(tmRoot))
                         System.IO.Directory.CreateDirectory(tmRoot);
                     var indexDir = Path.Combine(tmRoot, "source indexes");
                     if (!System.IO.Directory.Exists(indexDir))
                         System.IO.Directory.CreateDirectory(indexDir);
-                    var tmName = GetTMName(tmPath);
+                    var tmName = GetTMName(tmId);
                     var tmDir = Path.Combine(indexDir, tmName);
                     if (!System.IO.Directory.Exists(tmDir))
                         System.IO.Directory.CreateDirectory(tmDir);
 
                     //close the connection
-                    if (TM_CONNECTION_POOL.ContainsKey(tmPath))
+                    if (TMConnectionPool.ContainsKey(tmId))
                     {
-                        TM_CONNECTION_POOL[tmPath].tmWriter.Close();
-                        TM_CONNECTION_POOL.Remove(tmPath);
+                        TMConnectionPool[tmId].tmWriter.Close();
+                        TMConnectionPool.Remove(tmId);
                     }
 
-                    var tmWriter = TmWriterFactory.CreateFileBasedTmWriter(sourceIndexDir, true);
+                    var tmWriter = TmWriterFactory.CreateFileBasedTmWriter(sourceIndexDir, true, _logger);
                     tmWriter.Commit();
 
                     var sourceLookup = new Dictionary<int, dynamic>();
@@ -1952,7 +1911,7 @@ namespace cat.tm
             }
             catch (Exception ex)
             {
-                logger.Log("TMEntries.log", "ERROR: ReindexTM TM name -> " + tmPath + "\n\n" + ex.ToString());
+                _logger.LogError("TMEntries.log", "ERROR: ReindexTM TM name -> " + tmId + "\n\n" + ex.ToString());
                 throw ex;
             }
         }
@@ -1969,7 +1928,7 @@ namespace cat.tm
                 //shrink the sql data
                 var aPathElements = tmPath.Split('/');
                 var dbName = aPathElements[0];
-                dbFactory.ShrinkDatabase(dbName);
+                _dataStorage.ShrinkDatabase(dbName);
 
                 //optimize the lucene index
                 var tmWriter = GetTMWriter(tmPath);
@@ -1978,7 +1937,7 @@ namespace cat.tm
             }
             catch (Exception ex)
             {
-                logger.Log("TMEntries.log", "ERROR: shrinkDatabase TM name -> " + tmPath + "\n\n" + ex.ToString());
+                _logger.LogError("TMEntries.log", "ERROR: shrinkDatabase TM name -> " + tmPath + "\n\n" + ex.ToString());
                 throw ex;
             }
         }
@@ -1993,7 +1952,7 @@ namespace cat.tm
             try
             {
                 //load the entries
-                var dsEntries = dbFactory.GetTranslationMemoryData(tmPath);
+                var dsEntries = _dataStorage.GetTranslationMemoryData(tmPath);
                 var drEntries = dsEntries.Tables[0].Rows;
                 var tmInfo = GetTMInfo(tmPath, false);
                 var sbTmx = new StringBuilder();
@@ -2045,7 +2004,7 @@ namespace cat.tm
             }
             catch (Exception ex)
             {
-                logger.Log("TMEntries.log", "ERROR: shrinkDatabase TM name -> " + tmPath + "\n\n" + ex.ToString());
+                _logger.LogError("TMEntries.log", "ERROR: shrinkDatabase TM name -> " + tmPath + "\n\n" + ex.ToString());
                 throw ex;
             }
         }
@@ -2069,7 +2028,7 @@ namespace cat.tm
                 {
                     metadata.Add("extensionData", tmEntry["extensionData"] != DBNull.Value ? (String)tmEntry["extensionData"] : "");
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     metadata.Add("extensionData", "");
                 }
@@ -2078,9 +2037,9 @@ namespace cat.tm
 
                 return jsonMetadata;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                //logger.Log("Metadata.log", "Erros: " + ex.ToString());
+                //_logger.LogError("Metadata.log", "Erros: " + ex.ToString());
             }
 
             return "";

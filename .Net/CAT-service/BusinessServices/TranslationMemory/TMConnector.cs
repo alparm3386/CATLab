@@ -2,8 +2,8 @@
 {
     public class TMConnector
     {
-        public TMWriter tmWriter;
-        public String tmPath;
+        public TMWriter tmWriter = default!;
+        public String id = default!;
         public DateTime created;
         public DateTime lastAccess;
     }

@@ -1,5 +1,5 @@
+using CAT.GRPServices;
 using CAT.Infrastructure.Logging;
-using CAT.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 

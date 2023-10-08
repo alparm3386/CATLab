@@ -1,7 +1,7 @@
 using CAT;
 using Grpc.Core;
 
-namespace CAT.Services
+namespace CAT.GRPServices
 {
     public class GreeterService : Greeter.GreeterBase
     {

@@ -6,11 +6,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace cat.tm
+namespace CAT.TM
 {
     public class TmWriterFactory
     {
-        public static TMWriter CreateFileBasedTmWriter(String indexDirectoryPath, bool createNewTmIndex)
+        public static TMWriter CreateFileBasedTmWriter(String indexDirectoryPath, bool createNewTmIndex, ILogger logger)
         {
             TMWriter writer = null;
             try
@@ -19,29 +19,29 @@ namespace cat.tm
                 {
                     throw new IOException(indexDirectoryPath + " does not exist");
                 }
-                writer = new TMWriter(FSDirectory.Open(indexDirectoryPath), createNewTmIndex);
+                writer = new TMWriter(FSDirectory.Open(indexDirectoryPath), createNewTmIndex, logger);
             }
             catch (IOException ex)
             {
                 throw new IOException("Trouble creating FSDirectory with the given path: " + indexDirectoryPath, ex);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                throw ex;
+                throw;
             }
             return writer;
         }
 
-        public static TMWriter CreateRAMBasedTmWriter()
+        public static TMWriter CreateRAMBasedTmWriter(ILogger logger)
         {
             TMWriter writer = null;
             try
             {
                 //ByteBuffersDirectory directory = new ByteBuffersDirectory();
                 RAMDirectory directory = new RAMDirectory();
-                writer = new TMWriter(directory, true);
+                writer = new TMWriter(directory, true, logger);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 throw new Exception("Failed to create RAM directory.");
             }

@@ -9,7 +9,7 @@ using Lucene.Net.Analysis.TokenAttributes;
 using okapi.search.analysis;
 using utils;
 
-namespace cat.tm
+namespace CAT.TM
 {
     public class InvertedIndex
     {

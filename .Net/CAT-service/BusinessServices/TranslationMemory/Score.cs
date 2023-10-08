@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace cat.tm
+namespace CAT.TM
 {
 	public class Score
 	{
@@ -20,7 +20,7 @@ namespace cat.tm
 		public float score;
 		public bool isRepetition;
 
-		public Score cloneAsRepetition()
+		public Score CloneAsRepetition()
 		{
 			return new Score(id, wordcount, score, true);
 		}

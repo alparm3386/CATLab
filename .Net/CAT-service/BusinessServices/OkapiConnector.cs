@@ -19,7 +19,7 @@ namespace CAT.BusinessServices
     /// <summary>
     /// OkapiConnector
     /// </summary>
-    public class OkapiConnector
+    public class OkapiConnector : IOkapiConnector
     {
         private BasicHttpBinding _binding;
         private ILogger _logger;
@@ -74,27 +74,7 @@ namespace CAT.BusinessServices
         /// GetOkapiService
         /// </summary>
         /// <returns></returns>
-        public IOkapiService GetOkapiService()
-        {
-            ChannelFactory<IOkapiService> channelFactory =
-                new ChannelFactory<IOkapiService>(_binding, GetOkapiServiceEndpoint());
-
-            foreach (OperationDescription op in channelFactory.Endpoint.Contract.Operations)
-            {
-                var dataContractBehavior = op.Behaviors.Find<DataContractSerializerOperationBehavior>();
-                if (dataContractBehavior != null)
-                    dataContractBehavior.MaxItemsInObjectGraph = int.MaxValue;
-            }
-
-            return channelFactory.CreateChannel();
-        }
-
-        /// <summary>
-        /// GetOkapiService
-        /// </summary>
-        /// <param name="bFailover"></param>
-        /// <returns></returns>
-        public IOkapiService GetOkapiService(bool bFailover)
+        private IOkapiService GetOkapiService()
         {
             ChannelFactory<IOkapiService> channelFactory =
                 new ChannelFactory<IOkapiService>(_binding, GetOkapiServiceEndpoint());

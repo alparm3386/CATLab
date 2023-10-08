@@ -57,7 +57,7 @@ namespace CAT.TM
             {
                 indexWriter.Commit();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 throw; // To change body of catch statement use File | Settings | File Templates.
             }
