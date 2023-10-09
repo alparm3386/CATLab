@@ -28,7 +28,7 @@ using Constants = cat.utils.Constants;
 
 namespace CAT.TM
 {
-    class TMService
+    public class TMService
     {
         private Object TMLock = new Object();
         private readonly int TMWriterIdleTimeout = 20; //minutes
