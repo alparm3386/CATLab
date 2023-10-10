@@ -13,7 +13,7 @@ using System.Transactions;
 
 namespace CAT.TB
 {
-    public class TBService
+    public class TBService : ITBService
     {
         private readonly IDataStorage _dataStorage = default!;
         //private static BackupConnector backupClient = new BackupConnector(); no backup

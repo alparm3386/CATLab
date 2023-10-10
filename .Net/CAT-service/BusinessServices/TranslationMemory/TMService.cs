@@ -33,19 +33,27 @@ namespace CAT.TM
         private Object TMLock = new Object();
         private readonly int TMWriterIdleTimeout = 20; //minutes
         private readonly int MaxTmConnectionPoolSize = 40;
-        private Dictionary<String, TMConnector> TMConnectionPool = new Dictionary<String, TMConnector>();
-        private readonly String RepositoryFolder = System.Configuration.ConfigurationSettings.AppSettings["TMPath"];
-        private ILogger _logger;
-        private IDataStorage _dataStorage;
-        private IOkapiConnector _okapiConnector;
+        private readonly Dictionary<String, TMConnector> TMConnectionPool;
+        private readonly String RepositoryFolder;
+        private readonly IConfiguration _configuration;
+        private readonly ILogger _logger;
+        private readonly IDataStorage _dataStorage;
+        private readonly IOkapiConnector _okapiConnector;
         private readonly int NGramLength = 4;
-        private Dictionary<int, String>  specialities = new Dictionary<int, String>();
+        private Dictionary<int, String>  specialities;
 
-        public TMService(IOkapiConnector okapiConnector, IDataStorage dataStorage, ILogger logger)
+        public TMService(IOkapiConnector okapiConnector, IDataStorage dataStorage, IConfiguration configuration, ILogger logger)
         {
             _okapiConnector = okapiConnector;
             _dataStorage = dataStorage;
+            _configuration = configuration;
             _logger = logger;
+
+            //initialization
+            TMConnectionPool = new Dictionary<string, TMConnector>();
+            specialities = new Dictionary<int, string>(); //TODO: read from the database
+
+            RepositoryFolder = _configuration["TMPath"]!;
         }
 
         private String GetSourceIndexDirectory(String tmId)
@@ -160,7 +168,7 @@ namespace CAT.TM
             var tmpXliff = new XmlDocument();
             tmpXliff.LoadXml(sXliffContent);
             XmlNamespaceManager xmlnsmgr = new XmlNamespaceManager(tmpXliff.NameTable);
-            xmlnsmgr.AddNamespace("x", tmpXliff!.DocumentElement.NamespaceURI);
+            xmlnsmgr.AddNamespace("x", tmpXliff!.DocumentElement!.NamespaceURI);
 
             var lstTranslationUnits = new List<TranslationUnit>();
             var tus = tmpXliff.GetElementsByTagName("trans-unit");
@@ -172,12 +180,12 @@ namespace CAT.TM
                 XmlNodeList segmentNodes;
                 var ssNode = tu["seg-source"]!;
                 if (ssNode == null)
-                    segmentNodes = tu!.SelectNodes("x:source", xmlnsmgr);
+                    segmentNodes = tu!.SelectNodes("x:source", xmlnsmgr)!;
                 else
-                    segmentNodes = ssNode!.SelectNodes("x:mrk", xmlnsmgr);
+                    segmentNodes = ssNode!.SelectNodes("x:mrk", xmlnsmgr)!;
                 for (int j = 0; j < segmentNodes.Count; j++)
                 {
-                    var segmentNode = (XmlElement)segmentNodes[j]; // the source segment
+                    var segmentNode = (XmlElement)segmentNodes[j]!; // the source segment
                     if (segmentNode!.Attributes["translate"]?.Value.ToLower() == "no")
                         continue; //skip non-translatables
 
@@ -185,7 +193,7 @@ namespace CAT.TM
                     if (String.IsNullOrEmpty(sourceText))
                         continue;
                     var source = CATUtils.XliffSegmentToTextFragmentSimple(sourceText);
-                    var transUnit = new TranslationUnit(source, null, null);
+                    var transUnit = new TranslationUnit(source, null!, null!);
                     lstTranslationUnits.Add(transUnit);
                 }
             }
@@ -207,7 +215,7 @@ namespace CAT.TM
             foreach (var sTargetLang in aTargetLangsISO639_1)
             {
                 //TMs for the current language pair
-                TMAssignment[] currentTMAssignments = null;
+                TMAssignment[] currentTMAssignments = null!;
                 //check the languages for the TMs
                 if (aTMAssignments != null)
                 {
@@ -224,16 +232,12 @@ namespace CAT.TM
                     aTMAssignments = new TMAssignment[0];
 
                 //the statistics
-                var stat = GetStatisticsForTranslationUnits(lstTranslationUnits, sourceLangISO639_1, currentTMAssignments, true);
+                var stat = GetStatisticsForTranslationUnits(lstTranslationUnits, sourceLangISO639_1, currentTMAssignments!, true);
                 stat.targetLang = sTargetLang;
                 lstStats.Add(stat);
             }
 
             long lElapsed = CATUtils.CurrentTimeMillis() - lStart;
-            //_logger.LogError("GetStatisticsForDocument: { sFileName}  -> {lElapsed}ms", sFileName, lElapsed);
-            //_logger.LogError("Benchmark.log", DateTime.Now.ToString("yyyy-MM-dd HH:mm") + "\tGetStatisticsForDocument\t" + lElapsed 
-            //    + "\t" + sFileName + "\t" + sourceLangISO639_1 + "_" + String.Join(",", aTargetLangsISO639_1) + "_" + 
-            //    String.Join(",", Array.ConvertAll(aTMAssignments, o => o.id)));
 
             return lstStats.ToArray();
         }
@@ -316,8 +320,8 @@ namespace CAT.TM
                         var bUseSpeciality = tmAssignment.speciality >= 0;
                         String speciality = "," + tmAssignment.speciality.ToString() + ","; //not too nice but ok
                         //get the incontext matches in a background thread
-                        Thread contextCheckThread = null;
-                        DataSet dsContexts = null;
+                        Thread contextCheckThread = default!;
+                        DataSet dsContexts = default!;
                         if (tmAssignment.penalty <= 2)
                         {
                             contextCheckThread = new Thread(() =>
@@ -408,7 +412,7 @@ namespace CAT.TM
                             var codedText = transUnits[i].source.GetCodedText();
 
                             // initialize buffers
-                            System.Buffer.BlockCopy(emptyArray, 0, scoredDocs, 0, emptyArray.Length * 2); //short array
+                            Buffer.BlockCopy(emptyArray, 0, scoredDocs, 0, emptyArray.Length * 2); //short array
                             var docPointers = new List<int>();// new FixedBitSet(maxDoc);
                                                               // order the unique terms by term freq
                                                               // termList.sort((term1, term2) -> termFreqs.get(term1) - termFreqs.get(term2));
@@ -420,8 +424,8 @@ namespace CAT.TM
 
                             foreach (var term in termList)
                             {
-                                List<int> docIds = null;
-                                termsDocuments.TryGetValue(term, out docIds);
+                                List<int> docIds;
+                                termsDocuments.TryGetValue(term, out docIds!);
                                 if (docIds == null)
                                 {
                                     docIds = new List<int>();
@@ -510,9 +514,8 @@ namespace CAT.TM
                             }
                         }
 
-                        System.Diagnostics.Debug.WriteLine("lookup: " + (CATUtils.CurrentTimeMillis() - t1) + "ms.");
+                        //Debug.WriteLine("lookup: " + (CATUtils.CurrentTimeMillis() - t1) + "ms.");
                         //System.Diagnostics.Debug.WriteLine("loopCntr1: " + loopCntr1 + " maxDocs: " + maxDocs + " scoreCntr: " + scoreCntr);
-                        //_logger.LogError("Penalties.log", tmAssignment.id + " -> " + tmAssignment.penalty);
                     }
                 }
 
@@ -537,14 +540,14 @@ namespace CAT.TM
                         stats.no_match += score.wordcount;
                 }
 
-                Debug.WriteLine("Total: " + (CATUtils.CurrentTimeMillis() - lStart) + "ms.");
+                //Debug.WriteLine("Total: " + (CATUtils.CurrentTimeMillis() - lStart) + "ms.");
                 return stats;
 
             }
             catch (Exception ex)
             {
                 _logger.LogError("Statistics.log", "ERROR: " + ex.ToString());
-                System.Diagnostics.Debug.WriteLine(ex.ToString());
+                Debug.WriteLine(ex.ToString());
                 throw;
             }
         }
@@ -564,16 +567,10 @@ namespace CAT.TM
             String sourceLangISO639_1, String targetLangISO639_1, TMAssignment[] aTMAssignments)
         {
             long lStart = CATUtils.CurrentTimeMillis();
-            //pre-process the document
-            //fileContent = DocumentProcessor.PreprocessDocument(sFilterName, fileContent);
-
             var sXliffContent = _okapiConnector.CreateXliffFromDocument(sFileName, fileContent, sFilterName,
                 filterContent, sourceLangISO639_1, targetLangISO639_1);
 
             var sPreTranslatedXliff = PreTranslateXliff(sXliffContent, sourceLangISO639_1, targetLangISO639_1, aTMAssignments, 100);
-            long lElapsed = CATUtils.CurrentTimeMillis() - lStart;
-            //_logger.LogError("Benchmark.log", DateTime.Now.ToString("yyyy-MM-dd HH:mm") + "\tCreateXliff\t" + lElapsed
-            //    + "\t" + sFileName + "\t" + sourceLangISO639_1 + "_" + targetLangISO639_1 + String.Join(",", Array.ConvertAll(aTMAssignments, o => o.id)));
 
             return sPreTranslatedXliff;
         }
@@ -581,7 +578,6 @@ namespace CAT.TM
         public byte[] CreateDocumentFromXliff(String sFileName, byte[] fileContent, String sFilterName, byte[] filterContent,
             String sourceLangISO639_1, String targetLangISO639_1, String sXliffContent)
         {
-            long lStart = CATUtils.CurrentTimeMillis();
             byte[] aBytes = _okapiConnector.CreateDocumentFromXliff(sFileName, fileContent, sFilterName, filterContent,
                 sourceLangISO639_1, targetLangISO639_1, sXliffContent);
             var sExt = Path.GetExtension(sFileName).ToLower();
@@ -593,9 +589,6 @@ namespace CAT.TM
                 aBytes = Encoding.UTF8.GetBytes(xliffContent);
             }
 
-            //long lElapsed = CATUtils.CurrentTimeMillis() - lStart;
-            //_logger.LogError("Benchmark.log", DateTime.Now.ToString("yyyy-MM-dd HH:mm") + "\tCreateDocumentFromXliff\t" + lElapsed
-            //    + "\t" + sFileName + "\t" + sourceLangISO639_1 + "_" + targetLangISO639_1);
             return aBytes;
         }
 
@@ -631,7 +624,7 @@ namespace CAT.TM
                     dtExactMatches.Merge(dsExactMatches.Tables[0]);
             }
             if (dtExactMatches == null)
-                return null;
+                return null!;
 
             //pick the newest or the incontext one
             var translation = "";
@@ -654,7 +647,7 @@ namespace CAT.TM
                 return new TMMatch() { source = source, target = translation, origin = "", id = "", quality = score, metadata = null };
             }
 
-            return null;
+            return null!;
         }
 
         /// <summary>
@@ -669,7 +662,7 @@ namespace CAT.TM
         public String PreTranslateXliff(String sXliffContent, String langFrom_ISO639_1, String langTo_ISO639_1,
             TMAssignment[] aTMAssignments, int matchThreshold)
         {
-            var cntr = 0;
+            int cntr = 0;
             try
             {
                 //check the languages for the TMs
@@ -693,24 +686,24 @@ namespace CAT.TM
                 xliff.LoadXml(sXliffContent);
 
                 XmlNamespaceManager xmlnsManager = new XmlNamespaceManager(xliff.NameTable);
-                xmlnsManager.AddNamespace("x", xliff.DocumentElement.NamespaceURI);
+                xmlnsManager.AddNamespace("x", xliff.DocumentElement!.NamespaceURI);
 
                 //fix the source language
                 var fileNode = xliff.SelectSingleNode("//x:file", xmlnsManager);
-                fileNode.Attributes["source-language"].Value = langFrom_ISO639_1;
+                fileNode!.Attributes["source-language"]!.Value = langFrom_ISO639_1;
 
                 XmlNodeList tuNodeList = xliff.GetElementsByTagName("trans-unit");
-                String prev = null;
-                String next = null;
+                String prev = default!;
+                String next = default!;
                 for (int i = 0; i < tuNodeList.Count; i++)
                 {
                     cntr = i;
                     Stopwatch swInner = new Stopwatch();
                     swInner.Start();
-                    XmlNode tuNode = tuNodeList[i];
+                    XmlNode tuNode = tuNodeList[i]!;
 
                     //create the target node if it doesn't exists
-                    var targetNode = tuNode["target"];
+                    var targetNode = tuNode!["target"];
                     if (targetNode == null)
                     {
                         targetNode = xliff.CreateElement("target", xliff.DocumentElement.NamespaceURI);

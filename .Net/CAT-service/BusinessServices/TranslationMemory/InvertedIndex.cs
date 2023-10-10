@@ -17,16 +17,15 @@ namespace CAT.TM
         {
             public int id;
             public int termsNum;
-            public String text;
+            public String text = default!;
         }
 
         private readonly static int N_GRAM_LEN = 4;
-        private readonly static NgramAnalyzer defaultFuzzyAnalyzer = new NgramAnalyzer(N_GRAM_LEN);
         private Dictionary<String, List<int>> invertedIndex = new Dictionary<String, List<int>>();
         private List<IndexElement> indexElements = new List<IndexElement>();
         private int elementIdx = 0;
 
-        public short[] scoredDocs = null;
+        public short[] scoredDocs = null!;
 
         public InvertedIndex()
         {
@@ -46,7 +45,7 @@ namespace CAT.TM
             foreach (String term in uniqueTerms)
             {
                 List<int> lstDocIds;
-                invertedIndex.TryGetValue(term, out lstDocIds);
+                invertedIndex.TryGetValue(term, out lstDocIds!);
 
                 if (lstDocIds != null)
                 {
@@ -88,16 +87,8 @@ namespace CAT.TM
 
         public List<String> GetUniqueTerms(String text)
         {
-            try
-            {
-                var terms = CATUtils.GetTermsFromText(text);
-                return new HashSet<String>(terms).ToList();
-            }
-            catch (IOException ex)
-            {
-                // TODO Auto-generated catch block
-                throw ex;
-            }
+            var terms = CATUtils.GetTermsFromText(text);
+            return new HashSet<String>(terms).ToList();
         }
 
         public List<String> GetUniqueTermsFromIndex()
