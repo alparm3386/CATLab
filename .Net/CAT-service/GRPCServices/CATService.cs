@@ -15,7 +15,7 @@ namespace CAT.GRPServices
             _tmService = tmService;
         }
 
-        public override Task<HelloReply> SayHelloo(HelloRequest request, ServerCallContext context)
+        public override Task<HelloReply> SayHello(HelloRequest request, ServerCallContext context)
         {
             return Task.FromResult(new HelloReply
             {

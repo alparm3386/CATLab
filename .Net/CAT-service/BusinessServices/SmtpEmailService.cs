@@ -1,7 +1,7 @@
 ﻿using System.Net.Mail;
 using System.Net;
 
-namespace CAT.Services.Common
+namespace CAT.Services
 {
     public class SmtpEmailService : IEmailService
     {

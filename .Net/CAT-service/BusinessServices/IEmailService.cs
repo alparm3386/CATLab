@@ -1,4 +1,4 @@
-﻿namespace CAT.Services.Common
+﻿namespace CAT.Services
 {
     public interface IEmailService
     {
