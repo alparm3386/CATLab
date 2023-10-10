@@ -1,0 +1,64 @@
+syntax = "proto3";
+
+option csharp_namespace = "CAT";
+
+package CAT;
+
+// The greeting service definition.
+service CAT {
+    //rpc TMExists (TMExistsRequest) returns (TMExistsResponse);
+//    rpc CreateTM (CreateTMRequest) returns (EmptyResponse);
+//    rpc GetTMInfo (GetTMInfoRequest) returns (TMInfoResponse);
+//    rpc GetTMList (GetTMListRequest) returns (TMListResponse);
+}
+
+message EmptyResponse {
+}
+
+message TMExistsRequest {
+  string tmId = 1;
+}
+
+1message TMExistsResponse {
+  bool exists = 1;
+}
+
+message CreateTMRequest {
+  string value = 1;
+}
+
+message GetTMInfoRequest {
+  string id = 1;
+  bool fullInfo = 2;
+}
+
+message TMInfoResponse {
+  string id = 1;  // Simplified structure; adjust as needed
+  string info = 2;
+}
+
+message GetTMListRequest {
+  bool fullInfo = 1;
+}
+
+message TMListResponse {
+  repeated TMInfo tmInfos = 1;
+}
+
+message TMInfo {
+    string id = 1;
+    string langFrom = 2;
+    string langTo = 3;
+    int32 entryNumber = 4;
+    TMType tmType = 5;
+    int64 lastAccess = 6; // This will represent DateTime as a Unix timestamp
+}
+
+enum TMType {
+        global = 0;
+        groupPrimary = 1;
+        groupSecondary = 2;
+        profilePrimary = 3;
+        profileSecondary = 4;
+}
+

@@ -1,8 +1,7 @@
-﻿using cat.utils;
-using CAT.BusinessServices;
+﻿using CAT.BusinessServices;
 using CAT.Enums;
 using CAT.Models;
-using CATService.Utils;
+using CAT.Utils;
 using Lucene.Net.Index;
 using Lucene.Net.Search;
 using Lucene.Net.Store;
@@ -21,7 +20,6 @@ using System.Text;
 using System.Threading;
 using System.Transactions;
 using System.Xml;
-using CAT.Utils;
 using System.Text.RegularExpressions;
 using CAT.BusinessServices.Okapi;
 
@@ -1699,11 +1697,6 @@ namespace CAT.TM
             }
 
             return lstTMInfo.ToArray();
-        }
-
-        public void DeleteDocumentsFromSourceIndex(int[] aDocIds)
-        {
-            throw new NotImplementedException();
         }
 
         public string ConnectionPoolInfo()
