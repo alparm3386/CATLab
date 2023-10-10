@@ -121,8 +121,10 @@ namespace CAT.TM
                 invertedIndex.TryGetValue(term, out docIds!);
                 if (docIds == null)
                 {
-                    List<int> lstIds = new List<int>();
-                    lstIds.Add(indexElement.id);
+                    List<int> lstIds = new List<int>
+                    {
+                        indexElement.id
+                    };
                     invertedIndex.Add(term, lstIds);
                 }
                 else

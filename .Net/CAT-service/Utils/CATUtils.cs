@@ -30,8 +30,7 @@ namespace CAT.Utils
         {
             try
             {
-                if (sXliffSegment == null)
-                    sXliffSegment = "";
+                sXliffSegment ??= "";
 
                 // remove the outer tag
                 StringBuilder sbOut = new StringBuilder();
@@ -207,12 +206,12 @@ namespace CAT.Utils
         {
             try
             {
-                int N_GRAM_LEN = 4;
+                const int NGramLength = 4;
                 //the short length text
-                if (text.Length <= N_GRAM_LEN)
+                if (text.Length <= NGramLength)
                 {
                     text = text.Replace("  ", " ");
-                    text = text.PadRight(N_GRAM_LEN, '$');
+                    text = text.PadRight(NGramLength, '$');
                 }
 
                 // the analysis

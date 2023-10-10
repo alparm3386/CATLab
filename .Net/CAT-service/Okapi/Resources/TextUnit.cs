@@ -82,8 +82,7 @@ namespace CAT.Okapi.Resources
 
         public void SetProperty(String name, String value)
         {
-            if (properties == null) 
-                properties = new Dictionary<String, String>();
+            properties ??= new Dictionary<String, String>();
             properties.Add(name, value);
         }
     }

@@ -25,19 +25,19 @@ using CAT.Utils;
 
 namespace CAT.TM
 {
-    public class TMService
+    public partial class TMService
     {
-        private Object TMLock = new Object();
+        private object TMLock = new object();
         private readonly int TMWriterIdleTimeout = 20; //minutes
         private readonly int MaxTmConnectionPoolSize = 40;
-        private Dictionary<String, TMConnector> TMConnectionPool;
-        private readonly String RepositoryFolder;
+        private Dictionary<string, TMConnector> TMConnectionPool;
+        private readonly string RepositoryFolder;
         private readonly IConfiguration _configuration;
         private readonly ILogger _logger;
         private readonly IDataStorage _dataStorage;
         private readonly IOkapiConnector _okapiConnector;
         private readonly int NGramLength = 4;
-        private Dictionary<int, String>  specialities;
+        private Dictionary<int, string>  specialities;
 
         public TMService(IOkapiConnector okapiConnector, IDataStorage dataStorage, IConfiguration configuration, ILogger logger)
         {
@@ -53,7 +53,7 @@ namespace CAT.TM
             RepositoryFolder = _configuration["TMPath"]!;
         }
 
-        private String GetSourceIndexDirectory(String tmId)
+        private string GetSourceIndexDirectory(string tmId)
         {
             var tmName = tmId.Split('/')[1];
             var tmDir = GetTMDirectory(tmId);
@@ -62,13 +62,13 @@ namespace CAT.TM
             return sourceIndexDir;
         }
 
-        private String GetTMName(String tmId)
+        private string GetTMName(string tmId)
         {
             var tmName = tmId.Split('/')[1];
             return tmName;
         }
 
-        private String GetTMDirectory(String tmId)
+        private string GetTMDirectory(string tmId)
         {
             var parent = tmId.Split('/')[0];
             var tmDir = Path.Combine(RepositoryFolder, parent);
@@ -76,7 +76,7 @@ namespace CAT.TM
             return tmDir;
         }
 
-        private static String GetDatabaseName(String tmId)
+        private static string GetDatabaseName(string tmId)
         {
             return tmId.Split('/')[0];
         }
@@ -86,7 +86,7 @@ namespace CAT.TM
         /// </summary>
         /// <param name="tmPath"></param>
         /// <returns></returns>
-        public void CreateTM(String tmId)
+        public void CreateTM(string tmId)
         {
             try
             {
@@ -124,7 +124,7 @@ namespace CAT.TM
         /// </summary>
         /// <param name="sTMName"></param>
         /// <returns></returns>
-        public bool TMExists(String tmId)
+        public bool TMExists(string tmId)
         {
             //the TM directory
             var tmDir = GetTMDirectory(tmId);
@@ -154,8 +154,8 @@ namespace CAT.TM
         /// <param name="aTargetLangsISO639_1"></param>
         /// <param name="aTMAssignments"></param>
         /// <returns></returns>
-        public Statistics[] GetStatisticsForDocument(String sFileName, byte[] fileContent, String sFilterName, byte[] filterContent, 
-            String sourceLangISO639_1, String[] aTargetLangsISO639_1, TMAssignment[] aTMAssignments)
+        public Statistics[] GetStatisticsForDocument(string sFileName, byte[] fileContent, string sFilterName, byte[] filterContent,
+            string sourceLangISO639_1, string[] aTargetLangsISO639_1, TMAssignment[] aTMAssignments)
         {
             long lStart = CATUtils.CurrentTimeMillis();
             //convert the document to xliff
@@ -187,7 +187,7 @@ namespace CAT.TM
                         continue; //skip non-translatables
 
                     var sourceText = segmentNode.InnerXml.Trim();
-                    if (String.IsNullOrEmpty(sourceText))
+                    if (string.IsNullOrEmpty(sourceText))
                         continue;
                     var source = CATUtils.XliffSegmentToTextFragmentSimple(sourceText);
                     var transUnit = new TranslationUnit(source, null!, null!);
@@ -198,8 +198,8 @@ namespace CAT.TM
             //set the contexts
             for (int i = 0; i < lstTranslationUnits.Count; i++)
             {
-                String prev = "";
-                String next = "";
+                string prev = "";
+                string next = "";
                 if (i != 0)
                     prev = lstTranslationUnits[i - 1].source.GetCodedText();
                 if (i < lstTranslationUnits.Count - 1)
@@ -246,7 +246,7 @@ namespace CAT.TM
         /// <param name="aTMAssignments"></param>
         /// <param name="bWithHomogeneity"></param>
         /// <returns></returns>
-        private Statistics GetStatisticsForTranslationUnits(List<TranslationUnit> transUnits, String sourceLangISO639_1,
+        private Statistics GetStatisticsForTranslationUnits(List<TranslationUnit> transUnits, string sourceLangISO639_1,
             TMAssignment[] aTMAssignments, bool bWithHomogeneity)
         {
             try
@@ -258,12 +258,12 @@ namespace CAT.TM
                 var scoreCntr = 0;
                 var loopCntr1 = 0;
                 var ROUGH_CUTOFF = 0.5;
-                String searchFieldName = "SOURCE";
+                string searchFieldName = "SOURCE";
                 // inverted index on source
-                List<List<String>> textFragmentsUniqueTermsList = new List<List<String>>();
+                List<List<string>> textFragmentsUniqueTermsList = new List<List<string>>();
                 var scores = new List<Score>();
                 var homogeneityIndex = new InvertedIndex();
-                var repetitionsTable = new Dictionary<String, int>();
+                var repetitionsTable = new Dictionary<string, int>();
                 //data table for the incontext matches
                 DataTable dtQuery = new DataTable();
                 dtQuery.Columns.Add("id");
@@ -281,8 +281,7 @@ namespace CAT.TM
 
                     // check repetitions
                     var codedText = textFragment.GetCodedText();
-                    var idx = 0;
-                    repetitionsTable.TryGetValue(codedText, out idx);
+                    repetitionsTable.TryGetValue(codedText, out int idx);
                     //the incontext query
                     dtQuery.Rows.Add(i, codedText, CATUtils.djb2hash(codedText), tu.context);
                     if (idx > 0)
@@ -299,7 +298,7 @@ namespace CAT.TM
                         highestScore = homogeneityIndex.GetHighestScore(text, 50);
                     // the word count
                     var words = wordCounter.CountWords(text);//CountWords(textFragment);
-                    var score = new Score(i, (int)words, highestScore, false);
+                    var score = new Score(i, words, highestScore, false);
                     scores.Add(score);
                     homogeneityIndex.AddToIndex(text);
                 }
@@ -315,7 +314,7 @@ namespace CAT.TM
                     foreach (var tmAssignment in aTMAssignments)
                     {
                         var bUseSpeciality = tmAssignment.speciality >= 0;
-                        String speciality = "," + tmAssignment.speciality.ToString() + ","; //not too nice but ok
+                        string speciality = "," + tmAssignment.speciality.ToString() + ","; //not too nice but ok
                         //get the incontext matches in a background thread
                         Thread contextCheckThread = default!;
                         DataSet dsContexts = default!;
@@ -343,7 +342,7 @@ namespace CAT.TM
                         var reader = tmWriter.IndexWriter.GetReader(false);
 
                         var lstTermNums = new List<int>();
-                        var lstSpecialities = new List<String>();
+                        var lstSpecialities = new List<string>();
                         //init the doc values lists
                         for (int i = 0; i < reader.MaxDoc; i++)
                         {
@@ -383,7 +382,7 @@ namespace CAT.TM
 
                         // term freqs
                         t1 = CATUtils.CurrentTimeMillis();
-                        var termFreqs = new Dictionary<String, int>();
+                        var termFreqs = new Dictionary<string, int>();
                         // var sbTermFreqs = new StringBuilder();
                         foreach (var term in uniqueTerms)
                         {
@@ -397,9 +396,9 @@ namespace CAT.TM
                         var maxDoc = reader.MaxDoc;
                         var emptyArray = new short[maxDoc];
                         var scoredDocs = new short[maxDoc];
-                        var repetitions = new Dictionary<String, int>();
+                        var repetitions = new Dictionary<string, int>();
                         //the documents that contains the terms
-                        var termsDocuments = new Dictionary<String, List<int>>();
+                        var termsDocuments = new Dictionary<string, List<int>>();
                         for (int i = 0; i < transUnits.Count; i++)
                         {
                             var score = scores[i];
@@ -469,8 +468,8 @@ namespace CAT.TM
                                 foreach (var docId in uniqueDocIds)
                                 {
                                     scoreCntr++;
-                                    quality = (float)(2.0f * (float)scoredDocs[docId]
-                                            / (float)(lstTermNums[docId] + uniqueTermSize)) * 100.0f;
+                                    quality = (float)(2.0f * scoredDocs[docId]
+                                            / (lstTermNums[docId] + uniqueTermSize)) * 100.0f;
                                     if (quality > maxScore)
                                     {
                                         if (bUseSpeciality)
@@ -560,8 +559,8 @@ namespace CAT.TM
         /// <param name="targetLangISO639_1"></param>
         /// <param name="aTMAssignments"></param>
         /// <returns></returns>
-        public String CreateXliff(String sFileName, byte[] fileContent, String sFilterName, byte[] filterContent,
-            String sourceLangISO639_1, String targetLangISO639_1, TMAssignment[] aTMAssignments)
+        public string CreateXliff(string sFileName, byte[] fileContent, string sFilterName, byte[] filterContent,
+            string sourceLangISO639_1, string targetLangISO639_1, TMAssignment[] aTMAssignments)
         {
             long lStart = CATUtils.CurrentTimeMillis();
             var sXliffContent = _okapiConnector.CreateXliffFromDocument(sFileName, fileContent, sFilterName,
@@ -572,8 +571,8 @@ namespace CAT.TM
             return sPreTranslatedXliff;
         }
 
-        public byte[] CreateDocumentFromXliff(String sFileName, byte[] fileContent, String sFilterName, byte[] filterContent,
-            String sourceLangISO639_1, String targetLangISO639_1, String sXliffContent)
+        public byte[] CreateDocumentFromXliff(string sFileName, byte[] fileContent, string sFilterName, byte[] filterContent,
+            string sourceLangISO639_1, string targetLangISO639_1, string sXliffContent)
         {
             byte[] aBytes = _okapiConnector.CreateDocumentFromXliff(sFileName, fileContent, sFilterName, filterContent,
                 sourceLangISO639_1, targetLangISO639_1, sXliffContent);
@@ -597,17 +596,17 @@ namespace CAT.TM
         /// <param name="prev"></param>
         /// <param name="next"></param>
         /// <returns></returns>
-        private TMMatch GetExactMatch(TMAssignment[] aTmAssignments, String source, String prev, String next)
+        private TMMatch GetExactMatch(TMAssignment[] aTmAssignments, string source, string prev, string next)
         {
             DataTable dtExactMatches = default!;
-            String sourceCoded = "";
-            if (!String.IsNullOrEmpty(source))
+            string sourceCoded = "";
+            if (!string.IsNullOrEmpty(source))
                 sourceCoded = CATUtils.XliffSegmentToTextFragmentSimple(source.Trim()).GetCodedText();
-            String prevCoded = "";
-            if (!String.IsNullOrEmpty(prev))
+            string prevCoded = "";
+            if (!string.IsNullOrEmpty(prev))
                 prevCoded = CATUtils.XliffSegmentToTextFragmentSimple(prev.Trim()).GetCodedText();
-            String nextCoded = "";
-            if (!String.IsNullOrEmpty(next))
+            string nextCoded = "";
+            if (!string.IsNullOrEmpty(next))
                 nextCoded = CATUtils.XliffSegmentToTextFragmentSimple(next.Trim()).GetCodedText();
             var context = CATUtils.djb2hash(prevCoded + nextCoded);
             foreach (var tmAssignment in aTmAssignments)
@@ -638,7 +637,7 @@ namespace CAT.TM
                 score = 100;
             }
 
-            if (!String.IsNullOrEmpty(translation))
+            if (!string.IsNullOrEmpty(translation))
             {
                 translation = CATUtils.TextFragmentToTmx(new TextFragment(translation));
                 return new TMMatch() { source = source, target = translation, origin = "", id = "", quality = score, metadata = default! };
@@ -656,7 +655,7 @@ namespace CAT.TM
         /// <param name="aTMAssignments"></param>
         /// <param name="matchThreshold"></param>
         /// <returns></returns>
-        public String PreTranslateXliff(String sXliffContent, String langFrom_ISO639_1, String langTo_ISO639_1,
+        public string PreTranslateXliff(string sXliffContent, string langFrom_ISO639_1, string langTo_ISO639_1,
             TMAssignment[] aTMAssignments, int matchThreshold)
         {
             int cntr = 0;
@@ -690,8 +689,8 @@ namespace CAT.TM
                 fileNode!.Attributes!["source-language"]!.Value = langFrom_ISO639_1;
 
                 XmlNodeList tuNodeList = xliff.GetElementsByTagName("trans-unit");
-                String prev = default!;
-                String next = default!;
+                string prev = default!;
+                string next = default!;
                 for (int i = 0; i < tuNodeList.Count; i++)
                 {
                     cntr = i;
@@ -752,8 +751,8 @@ namespace CAT.TM
                             targetSegment = targetNode;
                         if (targetSegment == null || targetSegment.InnerXml.Length == 0)
                         {
-                            String sStartingWhiteSpaces = Regex.Match(segmentNode.InnerXml, @"^\s*").Value;
-                            String sEndingWhiteSpaces = Regex.Match(segmentNode.InnerXml, @"\s*$").Value;
+                            string sStartingWhiteSpaces = MyRegex().Match(segmentNode.InnerXml).Value;
+                            string sEndingWhiteSpaces = Regex.Match(segmentNode.InnerXml, @"\s*$").Value;
                             //the translation
                             var tmMatch = GetExactMatch(aTMAssignments, source, prev!, next!);
                             //set the translation
@@ -807,7 +806,7 @@ namespace CAT.TM
         /// <param name="sTMName"></param>
         /// <param name="fullInfo"></param>
         /// <returns></returns>
-        public TMInfo GetTMInfo(String id, bool fullInfo)
+        public TMInfo GetTMInfo(string id, bool fullInfo)
         {
             try
             {
@@ -849,7 +848,7 @@ namespace CAT.TM
                     //last access
                     DateTime lastAccess = DateTime.MinValue;
                     var aFilePaths = System.IO.Directory.GetFiles(GetSourceIndexDirectory(id));
-                    foreach (String sFilePath in aFilePaths)
+                    foreach (string sFilePath in aFilePaths)
                     {
                         var tmpLastAccess = File.GetLastWriteTime(sFilePath);
                         if (tmpLastAccess > lastAccess)
@@ -873,7 +872,7 @@ namespace CAT.TM
 
         private static int CountWords(TextFragment segment)
         {
-            String sText = segment.GetText();
+            string sText = segment.GetText();
             sText = sText.Replace("-", "");
             sText = Regex.Replace(sText, "\\d+\\.\\d+", "000");
             sText = Regex.Replace(sText, "'", "");
@@ -896,7 +895,7 @@ namespace CAT.TM
         /// <param name="matchThreshold"></param>
         /// <param name="maxHits"></param>
         /// <returns></returns>
-        public TMMatch[] GetTMMatches(TMAssignment[] aTMAssignments, String sSourceText, String sPrevText, String sNextText, byte matchThreshold, int maxHits)
+        public TMMatch[] GetTMMatches(TMAssignment[] aTMAssignments, string sSourceText, string sPrevText, string sNextText, byte matchThreshold, int maxHits)
         {
             long lStart = CATUtils.CurrentTimeMillis();
             try
@@ -916,23 +915,23 @@ namespace CAT.TM
                 foreach (var tmAssignment in aTMAssignments)
                 {
                     var bUseSpeciality = tmAssignment.speciality >= 0;
-                    String speciality = "," + tmAssignment.speciality.ToString() + ","; //not too nice but ok
+                    string speciality = "," + tmAssignment.speciality.ToString() + ","; //not too nice but ok
                     //get the connector
                     var tmWriter = GetTMWriter(tmAssignment.id);
                     var reader = tmWriter.IndexWriter.GetReader(false); // No benefit of OpenIfChanged
 
                     //the unique terms
                     var terms = CATUtils.GetTermsFromText(source.GetText());
-                    var uniqeTerms = new HashSet<String>(terms);
+                    var uniqeTerms = new HashSet<string>(terms);
 
                     // initialize buffers
                     var maxDoc = reader.MaxDoc;
                     var scoredDocs = new short[maxDoc];
                     var termNums = new short[maxDoc];
-                    var specialities = new String[maxDoc];
+                    var specialities = new string[maxDoc];
                     var docPointers = new List<int>(); // new FixedBitSet(maxDoc);
 
-                    String searchFieldName = TranslationUnitField.SOURCE.ToString();
+                    string searchFieldName = TranslationUnitField.SOURCE.ToString();
                     var leafReaderContexts = reader.Leaves;
                     var roughThresholdFreq = (int)(uniqeTerms.Count * RoughCutoff);
                     foreach (var term in uniqeTerms)
@@ -981,8 +980,8 @@ namespace CAT.TM
                         foreach (var docId in uniqueDocIds)
                         {
                             scoreCntr++;
-                            quality = (float)(2.0f * (float)scoredDocs[docId]
-                                    / (float)(termNums[docId] + uniqueTermSize)) * 100.0f;
+                            quality = (float)(2.0f * scoredDocs[docId]
+                                    / (termNums[docId] + uniqueTermSize)) * 100.0f;
 
                             if (bUseSpeciality)
                             {
@@ -1010,16 +1009,16 @@ namespace CAT.TM
                         foreach (DataRow tmEntry in aTMEntries)
                         {
                             var tmMatch = new TMMatch();
-                            var matchSourceCoded = (String)tmEntry["source"];
+                            var matchSourceCoded = (string)tmEntry["source"];
                             tmMatch.id = tmEntry!["id"]!.ToString()!;
                             tmMatch.source = CATUtils.TextFragmentToTmx(new TextFragment(matchSourceCoded));
-                            tmMatch.target = CATUtils.TextFragmentToTmx(new TextFragment((String)tmEntry["target"]));
+                            tmMatch.target = CATUtils.TextFragmentToTmx(new TextFragment((string)tmEntry["target"]));
                             tmMatch.quality = (int)tmHit.Value;
                             tmMatch.origin = tmAssignment.id;
                             tmMatch.metadata = GetMetaData(tmEntry, tmAssignment.id);
                             if (tmMatch.quality == 100)
                             {
-                                if (context.ToString() == (String)tmEntry["context"])
+                                if (context.ToString() == (string)tmEntry["context"])
                                     tmMatch.quality = 101;
 
                                 if (matchSourceCoded != sourceCoded)
@@ -1046,7 +1045,7 @@ namespace CAT.TM
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine(ex.ToString());
+                Debug.WriteLine(ex.ToString());
                 throw;
             }
         }
@@ -1061,7 +1060,7 @@ namespace CAT.TM
         /// <param name="bNumericEquivalenve"></param>
         /// <param name="nLimit"></param>
         /// <returns></returns>
-        public TMEntry[] Concordance(String[] tmIds, String sSourceText, String sTargetText, bool bCaseSensitive, int maxHits)
+        public TMEntry[] Concordance(string[] tmIds, string sSourceText, string sTargetText, bool bCaseSensitive, int maxHits)
         {
             try
             {
@@ -1077,10 +1076,10 @@ namespace CAT.TM
                         foreach (DataRow tmEntry in aTMEntries)
                         {
                             var tmpTmEntry = new TMEntry();
-                            var matchSourceCoded = (String)tmEntry["source"];
+                            var matchSourceCoded = (string)tmEntry["source"];
                             tmpTmEntry.id = (int)tmEntry["id"];
                             tmpTmEntry.source = CATUtils.TextFragmentToTmx(new TextFragment(matchSourceCoded));
-                            tmpTmEntry.target = CATUtils.TextFragmentToTmx(new TextFragment((String)tmEntry["target"]));
+                            tmpTmEntry.target = CATUtils.TextFragmentToTmx(new TextFragment((string)tmEntry["target"]));
                             tmpTmEntry.metadata = GetMetaData(tmEntry, tmId);
                             lstTMMatches.Add(tmpTmEntry);
                         }
@@ -1112,7 +1111,7 @@ namespace CAT.TM
 
                     //the unique terms
                     var terms = CATUtils.GetTermsFromText(sSourceText);
-                    var uniqeTerms = new HashSet<String>(terms);
+                    var uniqeTerms = new HashSet<string>(terms);
 
                     // initialize buffers
                     var maxDoc = reader.MaxDoc;
@@ -1120,7 +1119,7 @@ namespace CAT.TM
                     var docValues = new short[maxDoc];
                     var docPointers = new List<int>(); // new FixedBitSet(maxDoc);
 
-                    String searchFieldName = TranslationUnitField.SOURCE.ToString();
+                    string searchFieldName = TranslationUnitField.SOURCE.ToString();
                     var leafReaderContexts = reader.Leaves;
                     var roughThresholdFreq = (int)(uniqeTerms.Count * ROUGH_CUTOFF);
                     foreach (var term in uniqeTerms)
@@ -1158,8 +1157,8 @@ namespace CAT.TM
                         foreach (var docId in uniqueDocIds)
                         {
                             scoreCntr++;
-                            quality = (float)(2.0f * (float)scoredDocs[docId]
-                                    / (float)(docValues[docId] + uniqueTermSize)) * 100.0f;
+                            quality = (float)(2.0f * scoredDocs[docId]
+                                    / (docValues[docId] + uniqueTermSize)) * 100.0f;
                             tmHits.Add(docId, quality);
                         }
                     }
@@ -1183,10 +1182,10 @@ namespace CAT.TM
                         foreach (DataRow tmEntry in aTMEntries)
                         {
                             var tmpTmEntry = new TMEntry();
-                            var matchSourceCoded = (String)tmEntry["source"];
+                            var matchSourceCoded = (string)tmEntry["source"];
                             tmpTmEntry.id = (int)tmEntry["id"];
                             tmpTmEntry.source = CATUtils.TextFragmentToTmx(new TextFragment(matchSourceCoded));
-                            tmpTmEntry.target = CATUtils.TextFragmentToTmx(new TextFragment((String)tmEntry["target"]));
+                            tmpTmEntry.target = CATUtils.TextFragmentToTmx(new TextFragment((string)tmEntry["target"]));
                             tmpTmEntry.metadata = GetMetaData(tmEntry, tmId);
                             lstTMMatches.Add(tmpTmEntry);
                         }
@@ -1195,13 +1194,13 @@ namespace CAT.TM
 
                 lstTMMatches.Take(maxHits);
 
-                System.Diagnostics.Debug.WriteLine("Loops:" + loopCntr + " scores: " + scoreCntr);
+                Debug.WriteLine("Loops:" + loopCntr + " scores: " + scoreCntr);
 
                 return lstTMMatches.ToArray();
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine(ex.ToString());
+                Debug.WriteLine(ex.ToString());
                 throw;
             }
         }
@@ -1211,12 +1210,11 @@ namespace CAT.TM
         /// </summary>
         /// <param name="metadata"></param>
         /// <returns></returns>
-        private int CalculateContextHashFromMetadata(Dictionary<String, String> metadata)
+        private int CalculateContextHashFromMetadata(Dictionary<string, string> metadata)
         {
             if (metadata.ContainsKey("contextHash"))
             {
-                int contextHash = 0;
-                int.TryParse(metadata["contextHash"], out contextHash);
+                int.TryParse(metadata["contextHash"], out int contextHash);
                 return contextHash;
             }
 
@@ -1238,7 +1236,7 @@ namespace CAT.TM
         /// <returns></returns>
         private int CalculateContextHash(TextFragment prev, TextFragment next)
         {
-            String sContext = "";
+            string sContext = "";
             if (prev != null)
                 sContext += prev.GetCodedText().Trim();
 
@@ -1254,7 +1252,7 @@ namespace CAT.TM
         /// <param name="sTMName"></param>
         /// <param name="tmEntries"></param>
         /// <returns></returns>
-        public int AddTMEntries(String tmPath, TMEntry[] tmEntries)
+        public int AddTMEntries(string tmPath, TMEntry[] tmEntries)
         {
             try
             {
@@ -1286,10 +1284,10 @@ namespace CAT.TM
                         var source = CATUtils.TmxSegmentToTextFragmentSimple(tmEntry.source.Trim());
                         var target = CATUtils.TmxSegmentToTextFragmentSimple(tmEntry.target.Trim());
                         //the context
-                        var metadata = JsonConvert.DeserializeObject<Dictionary<String, String>>(tmEntry.metadata);
+                        var metadata = JsonConvert.DeserializeObject<Dictionary<string, string>>(tmEntry.metadata);
                         var context = CalculateContextHashFromMetadata(metadata!);
 
-                        String idUser = "";
+                        string idUser = "";
                         metadata!.TryGetValue("user", out idUser!);
                         int speciality = 0;
                         if (metadata.ContainsKey("speciality"))
@@ -1299,7 +1297,7 @@ namespace CAT.TM
                             int.TryParse(metadata["idTranslation"], out idTranslation);
                         //insert into SQL server
                         var dsResult = _dataStorage.InsertTMEntry(tmPath, source, target, context.ToString(), idUser!, speciality, idTranslation,
-                            DateTime.Now, DateTime.Now, (metadata.ContainsKey("metadata")? metadata["metadata"] : ""));
+                            DateTime.Now, DateTime.Now, metadata.ContainsKey("metadata")? metadata["metadata"] : "");
                         //var dsResult = _dataStorage.InsertTMEntry(tmPath, source, target, context.ToString(), idUser, speciality, idTranslation,
                         //    DateTime.Now, DateTime.Now, ""); //[AM:29/09/2023] hotfix
                         var rowResult = dsResult.Tables[0].Rows[0];
@@ -1309,10 +1307,10 @@ namespace CAT.TM
                             //index the source text
                             tmWriter.IndexSource(id, source, speciality.ToString());
                         }
-                        else if ((String)rowResult["oldSpecialities"] != (String)rowResult["newSpecialities"])
+                        else if ((string)rowResult["oldSpecialities"] != (string)rowResult["newSpecialities"])
                         {
-                            var oldSpecialities = String.Join(",", ((String)rowResult["oldSpecialities"]).Split(',').Distinct().OrderBy(element => element).ToArray());
-                            var newSpecialities = String.Join(",", ((String)rowResult["newSpecialities"]).Split(',').Distinct().OrderBy(element => element).ToArray());
+                            var oldSpecialities = string.Join(",", ((string)rowResult["oldSpecialities"]).Split(',').Distinct().OrderBy(element => element).ToArray());
+                            var newSpecialities = string.Join(",", ((string)rowResult["newSpecialities"]).Split(',').Distinct().OrderBy(element => element).ToArray());
                             if (oldSpecialities != newSpecialities)
                             {
                                 tmWriter.Delete(id);
@@ -1327,7 +1325,7 @@ namespace CAT.TM
                 }
 
                 long lElapsed = CATUtils.CurrentTimeMillis() - start;
-                System.Diagnostics.Debug.WriteLine("AddTMEntries: " + (CATUtils.CurrentTimeMillis() - start) + ".ms");
+                Debug.WriteLine("AddTMEntries: " + (CATUtils.CurrentTimeMillis() - start) + ".ms");
 
                 return itemsAfter - itemsBefore;
             }
@@ -1346,7 +1344,7 @@ namespace CAT.TM
         /// </summary>
         /// <param name="sTMPath"></param>
         /// <param name="idEntry"></param>
-        public void DeleteTMEntry(String tmPath, int idEntry)
+        public void DeleteTMEntry(string tmPath, int idEntry)
         {
             try
             {
@@ -1396,7 +1394,7 @@ namespace CAT.TM
         /// <param name="sTMPath"></param>
         /// <param name="idEntry"></param>
         /// <param name="fieldsToUpdate"></param>
-        public void UpdateTMEntry(String tmPath, int idEntry, Dictionary<String, String> fieldsToUpdate)
+        public void UpdateTMEntry(string tmPath, int idEntry, Dictionary<string, string> fieldsToUpdate)
         {
             try
             {
@@ -1406,7 +1404,7 @@ namespace CAT.TM
                     throw new Exception("The TM doesn't exist.");
 
                 _dataStorage.UpdateTMEntry(tmPath, idEntry, fieldsToUpdate);
-                System.Diagnostics.Debug.WriteLine("UpdateTMEntry: " + (CATUtils.CurrentTimeMillis() - start) + ".ms");
+                Debug.WriteLine("UpdateTMEntry: " + (CATUtils.CurrentTimeMillis() - start) + ".ms");
             }
             catch (Exception ex)
             {
@@ -1418,7 +1416,7 @@ namespace CAT.TM
             }
         }
 
-        private String GetTwoLetterLangCode(String langCode)
+        private string GetTwoLetterLangCode(string langCode)
         {
             //return new CultureInfo(sSourceLangIso639_1).TwoLetterISOLanguageName;
             return langCode.Substring(0, 2).ToLower();
@@ -1433,8 +1431,8 @@ namespace CAT.TM
         /// <param name="sUser"></param>
         /// <param name="speciality"></param>
         /// <returns></returns>
-        public TMImportResult ImportTmx(String tmPath, String sSourceLangIso639_1, String sTargetLangIso639_1, String sTMXContent, 
-            String sUser, int speciality)
+        public TMImportResult ImportTmx(string tmPath, string sSourceLangIso639_1, string sTargetLangIso639_1, string sTMXContent,
+            string sUser, int speciality)
         {
             int cntr = 0;
             try
@@ -1477,7 +1475,7 @@ namespace CAT.TM
                             var tu = (XmlElement)tus[i]!;
                             var tuProps = tu.GetElementsByTagName("prop");
                             //the extension metadata
-                            var metadataExtension = new Dictionary<String, String>();
+                            var metadataExtension = new Dictionary<string, string>();
                             //the dates
                             var dateCreated = DateTime.Now;
                             var dateModified = DateTime.Now;
@@ -1488,7 +1486,7 @@ namespace CAT.TM
                             int idTranslation = -1;
                             var context = "0"; //default context
                             var tuSpeciality = speciality;
-                            var contextData = new Dictionary<String, String>();
+                            var contextData = new Dictionary<string, string>();
                             foreach (XmlNode tuProp in tuProps)
                             {
                                 //context sometimes it is stored in the tuv node
@@ -1600,12 +1598,12 @@ namespace CAT.TM
                                 }
                                 else
                                 {
-                                    System.Diagnostics.Debug.WriteLine("Should never happen.");
+                                    Debug.WriteLine("Should never happen.");
                                 }
                             }
 
                             // check if the entry is valid
-                            if (!String.IsNullOrEmpty(tmEntry.source) && !String.IsNullOrEmpty(tmEntry.target))
+                            if (!string.IsNullOrEmpty(tmEntry.source) && !string.IsNullOrEmpty(tmEntry.target))
                             {
                                 //convert the texts to text fragments
                                 TextFragment source;
@@ -1640,10 +1638,10 @@ namespace CAT.TM
                                     //index the source text
                                     tmWriter.IndexSource(id, source, tuSpeciality.ToString());
                                 }
-                                else if ((String)rowResult["oldSpecialities"] != (String)rowResult["newSpecialities"])
+                                else if ((string)rowResult["oldSpecialities"] != (string)rowResult["newSpecialities"])
                                 {
-                                    var oldSpecialities = String.Join(",", ((String)rowResult["oldSpecialities"]).Split(',').Distinct().OrderBy(element => element).ToArray());
-                                    var newSpecialities = String.Join(",", ((String)rowResult["newSpecialities"]).Split(',').Distinct().OrderBy(element => element).ToArray());
+                                    var oldSpecialities = string.Join(",", ((string)rowResult["oldSpecialities"]).Split(',').Distinct().OrderBy(element => element).ToArray());
+                                    var newSpecialities = string.Join(",", ((string)rowResult["newSpecialities"]).Split(',').Distinct().OrderBy(element => element).ToArray());
                                     if (oldSpecialities != newSpecialities)
                                     {
                                         tmWriter.Delete(id);
@@ -1706,7 +1704,7 @@ namespace CAT.TM
         {
             var lstTMInfo = new List<TMInfo>();
             var aDirs = System.IO.Directory.GetDirectories(RepositoryFolder, "*", SearchOption.AllDirectories);
-            foreach (String sDir in aDirs)
+            foreach (string sDir in aDirs)
             {
                 var tmDir = Path.GetFileName(sDir);
                 if (tmDir.StartsWith("_"))
@@ -1726,14 +1724,14 @@ namespace CAT.TM
         /// </summary>
         /// <param name="dbName"></param>
         /// <returns></returns>
-        public TMInfo[] GetTMListFromDatabase(String dbName)
+        public TMInfo[] GetTMListFromDatabase(string dbName)
         {
             //get the TM tables from the database
             var dsTMNames = _dataStorage.GetTMListFromDatabase(dbName);
             var lstTMInfo = new List<TMInfo>();
             foreach (DataRow tmRow in dsTMNames.Tables[0].Rows)
             {
-                var tmName = (String)tmRow["TABLE_NAME"];
+                var tmName = (string)tmRow["TABLE_NAME"];
                 var tmInfo = GetTMInfo(dbName + "/" + tmName, false);
                 lstTMInfo.Add(tmInfo);
             }
@@ -1746,13 +1744,13 @@ namespace CAT.TM
             throw new NotImplementedException();
         }
 
-        public String ConnectionPoolInfo()
+        public string ConnectionPoolInfo()
         {
-            var activeWriters = new Dictionary<String, String>();
+            var activeWriters = new Dictionary<string, string>();
             //get the TM writers
             foreach (var key in TMConnectionPool.Keys)
             {
-                String sTmWriter = "Created: " + TMConnectionPool[key].created.ToString() +
+                string sTmWriter = "Created: " + TMConnectionPool[key].created.ToString() +
                     " Last access: " + TMConnectionPool[key].lastAccess.ToString();
                 activeWriters.Add(key, sTmWriter);
             }
@@ -1764,7 +1762,7 @@ namespace CAT.TM
         /// </summary>
         /// <param name="sTMName"></param>
         /// <returns></returns>
-        private TMWriter GetTMWriter(String tmId)
+        private TMWriter GetTMWriter(string tmId)
         {
             lock (TMLock)
             {
@@ -1782,7 +1780,7 @@ namespace CAT.TM
                     else
                     {
                         TMConnectionPool = TMConnectionPool.OrderBy(x => x.Value.lastAccess).ToDictionary(x => x.Key, x => x.Value);
-                        var keysToRemove = new HashSet<String>();
+                        var keysToRemove = new HashSet<string>();
                         //kick out the connectors that older than 20 minutes
                         foreach (var key in TMConnectionPool.Keys)
                         {
@@ -1828,7 +1826,7 @@ namespace CAT.TM
         /// <param name="sTMName"></param>
         /// <param name="index"></param>
         /// <returns></returns>
-        public int ReindexTM(String tmId, TMIndex index)
+        public int ReindexTM(string tmId, TMIndex index)
         {
             try
             {
@@ -1863,7 +1861,7 @@ namespace CAT.TM
                     var sourceLookup = new Dictionary<int, dynamic>();
                     foreach (DataRow drSource in indexData)
                     {
-                        var source = (String)drSource["source"];
+                        var source = (string)drSource["source"];
                         var id = (int)drSource["idSource"];
                         var speciality = (int)drSource["speciality"];
                         if (sourceLookup.Keys.Contains(id))
@@ -1882,7 +1880,7 @@ namespace CAT.TM
                     {
                         var sourceData = sourceItem.Value;
                         sourceData.specialities.Sort();
-                        var specialities = String.Join(",", sourceData.specialities.ToArray());
+                        var specialities = string.Join(",", sourceData.specialities.ToArray());
                         tmWriter.IndexSource(sourceItem.Key, new TextFragment(sourceData.source), specialities);
                     }
 
@@ -1907,7 +1905,7 @@ namespace CAT.TM
         /// </summary>
         /// <param name="sTMName"></param>
         /// <returns></returns>
-        public void ShrinkTM(String tmPath)
+        public void ShrinkTM(string tmPath)
         {
             try
             {
@@ -1933,7 +1931,7 @@ namespace CAT.TM
         /// </summary>
         /// <param name="sTMPath"></param>
         /// <returns></returns>
-        public String ExportTmx(String tmPath)
+        public string ExportTmx(string tmPath)
         {
             try
             {
@@ -1950,7 +1948,7 @@ namespace CAT.TM
                 {
                     var tu = "\r\n\t\t<tu tuid=\"" + (int)drEntry["id"] + "\" changedate=\"" + ((DateTime)drEntry["dateModified"]).ToString("yyyyMMdd'T'HHmmss'Z'") + 
                         "\" creationdate=\"" +
-                        ((DateTime)drEntry["dateCreated"]).ToString("yyyyMMdd'T'HHmmss'Z'") + "\" creationid=\"" + (String)drEntry["createdBy"] + "\" changeid=\"" + (String)drEntry["modifiedBy"] +
+                        ((DateTime)drEntry["dateCreated"]).ToString("yyyyMMdd'T'HHmmss'Z'") + "\" creationid=\"" + (string)drEntry["createdBy"] + "\" changeid=\"" + (string)drEntry["modifiedBy"] +
                         "\">\r\n{0}\r\n\t\t</tu>";
                     var sbTuContent = new StringBuilder();
                     //speciality
@@ -1963,12 +1961,12 @@ namespace CAT.TM
                         sbTuContent.Append("\t\t\t<prop type=\"x-translation\">" + idTranslation + "</prop>\r\n");
 
                     //the extension data
-                    var sExtensionData = drEntry["extensionData"] != DBNull.Value ? (String)drEntry["extensionData"] : "";
+                    var sExtensionData = drEntry["extensionData"] != DBNull.Value ? (string)drEntry["extensionData"] : "";
                     if (sExtensionData != "")
                     {
                         try
                         {
-                            var extensionData = JsonConvert.DeserializeObject<System.Collections.Generic.Dictionary<String, String>>(sExtensionData);
+                            var extensionData = JsonConvert.DeserializeObject<Dictionary<string, string>>(sExtensionData);
                             foreach (var prop in extensionData!.Keys)
                                 sbTuContent.Append("\t\t\t<prop type=\"" + prop + "\">" + extensionData[prop] + "</prop>\r\n");
                         }
@@ -1977,11 +1975,11 @@ namespace CAT.TM
                         }
                     }
 
-                    sbTuContent.Append("\t\t\t<tuv xml:lang=\"" + tmInfo.langFrom + "\">\r\n\t\t\t\t<prop type=\"x-context\">" + (String)drEntry["context"] +
-                        "</prop>\r\n\t\t\t\t<seg>" + CATUtils.TextFragmentToTmx(new TextFragment((String)drEntry["source"])) + "</seg>\r\n\t\t\t</tuv>\r\n");
-                    sbTuContent.Append("\t\t\t<tuv xml:lang=\"" + tmInfo.langTo + "\">\r\n\t\t\t\t<seg>" + CATUtils.TextFragmentToTmx(new TextFragment((String)drEntry["target"])) +
+                    sbTuContent.Append("\t\t\t<tuv xml:lang=\"" + tmInfo.langFrom + "\">\r\n\t\t\t\t<prop type=\"x-context\">" + (string)drEntry["context"] +
+                        "</prop>\r\n\t\t\t\t<seg>" + CATUtils.TextFragmentToTmx(new TextFragment((string)drEntry["source"])) + "</seg>\r\n\t\t\t</tuv>\r\n");
+                    sbTuContent.Append("\t\t\t<tuv xml:lang=\"" + tmInfo.langTo + "\">\r\n\t\t\t\t<seg>" + CATUtils.TextFragmentToTmx(new TextFragment((string)drEntry["target"])) +
                         "</seg>\r\n\t\t\t</tuv>");
-                    tu = String.Format(tu, sbTuContent.ToString());
+                    tu = string.Format(tu, sbTuContent.ToString());
                     sbTmxBody.Append(tu);
                 }
                 sbTmx.Append("<body>" + sbTmxBody + "\r\n\t</body>\r\n</tmx>");
@@ -1996,23 +1994,23 @@ namespace CAT.TM
         }
 
         #region Misc.
-        private String GetMetaData(DataRow tmEntry, String tmPath)
+        private string GetMetaData(DataRow tmEntry, string tmPath)
         {
             try
             {
-                var metadata = new Dictionary<String, String>();
+                var metadata = new Dictionary<string, string>();
                 metadata.Add("origin", tmPath);
                 metadata.Add("dateCreated", tmEntry["dateCreated"] != DBNull.Value ? ((DateTime)tmEntry["dateCreated"]).ToString("M/d/yyyy h:mm:ss tt") : "N/A");
-                metadata.Add("createdBy", tmEntry["createdBy"] != DBNull.Value ? (String)tmEntry["createdBy"] : "N/A");
+                metadata.Add("createdBy", tmEntry["createdBy"] != DBNull.Value ? (string)tmEntry["createdBy"] : "N/A");
                 metadata.Add("dateModified", tmEntry["dateModified"] != DBNull.Value ? ((DateTime)tmEntry["dateModified"]).ToString("M/d/yyyy h:mm:ss tt") : "N/A");
-                metadata.Add("modifiedBy", tmEntry["modifiedBy"] != DBNull.Value ? (String)tmEntry["modifiedBy"] : "N/A");
+                metadata.Add("modifiedBy", tmEntry["modifiedBy"] != DBNull.Value ? (string)tmEntry["modifiedBy"] : "N/A");
                 metadata.Add("speciality", tmEntry["speciality"] != DBNull.Value ? ((int)tmEntry["speciality"]).ToString() : "N/A");
                 metadata.Add("idTranslation", tmEntry["idTranslation"] != DBNull.Value ? ((int)tmEntry["idTranslation"]).ToString() : "N/A");
 
                 //the extension data
                 try
                 {
-                    metadata.Add("extensionData", tmEntry["extensionData"] != DBNull.Value ? (String)tmEntry["extensionData"] : "");
+                    metadata.Add("extensionData", tmEntry["extensionData"] != DBNull.Value ? (string)tmEntry["extensionData"] : "");
                 }
                 catch (Exception)
                 {
@@ -2030,6 +2028,9 @@ namespace CAT.TM
 
             return "";
         }
+
+        [GeneratedRegex("^\\s*")]
+        private static partial Regex MyRegex();
         #endregion
     }
 }

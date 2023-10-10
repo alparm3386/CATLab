@@ -25,7 +25,7 @@ namespace CAT.TM
     public class TMWriter
     {
         private readonly String IdField = "ID";
-        private readonly String SourceField = "SOURCE";
+        //private readonly String SourceField = "SOURCE";
         private readonly int NGramLength = 4;
         private IndexWriter indexWriter;
         private ILogger _logger;
