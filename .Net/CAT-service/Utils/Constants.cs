@@ -10,7 +10,7 @@ namespace cat.utils
 {
     public static class Constants
     {
-        public static readonly Dictionary<String, String> LANGUAGE_CODES = new Dictionary<String, String>() {
+        public static readonly Dictionary<String, String> LanguageCodes = new Dictionary<String, String>() {
               {"afr", "af"},
             {"alb", "sq"},
             {"amh", "am"},

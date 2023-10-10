@@ -15,7 +15,7 @@ namespace CAT.TB
 {
     public class TBService
     {
-        private IDataStorage _dataStorage;
+        private IDataStorage _dataStorage = default!;
         //private static BackupConnector backupClient = new BackupConnector(); no backup
 
         /// <summary>
@@ -25,7 +25,7 @@ namespace CAT.TB
         /// <returns></returns>
         private bool ValidateLanguages(String[] aLanguages)
         {
-            var tmpLangCodes = Array.ConvertAll(Constants.LANGUAGE_CODES.Keys.ToArray(), langCode => langCode.ToLower());
+            var tmpLangCodes = Array.ConvertAll(Constants.LanguageCodes.Keys.ToArray(), langCode => langCode.ToLower());
             return aLanguages.All(aLang => tmpLangCodes.Contains(aLang));
         }
 
@@ -41,10 +41,10 @@ namespace CAT.TB
 
             var tbInfo = new TBInfo();
             if (dsTermbase?.Tables[0]?.Rows.Count != 1)
-                return null;
+                return null!;
 
             var tbRow = dsTermbase?.Tables[0]?.Rows[0];
-            tbInfo.id = (int)tbRow["id"];
+            tbInfo.id = (int)tbRow!["id"];
             tbInfo.languages = tbRow["languages"].ToString().Split(',');
 
             //the metadata
@@ -126,9 +126,11 @@ namespace CAT.TB
             var tbLanguages = new HashSet<String>(languages.Split(','));
 
             //use transaction
-            var transactionOptions = new TransactionOptions();
-            transactionOptions.IsolationLevel = System.Transactions.IsolationLevel.ReadCommitted;
-            transactionOptions.Timeout = TransactionManager.MaximumTimeout;
+            var transactionOptions = new TransactionOptions
+            {
+                IsolationLevel = IsolationLevel.ReadCommitted,
+                Timeout = TransactionManager.MaximumTimeout
+            };
             TransactionScope TUTransaction = new TransactionScope(TransactionScopeOption.Required, transactionOptions);
 
             using (TUTransaction)
