@@ -33,7 +33,7 @@ namespace CAT.TM
         private Object TMLock = new Object();
         private readonly int TMWriterIdleTimeout = 20; //minutes
         private readonly int MaxTmConnectionPoolSize = 40;
-        private readonly Dictionary<String, TMConnector> TMConnectionPool;
+        private Dictionary<String, TMConnector> TMConnectionPool;
         private readonly String RepositoryFolder;
         private readonly IConfiguration _configuration;
         private readonly ILogger _logger;
@@ -690,7 +690,7 @@ namespace CAT.TM
 
                 //fix the source language
                 var fileNode = xliff.SelectSingleNode("//x:file", xmlnsManager);
-                fileNode!.Attributes["source-language"]!.Value = langFrom_ISO639_1;
+                fileNode!.Attributes!["source-language"]!.Value = langFrom_ISO639_1;
 
                 XmlNodeList tuNodeList = xliff.GetElementsByTagName("trans-unit");
                 String prev = default!;
@@ -717,15 +717,15 @@ namespace CAT.TM
                     XmlNodeList segmentNodes = null;
                     var ssNode = tuNode["seg-source"];
                     if (ssNode == null)
-                        segmentNodes = tuNode.SelectNodes("x:source", xmlnsManager);
+                        segmentNodes = tuNode!.SelectNodes("x:source", xmlnsManager)!;
                     else
-                        segmentNodes = ssNode.SelectNodes("x:mrk", xmlnsManager);
+                        segmentNodes = ssNode!.SelectNodes("x:mrk", xmlnsManager)!;
                     var targetXml = "";
-                    for (int j = 0; j < segmentNodes.Count; j++)
+                    for (int j = 0; j < segmentNodes!.Count; j++)
                     {
-                        XmlNode segmentNode = segmentNodes[j];
-                        var source = segmentNode.InnerXml.Trim();
-                        var status = segmentNode.Attributes["status"];
+                        XmlNode segmentNode = segmentNodes[j]!;
+                        var source = segmentNode!.InnerXml.Trim();
+                        var status = segmentNode!.Attributes!["status"];
                         if (status == null)
                         {
                             status = xliff.CreateAttribute("status");
@@ -734,23 +734,23 @@ namespace CAT.TM
 
                         var mid = "-1";
                         if (segmentNode.Name == "mrk")
-                            mid = segmentNode.Attributes["mid"].Value;
+                            mid = segmentNode!.Attributes!["mid"]!.Value;
                         //get the next segment for the context
                         if (j < segmentNodes.Count - 1)
-                            next = segmentNodes[j + 1].InnerXml.Trim();
+                            next = segmentNodes![j + 1]!.InnerXml.Trim();
                         else
                         {
                             //pick the first segment from the next tu
                             var nextTu = i < tuNodeList.Count - 1 ? tuNodeList[i + 1] : null;
                             if (segmentNode.Name == "mrk")
-                                next = nextTu?["seg-source"]?["mrk"]?.InnerXml.Trim();
+                                next = nextTu?["seg-source"]?["mrk"]?.InnerXml.Trim()!;
                             else
-                                next = nextTu?["source"].InnerXml.Trim();
+                                next = nextTu?["source"].InnerXml.Trim()!;
                         }
 
-                        XmlNode targetSegment = null;
+                        XmlNode targetSegment = default!;
                         if (segmentNode.Name == "mrk")
-                            targetSegment = targetNode.SelectSingleNode("x:mrk[@mid='" + mid + "']", xmlnsManager);
+                            targetSegment = targetNode!.SelectSingleNode("x:mrk[@mid='" + mid + "']", xmlnsManager)!;
                         else
                             targetSegment = targetNode;
                         if (targetSegment == null || targetSegment.InnerXml.Length == 0)
@@ -792,11 +792,7 @@ namespace CAT.TM
                     targetNode.InnerXml = targetXml;
                 }
 
-                String sRet = xliff.OuterXml;
-
-                //LOG("PreTranslate.log", String.Format("End ... min: {0}ms, max: {1}ms, avg: {2}ms total: {3}ms", min, max, total / tuNodeList.Count, total));
-
-                return sRet;
+                return xliff.OuterXml;
             }
             catch (Exception ex)
             {
@@ -821,7 +817,7 @@ namespace CAT.TM
                 var tmName = GetTMName(id);
                 var tmInfo = new TMInfo();
                 //get the languages from the TM name
-                Match m = null;
+                Match m = default!;
                 if (tmName.StartsWith("$__")) //global
                 {
                     m = Regex.Match(tmName, "_(.+)_(.+)");
@@ -910,7 +906,7 @@ namespace CAT.TM
             {
                 var loopCntr = 0;
                 var scoreCntr = 0;
-                var ROUGH_CUTOFF = 0.5;
+                const double RoughCutoff = 0.5;
                 var lstTMMatches = new List<TMMatch>();
 
                 //we need the source as TextFragment
@@ -941,7 +937,7 @@ namespace CAT.TM
 
                     String searchFieldName = TranslationUnitField.SOURCE.ToString();
                     var leafReaderContexts = reader.Leaves;
-                    var roughThresholdFreq = (int)(uniqeTerms.Count * ROUGH_CUTOFF);
+                    var roughThresholdFreq = (int)(uniqeTerms.Count * RoughCutoff);
                     foreach (var term in uniqeTerms)
                     {
                         var docIds = new List<int>();
@@ -962,7 +958,7 @@ namespace CAT.TM
                                 if (bUseSpeciality)
                                 {
                                     BytesRef binaryValue = new BytesRef();
-                                    bdv.Get(docId, binaryValue);
+                                    bdv!.Get(docId, binaryValue);
                                     var storedSpeciality = "," + binaryValue.Utf8ToString() + ",";
                                     specialities[docBase + docId] = storedSpeciality;
                                 }
@@ -1018,7 +1014,7 @@ namespace CAT.TM
                         {
                             var tmMatch = new TMMatch();
                             var matchSourceCoded = (String)tmEntry["source"];
-                            tmMatch.id = tmEntry!["id"]!.ToString();
+                            tmMatch.id = tmEntry!["id"]!.ToString()!;
                             tmMatch.source = CATUtils.TextFragmentToTmx(new TextFragment(matchSourceCoded));
                             tmMatch.target = CATUtils.TextFragmentToTmx(new TextFragment((String)tmEntry["target"]));
                             tmMatch.quality = (int)tmHit.Value;
@@ -1048,7 +1044,6 @@ namespace CAT.TM
                 //System.Diagnostics.Debug.WriteLine("Loops:" + loopCntr + " scores: " + scoreCntr);
 
                 long lElapsed = CATUtils.CurrentTimeMillis() - lStart;
-                //_logger.LogError("Benchmark.log", DateTime.Now.ToString("yyyy-MM-dd HH:mm") + "\tGetTMEntries\t" + lElapsed);
 
                 return lstTMMatches.ToArray();
             }
@@ -1210,7 +1205,7 @@ namespace CAT.TM
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine(ex.ToString());
-                throw ex;
+                throw;
             }
         }
 
@@ -1235,7 +1230,7 @@ namespace CAT.TM
             if (metadata.ContainsKey("nextSegment"))
                 next = CATUtils.TmxSegmentToTextFragmentSimple(metadata["nextSegment"]);
 
-            return CalculateContextHash(prev, next);
+            return CalculateContextHash(prev!, next!);
         }
 
         /// <summary>
@@ -1391,7 +1386,7 @@ namespace CAT.TM
             catch (Exception ex)
             {
                 _logger.LogError("TMEntries.log", "ERROR: DeleteTMEntry TM name -> " + tmPath + "\n\n" + ex.ToString());
-                throw ex;
+                throw;
             }
             finally
             {
@@ -1482,7 +1477,7 @@ namespace CAT.TM
                         // get the number of entries before the import
                         for (int i = from; i < tus.Count; i++)
                         {
-                            var tu = (XmlElement)tus[i];
+                            var tu = (XmlElement)tus[i]!;
                             var tuProps = tu.GetElementsByTagName("prop");
                             //the extension metadata
                             var metadataExtension = new Dictionary<String, String>();
@@ -1490,9 +1485,9 @@ namespace CAT.TM
                             var dateCreated = DateTime.Now;
                             var dateModified = DateTime.Now;
                             if (tu.Attributes["creationdate"] != null)
-                                dateCreated = DateTime.ParseExact(tu.Attributes["creationdate"].Value, formatStringISO8601, CultureInfo.InvariantCulture);
+                                dateCreated = DateTime.ParseExact(tu!.Attributes!["creationdate"]!.Value, formatStringISO8601, CultureInfo.InvariantCulture);
                             if (tu.Attributes["changedate"] != null)
-                                dateModified = DateTime.ParseExact(tu.Attributes["changedate"].Value, formatStringISO8601, CultureInfo.InvariantCulture);
+                                dateModified = DateTime.ParseExact(tu!.Attributes!["changedate"]!.Value, formatStringISO8601, CultureInfo.InvariantCulture);
                             int idTranslation = -1;
                             var context = "0"; //default context
                             var tuSpeciality = speciality;
@@ -1500,7 +1495,7 @@ namespace CAT.TM
                             foreach (XmlNode tuProp in tuProps)
                             {
                                 //context sometimes it is stored in the tuv node
-                                if (tuProp.Attributes["type"].Value.ToLower() == "x-context-pre")
+                                if (tuProp!.Attributes!["type"]!.Value!.ToLower() == "x-context-pre")
                                 {
                                     var type = "prevSegment";
                                     var value = tuProp.InnerText.Replace("<seg>", "").Replace("</seg>", "").Trim();
@@ -1511,7 +1506,7 @@ namespace CAT.TM
                                         contextData.Add(type, value );
                                     continue;
                                 }
-                                else if (tuProp.Attributes["type"].Value.ToLower() == "x-context-post")
+                                else if (tuProp.Attributes["type"]!.Value.ToLower() == "x-context-post")
                                 {
                                     var type = "nextSegment";
                                     var value = tuProp.InnerText.Replace("<seg>", "").Replace("</seg>", "").Trim();
@@ -1523,7 +1518,7 @@ namespace CAT.TM
                                     continue;
 
                                 }
-                                else if (tuProp.Attributes["type"].Value.ToLower() == "x-context")
+                                else if (tuProp.Attributes["type"]!.Value.ToLower() == "x-context")
                                 {
                                     var type = "contextHash";
                                     var value = tuProp.InnerText.Replace("<seg>", "").Replace("</seg>", "").Trim();
@@ -1536,7 +1531,7 @@ namespace CAT.TM
                                 }
 
                                 //idTranslation
-                                if (tuProp.Attributes["type"].Value.ToLower() == "x-translation")
+                                if (tuProp.Attributes["type"]!.Value.ToLower() == "x-translation")
                                 {
                                     if (!int.TryParse(tuProp.InnerText, out idTranslation))
                                         idTranslation = -1;
@@ -1544,7 +1539,7 @@ namespace CAT.TM
                                 }
 
                                 //speciality
-                                if (tuProp.Attributes["type"].Value.ToLower() == "domain")
+                                if (tuProp.Attributes["type"]!.Value.ToLower() == "domain")
                                 {
                                     //find by value
                                     int foundSpeciality = specialities.FirstOrDefault(x => x.Value == tuProp.InnerText.ToLower()).Key;
@@ -1553,13 +1548,13 @@ namespace CAT.TM
                                         tuSpeciality = foundSpeciality;
                                     continue;
                                 }
-                                if (metadataExtension.ContainsKey(tuProp.Attributes["type"].Value))
+                                if (metadataExtension.ContainsKey(tuProp.Attributes["type"]!.Value))
                                 {
-                                    metadataExtension[tuProp.Attributes["type"].Value] = tuProp.InnerText;
-                                    _logger.LogError("TMEntries.log", tuProp.Attributes["type"].Value.ToString() + " " + tuProp.InnerText);
+                                    metadataExtension[tuProp.Attributes["type"]!.Value] = tuProp.InnerText;
+                                    _logger.LogError("TMEntries.log", tuProp.Attributes["type"]!.Value.ToString() + " " + tuProp.InnerText);
                                 }
                                 else
-                                    metadataExtension.Add(tuProp.Attributes["type"].Value, tuProp.InnerText);
+                                    metadataExtension.Add(tuProp.Attributes["type"]!.Value, tuProp.InnerText);
                             }
 
                             var tuvs = tu.GetElementsByTagName("tuv");
@@ -1568,8 +1563,8 @@ namespace CAT.TM
                             bool bScrLangFound = false;
                             for (int j = 0; j < tuvs.Count; j++)
                             {
-                                var tuv = (XmlElement)tuvs[j];
-                                var lang = tuv.Attributes["xml:lang"].Value;
+                                var tuv = (XmlElement)tuvs[j]!;
+                                var lang = tuv.Attributes["xml:lang"]!.Value;
                                 var langTwoLetterISO = GetTwoLetterLangCode(lang);
                                 if (langTwoLetterISO == srcTwoLetterISO && !bScrLangFound)
                                 { // does it need to be culture invariant?
@@ -1577,18 +1572,19 @@ namespace CAT.TM
                                     var segments = tuv.GetElementsByTagName("seg");
                                     if (segments.Count == 0)
                                         continue;
-                                    tmEntry.source = segments[0].InnerXml.Trim();
+                                    tmEntry.source = segments[0]!.InnerXml.Trim();
                                     // set the context
                                     var props = tuv.GetElementsByTagName("prop");
                                     for (int k = 0; k < props.Count; k++)
                                     {
                                         var prop = props[k];
                                         var type = "";
-                                        if (prop.Attributes["type"].Value.ToLower() == "x-context-pre")
+                                        var typeAttr = prop!.Attributes!["type"]!.Value.ToLower();
+                                        if (typeAttr == "x-context-pre")
                                             type = "prevSegment";
-                                        else if (prop.Attributes["type"].Value.ToLower() == "x-context-post")
+                                        else if (typeAttr == "x-context-post")
                                             type = "nextSegment";
-                                        else if (prop.Attributes["type"].Value.ToLower() == "x-context")
+                                        else if (typeAttr == "x-context")
                                             type = "contextHash";
 
                                         var value = prop.InnerText.Replace("<seg>", "").Replace("</seg>", "").Trim();
@@ -1603,7 +1599,7 @@ namespace CAT.TM
                                     var segments = tuv.GetElementsByTagName("seg");
                                     if (segments.Count == 0)
                                         continue;
-                                    tmEntry.target = segments[0].InnerXml.Trim();
+                                    tmEntry.target = segments[0]!.InnerXml.Trim();
                                 }
                                 else
                                 {
@@ -1777,7 +1773,7 @@ namespace CAT.TM
             {
                 try
                 {
-                    TMWriter tmWriter = null;
+                    TMWriter tmWriter = default!;
                     var sourceIndexDir = GetSourceIndexDirectory(tmId);
                     // check if there is open connection
                     if (TMConnectionPool.ContainsKey(tmId))
@@ -1976,7 +1972,7 @@ namespace CAT.TM
                         try
                         {
                             var extensionData = JsonConvert.DeserializeObject<System.Collections.Generic.Dictionary<String, String>>(sExtensionData);
-                            foreach (var prop in extensionData.Keys)
+                            foreach (var prop in extensionData!.Keys)
                                 sbTuContent.Append("\t\t\t<prop type=\"" + prop + "\">" + extensionData[prop] + "</prop>\r\n");
                         }
                         catch (Exception ex)
