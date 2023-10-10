@@ -18,7 +18,8 @@ namespace CAT.TM
                 {
                     throw new IOException(indexDirectoryPath + " does not exist");
                 }
-                TMWriter writer = new TMWriter(FSDirectory.Open(indexDirectoryPath), createNewTmIndex, logger);
+
+                return new TMWriter(FSDirectory.Open(indexDirectoryPath), createNewTmIndex, logger);
             }
             catch (IOException ex)
             {

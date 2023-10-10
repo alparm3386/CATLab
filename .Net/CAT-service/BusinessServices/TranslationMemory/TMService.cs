@@ -17,15 +17,17 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Text.RegularExpressions;
+//using System.Text.RegularExpressions;
 using System.Threading;
 using System.Transactions;
 using System.Xml;
 using CAT.Utils;
+using System.Text.RegularExpressions;
+using CAT.BusinessServices.Okapi;
 
 namespace CAT.TM
 {
-    public partial class TMService
+    public class TMService : ITMService
     {
         private object TMLock = new object();
         private readonly int TMWriterIdleTimeout = 20; //minutes
@@ -37,7 +39,7 @@ namespace CAT.TM
         private readonly IDataStorage _dataStorage;
         private readonly IOkapiConnector _okapiConnector;
         private readonly int NGramLength = 4;
-        private Dictionary<int, string>  specialities;
+        private Dictionary<int, string> specialities;
 
         public TMService(IOkapiConnector okapiConnector, IDataStorage dataStorage, IConfiguration configuration, ILogger logger)
         {
@@ -549,46 +551,6 @@ namespace CAT.TM
         }
 
         /// <summary>
-        /// CreateXliff
-        /// </summary>
-        /// <param name="sFileName"></param>
-        /// <param name="fileContent"></param>
-        /// <param name="sFilterName"></param>
-        /// <param name="filterContent"></param>
-        /// <param name="sourceLangISO639_1"></param>
-        /// <param name="targetLangISO639_1"></param>
-        /// <param name="aTMAssignments"></param>
-        /// <returns></returns>
-        public string CreateXliff(string sFileName, byte[] fileContent, string sFilterName, byte[] filterContent,
-            string sourceLangISO639_1, string targetLangISO639_1, TMAssignment[] aTMAssignments)
-        {
-            long lStart = CATUtils.CurrentTimeMillis();
-            var sXliffContent = _okapiConnector.CreateXliffFromDocument(sFileName, fileContent, sFilterName,
-                filterContent, sourceLangISO639_1, targetLangISO639_1);
-
-            var sPreTranslatedXliff = PreTranslateXliff(sXliffContent, sourceLangISO639_1, targetLangISO639_1, aTMAssignments, 100);
-
-            return sPreTranslatedXliff;
-        }
-
-        public byte[] CreateDocumentFromXliff(string sFileName, byte[] fileContent, string sFilterName, byte[] filterContent,
-            string sourceLangISO639_1, string targetLangISO639_1, string sXliffContent)
-        {
-            byte[] aBytes = _okapiConnector.CreateDocumentFromXliff(sFileName, fileContent, sFilterName, filterContent,
-                sourceLangISO639_1, targetLangISO639_1, sXliffContent);
-            var sExt = Path.GetExtension(sFileName).ToLower();
-            if (sExt == ".mqxliff")
-            {
-                //set the status for memoQ xliff files
-                var xliffContent = Encoding.UTF8.GetString(aBytes);
-                xliffContent = xliffContent.Replace("mq:status=\"NotStarted\"", "mq:status=\"ManuallyConfirmed\"");
-                aBytes = Encoding.UTF8.GetBytes(xliffContent);
-            }
-
-            return aBytes;
-        }
-
-        /// <summary>
         /// GetExactMatch
         /// </summary>
         /// <param name="aTmAssignments"></param>
@@ -596,7 +558,7 @@ namespace CAT.TM
         /// <param name="prev"></param>
         /// <param name="next"></param>
         /// <returns></returns>
-        private TMMatch GetExactMatch(TMAssignment[] aTmAssignments, string source, string prev, string next)
+        public TMMatch GetExactMatch(TMAssignment[] aTmAssignments, string source, string prev, string next)
         {
             DataTable dtExactMatches = default!;
             string sourceCoded = "";
@@ -751,7 +713,7 @@ namespace CAT.TM
                             targetSegment = targetNode;
                         if (targetSegment == null || targetSegment.InnerXml.Length == 0)
                         {
-                            string sStartingWhiteSpaces = MyRegex().Match(segmentNode.InnerXml).Value;
+                            String sStartingWhiteSpaces = Regex.Match(segmentNode.InnerXml, @"^\s*").Value;
                             string sEndingWhiteSpaces = Regex.Match(segmentNode.InnerXml, @"\s*$").Value;
                             //the translation
                             var tmMatch = GetExactMatch(aTMAssignments, source, prev!, next!);
@@ -1297,7 +1259,7 @@ namespace CAT.TM
                             int.TryParse(metadata["idTranslation"], out idTranslation);
                         //insert into SQL server
                         var dsResult = _dataStorage.InsertTMEntry(tmPath, source, target, context.ToString(), idUser!, speciality, idTranslation,
-                            DateTime.Now, DateTime.Now, metadata.ContainsKey("metadata")? metadata["metadata"] : "");
+                            DateTime.Now, DateTime.Now, metadata.ContainsKey("metadata") ? metadata["metadata"] : "");
                         //var dsResult = _dataStorage.InsertTMEntry(tmPath, source, target, context.ToString(), idUser, speciality, idTranslation,
                         //    DateTime.Now, DateTime.Now, ""); //[AM:29/09/2023] hotfix
                         var rowResult = dsResult.Tables[0].Rows[0];
@@ -1498,7 +1460,7 @@ namespace CAT.TM
                                     if (contextData.ContainsKey(type))
                                         contextData[type] = value;
                                     else
-                                        contextData.Add(type, value );
+                                        contextData.Add(type, value);
                                     continue;
                                 }
                                 else if (tuProp.Attributes["type"]!.Value.ToLower() == "x-context-post")
@@ -1629,7 +1591,7 @@ namespace CAT.TM
 
                                 //insert into SQL server
                                 var extensionData = JsonConvert.SerializeObject(metadataExtension);
-                                var dsResult = _dataStorage.InsertTMEntry(tmPath, source, target, context.ToString(), sUser, tuSpeciality, idTranslation, 
+                                var dsResult = _dataStorage.InsertTMEntry(tmPath, source, target, context.ToString(), sUser, tuSpeciality, idTranslation,
                                     dateCreated, dateModified, extensionData);
                                 var rowResult = dsResult.Tables[0].Rows[0];
                                 var id = (int)rowResult["idSource"];
@@ -1941,12 +1903,12 @@ namespace CAT.TM
                 var tmInfo = GetTMInfo(tmPath, false);
                 var sbTmx = new StringBuilder();
                 sbTmx.Append("<tmx version=\"1.4\">\r\n" + "<header creationtool=\"tm\" segtype=\"sentence\" srclang=\"" + tmInfo.langFrom +
-                    "\" datatype=\"unknown\">\r\n"); 
+                    "\" datatype=\"unknown\">\r\n");
                 sbTmx.Append("<prop type=\"name\">" + tmPath + "</prop>\r\n</header>\r\n\t");
                 var sbTmxBody = new StringBuilder();
                 foreach (DataRow drEntry in drEntries)
                 {
-                    var tu = "\r\n\t\t<tu tuid=\"" + (int)drEntry["id"] + "\" changedate=\"" + ((DateTime)drEntry["dateModified"]).ToString("yyyyMMdd'T'HHmmss'Z'") + 
+                    var tu = "\r\n\t\t<tu tuid=\"" + (int)drEntry["id"] + "\" changedate=\"" + ((DateTime)drEntry["dateModified"]).ToString("yyyyMMdd'T'HHmmss'Z'") +
                         "\" creationdate=\"" +
                         ((DateTime)drEntry["dateCreated"]).ToString("yyyyMMdd'T'HHmmss'Z'") + "\" creationid=\"" + (string)drEntry["createdBy"] + "\" changeid=\"" + (string)drEntry["modifiedBy"] +
                         "\">\r\n{0}\r\n\t\t</tu>";
@@ -1971,7 +1933,7 @@ namespace CAT.TM
                                 sbTuContent.Append("\t\t\t<prop type=\"" + prop + "\">" + extensionData[prop] + "</prop>\r\n");
                         }
                         catch (Exception)
-                        { 
+                        {
                         }
                     }
 
@@ -2028,9 +1990,6 @@ namespace CAT.TM
 
             return "";
         }
-
-        [GeneratedRegex("^\\s*")]
-        private static partial Regex MyRegex();
         #endregion
     }
 }

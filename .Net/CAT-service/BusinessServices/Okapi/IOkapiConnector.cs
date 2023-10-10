@@ -1,4 +1,4 @@
-﻿namespace CAT.BusinessServices
+﻿namespace CAT.BusinessServices.Okapi
 {
     public interface IOkapiConnector
     {

@@ -1,5 +1,5 @@
 ﻿using cat.utils;
-using OkapiService;
+using CAT.ConnectedServices.OkapiService;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -14,7 +14,7 @@ using System.Threading;
 using System.Transactions;
 using System.Xml;
 
-namespace CAT.BusinessServices
+namespace CAT.BusinessServices.Okapi
 {
     /// <summary>
     /// OkapiConnector
@@ -74,10 +74,10 @@ namespace CAT.BusinessServices
         /// GetOkapiService
         /// </summary>
         /// <returns></returns>
-        private IOkapiService GetOkapiService()
+        private ConnectedServices.OkapiService.IOkapiService GetOkapiService()
         {
-            ChannelFactory<IOkapiService> channelFactory =
-                new ChannelFactory<IOkapiService>(_binding, GetOkapiServiceEndpoint());
+            ChannelFactory<ConnectedServices.OkapiService.IOkapiService> channelFactory =
+                new ChannelFactory<ConnectedServices.OkapiService.IOkapiService>(_binding, GetOkapiServiceEndpoint());
 
             foreach (OperationDescription op in channelFactory.Endpoint.Contract.Operations)
             {
@@ -89,14 +89,14 @@ namespace CAT.BusinessServices
             return channelFactory.CreateChannel();
         }
 
-        public String CreateXliffFromDocument(String sFileName, byte[] fileContent, String sFilterName, byte[] filterContent, String sourceLang,
-                    String targetLang)
+        public string CreateXliffFromDocument(string sFileName, byte[] fileContent, string sFilterName, byte[] filterContent, string sourceLang,
+                    string targetLang)
         {
             try
             {
                 //the client
                 var okapiClient = GetOkapiService();
-                String sXliffContent = okapiClient.createXliffAsync(new createXliffRequest(sFileName, fileContent, sFilterName, filterContent, sourceLang,
+                string sXliffContent = okapiClient.createXliffAsync(new createXliffRequest(sFileName, fileContent, sFilterName, filterContent, sourceLang,
                     targetLang, null)).Result.createXliffReturn;
 
                 return sXliffContent;
@@ -108,8 +108,8 @@ namespace CAT.BusinessServices
             }
         }
 
-        public byte[] CreateDocumentFromXliff(String sFileName, byte[] fileContent, String sFilterName, byte[] filterContent,
-            String sourceLangISO639_1, String targetLangISO639_1, String sXliffContent)
+        public byte[] CreateDocumentFromXliff(string sFileName, byte[] fileContent, string sFilterName, byte[] filterContent,
+            string sourceLangISO639_1, string targetLangISO639_1, string sXliffContent)
         {
             try
             {

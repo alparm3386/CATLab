@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace OkapiService
+namespace CAT.ConnectedServices.OkapiService
 {
     
     
