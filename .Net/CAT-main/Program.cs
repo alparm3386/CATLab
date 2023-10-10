@@ -217,7 +217,7 @@ app.Use(async (context, next) =>
     if (context.Request.Path.Value == "/" || context.Request.Path.Value == "/index" || context.Request.Path.Value == "/home")
     {
         var user = context.User;
-        if (user.Identity.IsAuthenticated)
+        if (user.Identity!.IsAuthenticated)
         {
             var roles = user.FindAll(ClaimTypes.Role).Select(c => c.Value);
 
@@ -261,7 +261,7 @@ app.Use(async (context, next) =>
 app.Use(async (context, next) =>
 {
     var user = context.User;
-    if (user.Identity.IsAuthenticated)
+    if (user.Identity!.IsAuthenticated)
     {
         var roles = user.FindAll(System.Security.Claims.ClaimTypes.Role).Select(c => c.Value);
         // Log roles or print them

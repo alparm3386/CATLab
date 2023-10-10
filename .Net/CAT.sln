@@ -11,7 +11,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CAT-main-tests", "CAT-main-
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CAT-service", "CAT-service\CAT-service.csproj", "{6AC6BFAD-198E-4D48-B81F-551A9598D14A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CAT-service-test", "CAT-service-test\CAT-service-test.csproj", "{2BF9A43B-9B76-468A-9602-F721D4081B80}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CAT-service-test", "CAT-service-test\CAT-service-test.csproj", "{2BF9A43B-9B76-468A-9602-F721D4081B80}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

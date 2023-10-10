@@ -20,7 +20,6 @@ namespace CAT.TM
             public String text = default!;
         }
 
-        private readonly static int N_GRAM_LEN = 4;
         private Dictionary<String, List<int>> invertedIndex = new Dictionary<String, List<int>>();
         private List<IndexElement> indexElements = new List<IndexElement>();
         private int elementIdx = 0;
