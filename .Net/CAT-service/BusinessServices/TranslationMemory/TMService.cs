@@ -39,7 +39,7 @@ namespace CAT.TM
         private readonly int NGramLength = 4;
         private Dictionary<int, string> specialities;
 
-        public TMService(IOkapiConnector okapiConnector, IDataStorage dataStorage, IConfiguration configuration, ILogger logger)
+        public TMService(IOkapiConnector okapiConnector, IDataStorage dataStorage, IConfiguration configuration, ILogger<TMService> logger)
         {
             _okapiConnector = okapiConnector;
             _dataStorage = dataStorage;

@@ -10,17 +10,16 @@ var builder = WebApplication.CreateBuilder(args);
 // Additional configuration is required to successfully run gRPC on macOS.
 // For instructions on how to configure Kestrel and gRPC clients on macOS, visit https://go.microsoft.com/fwlink/?linkid=2099682
 
-//the logger
-builder.Logging.AddProvider(new Log4NetLoggerProvider("log4net.config"));
-
 // Add services to the container.
 builder.Services.AddGrpc();
 builder.Services.AddSingleton<IDataStorage, DataStorage>();
 builder.Services.AddSingleton<IOkapiConnector, OkapiConnector>();
 builder.Services.AddSingleton<IOkapiService, OkapiService>();
 builder.Services.AddSingleton<ITMService, TMService>();
-
 builder.Services.AddTransient<IEmailService, SmtpEmailService>();
+
+//the logger
+builder.Logging.AddProvider(new Log4NetLoggerProvider("log4net.config"));
 
 var app = builder.Build();
 

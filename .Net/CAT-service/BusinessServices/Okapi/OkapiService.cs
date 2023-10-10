@@ -14,7 +14,7 @@ namespace CAT.BusinessServices.Okapi
         private readonly ITMService _tmService;
         private readonly ILogger _logger;
 
-        public OkapiService(IOkapiConnector okapiConnector, ITMService tmService, ILogger logger)
+        public OkapiService(IOkapiConnector okapiConnector, ITMService tmService, ILogger<OkapiService> logger)
         {
             _okapiConnector = okapiConnector;
             _tmService = tmService;

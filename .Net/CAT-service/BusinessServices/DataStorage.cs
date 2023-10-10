@@ -16,8 +16,8 @@ namespace CAT.BusinessServices
     public class DataStorage : IDataStorage
     {
         private String _termbasesConnectionString;
-        private String __translationMemoriesConnectionString;
-        private String _translationsConnectionString;
+        private String _translationMemoriesConnectionString;
+        private String _mainDbConnectionString;
 
         public String _tmRepository;
         private ILogger _logger;
@@ -47,15 +47,15 @@ namespace CAT.BusinessServices
             return dbParams;
         }
 
-        public DataStorage(IConfiguration configuration, ILogger logger)
+        public DataStorage(IConfiguration configuration, ILogger<DataStorage> logger)
         {
-            _termbasesConnectionString = _configuration!["TermbasesConnectionString"]!;
-            __translationMemoriesConnectionString = _configuration["_translationMemoriesConnectionString"]!;
-            _translationsConnectionString = _configuration["TranslationsConnectionString"]!;
+            _configuration = configuration;
+            _termbasesConnectionString = _configuration!["SQLiteStorage:TermbasesConnectionString"]!;
+            _translationMemoriesConnectionString = _configuration["SQLiteStorage:TranslationMemoriesConnectionString"]!;
+            _mainDbConnectionString = _configuration["SQLiteStorage:MainDbConnectionString"]!;
 
             _tmRepository = _configuration["TMPath"]!;
 
-            _configuration = configuration;
             _logger = logger;
             //load the sql commands
 
