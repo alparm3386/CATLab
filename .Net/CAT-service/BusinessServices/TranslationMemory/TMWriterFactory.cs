@@ -12,14 +12,13 @@ namespace CAT.TM
     {
         public static TMWriter CreateFileBasedTmWriter(String indexDirectoryPath, bool createNewTmIndex, ILogger logger)
         {
-            TMWriter writer = default!;
             try
             {
                 if (!System.IO.Directory.Exists(indexDirectoryPath))
                 {
                     throw new IOException(indexDirectoryPath + " does not exist");
                 }
-                writer = new TMWriter(FSDirectory.Open(indexDirectoryPath), createNewTmIndex, logger);
+                TMWriter writer = new TMWriter(FSDirectory.Open(indexDirectoryPath), createNewTmIndex, logger);
             }
             catch (IOException ex)
             {
@@ -29,7 +28,6 @@ namespace CAT.TM
             {
                 throw;
             }
-            return writer;
         }
 
         public static TMWriter CreateRAMBasedTmWriter(ILogger logger)
