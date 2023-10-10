@@ -17,7 +17,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace okapi.resource
+namespace CAT.Okapi.Resources
 {
     /**
      * Basic unit of extraction from a filter and also the resource associated with
@@ -27,11 +27,11 @@ namespace okapi.resource
      */
     public class TextUnit
     {
-        private TextContainer source;
-        private String tuid;
-        private String name;
+        private TextContainer source = default!;
+        private String tuid = default!;
+        private String name = default!;
         private Dictionary<String, TextContainer> targets = new Dictionary<String, TextContainer>();
-        private Dictionary<String, String> properties;
+        private Dictionary<String, String> properties = default!;
 
         public TextUnit(String tuid)
         {
@@ -77,7 +77,7 @@ namespace okapi.resource
             if (properties != null && properties.ContainsKey(name))
                 return properties[name];
 
-            return null;
+            return null!;
         }
 
         public void SetProperty(String name, String value)

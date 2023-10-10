@@ -16,7 +16,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace okapi.resource
+namespace CAT.Okapi.Resources
 {
 
     /**
@@ -30,7 +30,7 @@ namespace okapi.resource
      */
     public class TextContainer
     {
-        private Dictionary<String, String> properties;
+        private Dictionary<String, String> properties = default!;
 
         public TextFragment GetFirstContent()
         {
@@ -47,7 +47,7 @@ namespace okapi.resource
             if (properties != null && properties.ContainsKey(name))
                 return properties[name];
 
-            return null;
+            return null!;
         }
 
         public void SetProperty(String name, String value)

@@ -12,7 +12,7 @@ namespace CAT.TM
     {
         public static TMWriter CreateFileBasedTmWriter(String indexDirectoryPath, bool createNewTmIndex, ILogger logger)
         {
-            TMWriter writer = null;
+            TMWriter writer = default!;
             try
             {
                 if (!System.IO.Directory.Exists(indexDirectoryPath))
@@ -34,18 +34,17 @@ namespace CAT.TM
 
         public static TMWriter CreateRAMBasedTmWriter(ILogger logger)
         {
-            TMWriter writer = null;
             try
             {
                 //ByteBuffersDirectory directory = new ByteBuffersDirectory();
                 RAMDirectory directory = new RAMDirectory();
-                writer = new TMWriter(directory, true, logger);
+                TMWriter writer = new TMWriter(directory, true, logger);
+                return writer;
             }
             catch (Exception)
             {
                 throw new Exception("Failed to create RAM directory.");
             }
-            return writer;
         }
     }
 }

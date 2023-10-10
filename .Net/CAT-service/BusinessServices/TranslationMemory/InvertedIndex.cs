@@ -6,8 +6,8 @@ using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.TokenAttributes;
-using okapi.search.analysis;
 using utils;
+using CAT.Utils;
 
 namespace CAT.TM
 {

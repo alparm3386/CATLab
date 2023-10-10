@@ -1,4 +1,4 @@
-﻿using okapi.resource;
+﻿using CAT.Okapi.Resources;
 using System.Data;
 
 namespace CAT.BusinessServices

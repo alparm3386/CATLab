@@ -1,5 +1,5 @@
 ﻿using CAT.BusinessServices;
-using okapi.resource;
+using CAT.Okapi.Resources;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -228,7 +228,7 @@ namespace CAT.BusinessServices
             //    }
             //}
 
-            return null;
+            return null!;
         }
 
         public int DeleteTMEntry(String tmPath, int idEntry)
@@ -294,7 +294,7 @@ namespace CAT.BusinessServices
             //    }
             //}
 
-            return null;
+            return null!;
         }
 
         public DataSet GetTranslationMemoryData(String tmPath)
@@ -325,7 +325,7 @@ namespace CAT.BusinessServices
             //    }
             //}
 
-            return null;
+            return null!;
         }
 
         public DataSet CheckIncontextMatches(String tmPath, DataTable queryTable) //is there a nicer parameter name? : )
@@ -364,7 +364,7 @@ namespace CAT.BusinessServices
             //    }
             //}
 
-            return null;
+            return null!;
         }
 
         public DataSet GetIncontextMatch(String tmPath, String source, String context)
@@ -398,7 +398,7 @@ namespace CAT.BusinessServices
             //    }
             //}
 
-            return null;
+            return null!;
         }
 
         public bool DBExists(String dbName)
@@ -484,7 +484,7 @@ namespace CAT.BusinessServices
             //    }
             //}
 
-            return null;
+            return null!;
         }
 
         public DataSet GetTMEntriesBySourceIds(String tmPath, int[] aIdSource)
@@ -519,7 +519,7 @@ namespace CAT.BusinessServices
             //    }
             //}
 
-            return null;
+            return null!;
         }
 
         public DataSet GetTMEntriesByTargetText(String tmPath, String sTarget)
@@ -555,7 +555,7 @@ namespace CAT.BusinessServices
             //    }
             //}
 
-            return null;
+            return null!;
         }
 
         public void ShrinkDatabase(String dbName)
@@ -635,7 +635,7 @@ namespace CAT.BusinessServices
             //    }
             //}
 
-            return null;
+            return null!;
         }
 
         public void SetDatabaseLastAccess(String dbName)
@@ -737,7 +737,7 @@ namespace CAT.BusinessServices
             //    }
             //}
 
-            return null;
+            return null!;
         }
 
         public DataSet GetTBInfoById(int idTermbase)
@@ -769,7 +769,7 @@ namespace CAT.BusinessServices
             //    }
             //}
 
-            return null;
+            return null!;
         }
 
         public DataSet GetTBInfo(int idTermbase)
@@ -801,7 +801,7 @@ namespace CAT.BusinessServices
             //    }
             //}
 
-            return null;
+            return null!;
         }
 
         public void UpdateLanguages(int idTermbase, String[] aLanguages)
@@ -1009,7 +1009,7 @@ namespace CAT.BusinessServices
             //    }
             //}
 
-            return null;
+            return null!;
         }
 
         public DataSet ListTBEntries(int idTermbase, String[] languages)
@@ -1046,7 +1046,7 @@ namespace CAT.BusinessServices
             //    }
             //}
 
-            return null;
+            return null!;
         }
 
         public void UpdateTMEntry(String tmPath, int idEntry, Dictionary<String, String> fieldsToUpdate)
@@ -1114,7 +1114,7 @@ namespace CAT.BusinessServices
             //    }
             //}
 
-            return null;
+            return null!;
         }
 
         public DataSet GetDbListSyncSource(String backupSourceConnectionString)
@@ -1143,7 +1143,7 @@ namespace CAT.BusinessServices
             //    }
             //}
 
-            return null;
+            return null!;
         }
 
         public DataSet GetTMEntriesFromSyncSource(String backupSourceConnectionString, String dbName)
@@ -1172,7 +1172,7 @@ namespace CAT.BusinessServices
             //    }
             //}
 
-            return null;
+            return null!;
         }
 
         public void BackupDatabase(String dbName)
@@ -1258,10 +1258,10 @@ namespace CAT.BusinessServices
             //    {
             //        logger.Log("DB Errors.log", "GetUserFullNameTask: " + e);
             //        //throw e;
-            //        return null;
+            //        return null!;
             //    }
             //}
-            return null;
+            return null!;
         }
 
         /// <summary>

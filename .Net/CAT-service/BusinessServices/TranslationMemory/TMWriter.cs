@@ -4,14 +4,15 @@ using System.IO;
 using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 using cat.utils;
+using CAT.Okapi.analysis;
+using CAT.Okapi.Resources;
+using CAT.Utils;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.Search;
 using Lucene.Net.Search.Similarities;
 using Lucene.Net.Store;
 using Lucene.Net.Util;
-using okapi.resource;
-using okapi.search.analysis;
 using utils;
 using Directory = Lucene.Net.Store.Directory;
 using Document = Lucene.Net.Documents.Document;
@@ -27,7 +28,6 @@ namespace CAT.TM
         private readonly String SourceField = "SOURCE";
         private readonly int NGramLength = 4;
         private IndexWriter indexWriter;
-        private int maxVersions = 5;
         private ILogger _logger;
 
         /**
@@ -83,7 +83,7 @@ namespace CAT.TM
             {
                 indexWriter.Commit();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 throw;
             }

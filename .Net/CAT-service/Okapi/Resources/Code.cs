@@ -1,5 +1,5 @@
 /*===========================================================================
-  Copyright (C) 2008-2009 by the Okapi Framework contributors
+  Copyright (C) 2008-2013 by the Okapi Framework contributors
 -----------------------------------------------------------------------------
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -15,27 +15,26 @@
 ===========================================================================*/
 
 using System;
-using System.ComponentModel;
+using System.Collections.Generic;
 
-namespace okapi.resource
+namespace CAT.Okapi.Resources
 {
+
     /**
-     * The types of metadata that is supported. Currently all properties use the same store and indexTypes
-     * @author HaslamJD
-     */
-    public enum MetadataType
+	 * Represents an abstracted in-line code used in a TextFragment object.
+	 * For example, a <code>&lt;b&gt;</code> tag in an HTML paragraph.
+	 */
+    public class Code
     {
-        [Description("Context")]
-        CONTEXT = 1,
-        [Description("DateCreated")]
-        DATE_CREATED = 2,
-        [Description("CretedBy")]
-        CREATED_BY = 3,
-        [Description("DateModified")]
-        DATE_MODIFIED = 4,
-        [Description("ModifiedBy")]
-        MODIFIED_BY = 5,
-        [Description("Speciality")]
-        SPECIALITY = 6
+        public static List<Code> StringToCodes(String data)
+        {
+            return new List<Code>();
+            //throw new NotImplementedException();
+        }
+
+        public static String CodesToString(List<Code> codes, bool stripOuterData)
+        {
+            return "";
+        }
     }
 }

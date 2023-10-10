@@ -16,7 +16,7 @@
 
 using System;
 
-namespace okapi.resource
+namespace CAT.Okapi.Resources
 {
 
     /**

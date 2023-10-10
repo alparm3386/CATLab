@@ -8,8 +8,7 @@ using Lucene.Net.Search;
 using Lucene.Net.Store;
 using Lucene.Net.Util;
 using Newtonsoft.Json;
-using okapi;
-using okapi.resource;
+using CAT.Okapi.Resources;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -22,9 +21,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Transactions;
 using System.Xml;
-using utils;
-using static Lucene.Net.Util.Packed.PackedInt32s;
-using Constants = cat.utils.Constants;
+using CAT.Utils;
 
 namespace CAT.TM
 {
@@ -602,7 +599,7 @@ namespace CAT.TM
         /// <returns></returns>
         private TMMatch GetExactMatch(TMAssignment[] aTmAssignments, String source, String prev, String next)
         {
-            DataTable dtExactMatches = null;
+            DataTable dtExactMatches = default!;
             String sourceCoded = "";
             if (!String.IsNullOrEmpty(source))
                 sourceCoded = CATUtils.XliffSegmentToTextFragmentSimple(source.Trim()).GetCodedText();
@@ -644,7 +641,7 @@ namespace CAT.TM
             if (!String.IsNullOrEmpty(translation))
             {
                 translation = CATUtils.TextFragmentToTmx(new TextFragment(translation));
-                return new TMMatch() { source = source, target = translation, origin = "", id = "", quality = score, metadata = null };
+                return new TMMatch() { source = source, target = translation, origin = "", id = "", quality = score, metadata = default! };
             }
 
             return null!;
@@ -714,7 +711,7 @@ namespace CAT.TM
                         tuNode.AppendChild(targetNode);
                     }
 
-                    XmlNodeList segmentNodes = null;
+                    XmlNodeList segmentNodes = default!;
                     var ssNode = tuNode["seg-source"];
                     if (ssNode == null)
                         segmentNodes = tuNode!.SelectNodes("x:source", xmlnsManager)!;
@@ -745,7 +742,7 @@ namespace CAT.TM
                             if (segmentNode.Name == "mrk")
                                 next = nextTu?["seg-source"]?["mrk"]?.InnerXml.Trim()!;
                             else
-                                next = nextTu?["source"].InnerXml.Trim()!;
+                                next = nextTu?["source"]!.InnerXml.Trim()!;
                         }
 
                         XmlNode targetSegment = default!;
@@ -1223,8 +1220,8 @@ namespace CAT.TM
                 return contextHash;
             }
 
-            TextFragment prev = null;
-            TextFragment next = null;
+            TextFragment prev = default!;
+            TextFragment next = default!;
             if (metadata.ContainsKey("prevSegment"))
                 prev = CATUtils.TmxSegmentToTextFragmentSimple(metadata["prevSegment"]);
             if (metadata.ContainsKey("nextSegment"))
@@ -1975,7 +1972,7 @@ namespace CAT.TM
                             foreach (var prop in extensionData!.Keys)
                                 sbTuContent.Append("\t\t\t<prop type=\"" + prop + "\">" + extensionData[prop] + "</prop>\r\n");
                         }
-                        catch (Exception ex)
+                        catch (Exception)
                         { 
                         }
                     }

@@ -17,7 +17,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace okapi.resource
+namespace CAT.Okapi.Resources
 {
 
     /**
@@ -26,9 +26,9 @@ namespace okapi.resource
     public class TranslationUnit
     {
         public int tuid;
-        public TextFragment source;
-        public TextFragment target;
-        public String context;
+        public TextFragment source = default!;
+        public TextFragment target = default!;
+        public String context = default!;
 
         /**
 		 * Creates a TU w/o an source or target defined

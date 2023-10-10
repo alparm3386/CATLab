@@ -13,7 +13,7 @@ namespace CAT.Infrastructure.Logging
             _log = log;
         }
 
-        public IDisposable BeginScope<TState>(TState state)
+        public IDisposable BeginScope<TState>(TState state) where TState : notnull
         {
             return null!;
         }
@@ -32,7 +32,7 @@ namespace CAT.Infrastructure.Logging
             };
         }
 
-        public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception exception, Func<TState, Exception, string> formatter)
+        public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception? exception, Func<TState, Exception, string> formatter)
         {
             if (!IsEnabled(logLevel))
             {
@@ -44,7 +44,7 @@ namespace CAT.Infrastructure.Logging
                 throw new ArgumentNullException(nameof(formatter));
             }
 
-            var message = formatter(state, exception);
+            var message = formatter(state, exception!);
 
             if (!string.IsNullOrEmpty(message) || exception != null)
             {

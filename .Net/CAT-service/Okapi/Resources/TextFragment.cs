@@ -18,7 +18,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace okapi.resource
+namespace CAT.Okapi.Resources
 {
 
 	/**

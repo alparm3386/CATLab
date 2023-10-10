@@ -34,11 +34,11 @@ using System.Text.RegularExpressions;
 * @author HaslamJD
 * @author HARGRAVEJE
 */
-namespace okapi.search.analysis
+namespace CAT.Okapi.analysis
 {
     public sealed class NgramAnalyzer : Analyzer
     {
-        public static readonly int MAX_INPUT_SIZE = 4096;
+        public static readonly int MaxInputSize = 4096;
 
         private int ngramLength;
 
@@ -64,7 +64,7 @@ namespace okapi.search.analysis
                     <filter class="solr.LengthFilterFactory" max="4"/>
                 </analyzer>
              */
-            Tokenizer source = new KeywordTokenizer(reader, MAX_INPUT_SIZE);
+            Tokenizer source = new KeywordTokenizer(reader, MaxInputSize);
             var patternReplaceFilter = new PatternReplaceFilter(source, new Regex("\\s+"), " ", true);
             var lowerCaseFilter = new LowerCaseFilter(Lucene.Net.Util.LuceneVersion.LUCENE_48, patternReplaceFilter);
             var ngramTokenFilter = new NGramTokenFilter( Lucene.Net.Util.LuceneVersion.LUCENE_48, lowerCaseFilter, ngramLength, ngramLength);

@@ -1,7 +1,7 @@
-﻿using Lucene.Net.Analysis.TokenAttributes;
+﻿using CAT.Okapi.analysis;
+using CAT.Okapi.Resources;
+using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Index;
-using okapi.resource;
-using okapi.search.analysis;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -11,7 +11,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web;
 
-namespace utils
+namespace CAT.Utils
 {
     class CATUtils
     {
@@ -235,9 +235,8 @@ namespace utils
             {
                 // TODO Auto-generated catch block
                 System.Diagnostics.Debug.WriteLine(ex.ToString());
+                throw;
             }
-
-            return null;
         }
 
         /// <summary>
