@@ -23,6 +23,12 @@ namespace CAT.GRPServices
             });
         }
 
+        public override Task<TMExistsResponse> TMExists(TMExistsRequest request, ServerCallContext context)
+        {
+            var result = _tmService.TMExists(request.TmId);
+            return Task.FromResult(new TMExistsResponse { Exists = result });
+        }
+        
         //public override Task<TMExistsResponse> TMExists(TMExistsRequest request, ServerCallContext context)
         //{
         //    var result = _tmService.TMExists(request.TmId);
