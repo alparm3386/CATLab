@@ -28,18 +28,12 @@ namespace CAT.GRPServices
             var result = _tmService.TMExists(request.TmId);
             return Task.FromResult(new TMExistsResponse { Exists = result });
         }
-        
-        //public override Task<TMExistsResponse> TMExists(TMExistsRequest request, ServerCallContext context)
-        //{
-        //    var result = _tmService.TMExists(request.TmId);
-        //    return Task.FromResult(new TMExistsResponse { Exists = result });
-        //}
 
-        //public override Task<EmptyResponse> CreateTM(CreateTMRequest request, ServerCallContext context)
-        //{
-        //    _tmService.CreateTM(request.TmId);
-        //    return Task.FromResult(new EmptyResponse());
-        //}
+        public override Task<EmptyResponse> CreateTM(CreateTMRequest request, ServerCallContext context)
+        {
+            _tmService.CreateTM(request.TmId);
+            return Task.FromResult(new EmptyResponse());
+        }
 
         //public override Task<TMInfoResponse> GetTMInfo(GetTMInfoRequest request, ServerCallContext context)
         //{
