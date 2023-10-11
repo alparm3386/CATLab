@@ -5,132 +5,139 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using CAT_service_test.Utils;
+using System.Reflection;
+using Xunit.Sdk;
 
 namespace CAT.TM.Tests
 {
     public class TMServiceTests
     {
-        [Fact()]
+        public TMServiceTests()
+        {
+        }
+
+        //[Fact()]
         public void TMServiceTest()
         {
             Assert.True(false, "This test needs an implementation");
         }
 
-        [Fact()]
+        //[Fact()]
         public void CreateTMTest()
         {
             Assert.True(false, "This test needs an implementation");
         }
 
-        [Fact()]
+        //[Fact()]
         public void TMExistsTest()
         {
             Assert.True(false, "This test needs an implementation");
         }
 
-        [Fact()]
+        //[Fact()]
         public void GetStatisticsForDocumentTest()
         {
             Assert.True(false, "This test needs an implementation");
         }
 
-        [Fact()]
+        //[Fact()]
         public void CreateXliffTest()
         {
             Assert.True(false, "This test needs an implementation");
         }
 
-        [Fact()]
+        //[Fact()]
         public void CreateDocumentFromXliffTest()
         {
             Assert.True(false, "This test needs an implementation");
         }
 
-        [Fact()]
+        //[Fact()]
         public void PreTranslateXliffTest()
         {
             Assert.True(false, "This test needs an implementation");
         }
 
-        [Fact()]
+        //[Fact()]
         public void GetTMInfoTest()
         {
             Assert.True(false, "This test needs an implementation");
         }
 
-        [Fact()]
+        //[Fact()]
         public void GetTMMatchesTest()
         {
             Assert.True(false, "This test needs an implementation");
         }
 
-        [Fact()]
+        //[Fact()]
         public void ConcordanceTest()
         {
             Assert.True(false, "This test needs an implementation");
         }
 
-        [Fact()]
+        //[Fact()]
         public void AddTMEntriesTest()
         {
             Assert.True(false, "This test needs an implementation");
         }
 
-        [Fact()]
+        //[Fact()]
         public void DeleteTMEntryTest()
         {
             Assert.True(false, "This test needs an implementation");
         }
 
-        [Fact()]
+        //[Fact()]
         public void UpdateTMEntryTest()
         {
             Assert.True(false, "This test needs an implementation");
         }
 
-        [Fact()]
+        //[Fact()]
         public void ImportTmxTest()
         {
             Assert.True(false, "This test needs an implementation");
         }
 
-        [Fact()]
+        //[Fact()]
         public void GetTMListTest()
         {
             Assert.True(false, "This test needs an implementation");
         }
 
-        [Fact()]
+        //[Fact()]
         public void GetTMListFromDatabaseTest()
         {
             Assert.True(false, "This test needs an implementation");
         }
 
-        [Fact()]
+        //[Fact()]
         public void DeleteDocumentsFromSourceIndexTest()
         {
             Assert.True(false, "This test needs an implementation");
         }
 
-        [Fact()]
+        //[Fact()]
         public void ConnectionPoolInfoTest()
         {
             Assert.True(false, "This test needs an implementation");
         }
 
-        [Fact()]
+        //[Fact()]
         public void ReindexTMTest()
         {
             Assert.True(false, "This test needs an implementation");
         }
 
-        [Fact()]
+        //[Fact()]
         public void ShrinkTMTest()
         {
             Assert.True(false, "This test needs an implementation");
         }
 
-        [Fact()]
+        //[Fact()]
         public void ExportTmxTest()
         {
             Assert.True(false, "This test needs an implementation");

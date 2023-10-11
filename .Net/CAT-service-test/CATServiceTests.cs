@@ -14,11 +14,6 @@ namespace CAT
 
         public CATServiceTests()
         {
-            var skipClassAttribute = GetType().GetCustomAttribute<SkipClassAttribute>();
-            if (skipClassAttribute != null)
-            {
-                throw new SkipException(skipClassAttribute.Reason);
-            }
         }
         
         [Fact]
