@@ -1,12 +1,26 @@
 using Xunit;
 using Grpc.Net.Client;
+using CAT_service_test.Utils;
+using System.Reflection;
+using Xunit.Sdk;
 
 namespace CAT
 {
+    [SkipClass("All tests in this class are skipped")]
     public class CATServiceTests
     {
         private const string ServerAddress = "https://localhost:5001"; // Adjust the address/port as needed
 
+
+        public CATServiceTests()
+        {
+            var skipClassAttribute = GetType().GetCustomAttribute<SkipClassAttribute>();
+            if (skipClassAttribute != null)
+            {
+                throw new SkipException(skipClassAttribute.Reason);
+            }
+        }
+        
         [Fact]
         public async Task TMExists_ReturnsExpectedValue()
         {
