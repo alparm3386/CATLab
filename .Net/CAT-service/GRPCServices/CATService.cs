@@ -55,7 +55,15 @@ namespace CAT.GRPServices
             var response = new GetTMListResponse();
             foreach (var tmInfo in tmList)
             {
-                //response.TMInfos.Add(new TMInfo { Id = tmInfo.Id, Info = tmInfo.Info }); // Simplified; adjust as needed
+                response.TmInfoList.Add(new Proto.TMInfo 
+                {
+                    Id = tmInfo.id,
+                    LangFrom = tmInfo.langFrom,
+                    LangTo = tmInfo.langTo,
+                    LastAccess = Timestamp.FromDateTime(tmInfo.lastAccess.Kind != DateTimeKind.Utc ? tmInfo.lastAccess.ToUniversalTime() : tmInfo.lastAccess),
+                    TmType = (TMType)tmInfo.tmType,
+                    EntryNumber = tmInfo.entryNumber,
+                });
             }
             return Task.FromResult(response);
         }
