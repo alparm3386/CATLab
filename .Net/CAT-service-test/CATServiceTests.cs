@@ -24,10 +24,10 @@ namespace CAT
 
             try
             {
-                //var request = new TMExistsRequest { TmId = "_1/1_en_fr_marketing" };
+                //var request = new TMExistsRequest { TmId = "1/_1_en_fr_marketing" };
                 //var response = await client.TMExistsAsync(request);
-                //Assert.True(response);  // Or whatever your expected result is
-                var request = new CreateTMRequest { TmId = "_1/1_en_fr_marketing" };
+                //Assert.True(response.Exists);  // Or whatever your expected result is
+                var request = new CreateTMRequest { TmId = "1/_1_en_fr_marketing" };
                 var response = await client.CreateTMAsync(request);
                 //Assert.True(response);  // Or whatever your expected result is
             }

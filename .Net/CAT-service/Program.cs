@@ -12,7 +12,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddGrpc();
-builder.Services.AddSingleton<IDataStorage, DataStorage>();
+builder.Services.AddSingleton<IDataStorage, SQLiteStorage>();
 builder.Services.AddSingleton<IOkapiConnector, OkapiConnector>();
 builder.Services.AddSingleton<IOkapiService, OkapiService>();
 builder.Services.AddSingleton<ITMService, TMService>();

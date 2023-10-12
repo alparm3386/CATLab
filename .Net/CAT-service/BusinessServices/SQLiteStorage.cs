@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.Data.SQLite;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -13,15 +14,13 @@ using utils;
 
 namespace CAT.BusinessServices
 {
-    public class DataStorage : IDataStorage
+    public class SQLiteStorage : IDataStorage
     {
         private String _termbasesConnectionString;
-        private String _translationMemoriesConnectionString;
-        private String _mainDbConnectionString;
 
-        public String _tmRepository;
+        public readonly String _tmRepository;
+        private readonly Dictionary<String, String> _sqlCommands = new();
         private ILogger _logger;
-        private readonly Dictionary<String, String> _sqlCommands = new Dictionary<String, String>();
 
         private IConfiguration _configuration;
 
@@ -47,20 +46,17 @@ namespace CAT.BusinessServices
             return dbParams;
         }
 
-        public DataStorage(IConfiguration configuration, ILogger<DataStorage> logger)
+        public SQLiteStorage(IConfiguration configuration, ILogger<SQLiteStorage> logger)
         {
             _configuration = configuration;
-            _termbasesConnectionString = _configuration!["SQLiteStorage:TermbasesConnectionString"]!;
-            _translationMemoriesConnectionString = _configuration["SQLiteStorage:TranslationMemoriesConnectionString"]!;
-            _mainDbConnectionString = _configuration["SQLiteStorage:MainDbConnectionString"]!;
-
-            _tmRepository = _configuration["TMPath"]!;
-
             _logger = logger;
+
+            //these should be static fields
+            _tmRepository = _configuration["TMPath"]!;
+            _termbasesConnectionString = _configuration!["SQLiteStorage:TermbasesConnectionString"]!;
+
             //load the sql commands
-
             var resourceDir = _configuration["Resources"];
-
             var command = File.ReadAllText(Path.Combine(resourceDir!, "InsertTMEntry.sql"));
             _sqlCommands.Add("InsertTMEntry", command);
             command = File.ReadAllText(Path.Combine(resourceDir!, "CheckIncontextMatches.sql"));
@@ -69,110 +65,71 @@ namespace CAT.BusinessServices
             _sqlCommands.Add("RestoreDatabase", command);
             command = File.ReadAllText(Path.Combine(resourceDir!, "DeleteTMEntry.sql"));
             _sqlCommands.Add("DeleteTMEntry", command);
+            command = File.ReadAllText(Path.Combine(resourceDir!, "CreateTMTable.sql"));
+            _sqlCommands.Add("CreateTMTable", command);
         }
 
         public void CreateTranslationMemory(String tmPath)
         {
-            //try
-            //{
-            //    var dbParams = GetDBParams(tmPath);
-            //    var tmDir = Path.Combine(_tmRepository, dbParams.dbName);
+            try
+            {
+                var dbParams = GetDBParams(tmPath);
+                var tmTableName = dbParams.tmTableName;
 
-            //    var dbName = dbParams.dbName;
-            //    var tmTableName = dbParams.tmTableName;
+                var dbFolder = Path.Combine(_tmRepository, dbParams.dbName, "SQLData");
+                //check the db folder
+                if (!Directory.Exists(dbFolder))
+                    Directory.CreateDirectory(dbFolder);
+                var dbPath = Path.Combine(dbFolder, dbParams.dbName + ".db");
+                string connectionString = $"Data Source={dbPath};Version=3;";
+                //create the entries table
+                using (var sqlConnection = new SQLiteConnection(connectionString))
+                {
+                    sqlConnection.Open();
+                    //check if the table exists
 
-            //    //SQL directory
-            //    //var sqlDir = Path.Combine(tmDir, "SQL data");
-            //    //if (!Directory.Exists(sqlDir))
-            //    //    Directory.CreateDirectory(sqlDir);
+                    String sSql = "SELECT count(name) FROM sqlite_master WHERE type='table' AND name=@tableName";
+                    var cmd = new SQLiteCommand(sSql, sqlConnection);
+                    cmd.Parameters.Add(new SQLiteParameter("@tableName", tmTableName));
+                    var tableNum = (long)cmd.ExecuteScalar();
 
-            //    //Check the TM database
-            //    var connectionString = String.Format(_translationMemoriesConnectionString, "");
-            //    using (var sqlConnection = new SqlConnection(connectionString))
-            //    {
-            //        sqlConnection.Open();
-            //        String sSql = "SELECT count(name) FROM sys.databases where name = @dbName";
-            //        var cmd = new SqlCommand(sSql, sqlConnection);
-            //        cmd.Parameters.Add(new SqlParameter("@dbName", dbName));
-            //        var tmNum = (int)cmd.ExecuteScalar();
-
-            //        if (tmNum == 0)
-            //        {
-            //            //create the database
-            //            sSql = "CREATE DATABASE \"" + dbName + "\"";
-
-            //            cmd = new SqlCommand(sSql, sqlConnection);
-            //            cmd.ExecuteNonQuery();
-            //        }
-            //    }
-
-            //    //create the entries table
-            //    connectionString = String.Format(_translationMemoriesConnectionString, dbName);
-            //    using (var sqlConnection = new SqlConnection(connectionString))
-            //    {
-            //        sqlConnection.Open();
-            //        //check if the table exists
-
-            //        String sSql = "SELECT count(TABLE_NAME)  FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME=@tableName";
-            //        var cmd = new SqlCommand(sSql, sqlConnection);
-            //        cmd.Parameters.Add(new SqlParameter("@tableName", tmTableName));
-            //        var tableNum = (int)cmd.ExecuteScalar();
-
-            //        if (tableNum == 0)
-            //        {
-            //            //the TM table
-            //            var resourceDir = WebConfigurationManager.AppSettings["Resources"];
-            //            sSql = File.ReadAllText(Path.Combine(resourceDir, "tmTable.sql"));
-            //            sSql = sSql.Replace("[TM_TABLE]", tmTableName);
-            //            sSql = sSql.Replace("[PUBLIC_KEY_NAME]", "PK_" + tmTableName);
-            //            cmd = new SqlCommand(sSql, sqlConnection);
-            //            cmd.ExecuteNonQuery();
-
-            //            //types
-            //            sSql = File.ReadAllText(Path.Combine(resourceDir, "Types.sql"));
-            //            cmd = new SqlCommand(sSql, sqlConnection);
-            //            cmd.ExecuteNonQuery();
-            //        }
-            //    }
-            //}
-            //catch (Exception ex)
-            //{
-            //    //Logging.DEBUG_LOG("DB Errors.log", "InsertOEVersion: " + e + "\nidSourceElement: " + idSourceElement);
-            //    throw ex;
-            //}
+                    if (tableNum == 0)
+                    {
+                        //the TM table
+                        sSql = _sqlCommands["CreateTMTable"];
+                        sSql = sSql.Replace("[TM_TABLE]", tmTableName);
+                        sSql = sSql.Replace("[PUBLIC_KEY_NAME]", "PK_" + tmTableName);
+                        cmd = new SQLiteCommand(sSql, sqlConnection);
+                        cmd.ExecuteNonQuery();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("CreateTranslationMemory -> tmPath: " + tmPath + " error: " + ex.Message);
+                throw;
+            }
         }
 
         public bool TMExists(String tmPath)
         {
-            //var dbParams = GetDBParams(tmPath);
-            //var connectionString = String.Format(_translationMemoriesConnectionString, "");
-            //using (var sqlConnection = new SqlConnection(connectionString))
-            //{
-            //    sqlConnection.Open();
-            //    String sSql = "SELECT count(name) FROM sys.databases where name = @dbName";
-            //    var cmd = new SqlCommand(sSql, sqlConnection);
-            //    cmd.Parameters.Add(new SqlParameter("@dbName", dbParams.dbName));
-            //    var tmNum = (int)cmd.ExecuteScalar();
+            var dbParams = GetDBParams(tmPath);
+            var dbPath = Path.Combine(_tmRepository, dbParams.dbName + "/SQLData/" + dbParams.dbName + ".db");
+            if (!File.Exists(dbPath))
+                return false;
 
-            //    if (tmNum == 0)
-            //        return false;
-            //}
+            string connectionString = $"Data Source={dbPath};Version=3;";
+            using (var sqlConnection = new SQLiteConnection(connectionString))
+            {
+                sqlConnection.Open(); //it will create the database if it doesn't exists
+                //check if the table exists
+                String sSql = "SELECT count(name) FROM sqlite_master WHERE type='table' AND name=@tableName;";
+                var cmd = new SQLiteCommand(sSql, sqlConnection);
+                cmd.Parameters.Add(new SQLiteParameter("@tableName", dbParams.tmTableName));
+                var tableNum = (long)cmd.ExecuteScalar();
 
-            //connectionString = String.Format(_translationMemoriesConnectionString, dbParams.dbName);
-            //using (var sqlConnection = new SqlConnection(connectionString))
-            //{
-            //    sqlConnection.Open();
-            //    //check if the table exists
-
-            //    String sSql = "SELECT count(TABLE_NAME)  FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME=@tableName";
-            //    var cmd = new SqlCommand(sSql, sqlConnection);
-            //    cmd.Parameters.Add(new SqlParameter("@tableName", dbParams.tmTableName));
-            //    var tableNum = (int)cmd.ExecuteScalar();
-
-            //    return tableNum > 0;
-            //}
-
-            return false;
+                return tableNum > 0;
+            }
         }
 
         public DataSet InsertTMEntry(String tmPath, TextFragment source, TextFragment target, String context, String user, int speciality,
