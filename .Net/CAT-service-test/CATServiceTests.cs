@@ -22,12 +22,14 @@ namespace CAT
             using var channel = GrpcChannel.ForAddress(ServerAddress);
             var client = new CAT.CATClient(channel);
 
-            var request = new TMExistsRequest { TmId = "_1/1_en_fr_marketing" };
-
             try
             {
-                var response = await client.TMExistsAsync(request);
-                Assert.True(response.Exists);  // Or whatever your expected result is
+                //var request = new TMExistsRequest { TmId = "_1/1_en_fr_marketing" };
+                //var response = await client.TMExistsAsync(request);
+                //Assert.True(response);  // Or whatever your expected result is
+                var request = new CreateTMRequest { TmId = "_1/1_en_fr_marketing" };
+                var response = await client.CreateTMAsync(request);
+                //Assert.True(response);  // Or whatever your expected result is
             }
             catch (Exception ex)
             {

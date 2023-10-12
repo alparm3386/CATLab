@@ -6,23 +6,16 @@ package CAT;
 
 // The greeting service definition.
 service CAT {
-	rpc SayHello (HelloRequest) returns (HelloReply);
 	rpc TMExists (TMExistsRequest) returns (TMExistsResponse);
-//    rpc CreateTM (CreateTMRequest) returns (EmptyResponse);
+	rpc CreateTM (CreateTMRequest) returns (EmptyResponse);
 //    rpc GetTMInfo (GetTMInfoRequest) returns (TMInfoResponse);
 //    rpc GetTMList (GetTMListRequest) returns (TMListResponse);
 }
 
-// The request message containing the user's name.
-message HelloRequest {
-  string name = 1;
+message EmptyResponse {
 }
 
-// The response message containing the greetings.
-message HelloReply {
-  string message = 1;
-}
-
+//TMExists
 message TMExistsRequest {
   string tmId = 1;
 }
@@ -31,3 +24,7 @@ message TMExistsResponse {
   bool exists = 1;
 }
 
+//CreateTM
+message CreateTMRequest {
+  string tmId = 1;
+}
