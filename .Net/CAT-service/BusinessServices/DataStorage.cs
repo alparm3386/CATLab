@@ -73,73 +73,73 @@ namespace CAT.BusinessServices
 
         public void CreateTranslationMemory(String tmPath)
         {
-            //try
-            //{
-            //    var dbParams = GetDBParams(tmPath);
-            //    var tmDir = Path.Combine(_tmRepository, dbParams.dbName);
+            try
+            {
+                var dbParams = GetDBParams(tmPath);
+                var tmDir = Path.Combine(_tmRepository, dbParams.dbName);
 
-            //    var dbName = dbParams.dbName;
-            //    var tmTableName = dbParams.tmTableName;
+                var dbName = dbParams.dbName;
+                var tmTableName = dbParams.tmTableName;
 
-            //    //SQL directory
-            //    //var sqlDir = Path.Combine(tmDir, "SQL data");
-            //    //if (!Directory.Exists(sqlDir))
-            //    //    Directory.CreateDirectory(sqlDir);
+                //SQL directory
+                //var sqlDir = Path.Combine(tmDir, "SQL data");
+                //if (!Directory.Exists(sqlDir))
+                //    Directory.CreateDirectory(sqlDir);
 
-            //    //Check the TM database
-            //    var connectionString = String.Format(_translationMemoriesConnectionString, "");
-            //    using (var sqlConnection = new SqlConnection(connectionString))
-            //    {
-            //        sqlConnection.Open();
-            //        String sSql = "SELECT count(name) FROM sys.databases where name = @dbName";
-            //        var cmd = new SqlCommand(sSql, sqlConnection);
-            //        cmd.Parameters.Add(new SqlParameter("@dbName", dbName));
-            //        var tmNum = (int)cmd.ExecuteScalar();
+                //Check the TM database
+                var connectionString = String.Format(_translationMemoriesConnectionString, "");
+                using (var sqlConnection = new SqlConnection(connectionString))
+                {
+                    sqlConnection.Open();
+                    String sSql = "SELECT count(name) FROM sys.databases where name = @dbName";
+                    var cmd = new SqlCommand(sSql, sqlConnection);
+                    cmd.Parameters.Add(new SqlParameter("@dbName", dbName));
+                    var tmNum = (int)cmd.ExecuteScalar();
 
-            //        if (tmNum == 0)
-            //        {
-            //            //create the database
-            //            sSql = "CREATE DATABASE \"" + dbName + "\"";
+                    if (tmNum == 0)
+                    {
+                        //create the database
+                        sSql = "CREATE DATABASE \"" + dbName + "\"";
 
-            //            cmd = new SqlCommand(sSql, sqlConnection);
-            //            cmd.ExecuteNonQuery();
-            //        }
-            //    }
+                        cmd = new SqlCommand(sSql, sqlConnection);
+                        cmd.ExecuteNonQuery();
+                    }
+                }
 
-            //    //create the entries table
-            //    connectionString = String.Format(_translationMemoriesConnectionString, dbName);
-            //    using (var sqlConnection = new SqlConnection(connectionString))
-            //    {
-            //        sqlConnection.Open();
-            //        //check if the table exists
+                //create the entries table
+                connectionString = String.Format(_translationMemoriesConnectionString, dbName);
+                using (var sqlConnection = new SqlConnection(connectionString))
+                {
+                    sqlConnection.Open();
+                    //check if the table exists
 
-            //        String sSql = "SELECT count(TABLE_NAME)  FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME=@tableName";
-            //        var cmd = new SqlCommand(sSql, sqlConnection);
-            //        cmd.Parameters.Add(new SqlParameter("@tableName", tmTableName));
-            //        var tableNum = (int)cmd.ExecuteScalar();
+                    String sSql = "SELECT count(TABLE_NAME)  FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME=@tableName";
+                    var cmd = new SqlCommand(sSql, sqlConnection);
+                    cmd.Parameters.Add(new SqlParameter("@tableName", tmTableName));
+                    var tableNum = (int)cmd.ExecuteScalar();
 
-            //        if (tableNum == 0)
-            //        {
-            //            //the TM table
-            //            var resourceDir = WebConfigurationManager.AppSettings["Resources"];
-            //            sSql = File.ReadAllText(Path.Combine(resourceDir, "tmTable.sql"));
-            //            sSql = sSql.Replace("[TM_TABLE]", tmTableName);
-            //            sSql = sSql.Replace("[PUBLIC_KEY_NAME]", "PK_" + tmTableName);
-            //            cmd = new SqlCommand(sSql, sqlConnection);
-            //            cmd.ExecuteNonQuery();
+                    if (tableNum == 0)
+                    {
+                        //the TM table
+                        var resourceDir = WebConfigurationManager.AppSettings["Resources"];
+                        sSql = File.ReadAllText(Path.Combine(resourceDir, "tmTable.sql"));
+                        sSql = sSql.Replace("[TM_TABLE]", tmTableName);
+                        sSql = sSql.Replace("[PUBLIC_KEY_NAME]", "PK_" + tmTableName);
+                        cmd = new SqlCommand(sSql, sqlConnection);
+                        cmd.ExecuteNonQuery();
 
-            //            //types
-            //            sSql = File.ReadAllText(Path.Combine(resourceDir, "Types.sql"));
-            //            cmd = new SqlCommand(sSql, sqlConnection);
-            //            cmd.ExecuteNonQuery();
-            //        }
-            //    }
-            //}
-            //catch (Exception ex)
-            //{
-            //    //Logging.DEBUG_LOG("DB Errors.log", "InsertOEVersion: " + e + "\nidSourceElement: " + idSourceElement);
-            //    throw ex;
-            //}
+                        //types
+                        sSql = File.ReadAllText(Path.Combine(resourceDir, "Types.sql"));
+                        cmd = new SqlCommand(sSql, sqlConnection);
+                        cmd.ExecuteNonQuery();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                //Logging.DEBUG_LOG("DB Errors.log", "InsertOEVersion: " + e + "\nidSourceElement: " + idSourceElement);
+                throw ex;
+            }
         }
 
         public bool TMExists(String tmPath)
