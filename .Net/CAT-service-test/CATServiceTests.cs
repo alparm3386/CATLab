@@ -28,7 +28,7 @@ namespace CAT
                 //var response = await client.TMExistsAsync(request);
                 //var request = new CreateTMRequest { TmId = "1/_1_en_fr_marketing" };
                 //var response = await client.CreateTMAsync(request);
-                var request = new GetTMInfoRequest { Id = "1/_1_en_fr_marketing", FullInfo = false };
+                var request = new GetTMInfoRequest { Id = "1/_1_en_fr_marketing", FullInfo = true };
                 var response = await client.GetTMInfoAsync(request);
 
                 //Assert.True(response);  // Or whatever your expected result is

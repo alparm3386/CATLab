@@ -132,6 +132,33 @@ namespace CAT.BusinessServices
             }
         }
 
+        public int GetTMEntriesNumber(String tmPath)
+        {
+            var dbParams = GetDBParams(tmPath);
+            var dbPath = Path.Combine(_tmRepository, dbParams.dbName + "/SQLData/" + dbParams.dbName + ".db");
+
+            string connectionString = $"Data Source={dbPath};Version=3;";
+            using (var sqlConnection = new SQLiteConnection(connectionString))
+            {
+                try
+                {
+                    //open connection
+                    sqlConnection.Open();
+                    var sqlCommand = new SQLiteCommand();
+                    sqlCommand.Connection = sqlConnection;
+                    sqlCommand.CommandText = $"SELECT CASE WHEN EXISTS(SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = '{dbParams.tmTableName}') THEN(SELECT count(*) FROM [{dbParams.tmTableName}]) ELSE - 1 END;";
+                    sqlCommand.CommandType = CommandType.Text;
+
+                    return (int)((long)sqlCommand.ExecuteScalar());
+                }
+                catch (SQLiteException ex)
+                {
+                    _logger.LogError("GetTMEntriesNumber -> tmPath: " + tmPath  + " error: " + ex);
+                    throw;
+                }
+            }
+        }
+
         public DataSet InsertTMEntry(String tmPath, TextFragment source, TextFragment target, String context, String user, int speciality,
             int idTranslation, DateTime dateCreated, DateTime dateModified, String extensionData)
         {
@@ -373,41 +400,6 @@ namespace CAT.BusinessServices
             //}
 
             return false;
-        }
-
-        public int GetTMEntriesNumber(String tmPath)
-        {
-            //var dbParams = GetDBParams(tmPath);
-            ////check if the db exists
-            //if (!DBExists(dbParams.dbName))
-            //    return -1; //no database
-
-            //var connectionString = String.Format(_translationMemoriesConnectionString, dbParams.dbName);
-            //using (SqlConnection sqlConnection = new SqlConnection(connectionString))
-            //{
-            //    try
-            //    {
-            //        //open connection
-            //        sqlConnection.Open();
-            //        SqlCommand sqlCommand = new SqlCommand();
-            //        sqlCommand.Connection = sqlConnection;
-            //        sqlCommand.CommandText = "if OBJECT_ID('" + dbParams.tmTableName +
-            //            "') is not null Select count(*) from [" + dbParams.tmTableName + "] else Select -1";
-            //        //sqlCommand.Parameters.Add(new SqlParameter("@tableName", dbParams.tmTableName));
-            //        //sqlCommand.CommandText = "if OBJECT_ID('@tableName') is not null Select count(*) from @tableName else Select -1";
-            //        //sqlCommand.Parameters.Add(new SqlParameter("@tableName", dbParams.tmTableName));
-            //        sqlCommand.CommandType = CommandType.Text;
-
-            //        return (int)sqlCommand.ExecuteScalar();
-            //    }
-            //    catch (SqlException ex)
-            //    {
-            //        logger.Log("DB Errors.log", "GetTMEntriesNumber: " + ex);
-            //        throw ex;
-            //    }
-            //}
-
-            return 0;
         }
 
         public DataSet GetExactMatchesBySource(String tmPath, String source)

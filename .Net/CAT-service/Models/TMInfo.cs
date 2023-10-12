@@ -12,3 +12,11 @@ namespace CAT.Models
         public DateTime lastAccess;
     }
 }
+
+
+public class TestResponse
+{
+    public long LastAccess { get; set; }
+    public int TmType { get; set; }
+    // ... other properties
+}

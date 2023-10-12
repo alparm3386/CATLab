@@ -1,6 +1,7 @@
 using AutoMapper;
 using CAT.ConnectedServices.OkapiService;
 using CAT.TM;
+using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
 
 namespace CAT.GRPServices
@@ -33,7 +34,17 @@ namespace CAT.GRPServices
         public override Task<GetTMInfoResponse> GetTMInfo(GetTMInfoRequest request, ServerCallContext context)
         {
             var tmInfo = _tmService.GetTMInfo(request.Id, request.FullInfo);
-            var response = _mapper.Map<GetTMInfoResponse>(tmInfo);
+
+            var response = new GetTMInfoResponse()
+            {
+                Id = tmInfo.id,
+                LangFrom = tmInfo.langFrom,
+                LangTo = tmInfo.langTo,
+                LastAccess = Timestamp.FromDateTime(tmInfo.lastAccess.Kind != DateTimeKind.Utc ? tmInfo.lastAccess.ToUniversalTime() : tmInfo.lastAccess),
+                TmType = (int)tmInfo.tmType,
+                EntryNumber = tmInfo.entryNumber,
+            };
+
             return Task.FromResult(response);
         }
 

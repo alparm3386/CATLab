@@ -1,4 +1,5 @@
 syntax = "proto3";
+import "google/protobuf/timestamp.proto";
 
 option csharp_namespace = "CAT";
 
@@ -41,5 +42,5 @@ message GetTMInfoResponse {
     string langTo = 3;
     int32 entryNumber = 4;
     int32 tmType = 5;
-    int64 lastAccess = 6;  // Represented as a timestamp (Unix epoch time in milliseconds)
+    google.protobuf.Timestamp lastAccess = 6; 
 }
