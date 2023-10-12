@@ -3,6 +3,7 @@ using Grpc.Net.Client;
 using CAT_service_test.Utils;
 using System.Reflection;
 using Xunit.Sdk;
+using Proto;
 
 namespace CAT
 {
@@ -20,7 +21,7 @@ namespace CAT
         public async Task TMExists_ReturnsExpectedValue()
         {
             using var channel = GrpcChannel.ForAddress(ServerAddress);
-            var client = new CAT.CATClient(channel);
+            var client = new Proto.CAT.CATClient(channel);
 
             try
             {

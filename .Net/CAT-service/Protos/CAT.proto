@@ -1,16 +1,17 @@
 syntax = "proto3";
 import "google/protobuf/timestamp.proto";
 
-option csharp_namespace = "CAT";
+//option csharp_namespace = "CAT.Proto";
 
-package CAT;
+package Proto;
+
 
 // The greeting service definition.
 service CAT {
 	rpc TMExists (TMExistsRequest) returns (TMExistsResponse);
 	rpc CreateTM (CreateTMRequest) returns (EmptyResponse);
 	rpc GetTMInfo(GetTMInfoRequest) returns (GetTMInfoResponse);
-//    rpc GetTMList (GetTMListRequest) returns (TMListResponse);
+    rpc GetTMList (GetTMListRequest) returns (GetTMListResponse);
 }
 
 message EmptyResponse {
@@ -36,11 +37,36 @@ message GetTMInfoRequest {
     bool fullInfo = 2;
 }
 
+enum TMType {
+    GLOBAL = 0;
+    GROUP_PRIMARY = 1;
+    GROUP_SECONDARY = 2;
+    PROFILE_PRIMARY = 3;
+    PROFILE_SECONDARY = 4;
+}
 message GetTMInfoResponse {
     string id = 1;
     string langFrom = 2;
     string langTo = 3;
     int32 entryNumber = 4;
-    int32 tmType = 5;
+    TMType tmType = 5;
     google.protobuf.Timestamp lastAccess = 6; 
+}
+
+//GetTMList
+message TMInfo {
+    string id = 1;
+    string langFrom = 2;
+    string langTo = 3;
+    int32 entryNumber = 4;
+    TMType tmType = 5;
+    google.protobuf.Timestamp lastAccess = 6;
+}
+
+message GetTMListRequest {
+    bool fullInfo = 1;
+}
+
+message GetTMListResponse {
+    repeated TMInfo tmInfoList = 1;  // This will store an array of TMInfo objects
 }

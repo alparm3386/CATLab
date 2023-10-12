@@ -1,12 +1,13 @@
 using AutoMapper;
 using CAT.ConnectedServices.OkapiService;
+using Proto;
 using CAT.TM;
 using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
 
 namespace CAT.GRPServices
 {
-    public class CATService : CAT.CATBase
+    public class CATService : Proto.CAT.CATBase
     {
         private readonly ILogger<CATService> _logger;
         private readonly ITMService _tmService;
@@ -41,30 +42,22 @@ namespace CAT.GRPServices
                 LangFrom = tmInfo.langFrom,
                 LangTo = tmInfo.langTo,
                 LastAccess = Timestamp.FromDateTime(tmInfo.lastAccess.Kind != DateTimeKind.Utc ? tmInfo.lastAccess.ToUniversalTime() : tmInfo.lastAccess),
-                TmType = (int)tmInfo.tmType,
+                TmType = (TMType)tmInfo.tmType,
                 EntryNumber = tmInfo.entryNumber,
             };
 
             return Task.FromResult(response);
         }
 
-        //public override Task<TMInfoResponse> GetTMInfo(TMInfoRequest request, ServerCallContext context)
-        //{
-        //    //var tmInfo = _tmService.GetTMInfo(request.Id, request.FullInfo);
-        //    //var response = _mapper.Map<TMInfoResponse>(tmInfo);
-        //    var response = new TMInfoResponse();
-        //    return Task.FromResult(response);
-        //}
-
-        //public override Task<TMListResponse> GetTMList(GetTMListRequest request, ServerCallContext context)
-        //{
-        //    var tmList = _tmService.GetTMList(request.FullInfo);
-        //    var response = new TMListResponse();
-        //    foreach (var tmInfo in tmList)
-        //    {
-        //        response.TMInfos.Add(new TMInfo { Id = tmInfo.Id, Info = tmInfo.Info }); // Simplified; adjust as needed
-        //    }
-        //    return Task.FromResult(response);
-        //}
+        public override Task<GetTMListResponse> GetTMList(GetTMListRequest request, ServerCallContext context)
+        {
+            var tmList = _tmService.GetTMList(request.FullInfo);
+            var response = new GetTMListResponse();
+            foreach (var tmInfo in tmList)
+            {
+                //response.TMInfos.Add(new TMInfo { Id = tmInfo.Id, Info = tmInfo.Info }); // Simplified; adjust as needed
+            }
+            return Task.FromResult(response);
+        }
     }
 }
