@@ -1,5 +1,8 @@
+using AutoMapper;
+
 using CAT.BusinessServices;
 using CAT.BusinessServices.Okapi;
+using CAT.Configuration;
 using CAT.GRPServices;
 using CAT.Infrastructure.Logging;
 using CAT.Services;
@@ -12,6 +15,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddGrpc();
+builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
+
 builder.Services.AddSingleton<IDataStorage, SQLiteStorage>();
 builder.Services.AddSingleton<IOkapiConnector, OkapiConnector>();
 builder.Services.AddSingleton<IOkapiService, OkapiService>();

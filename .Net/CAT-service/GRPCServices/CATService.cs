@@ -1,3 +1,4 @@
+using AutoMapper;
 using CAT.ConnectedServices.OkapiService;
 using CAT.TM;
 using Grpc.Core;
@@ -8,11 +9,13 @@ namespace CAT.GRPServices
     {
         private readonly ILogger<CATService> _logger;
         private readonly ITMService _tmService;
+        private readonly IMapper _mapper;
 
-        public CATService(ILogger<CATService> logger, ITMService tmService)
+        public CATService(ILogger<CATService> logger, ITMService tmService, IMapper mapper)
         {
             _logger = logger;
             _tmService = tmService;
+            _mapper = mapper;
         }
 
         public override Task<TMExistsResponse> TMExists(TMExistsRequest request, ServerCallContext context)
@@ -27,10 +30,19 @@ namespace CAT.GRPServices
             return Task.FromResult(new EmptyResponse());
         }
 
-        //public override Task<TMInfoResponse> GetTMInfo(GetTMInfoRequest request, ServerCallContext context)
+        public override Task<EmptyResponse> GetTMInfo(CreateTMRequest request, ServerCallContext context)
+        {
+            //var tmInfo = _tmService.GetTMInfo(request.Id, request.FullInfo);
+            //var response = _mapper.Map<TMInfoResponse>(tmInfo);
+            return Task.FromResult(new EmptyResponse());
+        }
+
+        //public override Task<TMInfoResponse> GetTMInfo(TMInfoRequest request, ServerCallContext context)
         //{
-        //    var tmInfo = _tmService.GetTMInfo(request.Id, request.FullInfo);
-        //    return Task.FromResult(new TMInfoResponse { Id = tmInfo.Id, Info = tmInfo.Info }); // Simplified; adjust as needed
+        //    //var tmInfo = _tmService.GetTMInfo(request.Id, request.FullInfo);
+        //    //var response = _mapper.Map<TMInfoResponse>(tmInfo);
+        //    var response = new TMInfoResponse();
+        //    return Task.FromResult(response);
         //}
 
         //public override Task<TMListResponse> GetTMList(GetTMListRequest request, ServerCallContext context)

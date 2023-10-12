@@ -8,7 +8,7 @@ package CAT;
 service CAT {
 	rpc TMExists (TMExistsRequest) returns (TMExistsResponse);
 	rpc CreateTM (CreateTMRequest) returns (EmptyResponse);
-//    rpc GetTMInfo (GetTMInfoRequest) returns (TMInfoResponse);
+	rpc GetTMInfo(CreateTMRequest) returns (EmptyResponse);
 //    rpc GetTMList (GetTMListRequest) returns (TMListResponse);
 }
 
@@ -28,3 +28,15 @@ message TMExistsResponse {
 message CreateTMRequest {
   string tmId = 1;
 }
+
+//GetTMInfo
+//message TMInfoRequest {
+//    string id = 1;
+//    bool fullInfo = 2;
+//}
+
+//message TMInfoResponse {
+//    string id = 1;
+//    string langFrom = 2;
+//    string langTo = 3;
+//}
