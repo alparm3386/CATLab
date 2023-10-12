@@ -8,7 +8,7 @@ package CAT;
 service CAT {
 	rpc TMExists (TMExistsRequest) returns (TMExistsResponse);
 	rpc CreateTM (CreateTMRequest) returns (EmptyResponse);
-	rpc GetTMInfo(CreateTMRequest) returns (EmptyResponse);
+	rpc GetTMInfo(GetTMInfoRequest) returns (GetTMInfoResponse);
 //    rpc GetTMList (GetTMListRequest) returns (TMListResponse);
 }
 
@@ -30,13 +30,16 @@ message CreateTMRequest {
 }
 
 //GetTMInfo
-//message TMInfoRequest {
-//    string id = 1;
-//    bool fullInfo = 2;
-//}
+message GetTMInfoRequest {
+    string id = 1;
+    bool fullInfo = 2;
+}
 
-//message TMInfoResponse {
-//    string id = 1;
-//    string langFrom = 2;
-//    string langTo = 3;
-//}
+message GetTMInfoResponse {
+    string id = 1;
+    string langFrom = 2;
+    string langTo = 3;
+    int32 entryNumber = 4;
+    int32 tmType = 5;
+    int64 lastAccess = 6;  // Represented as a timestamp (Unix epoch time in milliseconds)
+}

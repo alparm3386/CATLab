@@ -8,7 +8,7 @@ namespace CAT.Configuration
         public AutoMapperProfile()
         {
             //gRPC service
-            //CreateMap<TMInfoResponse, TMInfo>();
+            //CreateMap<GetTMInfoResponse, TMInfo>();
             //.ForMember(dest => dest.tmPath, opt => opt.MapFrom(src => src.tmId))
             //.ReverseMap()
             //.ForMember(dest => dest.tmId, opt => opt.MapFrom(src => src.tmPath));
