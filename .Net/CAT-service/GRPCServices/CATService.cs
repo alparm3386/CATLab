@@ -32,9 +32,9 @@ namespace CAT.GRPServices
 
         public override Task<GetTMInfoResponse> GetTMInfo(GetTMInfoRequest request, ServerCallContext context)
         {
-            //var tmInfo = _tmService.GetTMInfo(request.Id, request.FullInfo);
-            //var response = _mapper.Map<TMInfoResponse>(tmInfo);
-            return Task.FromResult(new GetTMInfoResponse());
+            var tmInfo = _tmService.GetTMInfo(request.Id, request.FullInfo);
+            var response = _mapper.Map<GetTMInfoResponse>(tmInfo);
+            return Task.FromResult(response);
         }
 
         //public override Task<TMInfoResponse> GetTMInfo(TMInfoRequest request, ServerCallContext context)
