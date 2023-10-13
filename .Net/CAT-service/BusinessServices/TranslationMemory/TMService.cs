@@ -1684,7 +1684,7 @@ namespace CAT.TM
         /// </summary>
         /// <param name="dbName"></param>
         /// <returns></returns>
-        public TMInfo[] GetTMListFromDatabase(string dbName)
+        public TMInfo[] GetTMListFromDatabase(string dbName, bool bFullInfo)
         {
             //get the TM tables from the database
             var dsTMNames = _dataStorage.GetTMListFromDatabase(dbName);
@@ -1692,7 +1692,7 @@ namespace CAT.TM
             foreach (DataRow tmRow in dsTMNames.Tables[0].Rows)
             {
                 var tmName = (string)tmRow["TABLE_NAME"];
-                var tmInfo = GetTMInfo(dbName + "/" + tmName, false);
+                var tmInfo = GetTMInfo(dbName + "/" + tmName, bFullInfo);
                 lstTMInfo.Add(tmInfo);
             }
 

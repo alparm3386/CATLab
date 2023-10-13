@@ -33,7 +33,7 @@ namespace CAT
                 //var response = await client.GetTMInfoAsync(request);
                 //var request = new GetTMListRequest { FullInfo = true };
                 //var response = await client.GetTMListAsync(request);
-                var request = new GetTMListFromDatabaseRequest { DbName = "1" };
+                var request = new GetTMListFromDatabaseRequest { DbName = "1", FullInfo = true };
                 var response = await client.GetTMListFromDatabaseAsync(request);
 
                 //Assert.True(response);  // Or whatever your expected result is

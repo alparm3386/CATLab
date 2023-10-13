@@ -70,7 +70,7 @@ namespace CAT.GRPServices
 
         public override Task<GetTMListFromDatabaseResponse> GetTMListFromDatabase(GetTMListFromDatabaseRequest request, ServerCallContext context)
         {
-            var tmList = _tmService.GetTMListFromDatabase(request.DbName);
+            var tmList = _tmService.GetTMListFromDatabase(request.DbName, request.FullInfo);
             var response = new GetTMListFromDatabaseResponse();
             foreach (var tmInfo in tmList)
             {

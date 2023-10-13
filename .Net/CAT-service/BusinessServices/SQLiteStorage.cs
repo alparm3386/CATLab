@@ -174,9 +174,8 @@ namespace CAT.BusinessServices
                         sqlConn.Open();
                         var sqlCmd = new SQLiteCommand();
                         sqlCmd.Connection = sqlConn;
-                        sqlCmd.CommandText = "SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE='BASE TABLE' AND TABLE_CATALOG=@catalog";
+                        sqlCmd.CommandText = "SELECT name AS TABLE_NAME FROM sqlite_master WHERE type='table';";
                         sqlCmd.CommandType = CommandType.Text;
-                        sqlCmd.Parameters.Add(new SQLiteParameter("@catalog", dbName));
 
                         var adpt = new SQLiteDataAdapter(sqlCmd);
                         DataSet ds = new DataSet();

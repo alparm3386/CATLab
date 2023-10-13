@@ -75,6 +75,7 @@ message GetTMListResponse {
 //GetTMListFromDatabase
 message GetTMListFromDatabaseRequest {
     string dbName = 1;
+    bool fullInfo = 2;
 }
 
 message GetTMListFromDatabaseResponse {

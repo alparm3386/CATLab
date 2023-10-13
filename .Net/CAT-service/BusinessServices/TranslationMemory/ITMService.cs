@@ -13,7 +13,7 @@ namespace CAT.TM
 
         TMInfo[] GetTMList(bool bFullInfo);
 
-        TMInfo[] GetTMListFromDatabase(string dbName);
+        TMInfo[] GetTMListFromDatabase(string dbName, bool bFullInfo);
 
         Statistics[] GetStatisticsForDocument(string sFileName, byte[] fileContent, string sFilterName, byte[] filterContent, string sourceLangISO639_1, string[] aTargetLangsISO639_1, TMAssignment[] aTMAssignments);
 
