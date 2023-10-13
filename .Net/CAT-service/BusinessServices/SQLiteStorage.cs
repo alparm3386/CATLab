@@ -159,6 +159,39 @@ namespace CAT.BusinessServices
             }
         }
 
+        public DataSet GetTMListFromDatabase(string dbName)
+        {
+            var dbPath = Path.Combine(_tmRepository, dbName + "/SQLData/" + dbName + ".db");
+            string connectionString = $"Data Source={dbPath};Version=3;";
+            using (var sqlConnection = new SQLiteConnection(connectionString))
+            {
+                try
+                {
+                    //open connection
+                    connectionString = String.Format(connectionString);
+                    using (var sqlConn = new SQLiteConnection(connectionString))
+                    {
+                        sqlConn.Open();
+                        var sqlCmd = new SQLiteCommand();
+                        sqlCmd.Connection = sqlConn;
+                        sqlCmd.CommandText = "SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE='BASE TABLE' AND TABLE_CATALOG=@catalog";
+                        sqlCmd.CommandType = CommandType.Text;
+                        sqlCmd.Parameters.Add(new SQLiteParameter("@catalog", dbName));
+
+                        var adpt = new SQLiteDataAdapter(sqlCmd);
+                        DataSet ds = new DataSet();
+                        adpt.Fill(ds);
+                        return ds;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError("GetTMListFromDatabase -> dbName " +dbName + " error: "+ ex);
+                    throw;
+                }
+            }
+        }
+
         public DataSet InsertTMEntry(String tmPath, TextFragment source, TextFragment target, String context, String user, int speciality,
             int idTranslation, DateTime dateCreated, DateTime dateModified, String extensionData)
         {
@@ -534,57 +567,6 @@ namespace CAT.BusinessServices
             //        throw ex;
             //    }
             //}
-        }
-
-        public DataSet GetTMListFromDatabase(string dbName)
-        {
-            //var connectionString = String.Format(_translationMemoriesConnectionString, "");
-            //using (SqlConnection sqlConnection = new SqlConnection(connectionString))
-            //{
-            //    try
-            //    {
-            //        //open connection
-            //        sqlConnection.Open();
-            //        SqlCommand sqlCommand = new SqlCommand();
-            //        sqlCommand.Connection = sqlConnection;
-            //        sqlCommand.CommandText = "SELECT count(*) FROM master.sys.databases where name=@catalog";
-            //        sqlCommand.CommandType = CommandType.Text;
-            //        sqlCommand.Parameters.Add(new SqlParameter("@catalog", dbName));
-
-            //        var num = (int)sqlCommand.ExecuteScalar();
-            //        DataSet ds = new DataSet();
-            //        if (num > 0)
-            //        {
-            //            connectionString = String.Format(_translationMemoriesConnectionString, dbName);
-            //            using (SqlConnection sqlConn = new SqlConnection(connectionString))
-            //            {
-            //                sqlConn.Open();
-            //                SqlCommand sqlCmd = new SqlCommand();
-            //                sqlCmd.Connection = sqlConn;
-            //                sqlCmd.CommandText = "SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE='BASE TABLE' AND TABLE_CATALOG=@catalog";
-            //                sqlCmd.CommandType = CommandType.Text;
-            //                sqlCmd.Parameters.Add(new SqlParameter("@catalog", dbName));
-
-            //                SqlDataAdapter adpt = new SqlDataAdapter(sqlCmd);
-            //                adpt.Fill(ds);
-            //                return ds;
-            //            }
-            //        }
-
-            //        //an empty dataset is better than null
-            //        sqlCommand.CommandText = "SELECT TABLE_CATALOG FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE='BASE TABLE' AND TABLE_CATALOG=''";
-            //        SqlDataAdapter sqlAdapter = new SqlDataAdapter(sqlCommand);
-            //        sqlAdapter.Fill(ds);
-            //        return ds;
-            //    }
-            //    catch (SqlException ex)
-            //    {
-            //        logger.Log("DB Errors.log", "GetTMEntriesByIdSource: " + ex);
-            //        throw ex;
-            //    }
-            //}
-
-            return null!;
         }
 
         public void SetDatabaseLastAccess(String dbName)

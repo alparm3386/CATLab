@@ -12,6 +12,7 @@ service CAT {
 	rpc CreateTM (CreateTMRequest) returns (EmptyResponse);
 	rpc GetTMInfo(GetTMInfoRequest) returns (GetTMInfoResponse);
     rpc GetTMList (GetTMListRequest) returns (GetTMListResponse);
+    rpc GetTMListFromDatabase (GetTMListFromDatabaseRequest) returns (GetTMListFromDatabaseResponse);
 }
 
 message EmptyResponse {
@@ -68,5 +69,14 @@ message GetTMListRequest {
 }
 
 message GetTMListResponse {
+    repeated TMInfo tmInfoList = 1;  // This will store an array of TMInfo objects
+}
+
+//GetTMListFromDatabase
+message GetTMListFromDatabaseRequest {
+    string dbName = 1;
+}
+
+message GetTMListFromDatabaseResponse {
     repeated TMInfo tmInfoList = 1;  // This will store an array of TMInfo objects
 }
