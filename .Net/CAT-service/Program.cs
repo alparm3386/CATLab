@@ -3,7 +3,7 @@ using AutoMapper;
 using CAT.BusinessServices;
 using CAT.BusinessServices.Okapi;
 using CAT.Configuration;
-using CAT.GRPServices;
+using CAT.GRPCServices;
 using CAT.Infrastructure.Logging;
 using CAT.Services;
 using CAT.TM;

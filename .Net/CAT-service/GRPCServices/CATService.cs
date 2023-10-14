@@ -5,7 +5,7 @@ using CAT.TM;
 using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
 
-namespace CAT.GRPServices
+namespace CAT.GRPCServices
 {
     public class CATService : Proto.CAT.CATBase
     {
@@ -55,7 +55,7 @@ namespace CAT.GRPServices
             var response = new GetTMListResponse();
             foreach (var tmInfo in tmList)
             {
-                response.TmInfoList.Add(new Proto.TMInfo 
+                response.TmInfoList.Add(new Proto.TMInfo
                 {
                     Id = tmInfo.id,
                     LangFrom = tmInfo.langFrom,
