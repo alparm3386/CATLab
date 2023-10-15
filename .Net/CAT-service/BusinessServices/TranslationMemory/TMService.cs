@@ -619,7 +619,6 @@ namespace CAT.TM
         public string PreTranslateXliff(string sXliffContent, string langFrom_ISO639_1, string langTo_ISO639_1,
             TMAssignment[] aTMAssignments, int matchThreshold)
         {
-            int cntr = 0;
             try
             {
                 //check the languages for the TMs
@@ -654,7 +653,6 @@ namespace CAT.TM
                 string next = default!;
                 for (int i = 0; i < tuNodeList.Count; i++)
                 {
-                    cntr = i;
                     Stopwatch swInner = new Stopwatch();
                     swInner.Start();
                     XmlNode tuNode = tuNodeList[i]!;
@@ -749,7 +747,6 @@ namespace CAT.TM
                     targetNode.InnerXml = targetXml;
                 }
 
-                System.Console.Out.WriteLine("Cntr: " + cntr);
                 return xliff.OuterXml;
             }
             catch (Exception ex)

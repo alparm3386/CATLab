@@ -8,12 +8,15 @@ package Proto;
 
 // The greeting service definition.
 service CAT {
+    //TM ervice
 	rpc TMExists (TMExistsRequest) returns (TMExistsResponse);
 	rpc CreateTM (CreateTMRequest) returns (EmptyResponse);
 	rpc GetTMInfo(GetTMInfoRequest) returns (GetTMInfoResponse);
     rpc GetTMList (GetTMListRequest) returns (GetTMListResponse);
     rpc GetTMListFromDatabase (GetTMListFromDatabaseRequest) returns (GetTMListFromDatabaseResponse);
     rpc GetStatisticsForDocument(GetStatisticsForDocumentRequest) returns (GetStatisticsForDocumentResponse);
+    rpc PreTranslateXliff(PreTranslateXliffRequest) returns (PreTranslateXliffResponse);
+    rpc GetTMMatches(GetTMMatchesRequest) returns (GetTMMatchesResponse);
 }
 
 message EmptyResponse {
@@ -115,4 +118,40 @@ message GetStatisticsForDocumentRequest {
 
 message GetStatisticsForDocumentResponse {
     repeated Statistics statistics = 1;
+}
+
+//PreTranslateXliff
+message PreTranslateXliffRequest {
+    string xliffContent = 1;
+    string langFrom = 2;
+    string langTo = 3;
+    repeated TMAssignment TMAssignments = 4;
+    int32 matchThreshold = 5;
+}
+
+message PreTranslateXliffResponse {
+    string xliffContent = 1;
+}
+
+//GetTMMatches
+message GetTMMatchesRequest {
+    repeated TMAssignment TMAssignments = 1;
+    string sourceText = 2;
+    string prevText = 3;
+    string nextText = 4;
+    int32 matchThreshold = 5;
+    int32 maxHits = 6;
+}
+
+message TMMatch {
+    string id = 1;
+    string source = 2;
+    string target = 3;
+    string origin = 4;
+    int32 quality = 5;
+    string metadata = 6;
+}
+
+message GetTMMatchesResponse {
+    repeated TMMatch TMMatches = 1;
 }

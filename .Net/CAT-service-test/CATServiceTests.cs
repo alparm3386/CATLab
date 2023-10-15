@@ -36,17 +36,23 @@ namespace CAT
                 //var response = await client.GetTMListAsync(request);
                 //var request = new GetTMListFromDatabaseRequest { DbName = "1", FullInfo = true };
                 //var response = await client.GetTMListFromDatabaseAsync(request);
-                var request = new GetStatisticsForDocumentRequest
-                {
-                    FileName = "test.txt",
-                    FileContent = ByteString.CopyFrom(File.ReadAllBytes("C:\\Alpar\\Janet Yellen.txt")),
-                    SourceLangISO6391 = "en"
-                };
-                request.TargetLangsISO6391.Add("fr");
-                request.TargetLangsISO6391.Add("de");
+                //var request = new GetStatisticsForDocumentRequest
+                //{
+                //    FileName = "test.txt",
+                //    FileContent = ByteString.CopyFrom(File.ReadAllBytes("C:\\Alpar\\Janet Yellen.txt")),
+                //    SourceLangISO6391 = "en"
+                //};
+                //request.TargetLangsISO6391.Add("fr");
+                //request.TargetLangsISO6391.Add("de");
+                //var response = await client.GetStatisticsForDocumentAsync(request);
 
-                var response = await client.GetStatisticsForDocumentAsync(request);
+                //var request = new PreTranslateXliffRequest { XliffContent = File.ReadAllText("C:\\Alpar\\Test.xlf"), LangFrom = "en", LangTo = "fr" };
+                //var response = await client.PreTranslateXliffAsync(request);
 
+                var request = new GetTMMatchesRequest { SourceText = "test", PrevText = "", NextText = "", MatchThreshold = 50, MaxHits = 10 };
+                var tmAssignment = new Proto.TMAssignment() { Id = "1/_1_en_fr_marketing", Penalty = -1, Speciality = 1 };
+                request.TMAssignments.Add(tmAssignment);
+                var response = await client.GetTMMatchesAsync(request);
                 //Assert.True(response);  // Or whatever your expected result is
             }
             catch (Exception)

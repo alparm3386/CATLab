@@ -4,7 +4,6 @@ using Proto;
 using CAT.TM;
 using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
-using System.Reflection.Metadata.Ecma335;
 
 namespace CAT.GRPCServices
 {
@@ -117,6 +116,51 @@ namespace CAT.GRPCServices
                 Match7584 = stat.match_75_84,
                 Match5074 = stat.match_50_74,
                 NoMatch = stat.no_match
+            }));
+
+            return Task.FromResult(response);
+        }
+
+        public override Task<PreTranslateXliffResponse> PreTranslateXliff(PreTranslateXliffRequest request, ServerCallContext context)
+        {
+            //var tmAssignments = _mapper.Map<Models.TMAssignment[]>(request.TMAssignments);
+            var tmAssignments = request.TMAssignments.Select(tmAssignment => new Models.TMAssignment
+            {
+                tmId = tmAssignment.Id,
+                penalty = tmAssignment.Penalty,
+                speciality = tmAssignment.Speciality,
+            }).ToArray();
+
+            var xliffContent = _tmService.PreTranslateXliff(request.XliffContent, request.LangFrom, request.LangTo, tmAssignments, request.MatchThreshold);
+
+            var response = new PreTranslateXliffResponse();
+            response.XliffContent = xliffContent;
+
+            return Task.FromResult(response);
+        }
+
+        public override Task<GetTMMatchesResponse> GetTMMatches(GetTMMatchesRequest request, ServerCallContext context)
+        {
+            //var tmAssignments = _mapper.Map<Models.TMAssignment[]>(request.TMAssignments);
+            var tmAssignments = request.TMAssignments.Select(tmAssignment => new Models.TMAssignment
+            {
+                tmId = tmAssignment.Id,
+                penalty = tmAssignment.Penalty,
+                speciality = tmAssignment.Speciality,
+            }).ToArray();
+
+            var tmMatches = _tmService.GetTMMatches(tmAssignments, request.SourceText, request.PrevText, request.NextText, 
+                (byte)request.MatchThreshold, request.MaxHits);
+
+            var response = new GetTMMatchesResponse();
+            Array.ForEach(tmMatches, tmMatch => response.TMMatches.Add(new Proto.TMMatch()
+            {
+                Id = tmMatch.id,
+                Source = tmMatch.source,
+                Target = tmMatch.target,
+                Origin = tmMatch.origin,
+                Quality = tmMatch.quality,
+                Metadata = tmMatch.metadata
             }));
 
             return Task.FromResult(response);
