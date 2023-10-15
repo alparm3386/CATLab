@@ -86,5 +86,25 @@ namespace CAT.GRPCServices
             }
             return Task.FromResult(response);
         }
+
+        public override Task<GetStatisticsForDocumentResponse> GetStatisticsForDocument(GetStatisticsForDocumentRequest request, ServerCallContext context)
+        {
+            var tmList = _tmService.GetStatisticsForDocument(request.FileName, request.FilterContent, request.FilterName, 
+                request.FilterContent, request.SourceLangISO6391, request.TargetLangsISO6391, request.TMAssignments);
+            var response = new GetTMListFromDatabaseResponse();
+            foreach (var tmInfo in tmList)
+            {
+                response.TmInfoList.Add(new Proto.TMInfo
+                {
+                    Id = tmInfo.id,
+                    LangFrom = tmInfo.langFrom,
+                    LangTo = tmInfo.langTo,
+                    LastAccess = Timestamp.FromDateTime(tmInfo.lastAccess.Kind != DateTimeKind.Utc ? tmInfo.lastAccess.ToUniversalTime() : tmInfo.lastAccess),
+                    TmType = (TMType)tmInfo.tmType,
+                    EntryNumber = tmInfo.entryNumber,
+                });
+            }
+            return Task.FromResult(response);
+        }
     }
 }

@@ -13,6 +13,7 @@ service CAT {
 	rpc GetTMInfo(GetTMInfoRequest) returns (GetTMInfoResponse);
     rpc GetTMList (GetTMListRequest) returns (GetTMListResponse);
     rpc GetTMListFromDatabase (GetTMListFromDatabaseRequest) returns (GetTMListFromDatabaseResponse);
+    rpc GetStatisticsForDocument(GetStatisticsForDocumentRequest) returns (GetStatisticsForDocumentResponse);
 }
 
 message EmptyResponse {
@@ -80,4 +81,38 @@ message GetTMListFromDatabaseRequest {
 
 message GetTMListFromDatabaseResponse {
     repeated TMInfo tmInfoList = 1;  // This will store an array of TMInfo objects
+}
+
+//GetStatisticsForDocument
+message Statistics {
+    string sourceLang = 1;
+    string targetLang = 2;
+    int32 repetitions = 3;
+    int32 match_101 = 4;
+    int32 match_100 = 5;
+    int32 match_95_99 = 6;
+    int32 match_85_94 = 7;
+    int32 match_75_84 = 8;
+    int32 match_50_74 = 9;
+    int32 no_match = 10;
+}
+
+message TMAssignment {
+    string id = 1;
+    int32 penalty = 2;
+    int32 speciality = 3;
+}
+
+message GetStatisticsForDocumentRequest {
+    string fileName = 1;
+    bytes fileContent = 2;
+    string filterName = 3;
+    bytes filterContent = 4;
+    string sourceLangISO639_1 = 5;
+    repeated string targetLangsISO639_1 = 6;
+    repeated TMAssignment TMAssignments = 7;
+}
+
+message GetStatisticsForDocumentResponse {
+    repeated Statistics statistics = 1;
 }
