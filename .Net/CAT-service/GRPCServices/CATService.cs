@@ -90,10 +90,8 @@ namespace CAT.GRPCServices
 
         public override Task<GetStatisticsForDocumentResponse> GetStatisticsForDocument(GetStatisticsForDocumentRequest request, ServerCallContext context)
         {
-            //var stats = _tmService.GetStatisticsForDocument(request.FileName, request.FilterContent.ToByteArray(), request.FilterName,
-            //    request.FilterContent.ToByteArray(), request.SourceLangISO6391, request.TargetLangsISO6391.ToArray(), request.TMAssignments.ToArray());
-            var stats = _tmService.GetStatisticsForDocument(request.FileName, request.FilterContent.ToByteArray(), request.FilterName,
-                request.FilterContent.ToByteArray(), request.SourceLangISO6391, request.TargetLangsISO6391.ToArray(), null!);
+            var stats = _tmService.GetStatisticsForDocument(request.FileName, request.FileContent.ToByteArray(), request.FilterName,
+                request.FilterContent.ToByteArray(), request.SourceLangISO6391, request.TargetLangsISO6391.ToArray(), request.TMAssignments.ToArray());
 
             return null!;
         }

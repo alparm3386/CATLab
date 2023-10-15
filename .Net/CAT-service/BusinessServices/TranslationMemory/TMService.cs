@@ -711,7 +711,7 @@ namespace CAT.TM
                             targetSegment = targetNode;
                         if (targetSegment == null || targetSegment.InnerXml.Length == 0)
                         {
-                            String sStartingWhiteSpaces = Regex.Match(segmentNode.InnerXml, @"^\s*").Value;
+                            string sStartingWhiteSpaces = Regex.Match(segmentNode.InnerXml, @"^\s*").Value;
                             string sEndingWhiteSpaces = Regex.Match(segmentNode.InnerXml, @"\s*$").Value;
                             //the translation
                             var tmMatch = GetExactMatch(aTMAssignments, source, prev!, next!);
