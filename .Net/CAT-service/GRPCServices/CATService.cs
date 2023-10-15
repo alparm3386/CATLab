@@ -194,5 +194,21 @@ namespace CAT.GRPCServices
 
             return Task.FromResult(response);
         }
+
+        public override Task<AddTMEntriesResponse> AddTMEntries(AddTMEntriesRequest request, ServerCallContext context)
+        {
+            var tmEntries = request.TMEntries.Select(tmEntry => new Models.TMEntry
+            {
+                source = tmEntry.Source,
+                target = tmEntry.Target,
+                metadata = tmEntry.Metadata,
+
+            }).ToArray();
+            var entriesNum = _tmService.AddTMEntries(request.TmId, tmEntries);
+
+            var response = new AddTMEntriesResponse() { EntriesNum = entriesNum };
+
+            return Task.FromResult(response);
+        }
     }
 }

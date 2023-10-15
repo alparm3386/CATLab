@@ -172,10 +172,17 @@ message GetExactMatchResponse {
 
 //AddTMEntries
 message AddTMEntriesRequest {
-  string tmId = 1;
-
+    string tmId = 1;
+    repeated TMEntry TMEntries = 2;
 }
 
 message AddTMEntriesResponse {
-    int32 entries = 1;
+    int32 entriesNum = 1;
+}
+
+message TMEntry {
+    int32 id = 1;
+    string source = 2;
+    string target = 3;
+    string metadata = 4;
 }

@@ -54,10 +54,21 @@ namespace CAT
                 //request.TMAssignments.Add(tmAssignment);
                 //var response = await client.GetTMMatchesAsync(request);
 
-                var request = new GetExactMatchRequest { SourceText = "test", PrevText = "", NextText = ""};
-                var tmAssignment = new Proto.TMAssignment() { Id = "1/_1_en_fr_marketing", Penalty = -1, Speciality = 1 };
-                request.TMAssignments.Add(tmAssignment);
-                var response = await client.GetExactMatchAsync(request);
+                //var request = new GetExactMatchRequest { SourceText = "test", PrevText = "", NextText = ""};
+                //var tmAssignment = new Proto.TMAssignment() { TmId = "1/_1_en_fr_marketing", Penalty = -1, Speciality = 1 };
+                //request.TMAssignments.Add(tmAssignment);
+                //var response = await client.GetExactMatchAsync(request);
+
+                var request = new AddTMEntriesRequest { TmId = "1/_1_en_fr_marketing" };
+                var tmEntry = new TMEntry()
+                {
+                    Source = "this is a test",
+                    Target = "this is the translation for test",
+                    Metadata = "{\r\n    \"prevSegment\": \"aaa\",\r\n    \"nextSegment\": \"bbb\"\r\n}"
+                };
+                request.TMEntries.Add(tmEntry);
+                var response = await client.AddTMEntriesAsync(request);
+
                 //Assert.True(response);  // Or whatever your expected result is
             }
             catch (Exception)
