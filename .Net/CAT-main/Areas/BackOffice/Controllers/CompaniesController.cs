@@ -173,6 +173,7 @@ namespace CAT.Areas.BackOffice.Controllers
         // GET: BackOffice/Companies/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
+            await Task.Yield(); // Dummy await to make the method asynchronous
             throw new InvalidOperationException("This operation cannot be performed in the object's current state.");
 
             //return View(Companies);
@@ -183,6 +184,7 @@ namespace CAT.Areas.BackOffice.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
+            await Task.Yield(); // Dummy await to make the method asynchronous
             throw new InvalidOperationException("This operation cannot be performed in the object's current state.");
             //return RedirectToAction(nameof(Index));
         }

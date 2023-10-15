@@ -56,7 +56,7 @@ namespace CAT.BusinessServices
             _termbasesConnectionString = _configuration!["SQLiteStorage:TermbasesConnectionString"]!;
 
             //load the sql commands
-            var resourceDir = Path.Combine(_configuration["Resources"], "SQLite");
+            var resourceDir = Path.Combine(_configuration["Resources"]!, "SQLite");
             var command = File.ReadAllText(Path.Combine(resourceDir!, "InsertTMEntry.sql"));
             _sqlCommands.Add("InsertTMEntry", command);
             command = File.ReadAllText(Path.Combine(resourceDir!, "CheckIncontextMatches.sql"));

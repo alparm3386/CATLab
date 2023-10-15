@@ -4,6 +4,7 @@ using Proto;
 using CAT.TM;
 using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
+using System.Reflection.Metadata.Ecma335;
 
 namespace CAT.GRPCServices
 {
@@ -89,22 +90,12 @@ namespace CAT.GRPCServices
 
         public override Task<GetStatisticsForDocumentResponse> GetStatisticsForDocument(GetStatisticsForDocumentRequest request, ServerCallContext context)
         {
-            var tmList = _tmService.GetStatisticsForDocument(request.FileName, request.FilterContent, request.FilterName, 
-                request.FilterContent, request.SourceLangISO6391, request.TargetLangsISO6391, request.TMAssignments);
-            var response = new GetTMListFromDatabaseResponse();
-            foreach (var tmInfo in tmList)
-            {
-                response.TmInfoList.Add(new Proto.TMInfo
-                {
-                    Id = tmInfo.id,
-                    LangFrom = tmInfo.langFrom,
-                    LangTo = tmInfo.langTo,
-                    LastAccess = Timestamp.FromDateTime(tmInfo.lastAccess.Kind != DateTimeKind.Utc ? tmInfo.lastAccess.ToUniversalTime() : tmInfo.lastAccess),
-                    TmType = (TMType)tmInfo.tmType,
-                    EntryNumber = tmInfo.entryNumber,
-                });
-            }
-            return Task.FromResult(response);
+            //var stats = _tmService.GetStatisticsForDocument(request.FileName, request.FilterContent.ToByteArray(), request.FilterName,
+            //    request.FilterContent.ToByteArray(), request.SourceLangISO6391, request.TargetLangsISO6391.ToArray(), request.TMAssignments.ToArray());
+            var stats = _tmService.GetStatisticsForDocument(request.FileName, request.FilterContent.ToByteArray(), request.FilterName,
+                request.FilterContent.ToByteArray(), request.SourceLangISO6391, request.TargetLangsISO6391.ToArray(), null!);
+
+            return null!;
         }
     }
 }

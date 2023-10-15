@@ -25,7 +25,7 @@ namespace CAT.Areas.API.Internal.Controllers
         [HttpGet("GetFilteredClients")]
         public async Task<IActionResult> GetFilteredClients(string term, int? limit)
         {
-            limit = limit ?? AUTOCOMPLETE_LIMIT;
+            limit ??= AUTOCOMPLETE_LIMIT;
             // Query the database based on "term". 
             var clients = await _dbContextContainer.MainContext.Clients.AsNoTracking().Include(c => c.Company)
                 .Where(item => item.Company.Name.Contains(term))
@@ -92,7 +92,7 @@ namespace CAT.Areas.API.Internal.Controllers
                 var imageBytes = System.IO.File.ReadAllBytes(imagePath);
                 return new FileContentResult(imageBytes, mimeType);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return Problem("System error");
             }

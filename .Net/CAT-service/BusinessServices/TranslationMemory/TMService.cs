@@ -157,7 +157,7 @@ namespace CAT.TM
         public Statistics[] GetStatisticsForDocument(string sFileName, byte[] fileContent, string sFilterName, byte[] filterContent,
             string sourceLangISO639_1, string[] aTargetLangsISO639_1, TMAssignment[] aTMAssignments)
         {
-            long lStart = CATUtils.CurrentTimeMillis();
+            //long lStart = CATUtils.CurrentTimeMillis();
             //convert the document to xliff
             var sXliffContent = _okapiConnector.CreateXliffFromDocument(sFileName, fileContent, sFilterName, filterContent, sourceLangISO639_1, "fr"); //we can use a dummy language here
 
@@ -234,7 +234,7 @@ namespace CAT.TM
                 lstStats.Add(stat);
             }
 
-            long lElapsed = CATUtils.CurrentTimeMillis() - lStart;
+            //long lElapsed = CATUtils.CurrentTimeMillis() - lStart;
 
             return lstStats.ToArray();
         }
@@ -748,6 +748,7 @@ namespace CAT.TM
                     targetNode.InnerXml = targetXml;
                 }
 
+                System.Console.Out.WriteLine("Cntr: " + cntr);
                 return xliff.OuterXml;
             }
             catch (Exception ex)
