@@ -39,10 +39,6 @@
     </Reference>
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Models\" />
-  </ItemGroup>
-
   <PropertyGroup>
     <RootNamespace>CAT</RootNamespace>
   </PropertyGroup>
