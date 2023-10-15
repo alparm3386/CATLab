@@ -60,7 +60,7 @@ namespace CAT.BusinessServices.Okapi
         /// <param name="targetLangISO639_1"></param>
         /// <param name="aTMAssignments"></param>
         /// <returns></returns>
-        public string CreateXliff(string sFileName, byte[] fileContent, string sFilterName, byte[] filterContent,
+        public string CreateXliffFromDocument(string sFileName, byte[] fileContent, string sFilterName, byte[] filterContent,
             string sourceLangISO639_1, string targetLangISO639_1, TMAssignment[] aTMAssignments)
         {
             long lStart = CATUtils.CurrentTimeMillis();
