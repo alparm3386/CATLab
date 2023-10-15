@@ -4,7 +4,7 @@ namespace CAT.Models
 {
     public class TMInfo
     {
-        public String id = default!;
+        public String tmId = default!;
         public String langFrom = default!;
         public String langTo = default!;
         public int entryNumber;

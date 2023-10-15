@@ -34,11 +34,11 @@ namespace CAT.GRPCServices
 
         public override Task<GetTMInfoResponse> GetTMInfo(GetTMInfoRequest request, ServerCallContext context)
         {
-            var tmInfo = _tmService.GetTMInfo(request.Id, request.FullInfo);
+            var tmInfo = _tmService.GetTMInfo(request.TmId, request.FullInfo);
 
             var response = new GetTMInfoResponse()
             {
-                Id = tmInfo.id,
+                TmId = tmInfo.tmId,
                 LangFrom = tmInfo.langFrom,
                 LangTo = tmInfo.langTo,
                 LastAccess = Timestamp.FromDateTime(tmInfo.lastAccess.Kind != DateTimeKind.Utc ? tmInfo.lastAccess.ToUniversalTime() : tmInfo.lastAccess),
@@ -57,7 +57,7 @@ namespace CAT.GRPCServices
             {
                 response.TmInfoList.Add(new Proto.TMInfo
                 {
-                    Id = tmInfo.id,
+                    TmId = tmInfo.tmId,
                     LangFrom = tmInfo.langFrom,
                     LangTo = tmInfo.langTo,
                     LastAccess = Timestamp.FromDateTime(tmInfo.lastAccess.Kind != DateTimeKind.Utc ? tmInfo.lastAccess.ToUniversalTime() : tmInfo.lastAccess),
@@ -76,7 +76,7 @@ namespace CAT.GRPCServices
             {
                 response.TmInfoList.Add(new Proto.TMInfo
                 {
-                    Id = tmInfo.id,
+                    TmId = tmInfo.tmId,
                     LangFrom = tmInfo.langFrom,
                     LangTo = tmInfo.langTo,
                     LastAccess = Timestamp.FromDateTime(tmInfo.lastAccess.Kind != DateTimeKind.Utc ? tmInfo.lastAccess.ToUniversalTime() : tmInfo.lastAccess),
@@ -93,7 +93,7 @@ namespace CAT.GRPCServices
             //var tmAssignments = _mapper.Map<Models.TMAssignment[]>(request.TMAssignments);
             var tmAssignments = request.TMAssignments.Select(tmAssignment => new Models.TMAssignment
             {
-                tmId = tmAssignment.Id,
+                tmId = tmAssignment.TmId,
                 penalty = tmAssignment.Penalty,
                 speciality = tmAssignment.Speciality,
             }).ToArray();
@@ -126,7 +126,7 @@ namespace CAT.GRPCServices
             //var tmAssignments = _mapper.Map<Models.TMAssignment[]>(request.TMAssignments);
             var tmAssignments = request.TMAssignments.Select(tmAssignment => new Models.TMAssignment
             {
-                tmId = tmAssignment.Id,
+                tmId = tmAssignment.TmId,
                 penalty = tmAssignment.Penalty,
                 speciality = tmAssignment.Speciality,
             }).ToArray();
@@ -144,7 +144,7 @@ namespace CAT.GRPCServices
             //var tmAssignments = _mapper.Map<Models.TMAssignment[]>(request.TMAssignments);
             var tmAssignments = request.TMAssignments.Select(tmAssignment => new Models.TMAssignment
             {
-                tmId = tmAssignment.Id,
+                tmId = tmAssignment.TmId,
                 penalty = tmAssignment.Penalty,
                 speciality = tmAssignment.Speciality,
             }).ToArray();
@@ -171,26 +171,24 @@ namespace CAT.GRPCServices
             //var tmAssignments = _mapper.Map<Models.TMAssignment[]>(request.TMAssignments);
             var tmAssignments = request.TMAssignments.Select(tmAssignment => new Models.TMAssignment
             {
-                tmId = tmAssignment.Id,
+                tmId = tmAssignment.TmId,
                 penalty = tmAssignment.Penalty,
                 speciality = tmAssignment.Speciality,
             }).ToArray();
 
             var tmMatch = _tmService.GetExactMatch(tmAssignments, request.SourceText, request.PrevText, request.NextText);
 
-            if (tmMatch)
+            var response = new GetExactMatchResponse();
+            if (tmMatch != null)
             {
-                var response = new GetExactMatchResponse()
+                response.TMMatch = new Proto.TMMatch()
                 {
-                    TMMatch = new Proto.TMMatch()
-                    {
-                        Id = tmMatch.id,
-                        Source = tmMatch.source,
-                        Target = tmMatch.target,
-                        Origin = tmMatch.origin,
-                        Quality = tmMatch.quality,
-                        Metadata = tmMatch.metadata
-                    }
+                    Id = tmMatch.id,
+                    Source = tmMatch.source,
+                    Target = tmMatch.target,
+                    Origin = tmMatch.origin,
+                    Quality = tmMatch.quality,
+                    Metadata = tmMatch.metadata
                 };
             }
 

@@ -23,7 +23,7 @@ namespace CAT.TM
 
         TMMatch GetExactMatch(TMAssignment[] aTmAssignments, string source, string prev, string next);
 
-        int AddTMEntries(string tmPath, TMEntry[] tmEntries);
+        int AddTMEntries(string tmId, TMEntry[] tmEntries);
 
         void DeleteTMEntry(string tmPath, int idEntry);
 

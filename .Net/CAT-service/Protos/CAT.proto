@@ -18,6 +18,7 @@ service CAT {
     rpc PreTranslateXliff(PreTranslateXliffRequest) returns (PreTranslateXliffResponse);
     rpc GetTMMatches(GetTMMatchesRequest) returns (GetTMMatchesResponse);
     rpc GetExactMatch(GetExactMatchRequest) returns (GetExactMatchResponse);
+    rpc AddTMEntries(AddTMEntriesRequest) returns (AddTMEntriesResponse);
 }
 
 message EmptyResponse {
@@ -39,7 +40,7 @@ message CreateTMRequest {
 
 //GetTMInfo
 message GetTMInfoRequest {
-    string id = 1;
+    string tmId = 1;
     bool fullInfo = 2;
 }
 
@@ -51,7 +52,7 @@ enum TMType {
     PROFILE_SECONDARY = 4;
 }
 message GetTMInfoResponse {
-    string id = 1;
+    string tmId = 1;
     string langFrom = 2;
     string langTo = 3;
     int32 entryNumber = 4;
@@ -61,7 +62,7 @@ message GetTMInfoResponse {
 
 //GetTMList
 message TMInfo {
-    string id = 1;
+    string tmId = 1;
     string langFrom = 2;
     string langTo = 3;
     int32 entryNumber = 4;
@@ -102,7 +103,7 @@ message Statistics {
 }
 
 message TMAssignment {
-    string id = 1;
+    string tmId = 1;
     int32 penalty = 2;
     int32 speciality = 3;
 }
@@ -167,4 +168,14 @@ message GetExactMatchRequest {
 
 message GetExactMatchResponse {
     TMMatch TMMatch = 1;
+}
+
+//AddTMEntries
+message AddTMEntriesRequest {
+  string tmId = 1;
+
+}
+
+message AddTMEntriesResponse {
+    int32 entries = 1;
 }

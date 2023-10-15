@@ -797,7 +797,7 @@ namespace CAT.TM
                 var langFrom_ISO639_1 = m.Groups[2].Value;
                 var lagngTo_ISO639_1 = m.Groups[3].Value;
 
-                tmInfo.id = id;
+                tmInfo.tmId = id;
                 tmInfo.langFrom = langFrom_ISO639_1;
                 tmInfo.langTo = lagngTo_ISO639_1;
 
