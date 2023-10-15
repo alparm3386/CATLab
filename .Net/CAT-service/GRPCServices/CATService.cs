@@ -149,7 +149,7 @@ namespace CAT.GRPCServices
                 speciality = tmAssignment.Speciality,
             }).ToArray();
 
-            var tmMatches = _tmService.GetTMMatches(tmAssignments, request.SourceText, request.PrevText, request.NextText, 
+            var tmMatches = _tmService.GetTMMatches(tmAssignments, request.SourceText, request.PrevText, request.NextText,
                 (byte)request.MatchThreshold, request.MaxHits);
 
             var response = new GetTMMatchesResponse();
@@ -162,6 +162,37 @@ namespace CAT.GRPCServices
                 Quality = tmMatch.quality,
                 Metadata = tmMatch.metadata
             }));
+
+            return Task.FromResult(response);
+        }
+
+        public override Task<GetExactMatchResponse> GetExactMatch(GetExactMatchRequest request, ServerCallContext context)
+        {
+            //var tmAssignments = _mapper.Map<Models.TMAssignment[]>(request.TMAssignments);
+            var tmAssignments = request.TMAssignments.Select(tmAssignment => new Models.TMAssignment
+            {
+                tmId = tmAssignment.Id,
+                penalty = tmAssignment.Penalty,
+                speciality = tmAssignment.Speciality,
+            }).ToArray();
+
+            var tmMatch = _tmService.GetExactMatch(tmAssignments, request.SourceText, request.PrevText, request.NextText);
+
+            if (tmMatch)
+            {
+                var response = new GetExactMatchResponse()
+                {
+                    TMMatch = new Proto.TMMatch()
+                    {
+                        Id = tmMatch.id,
+                        Source = tmMatch.source,
+                        Target = tmMatch.target,
+                        Origin = tmMatch.origin,
+                        Quality = tmMatch.quality,
+                        Metadata = tmMatch.metadata
+                    }
+                };
+            }
 
             return Task.FromResult(response);
         }

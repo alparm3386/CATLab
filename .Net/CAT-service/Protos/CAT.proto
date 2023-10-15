@@ -17,6 +17,7 @@ service CAT {
     rpc GetStatisticsForDocument(GetStatisticsForDocumentRequest) returns (GetStatisticsForDocumentResponse);
     rpc PreTranslateXliff(PreTranslateXliffRequest) returns (PreTranslateXliffResponse);
     rpc GetTMMatches(GetTMMatchesRequest) returns (GetTMMatchesResponse);
+    rpc GetExactMatch(GetExactMatchRequest) returns (GetExactMatchResponse);
 }
 
 message EmptyResponse {
@@ -154,4 +155,16 @@ message TMMatch {
 
 message GetTMMatchesResponse {
     repeated TMMatch TMMatches = 1;
+}
+
+//GetExactMatch
+message GetExactMatchRequest {
+    repeated TMAssignment TMAssignments = 1;
+    string sourceText = 2;
+    string prevText = 3;
+    string nextText = 4;
+}
+
+message GetExactMatchResponse {
+    TMMatch TMMatch = 1;
 }
