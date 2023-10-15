@@ -7,6 +7,7 @@ using CAT.GRPCServices;
 using CAT.Infrastructure.Logging;
 using CAT.Services;
 using CAT.TM;
+using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,6 +16,10 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddGrpc();
+//builder.Services.AddAutoMapper(cfg =>
+//    {
+//        cfg.ShouldMapProperty = pi => pi is PropertyInfo && pi.GetMethod != null && !pi.GetMethod.IsVirtual;
+//    }, typeof(AutoMapperProfile));
 builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
 
 builder.Services.AddSingleton<IDataStorage, SQLiteStorage>();

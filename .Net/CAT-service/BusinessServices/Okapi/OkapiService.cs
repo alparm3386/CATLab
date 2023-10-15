@@ -93,7 +93,7 @@ namespace CAT.BusinessServices.Okapi
                     var lstTmpTMs = new List<TMAssignment>();
                     foreach (var tmAssignment in aTMAssignments)
                     {
-                        var tmInfo = _tmService.GetTMInfo(tmAssignment.id, false);
+                        var tmInfo = _tmService.GetTMInfo(tmAssignment.tmId, false);
                         if (tmInfo.langFrom?.ToLower() == langFrom_ISO639_1?.ToLower() && tmInfo.langTo?.ToLower() == langTo_ISO639_1?.ToLower())
                             lstTmpTMs.Add(tmAssignment);
                     }

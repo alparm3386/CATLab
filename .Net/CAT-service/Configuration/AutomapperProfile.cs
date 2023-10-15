@@ -8,8 +8,8 @@ namespace CAT.Configuration
         public AutoMapperProfile()
         {
             //gRPC service
-            CreateMap<Proto.TMAssignment, Models.TMAssignment>();
-            CreateMap<Models.Statistics, Proto.Statistics>();
+            //CreateMap<Proto.TMAssignment, Models.TMAssignment>();
+            //CreateMap<Models.Statistics, Proto.Statistics>();
 
             //CreateMap<TMInfo, GetTMInfoResponse>()
             //    .ForMember(dest => dest.LastAccess, opt => opt.MapFrom(src => 100))

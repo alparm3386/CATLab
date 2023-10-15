@@ -91,12 +91,33 @@ namespace CAT.GRPCServices
 
         public override Task<GetStatisticsForDocumentResponse> GetStatisticsForDocument(GetStatisticsForDocumentRequest request, ServerCallContext context)
         {
-            var tmAssignments = _mapper.Map<Models.TMAssignment[]>(request.TMAssignments);
+            //var tmAssignments = _mapper.Map<Models.TMAssignment[]>(request.TMAssignments);
+            var tmAssignments = request.TMAssignments.Select(tmAssignment => new Models.TMAssignment
+            {
+                tmId = tmAssignment.Id,
+                penalty = tmAssignment.Penalty,
+                speciality = tmAssignment.Speciality,
+            }).ToArray();
+
             var stats = _tmService.GetStatisticsForDocument(request.FileName, request.FileContent.ToByteArray(), request.FilterName,
                 request.FilterContent.ToByteArray(), request.SourceLangISO6391, request.TargetLangsISO6391.ToArray(), tmAssignments);
 
             var response = new GetStatisticsForDocumentResponse();
-            Array.ForEach(stats, stat => response.Statistics.Add(_mapper.Map<Proto.Statistics>(stat)));
+            //Array.ForEach(stats, stat => response.Statistics.Add(_mapper.Map<Proto.Statistics>(stat)));
+            Array.ForEach(stats, stat => response.Statistics.Add(new Proto.Statistics()
+            {
+                SourceLang = stat.sourceLang,
+                TargetLang = stat.targetLang,
+                Repetitions = stat.repetitions,
+
+                Match101 = stat.match_101,
+                Match100 = stat.match_100,
+                Match9599 = stat.match_95_99,
+                Match8594 = stat.match_85_94,
+                Match7584 = stat.match_75_84,
+                Match5074 = stat.match_50_74,
+                NoMatch = stat.no_match
+            }));
 
             return Task.FromResult(response);
         }

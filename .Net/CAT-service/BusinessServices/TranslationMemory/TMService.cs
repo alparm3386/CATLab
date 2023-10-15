@@ -219,7 +219,7 @@ namespace CAT.TM
                     var lstTmpTMs = new List<TMAssignment>();
                     foreach (var tmAssignment in aTMAssignments)
                     {
-                        var tmInfo = GetTMInfo(tmAssignment.id, false);
+                        var tmInfo = GetTMInfo(tmAssignment.tmId, false);
                         if (tmInfo.langFrom.ToLower() == sourceLangISO639_1.ToLower() && tmInfo.langTo.ToLower() == sTargetLang.ToLower())
                             lstTmpTMs.Add(tmAssignment);
                     }
@@ -230,6 +230,7 @@ namespace CAT.TM
 
                 //the statistics
                 var stat = GetStatisticsForTranslationUnits(lstTranslationUnits, sourceLangISO639_1, currentTMAssignments!, true);
+                stat.sourceLang = sourceLangISO639_1;
                 stat.targetLang = sTargetLang;
                 lstStats.Add(stat);
             }
@@ -324,7 +325,7 @@ namespace CAT.TM
                             {
                                 try
                                 {
-                                    dsContexts = _dataStorage.CheckIncontextMatches(tmAssignment.id, dtQuery);
+                                    dsContexts = _dataStorage.CheckIncontextMatches(tmAssignment.tmId, dtQuery);
                                 }
                                 catch (Exception ex)
                                 {
@@ -338,7 +339,7 @@ namespace CAT.TM
                         //var dir = FSDirectory.Open(new DirectoryInfo(tmDirectory));
                         // var RAMDir = new MMapDirectory(tmDirectory);
                         //var reader = DirectoryReader.Open(dir);
-                        var tmWriter = GetTMWriter(tmAssignment.id);
+                        var tmWriter = GetTMWriter(tmAssignment.tmId);
                         var reader = tmWriter.IndexWriter.GetReader(false);
 
                         var lstTermNums = new List<int>();
@@ -571,7 +572,7 @@ namespace CAT.TM
             var context = CATUtils.djb2hash(prevCoded + nextCoded);
             foreach (var tmAssignment in aTmAssignments)
             {
-                var dsExactMatches = _dataStorage.GetExactMatchesBySource(tmAssignment.id, sourceCoded);
+                var dsExactMatches = _dataStorage.GetExactMatchesBySource(tmAssignment.tmId, sourceCoded);
                 if (dsExactMatches == null)
                     continue;
                 if (dtExactMatches == null)
@@ -627,7 +628,7 @@ namespace CAT.TM
                     var lstTmpTMs = new List<TMAssignment>();
                     foreach (var tmAssignment in aTMAssignments)
                     {
-                        var tmInfo = GetTMInfo(tmAssignment.id, false);
+                        var tmInfo = GetTMInfo(tmAssignment.tmId, false);
                         if (tmInfo.langFrom?.ToLower() == langFrom_ISO639_1?.ToLower() && tmInfo.langTo?.ToLower() == langTo_ISO639_1?.ToLower())
                             lstTmpTMs.Add(tmAssignment);
                     }
@@ -878,7 +879,7 @@ namespace CAT.TM
                     var bUseSpeciality = tmAssignment.speciality >= 0;
                     string speciality = "," + tmAssignment.speciality.ToString() + ","; //not too nice but ok
                     //get the connector
-                    var tmWriter = GetTMWriter(tmAssignment.id);
+                    var tmWriter = GetTMWriter(tmAssignment.tmId);
                     var reader = tmWriter.IndexWriter.GetReader(false); // No benefit of OpenIfChanged
 
                     //the unique terms
@@ -965,7 +966,7 @@ namespace CAT.TM
                     {
                         var doc = reader.Document(tmHit.Key);
                         int idSource = int.Parse(doc.GetField("ID").GetStringValue());
-                        var dsTMEntries = _dataStorage.GetTMEntriesBySourceIds(tmAssignment.id, new int[] { idSource }); //we could do it faster
+                        var dsTMEntries = _dataStorage.GetTMEntriesBySourceIds(tmAssignment.tmId, new int[] { idSource }); //we could do it faster
                         var aTMEntries = dsTMEntries.Tables[0].Rows;
                         foreach (DataRow tmEntry in aTMEntries)
                         {
@@ -975,8 +976,8 @@ namespace CAT.TM
                             tmMatch.source = CATUtils.TextFragmentToTmx(new TextFragment(matchSourceCoded));
                             tmMatch.target = CATUtils.TextFragmentToTmx(new TextFragment((string)tmEntry["target"]));
                             tmMatch.quality = (int)tmHit.Value;
-                            tmMatch.origin = tmAssignment.id;
-                            tmMatch.metadata = GetMetaData(tmEntry, tmAssignment.id);
+                            tmMatch.origin = tmAssignment.tmId;
+                            tmMatch.metadata = GetMetaData(tmEntry, tmAssignment.tmId);
                             if (tmMatch.quality == 100)
                             {
                                 if (context.ToString() == (string)tmEntry["context"])
