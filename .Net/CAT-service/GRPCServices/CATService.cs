@@ -85,15 +85,20 @@ namespace CAT.GRPCServices
                     EntryNumber = tmInfo.entryNumber,
                 });
             }
+
             return Task.FromResult(response);
         }
 
         public override Task<GetStatisticsForDocumentResponse> GetStatisticsForDocument(GetStatisticsForDocumentRequest request, ServerCallContext context)
         {
+            var tmAssignments = _mapper.Map<Models.TMAssignment[]>(request.TMAssignments);
             var stats = _tmService.GetStatisticsForDocument(request.FileName, request.FileContent.ToByteArray(), request.FilterName,
-                request.FilterContent.ToByteArray(), request.SourceLangISO6391, request.TargetLangsISO6391.ToArray(), request.TMAssignments.ToArray());
+                request.FilterContent.ToByteArray(), request.SourceLangISO6391, request.TargetLangsISO6391.ToArray(), tmAssignments);
 
-            return null!;
+            var response = new GetStatisticsForDocumentResponse();
+            Array.ForEach(stats, stat => response.Statistics.Add(_mapper.Map<Proto.Statistics>(stat)));
+
+            return Task.FromResult(response);
         }
     }
 }
