@@ -1,12 +1,13 @@
 CREATE TABLE "[TM_TABLE]" (
     "id" INTEGER PRIMARY KEY,
-    "idSource" INTEGER,
+    "ourceId" INTEGER,
     "source" TEXT,
     "sourceHash" INTEGER,
-    "idTarget" INTEGER,
     "target" TEXT,
     "targetHash" INTEGER,
-    "metaData" TEXT
+    "context" TEXT,
+    "speciality" INTEGER,
+    "metadata" TEXT
 );
 
 CREATE INDEX "ix_entries_source_hash" ON "[TM_TABLE]"("sourceHash");

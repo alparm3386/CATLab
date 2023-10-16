@@ -1260,8 +1260,8 @@ namespace CAT.TM
                         //var dsResult = _dataStorage.InsertTMEntry(tmPath, source, target, context.ToString(), idUser, speciality, idTranslation,
                         //    DateTime.Now, DateTime.Now, ""); //[AM:29/09/2023] hotfix
                         var rowResult = dsResult.Tables[0].Rows[0];
-                        var id = (int)rowResult["idSource"];
-                        if ((bool)rowResult["isNew"])
+                        var id = (int)(long)rowResult["sourceId"];
+                        if (Convert.ToBoolean(rowResult["isNew"]))
                         {
                             //index the source text
                             tmWriter.IndexSource(id, source, speciality.ToString());
