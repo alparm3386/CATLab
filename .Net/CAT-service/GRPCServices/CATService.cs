@@ -217,5 +217,21 @@ namespace CAT.GRPCServices
 
             return Task.FromResult(new EmptyResponse());
         }
+
+        public override Task<ConcordanceResponse> Concordance(ConcordanceRequest request, ServerCallContext context)
+        {
+            var tmEntries = _tmService.Concordance(request.TmIds.ToArray(), request.SourceText, request.TargetText, request.CaseSensitive, request.MaxHits);
+
+            var response = new ConcordanceResponse();
+            Array.ForEach(tmEntries, tmEntry => response.TmEntries.Add(new Proto.TMEntry()
+            {
+                Id = tmEntry.id,
+                Source = tmEntry.source,
+                Target = tmEntry.target,
+                Metadata = tmEntry.metadata,
+            }));
+
+            return Task.FromResult(response);
+        }
     }
 }

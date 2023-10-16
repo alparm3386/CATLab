@@ -1142,7 +1142,7 @@ namespace CAT.TM
                         {
                             var tmpTmEntry = new TMEntry();
                             var matchSourceCoded = (string)tmEntry["source"];
-                            tmpTmEntry.id = (int)tmEntry["id"];
+                            tmpTmEntry.id = (int)(long)tmEntry["id"];
                             tmpTmEntry.source = CATUtils.TextFragmentToTmx(new TextFragment(matchSourceCoded));
                             tmpTmEntry.target = CATUtils.TextFragmentToTmx(new TextFragment((string)tmEntry["target"]));
                             tmpTmEntry.metadata = GetMetaData(tmEntry, tmId);

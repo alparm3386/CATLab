@@ -20,6 +20,7 @@ service CAT {
     rpc GetExactMatch(GetExactMatchRequest) returns (GetExactMatchResponse);
     rpc AddTMEntries(AddTMEntriesRequest) returns (AddTMEntriesResponse);
     rpc DeleteTMEntry(DeleteTMEntryRequest) returns (EmptyResponse);
+    rpc Concordance(ConcordanceRequest) returns (ConcordanceResponse);
 }
 
 message EmptyResponse {
@@ -192,4 +193,17 @@ message TMEntry {
 message DeleteTMEntryRequest {
     string tmId = 1;
     int32 entryId = 2;
+}
+
+//Concordance
+message ConcordanceRequest {
+    repeated string tmIds = 1;
+    string sourceText = 2;
+    string targetText = 3;
+    bool caseSensitive = 4;
+    int32 maxHits = 5;
+}
+
+message ConcordanceResponse {
+    repeated TMEntry tmEntries = 1;
 }

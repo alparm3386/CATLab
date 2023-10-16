@@ -276,6 +276,37 @@ namespace CAT.BusinessServices
             }
         }
 
+        public DataSet GetTMEntriesBySourceIds(String tmPath, int[] aSourceIds)
+        {
+            var dbParams = GetDBParams(tmPath);
+            var dbPath = Path.Combine(_tmRepository, dbParams.dbName + "/SQLData/" + dbParams.dbName + ".db");
+            string connectionString = $"Data Source={dbPath};Version=3;";
+            using (var sqlConnection = new SQLiteConnection(connectionString))
+            {
+                try
+                {
+                    //open connection
+                    sqlConnection.Open();
+                    var sqlCommand = new SQLiteCommand();
+                    sqlCommand.Connection = sqlConnection;
+                    sqlCommand.CommandType = CommandType.Text;
+                    var idSourceList = String.Join(",", aSourceIds);
+                    sqlCommand.CommandText = "Select * from [" + dbParams.tmTableName + "] where idSource in (" + idSourceList + ");";
+
+                    var adpt = new SQLiteDataAdapter(sqlCommand);
+                    DataSet ds = new DataSet();
+                    adpt.Fill(ds);
+
+                    return ds;
+                }
+                catch (SQLiteException ex)
+                {
+                    _logger.LogError("InsertTMEntry -> tmId: " + tmPath + " error: " + ex);
+                    throw ex;
+                }
+            }
+        }
+
         public DataSet GetSourceIndexData(String tmPath)
         {
             //var dbParams = GetDBParams(tmPath);
@@ -306,7 +337,7 @@ namespace CAT.BusinessServices
             //    }
             //}
 
-            return null!;
+            throw new NotImplementedException();
         }
 
         public DataSet GetTranslationMemoryData(String tmPath)
@@ -337,7 +368,7 @@ namespace CAT.BusinessServices
             //    }
             //}
 
-            return null!;
+            throw new NotImplementedException();
         }
 
         public DataSet CheckIncontextMatches(String tmPath, DataTable queryTable) //is there a nicer parameter name? : )
@@ -376,7 +407,7 @@ namespace CAT.BusinessServices
             //    }
             //}
 
-            return null!;
+            throw new NotImplementedException();
         }
 
         public DataSet GetIncontextMatch(String tmPath, String source, String context)
@@ -410,7 +441,7 @@ namespace CAT.BusinessServices
             //    }
             //}
 
-            return null!;
+            throw new NotImplementedException();
         }
 
         public bool DBExists(String dbName)
@@ -427,7 +458,7 @@ namespace CAT.BusinessServices
             //    return dbId != DBNull.Value;
             //}
 
-            return false;
+            throw new NotImplementedException();
         }
 
         public DataSet GetExactMatchesBySource(String tmPath, String source)
@@ -461,42 +492,7 @@ namespace CAT.BusinessServices
             //    }
             //}
 
-            return null!;
-        }
-
-        public DataSet GetTMEntriesBySourceIds(String tmPath, int[] aIdSource)
-        {
-            //var dbParams = GetDBParams(tmPath);
-            //var connectionString = String.Format(_translationMemoriesConnectionString, dbParams.dbName);
-            //using (SqlConnection sqlConnection = new SqlConnection(connectionString))
-            //{
-            //    try
-            //    {
-            //        //open connection
-            //        sqlConnection.Open();
-            //        SqlCommand sqlCommand = new SqlCommand();
-            //        sqlCommand.Connection = sqlConnection;
-            //        sqlCommand.CommandType = CommandType.Text;
-            //        var idSourceList = String.Join(",", aIdSource);
-            //        //sqlCommand.CommandText = "Select * from [" + dbParams.tmTableName + "] where idSource in (@idSourceList)";
-            //        //sqlCommand.Parameters.Add(new SqlParameter("@idSourceList", idSourceList));
-            //        sqlCommand.CommandText =
-            //            "Select * from [" + dbParams.tmTableName + "] where idSource in (" + idSourceList + ")";
-
-            //        SqlDataAdapter adpt = new SqlDataAdapter(sqlCommand);
-            //        DataSet ds = new DataSet();
-            //        adpt.Fill(ds);
-
-            //        return ds;
-            //    }
-            //    catch (SqlException ex)
-            //    {
-            //        logger.Log("DB Errors.log", "GetTMEntriesByIdSource: " + ex);
-            //        throw ex;
-            //    }
-            //}
-
-            return null!;
+            throw new NotImplementedException();
         }
 
         public DataSet GetTMEntriesByTargetText(String tmPath, String sTarget)

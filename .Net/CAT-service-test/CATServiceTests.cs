@@ -69,8 +69,12 @@ namespace CAT
                 //request.TMEntries.Add(tmEntry);
                 //var response = await client.AddTMEntriesAsync(request);
 
-                var request = new DeleteTMEntryRequest { TmId = "1/_1_en_fr", EntryId = 1 };
-                var response = await client.DeleteTMEntryAsync(request);
+                //var request = new DeleteTMEntryRequest { TmId = "1/_1_en_fr", EntryId = 1 };
+                //var response = await client.DeleteTMEntryAsync(request);
+
+                var request = new ConcordanceRequest { SourceText = "test", TargetText = "", CaseSensitive = false, MaxHits = 10 };
+                request.TmIds.Add("1/_1_en_fr");
+                var response = await client.ConcordanceAsync(request);
 
                 //Assert.True(response);  // Or whatever your expected result is
             }
