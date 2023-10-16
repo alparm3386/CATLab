@@ -210,5 +210,12 @@ namespace CAT.GRPCServices
 
             return Task.FromResult(response);
         }
+
+        public override Task<EmptyResponse> DeleteTMEntry(DeleteTMEntryRequest request, ServerCallContext context)
+        {
+            _tmService.DeleteTMEntry(request.TmId, request.EntryId);
+
+            return Task.FromResult(new EmptyResponse());
+        }
     }
 }

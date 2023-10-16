@@ -19,6 +19,7 @@ service CAT {
     rpc GetTMMatches(GetTMMatchesRequest) returns (GetTMMatchesResponse);
     rpc GetExactMatch(GetExactMatchRequest) returns (GetExactMatchResponse);
     rpc AddTMEntries(AddTMEntriesRequest) returns (AddTMEntriesResponse);
+    rpc DeleteTMEntry(DeleteTMEntryRequest) returns (EmptyResponse);
 }
 
 message EmptyResponse {
@@ -185,4 +186,10 @@ message TMEntry {
     string source = 2;
     string target = 3;
     string metadata = 4;
+}
+
+//DeleteTMEntry
+message DeleteTMEntryRequest {
+    string tmId = 1;
+    int32 entryId = 2;
 }

@@ -25,19 +25,19 @@ namespace CAT.TM
 
         int AddTMEntries(string tmId, TMEntry[] tmEntries);
 
-        void DeleteTMEntry(string tmPath, int idEntry);
+        void DeleteTMEntry(string tmId, int entryId);
 
         TMEntry[] Concordance(string[] tmIds, string sSourceText, string sTargetText, bool bCaseSensitive, int maxHits);
 
-        string ExportTmx(string tmPath);
+        string ExportTmx(string tmId);
 
-        TMImportResult ImportTmx(string tmPath, string sSourceLangIso639_1, string sTargetLangIso639_1, string sTMXContent, string sUser, int speciality);
+        TMImportResult ImportTmx(string tmId, string sSourceLangIso639_1, string sTargetLangIso639_1, string sTMXContent, string sUser, int speciality);
 
         int ReindexTM(string tmId, TMIndex index);
 
-        void ShrinkTM(string tmPath);
+        void ShrinkTM(string tmId);
 
-        void UpdateTMEntry(string tmPath, int idEntry, Dictionary<string, string> fieldsToUpdate);
+        void UpdateTMEntry(string tmId, int idEntry, Dictionary<string, string> fieldsToUpdate);
 
         string ConnectionPoolInfo();
     }

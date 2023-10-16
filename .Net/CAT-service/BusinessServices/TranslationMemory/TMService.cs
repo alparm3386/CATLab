@@ -84,7 +84,7 @@ namespace CAT.TM
         /// <summary>
         /// CreateTM
         /// </summary>
-        /// <param name="tmPath"></param>
+        /// <param name="tmId"></param>
         /// <returns></returns>
         public void CreateTM(string tmId)
         {
@@ -1012,25 +1012,25 @@ namespace CAT.TM
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="aTMPaths"></param>
-        /// <param name="sSourceText"></param>
-        /// <param name="sTargetText"></param>
+        /// <param name="tmIds"></param>
+        /// <param name="sourceText"></param>
+        /// <param name="targetText"></param>
         /// <param name="bCaseSensitive"></param>
         /// <param name="bNumericEquivalenve"></param>
         /// <param name="nLimit"></param>
         /// <returns></returns>
-        public TMEntry[] Concordance(string[] tmIds, string sSourceText, string sTargetText, bool bCaseSensitive, int maxHits)
+        public TMEntry[] Concordance(string[] tmIds, string sourceText, string targetText, bool bCaseSensitive, int maxHits)
         {
             try
             {
                 var lstTMMatches = new List<TMEntry>();
 
                 //search in target
-                if (sTargetText != null && sTargetText.Length > 0)
+                if (targetText != null && targetText.Length > 0)
                 {
                     foreach (var tmId in tmIds)
                     {
-                        var dsTMEntries = _dataStorage.GetTMEntriesByTargetText(tmId, sTargetText);
+                        var dsTMEntries = _dataStorage.GetTMEntriesByTargetText(tmId, targetText);
                         var aTMEntries = dsTMEntries.Tables[0].Rows;
                         foreach (DataRow tmEntry in aTMEntries)
                         {
@@ -1048,13 +1048,13 @@ namespace CAT.TM
                     return lstTMMatches.ToArray();
                 }
 
-                if (sSourceText.Length < NGramLength)
+                if (sourceText.Length < NGramLength)
                 {
-                    sSourceText = sSourceText.PadLeft(sSourceText.Length + 1);
-                    if (sSourceText.Length < NGramLength)
-                        sSourceText = sSourceText.PadRight(sSourceText.Length + 1);
-                    if (sSourceText.Length < NGramLength)
-                        sSourceText = sSourceText.PadLeft(NGramLength);
+                    sourceText = sourceText.PadLeft(sourceText.Length + 1);
+                    if (sourceText.Length < NGramLength)
+                        sourceText = sourceText.PadRight(sourceText.Length + 1);
+                    if (sourceText.Length < NGramLength)
+                        sourceText = sourceText.PadLeft(NGramLength);
                 }
 
                 //search in source
@@ -1069,7 +1069,7 @@ namespace CAT.TM
                     var reader = tmWriter.IndexWriter.GetReader(false); // No benefit of OpenIfChanged
 
                     //the unique terms
-                    var terms = CATUtils.GetTermsFromText(sSourceText);
+                    var terms = CATUtils.GetTermsFromText(sourceText);
                     var uniqeTerms = new HashSet<string>(terms);
 
                     // initialize buffers
@@ -1211,7 +1211,7 @@ namespace CAT.TM
         /// <param name="sTMName"></param>
         /// <param name="tmEntries"></param>
         /// <returns></returns>
-        public int AddTMEntries(string tmPath, TMEntry[] tmEntries)
+        public int AddTMEntries(string tmId, TMEntry[] tmEntries)
         {
             try
             {
@@ -1219,10 +1219,10 @@ namespace CAT.TM
                 int itemsBefore = 0;
                 var start = CATUtils.CurrentTimeMillis();
                 //check the TM
-                if (!TMExists(tmPath))
+                if (!TMExists(tmId))
                 {
                     //create the TM
-                    CreateTM(tmPath);
+                    CreateTM(tmId);
                     //throw new Exception("The TM doesn't exist.");
                 }
 
@@ -1232,7 +1232,7 @@ namespace CAT.TM
                 TransactionScope tuTransaction = new TransactionScope(TransactionScopeOption.Required, transactionOptions);
                 using (tuTransaction)
                 {
-                    var tmWriter = GetTMWriter(tmPath);
+                    var tmWriter = GetTMWriter(tmId);
                     // get the number of entries before the import
                     itemsBefore = tmWriter.IndexWriter.NumDocs;
 
@@ -1255,9 +1255,9 @@ namespace CAT.TM
                         if (metadata.ContainsKey("idTranslation"))
                             int.TryParse(metadata["idTranslation"], out idTranslation);
                         //insert into SQL server
-                        var dsResult = _dataStorage.InsertTMEntry(tmPath, source, target, context.ToString(), idUser!, speciality, idTranslation,
+                        var dsResult = _dataStorage.InsertTMEntry(tmId, source, target, context.ToString(), idUser!, speciality, idTranslation,
                             DateTime.Now, DateTime.Now, metadata.ContainsKey("metadata") ? metadata["metadata"] : "");
-                        //var dsResult = _dataStorage.InsertTMEntry(tmPath, source, target, context.ToString(), idUser, speciality, idTranslation,
+                        //var dsResult = _dataStorage.InsertTMEntry(tmId, source, target, context.ToString(), idUser, speciality, idTranslation,
                         //    DateTime.Now, DateTime.Now, ""); //[AM:29/09/2023] hotfix
                         var rowResult = dsResult.Tables[0].Rows[0];
                         var id = (int)(long)rowResult["sourceId"];
@@ -1290,7 +1290,7 @@ namespace CAT.TM
             }
             catch (Exception ex)
             {
-                _logger.LogError("TMEntries.log", "ERROR: AddTMEntries TM name -> " + tmPath + "\n\n" + ex.ToString());
+                _logger.LogError("TMEntries.log", "ERROR: AddTMEntries TM name -> " + tmId + "\n\n" + ex.ToString());
                 throw;
             }
             finally
@@ -1301,20 +1301,16 @@ namespace CAT.TM
         /// <summary>
         /// DeleteTMEntry
         /// </summary>
-        /// <param name="sTMPath"></param>
-        /// <param name="idEntry"></param>
-        public void DeleteTMEntry(string tmPath, int idEntry)
+        /// <param name="tmId"></param>
+        /// <param name="entryId"></param>
+        public void DeleteTMEntry(string tmId, int entryId)
         {
             try
             {
                 var start = CATUtils.CurrentTimeMillis();
                 //check the TM
-                if (!TMExists(tmPath))
-                {
-                    //create the TM
-                    CreateTM(tmPath);
-                    //throw new Exception("The TM doesn't exist.");
-                }
+                if (!TMExists(tmId))
+                    throw new Exception("The TM doesn't exist.");
 
                 var transactionOptions = new TransactionOptions();
                 transactionOptions.IsolationLevel = System.Transactions.IsolationLevel.ReadCommitted;
@@ -1323,10 +1319,10 @@ namespace CAT.TM
                 using (tuTransaction)
                 {
                     //delete the entry from the SQL database
-                    var luceneId = _dataStorage.DeleteTMEntry(tmPath, idEntry);
+                    var luceneId = _dataStorage.DeleteTMEntry(tmId, entryId);
                     if (luceneId >= 0)
                     {
-                        var tmWriter = GetTMWriter(tmPath);
+                        var tmWriter = GetTMWriter(tmId);
                         //delete the entry from the Lucene index
                         tmWriter.Delete(luceneId);
                         tmWriter.Commit();
@@ -1335,11 +1331,11 @@ namespace CAT.TM
                 }
 
                 //backup
-                //backupClient.DeleteTMEntry(tmPath, idEntry);
+                //backupClient.DeleteTMEntry(tmId, idEntry);
             }
             catch (Exception ex)
             {
-                _logger.LogError("TMEntries.log", "ERROR: DeleteTMEntry TM name -> " + tmPath + "\n\n" + ex.ToString());
+                _logger.LogError("TMEntries.log", "ERROR: DeleteTMEntry TM name -> " + tmId + "\n\n" + ex.ToString());
                 throw;
             }
             finally
@@ -1350,24 +1346,24 @@ namespace CAT.TM
         /// <summary>
         /// UpdateTMEntry
         /// </summary>
-        /// <param name="sTMPath"></param>
+        /// <param name="tmId"></param>
         /// <param name="idEntry"></param>
         /// <param name="fieldsToUpdate"></param>
-        public void UpdateTMEntry(string tmPath, int idEntry, Dictionary<string, string> fieldsToUpdate)
+        public void UpdateTMEntry(string tmId, int idEntry, Dictionary<string, string> fieldsToUpdate)
         {
             try
             {
                 var start = CATUtils.CurrentTimeMillis();
                 //check the TM
-                if (!TMExists(tmPath))
+                if (!TMExists(tmId))
                     throw new Exception("The TM doesn't exist.");
 
-                _dataStorage.UpdateTMEntry(tmPath, idEntry, fieldsToUpdate);
+                _dataStorage.UpdateTMEntry(tmId, idEntry, fieldsToUpdate);
                 Debug.WriteLine("UpdateTMEntry: " + (CATUtils.CurrentTimeMillis() - start) + ".ms");
             }
             catch (Exception ex)
             {
-                _logger.LogError("TMEntries.log", "ERROR: UpdateTMEntry, TM name -> " + tmPath + "\n\n" + ex.ToString());
+                _logger.LogError("TMEntries.log", "ERROR: UpdateTMEntry, TM name -> " + tmId + "\n\n" + ex.ToString());
                 throw;
             }
             finally
@@ -1383,22 +1379,22 @@ namespace CAT.TM
         /// <summary>
         /// ImportTmx
         /// </summary>
-        /// <param name="sTMPath"></param>
-        /// <param name="sSourceLangIso639_1"></param>
-        /// <param name="sTargetLangIso639_1"></param>
+        /// <param name="tmId"></param>
+        /// <param name="sourceLangIso639_1"></param>
+        /// <param name="targetLangIso639_1"></param>
         /// <param name="sTMXContent"></param>
         /// <param name="sUser"></param>
         /// <param name="speciality"></param>
         /// <returns></returns>
-        public TMImportResult ImportTmx(string tmPath, string sSourceLangIso639_1, string sTargetLangIso639_1, string sTMXContent,
+        public TMImportResult ImportTmx(string tmId, string sourceLangIso639_1, string targetLangIso639_1, string sTMXContent,
             string sUser, int speciality)
         {
             int cntr = 0;
             try
             {
                 //check the TM
-                if (!TMExists(tmPath))
-                    CreateTM(tmPath);
+                if (!TMExists(tmId))
+                    CreateTM(tmId);
 
                 int itemsAfter = 0;
                 int itemsBefore = 0;
@@ -1411,14 +1407,14 @@ namespace CAT.TM
                 transactionOptions.IsolationLevel = System.Transactions.IsolationLevel.ReadCommitted;
                 transactionOptions.Timeout = TransactionManager.MaximumTimeout;
 
-                var tmWriter = GetTMWriter(tmPath);
-                itemsBefore = itemsAfter = _dataStorage.GetTMEntriesNumber(tmPath);
+                var tmWriter = GetTMWriter(tmId);
+                itemsBefore = itemsAfter = _dataStorage.GetTMEntriesNumber(tmId);
 
                 //the TransactionManager.MaximumTimeout is 10 minutes. We need to use transaction blocks.
                 var swTimeout = new Stopwatch();
                 var from = 0;
-                var srcTwoLetterISO = GetTwoLetterLangCode(sSourceLangIso639_1);
-                var targetTwoLetterISO = GetTwoLetterLangCode(sTargetLangIso639_1);
+                var srcTwoLetterISO = GetTwoLetterLangCode(sourceLangIso639_1);
+                var targetTwoLetterISO = GetTwoLetterLangCode(targetLangIso639_1);
                 string formatStringISO8601 = "yyyyMMdd'T'HHmmss'Z'";
                 while (from < tus.Count)
                 {
@@ -1575,7 +1571,7 @@ namespace CAT.TM
                                 }
                                 catch (Exception ex)
                                 {
-                                    _logger.LogError("TMEntries.log", "ERROR: TM name -> " + tmPath + "\nsource: " + tmEntry.source + "\ntargt: " +
+                                    _logger.LogError("TMEntries.log", "ERROR: TM name -> " + tmId + "\nsource: " + tmEntry.source + "\ntargt: " +
                                         tmEntry.target + "\n\n" + ex.Message);
                                     continue;
                                 }
@@ -1588,7 +1584,7 @@ namespace CAT.TM
 
                                 //insert into SQL server
                                 var extensionData = JsonConvert.SerializeObject(metadataExtension);
-                                var dsResult = _dataStorage.InsertTMEntry(tmPath, source, target, context.ToString(), sUser, tuSpeciality, idTranslation,
+                                var dsResult = _dataStorage.InsertTMEntry(tmId, source, target, context.ToString(), sUser, tuSpeciality, idTranslation,
                                     dateCreated, dateModified, extensionData);
                                 var rowResult = dsResult.Tables[0].Rows[0];
                                 var id = (int)rowResult["idSource"];
@@ -1615,7 +1611,7 @@ namespace CAT.TM
                                 swTimeout.Reset();
                                 tuTransaction.Complete();
                                 tmWriter.Commit();
-                                tmWriter = GetTMWriter(tmPath); //keep alive
+                                tmWriter = GetTMWriter(tmId); //keep alive
                                 from = i + 1;
                                 bCommitted = true;
                                 break;
@@ -1635,12 +1631,12 @@ namespace CAT.TM
                 }
 
                 //shrink the sql database
-                ShrinkTM(tmPath);
-                //_dataStorage.shrinkDatabase(tmPath);
+                ShrinkTM(tmId);
+                //_dataStorage.shrinkDatabase(tmId);
                 //tmWriter.IndexWriter.MaybeMerge();
 
                 //the items after the import
-                itemsAfter = _dataStorage.GetTMEntriesNumber(tmPath);
+                itemsAfter = _dataStorage.GetTMEntriesNumber(tmId);
 
                 var ret = new TMImportResult();
                 ret.allItems = itemsAfter;
@@ -1650,7 +1646,7 @@ namespace CAT.TM
             }
             catch (Exception ex)
             {
-                _logger.LogError("TMEntries.log", "ERROR: TM name -> " + tmPath + "\n\n" + ex.ToString());
+                _logger.LogError("TMEntries.log", "ERROR: TM name -> " + tmId + "\n\n" + ex.ToString());
                 throw;
             }
         }
@@ -1859,23 +1855,23 @@ namespace CAT.TM
         /// </summary>
         /// <param name="sTMName"></param>
         /// <returns></returns>
-        public void ShrinkTM(string tmPath)
+        public void ShrinkTM(string tmId)
         {
             try
             {
                 //shrink the sql data
-                var aPathElements = tmPath.Split('/');
+                var aPathElements = tmId.Split('/');
                 var dbName = aPathElements[0];
                 _dataStorage.ShrinkDatabase(dbName);
 
                 //optimize the lucene index
-                var tmWriter = GetTMWriter(tmPath);
+                var tmWriter = GetTMWriter(tmId);
                 tmWriter.IndexWriter.MaybeMerge();
 
             }
             catch (Exception ex)
             {
-                _logger.LogError("TMEntries.log", "ERROR: shrinkDatabase TM name -> " + tmPath + "\n\n" + ex.ToString());
+                _logger.LogError("TMEntries.log", "ERROR: shrinkDatabase TM name -> " + tmId + "\n\n" + ex.ToString());
                 throw;
             }
         }
@@ -1883,20 +1879,20 @@ namespace CAT.TM
         /// <summary>
         /// ExportTmx
         /// </summary>
-        /// <param name="sTMPath"></param>
+        /// <param name="tmId"></param>
         /// <returns></returns>
-        public string ExportTmx(string tmPath)
+        public string ExportTmx(string tmId)
         {
             try
             {
                 //load the entries
-                var dsEntries = _dataStorage.GetTranslationMemoryData(tmPath);
+                var dsEntries = _dataStorage.GetTranslationMemoryData(tmId);
                 var drEntries = dsEntries.Tables[0].Rows;
-                var tmInfo = GetTMInfo(tmPath, false);
+                var tmInfo = GetTMInfo(tmId, false);
                 var sbTmx = new StringBuilder();
                 sbTmx.Append("<tmx version=\"1.4\">\r\n" + "<header creationtool=\"tm\" segtype=\"sentence\" srclang=\"" + tmInfo.langFrom +
                     "\" datatype=\"unknown\">\r\n");
-                sbTmx.Append("<prop type=\"name\">" + tmPath + "</prop>\r\n</header>\r\n\t");
+                sbTmx.Append("<prop type=\"name\">" + tmId + "</prop>\r\n</header>\r\n\t");
                 var sbTmxBody = new StringBuilder();
                 foreach (DataRow drEntry in drEntries)
                 {
@@ -1942,18 +1938,18 @@ namespace CAT.TM
             }
             catch (Exception ex)
             {
-                _logger.LogError("TMEntries.log", "ERROR: shrinkDatabase TM name -> " + tmPath + "\n\n" + ex.ToString());
+                _logger.LogError("TMEntries.log", "ERROR: shrinkDatabase TM name -> " + tmId + "\n\n" + ex.ToString());
                 throw;
             }
         }
 
         #region Misc.
-        private string GetMetaData(DataRow tmEntry, string tmPath)
+        private string GetMetaData(DataRow tmEntry, string tmId)
         {
             try
             {
                 var metadata = new Dictionary<string, string>();
-                metadata.Add("origin", tmPath);
+                metadata.Add("origin", tmId);
                 metadata.Add("dateCreated", tmEntry["dateCreated"] != DBNull.Value ? ((DateTime)tmEntry["dateCreated"]).ToString("M/d/yyyy h:mm:ss tt") : "N/A");
                 metadata.Add("createdBy", tmEntry["createdBy"] != DBNull.Value ? (string)tmEntry["createdBy"] : "N/A");
                 metadata.Add("dateModified", tmEntry["dateModified"] != DBNull.Value ? ((DateTime)tmEntry["dateModified"]).ToString("M/d/yyyy h:mm:ss tt") : "N/A");

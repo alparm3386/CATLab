@@ -244,37 +244,36 @@ namespace CAT.BusinessServices
             }
         }
 
-        public int DeleteTMEntry(String tmPath, int idEntry)
+        public int DeleteTMEntry(String tmPath, int entryId)
         {
-            //var dbParams = GetDBParams(tmPath);
-            //var connectionString = String.Format(_translationMemoriesConnectionString, dbParams.dbName);
-            //using (SqlConnection sqlConnection = new SqlConnection(connectionString))
-            //{
-            //    try
-            //    {
-            //        var sSql = sqlCommands["DeleteTMEntry"];
-            //        sSql = sSql.Replace("TM_TABLE", dbParams.tmTableName);
-            //        //open connection
-            //        sqlConnection.Open();
-            //        SqlCommand sqlCommand = new SqlCommand();
-            //        sqlCommand.Connection = sqlConnection;
-            //        sqlCommand.CommandText = sSql;
-            //        sqlCommand.CommandType = CommandType.Text;
+            var dbParams = GetDBParams(tmPath);
+            var dbPath = Path.Combine(_tmRepository, dbParams.dbName + "/SQLData/" + dbParams.dbName + ".db");
+            string connectionString = $"Data Source={dbPath};Version=3;";
+            using (var sqlConnection = new SQLiteConnection(connectionString))
+            {
+                try
+                {
+                    var sSql = _sqlCommands["DeleteTMEntry"];
+                    sSql = sSql.Replace("TM_TABLE", dbParams.tmTableName);
+                    //open connection
+                    sqlConnection.Open();
+                    var sqlCommand = new SQLiteCommand();
+                    sqlCommand.Connection = sqlConnection;
+                    sqlCommand.CommandText = sSql;
+                    sqlCommand.CommandType = CommandType.Text;
 
-            //        //set the query params
-            //        sqlCommand.Parameters.Add(new SqlParameter("@id", idEntry));
+                    //set the query params
+                    sqlCommand.Parameters.Add(new SQLiteParameter(":id", entryId));
 
-            //        int exactMatches = Convert.ToInt32(sqlCommand.ExecuteScalar());
-            //        return exactMatches;
-            //    }
-            //    catch (SqlException ex)
-            //    {
-            //        logger.Log("DB Errors.log", "InsertTMEntry: " + ex);
-            //        throw ex;
-            //    }
-            //}
-
-            return 0;
+                    int luceneId = Convert.ToInt32(sqlCommand.ExecuteScalar());
+                    return luceneId;
+                }
+                catch (SQLiteException ex)
+                {
+                    _logger.LogError("InsertTMEntry -> tmId: " + tmPath + " error: " + ex);
+                    throw ex;
+                }
+            }
         }
 
         public DataSet GetSourceIndexData(String tmPath)
