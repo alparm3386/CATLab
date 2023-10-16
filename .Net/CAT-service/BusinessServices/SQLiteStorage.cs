@@ -1,5 +1,8 @@
 ﻿using CAT.BusinessServices;
 using CAT.Okapi.Resources;
+using CAT.Utils;
+using Grpc.Core;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -192,59 +195,53 @@ namespace CAT.BusinessServices
         }
 
         public DataSet InsertTMEntry(String tmPath, TextFragment source, TextFragment target, String context, String user, int speciality,
-            int idTranslation, DateTime dateCreated, DateTime dateModified, String extensionData)
+            int jobId, DateTime dateCreated, DateTime dateModified, String extensionData)
         {
-            //var dbParams = GetDBParams(tmPath);
-            //var connectionString = String.Format(_translationMemoriesConnectionString, dbParams.dbName);
-            //using (SqlConnection sqlConnection = new SqlConnection(connectionString))
-            //{
-            //    try
-            //    {
-            //        var sSql = sqlCommands["InsertTMEntry"];
-            //        sSql = sSql.Replace("TM_TABLE", dbParams.tmTableName);
-            //        //open connection
-            //        sqlConnection.Open();
-            //        SqlCommand sqlCommand = new SqlCommand();
-            //        sqlCommand.Connection = sqlConnection;
-            //        sqlCommand.CommandText = sSql;
-            //        //sqlCommand.CommandText = "InsertTMEntry";
-            //        sqlCommand.CommandType = CommandType.Text;
+            var dbParams = GetDBParams(tmPath);
+            var dbPath = Path.Combine(_tmRepository, dbParams.dbName + "/SQLData/" + dbParams.dbName + ".db");
+            string connectionString = $"Data Source={dbPath};Version=3;";
+            using (var sqlConnection = new SQLiteConnection(connectionString))
+            {
+                try
+                {
+                    var sSql = _sqlCommands["InsertTMEntry"];
+                    sSql = sSql.Replace("[TM_TABLE]", dbParams.tmTableName);
+                    //open connection
+                    sqlConnection.Open();
+                    var sqlCommand = new SQLiteCommand();
+                    sqlCommand.Connection = sqlConnection;
+                    sqlCommand.CommandText = sSql;
+                    //sqlCommand.CommandText = "InsertTMEntry";
+                    sqlCommand.CommandType = CommandType.Text;
 
-            //        //set the query params
-            //        var sourceText = source.GetCodedText();
-            //        var targetText = target.GetCodedText();
-            //        //this trick forces the execution plan reuse
-            //        sqlCommand.Parameters.Add(new SqlParameter("@tmTableName", dbParams.tmTableName));
-            //        sqlCommand.Parameters.Add(new SqlParameter("@source", SqlDbType.NVarChar, 4000));
-            //        sqlCommand.Parameters["@source"].Value = sourceText;
-            //        sqlCommand.Parameters.Add(new SqlParameter("@sourceHash", CATUtils.djb2hash(sourceText)));
-            //        sqlCommand.Parameters.Add(new SqlParameter("@target", SqlDbType.NVarChar, 4000));
-            //        sqlCommand.Parameters["@target"].Value = targetText;
-            //        sqlCommand.Parameters.Add(new SqlParameter("@targetHash", CATUtils.djb2hash(targetText)));
-            //        sqlCommand.Parameters.Add(new SqlParameter("@context", SqlDbType.VarChar, 16));
-            //        sqlCommand.Parameters["@context"].Value = context;
-            //        sqlCommand.Parameters.Add(new SqlParameter("@user", SqlDbType.NVarChar, 100));
-            //        sqlCommand.Parameters["@user"].Value = user == null ? "" : user;
-            //        sqlCommand.Parameters.Add(new SqlParameter("@speciality", speciality));
-            //        sqlCommand.Parameters.Add(new SqlParameter("@idTranslation", idTranslation));
-            //        sqlCommand.Parameters.Add(new SqlParameter("@dateCreated", dateCreated));
-            //        sqlCommand.Parameters.Add(new SqlParameter("@dateModified", dateModified));
-            //        sqlCommand.Parameters.Add(new SqlParameter("@extensionData", extensionData));
+                    //set the query params
+                    var sourceText = source.GetCodedText();
+                    var targetText = target.GetCodedText();
+                    //this trick forces the execution plan reuse
+                    sqlCommand.Parameters.Add(new SQLiteParameter(":source", DbType.String) { Value = sourceText });
+                    sqlCommand.Parameters.Add(new SQLiteParameter(":sourceHash", CATUtils.djb2hash(sourceText)));
+                    sqlCommand.Parameters.Add(new SQLiteParameter(":target", DbType.String) { Value = sourceText });
+                    sqlCommand.Parameters.Add(new SQLiteParameter(":targetHash", CATUtils.djb2hash(targetText)));
+                    sqlCommand.Parameters.Add(new SQLiteParameter(":context", DbType.String) { Value = context });
+                    sqlCommand.Parameters.Add(new SQLiteParameter(":speciality", speciality));
 
-            //        SqlDataAdapter adpt = new SqlDataAdapter(sqlCommand);
-            //        DataSet ds = new DataSet();
-            //        adpt.Fill(ds);
+                    //the metadata
+                    var metadata = JsonConvert.SerializeObject(new { jobId, createdBy = user, dateCreated = DateTime.UtcNow, modifiedBy = user, 
+                        dateModified = DateTime.UtcNow });
+                    sqlCommand.Parameters.Add(new SQLiteParameter(":metadata", metadata));
 
-            //        return ds;
-            //    }
-            //    catch (SqlException ex)
-            //    {
-            //        logger.Log("DB Errors.log", "InsertTMEntry: " + ex);
-            //        throw ex;
-            //    }
-            //}
+                    var adpt = new SQLiteDataAdapter(sqlCommand);
+                    DataSet ds = new DataSet();
+                    adpt.Fill(ds);
 
-            return null!;
+                    return ds;
+                }
+                catch (SQLiteException ex)
+                {
+                    _logger.LogError("InsertTMEntry -> tmPath: " + tmPath + " error: " + ex);
+                    throw ex;
+                }
+            }
         }
 
         public int DeleteTMEntry(String tmPath, int idEntry)

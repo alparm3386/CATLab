@@ -28,7 +28,7 @@ namespace CAT
             {
                 //var request = new TMExistsRequest { TmId = "1/_1_en_fr_marketing" };
                 //var response = await client.TMExistsAsync(request);
-                //var request = new CreateTMRequest { TmId = "1/_1_en_fr_marketing" };
+                //var request = new CreateTMRequest { TmId = "1/_1_en_fr" };
                 //var response = await client.CreateTMAsync(request);
                 //var request = new GetTMInfoRequest { Id = "1/_1_en_fr_marketing", FullInfo = true };
                 //var response = await client.GetTMInfoAsync(request);
@@ -59,7 +59,7 @@ namespace CAT
                 //request.TMAssignments.Add(tmAssignment);
                 //var response = await client.GetExactMatchAsync(request);
 
-                var request = new AddTMEntriesRequest { TmId = "1/_1_en_fr_marketing" };
+                var request = new AddTMEntriesRequest { TmId = "1/_1_en_fr" };
                 var tmEntry = new TMEntry()
                 {
                     Source = "this is a test",
