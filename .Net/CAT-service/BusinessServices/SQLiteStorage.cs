@@ -220,7 +220,7 @@ namespace CAT.BusinessServices
                     //this trick forces the execution plan reuse
                     sqlCommand.Parameters.Add(new SQLiteParameter(":source", DbType.String) { Value = sourceText });
                     sqlCommand.Parameters.Add(new SQLiteParameter(":sourceHash", CATUtils.djb2hash(sourceText)));
-                    sqlCommand.Parameters.Add(new SQLiteParameter(":target", DbType.String) { Value = sourceText });
+                    sqlCommand.Parameters.Add(new SQLiteParameter(":target", DbType.String) { Value = targetText });
                     sqlCommand.Parameters.Add(new SQLiteParameter(":targetHash", CATUtils.djb2hash(targetText)));
                     sqlCommand.Parameters.Add(new SQLiteParameter(":context", DbType.String) { Value = context });
                     sqlCommand.Parameters.Add(new SQLiteParameter(":speciality", speciality));
