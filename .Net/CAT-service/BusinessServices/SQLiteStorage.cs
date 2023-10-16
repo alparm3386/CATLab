@@ -218,6 +218,7 @@ namespace CAT.BusinessServices
                     var sourceText = source.GetCodedText();
                     var targetText = target.GetCodedText();
                     //this trick forces the execution plan reuse
+                    sqlCommand.Parameters.Add(new SQLiteParameter(":idSource", DbType.String) { Value = sourceText });
                     sqlCommand.Parameters.Add(new SQLiteParameter(":source", DbType.String) { Value = sourceText });
                     sqlCommand.Parameters.Add(new SQLiteParameter(":sourceHash", CATUtils.djb2hash(sourceText)));
                     sqlCommand.Parameters.Add(new SQLiteParameter(":target", DbType.String) { Value = sourceText });
