@@ -614,19 +614,17 @@ namespace CAT.BusinessServices
                         sqlCommand.Connection = sqlConnection;
                         sqlCommand.CommandText = @"
                             INSERT INTO termbaseEntries (
-                                idTermbase,
                                 dateCreated,
                                 dateModified,
                                 comment,
                                 createdBy,
                                 modifiedBy
                             ) VALUES (
-                                @idTermbase,
-                                @date,
-                                @date,
-                                @comment,
-                                @user,
-                                @user
+                                :date,
+                                :date,
+                                :comment,
+                                :user,
+                                :user
                             );";
                         sqlCommand.CommandType = CommandType.Text;
 
@@ -659,7 +657,7 @@ namespace CAT.BusinessServices
                     using (var sqlCommand = new SQLiteCommand(sqlConnection))
                     {
                         sqlCommand.Connection = sqlConnection;
-                        sqlCommand.CommandText = "SELECT * from Termbases WHERE tbType = @tbType and idType=:idType";
+                        sqlCommand.CommandText = "SELECT * from termbases WHERE tbType = :tbType and idType=:idType";
                         sqlCommand.CommandType = CommandType.Text;
 
                         //set the query params
