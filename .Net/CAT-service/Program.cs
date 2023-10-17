@@ -6,6 +6,7 @@ using CAT.Configuration;
 using CAT.GRPCServices;
 using CAT.Infrastructure.Logging;
 using CAT.Services;
+using CAT.TB;
 using CAT.TM;
 using System.Reflection;
 
@@ -26,6 +27,7 @@ builder.Services.AddSingleton<IDataStorage, SQLiteStorage>();
 builder.Services.AddSingleton<IOkapiConnector, OkapiConnector>();
 builder.Services.AddSingleton<IOkapiService, OkapiService>();
 builder.Services.AddSingleton<ITMService, TMService>();
+builder.Services.AddSingleton<ITBService, TBService>();
 builder.Services.AddTransient<IEmailService, SmtpEmailService>();
 
 //the logger

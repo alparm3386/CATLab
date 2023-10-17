@@ -199,7 +199,7 @@ namespace CAT.BusinessServices
         {
             var dbParams = GetDBParams(tmPath);
             var dbPath = Path.Combine(_tmRepository, dbParams.dbName + "/SQLData/" + dbParams.dbName + ".db");
-            string connectionString = $"Data Source={dbPath};Version=3;";
+            string connectionString = $"Data Source={dbPath};Version=3;Pooling=True;";
             using (var sqlConnection = new SQLiteConnection(connectionString))
             {
                 try

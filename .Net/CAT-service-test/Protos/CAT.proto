@@ -21,6 +21,8 @@ service CAT {
     rpc AddTMEntries(AddTMEntriesRequest) returns (AddTMEntriesResponse);
     rpc DeleteTMEntry(DeleteTMEntryRequest) returns (EmptyResponse);
     rpc Concordance(ConcordanceRequest) returns (ConcordanceResponse);
+    rpc ExportTmx(ExportTmxRequest) returns (ExportTmxResponse);
+    rpc ImportTmx(ImportTmxRequest) returns (ImportTmxResponse);
 }
 
 message EmptyResponse {
@@ -206,4 +208,32 @@ message ConcordanceRequest {
 
 message ConcordanceResponse {
     repeated TMEntry tmEntries = 1;
+}
+
+//ExportTmx
+message ExportTmxRequest {
+    string tmId = 1;
+}
+
+message ExportTmxResponse {
+    string tmxContent = 1;
+}
+
+//ImportTmx
+message ImportTmxRequest {
+    string tmId = 1;
+    string sourceLangIso639_1 = 2;
+    string targetLangIso639_1 = 3;
+    string tmxContent = 4;
+    string user = 5;
+    int32 speciality = 6; 
+}
+
+message ImportTmxResponse {
+    TMImportResult tmxImportResult = 1;
+}
+
+message TMImportResult {
+    int32 allItems = 1;
+    int32 importedItems = 2;
 }

@@ -4,6 +4,7 @@ using Proto;
 using CAT.TM;
 using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
+using CAT.TB;
 
 namespace CAT.GRPCServices
 {
@@ -11,15 +12,18 @@ namespace CAT.GRPCServices
     {
         private readonly ILogger<CATService> _logger;
         private readonly ITMService _tmService;
+        private readonly ITBService _tbService;
         private readonly IMapper _mapper;
 
-        public CATService(ILogger<CATService> logger, ITMService tmService, IMapper mapper)
+        public CATService(ILogger<CATService> logger, ITMService tmService, ITBService tbService, IMapper mapper)
         {
             _logger = logger;
             _tmService = tmService;
+            _tbService = tbService;
             _mapper = mapper;
         }
 
+        #region Translation memory
         public override Task<TMExistsResponse> TMExists(TMExistsRequest request, ServerCallContext context)
         {
             var result = _tmService.TMExists(request.TmId);
@@ -38,12 +42,15 @@ namespace CAT.GRPCServices
 
             var response = new GetTMInfoResponse()
             {
-                TmId = tmInfo.tmId,
-                LangFrom = tmInfo.langFrom,
-                LangTo = tmInfo.langTo,
-                LastAccess = Timestamp.FromDateTime(tmInfo.lastAccess.Kind != DateTimeKind.Utc ? tmInfo.lastAccess.ToUniversalTime() : tmInfo.lastAccess),
-                TmType = (TMType)tmInfo.tmType,
-                EntryNumber = tmInfo.entryNumber,
+                TmInfo = new Proto.TMInfo()
+                {
+                    TmId = tmInfo.tmId,
+                    LangFrom = tmInfo.langFrom,
+                    LangTo = tmInfo.langTo,
+                    LastAccess = Timestamp.FromDateTime(tmInfo.lastAccess.Kind != DateTimeKind.Utc ? tmInfo.lastAccess.ToUniversalTime() : tmInfo.lastAccess),
+                    TmType = (TMType)tmInfo.tmType,
+                    EntryNumber = tmInfo.entryNumber
+                }
             };
 
             return Task.FromResult(response);
@@ -233,5 +240,44 @@ namespace CAT.GRPCServices
 
             return Task.FromResult(response);
         }
+
+        public override Task<ExportTmxResponse> ExportTmx(ExportTmxRequest request, ServerCallContext context)
+        {
+            var tmxContent = _tmService.ExportTmx(request.TmId);
+            var response = new ExportTmxResponse() { TmxContent = tmxContent };
+
+            return Task.FromResult(response);
+        }
+
+        public override Task<ImportTmxResponse> ImportTmx(ImportTmxRequest request, ServerCallContext context)
+        {
+            var importResult = _tmService.ImportTmx(request.TmId, request.SourceLangIso6391, request.TargetLangIso6391,
+                request.TmxContent, request.User, request.Speciality);
+            var response = new ImportTmxResponse();
+            response.TmxImportResult.AllItems = importResult.allItems;
+            response.TmxImportResult.ImportedItems = importResult.importedItems;
+
+            return Task.FromResult(response);
+        }
+        #endregion Translation memory
+
+        #region Termbase
+        public override Task<CreateTBResponse> CreateTB(CreateTBRequest request, ServerCallContext context)
+        {
+            var tbInfo = _tbService.CreateTB((CAT.Enums.TBType)request.TbType, request.IdType, request.LangCodes.ToArray());
+            var result = new CreateTBResponse()
+            {
+                TbInfo = new TBInfo()
+                {
+                    Id = tbInfo.id,
+                    Metadata = tbInfo.metadata
+                }
+            };
+            result.TbInfo.Languages.AddRange(tbInfo.languages);
+
+            return Task.FromResult(result);
+        }
+
+        #endregion Termbase
     }
 }

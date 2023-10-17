@@ -72,9 +72,13 @@ namespace CAT
                 //var request = new DeleteTMEntryRequest { TmId = "1/_1_en_fr", EntryId = 1 };
                 //var response = await client.DeleteTMEntryAsync(request);
 
-                var request = new ConcordanceRequest { SourceText = "test", TargetText = "", CaseSensitive = false, MaxHits = 10 };
-                request.TmIds.Add("1/_1_en_fr");
-                var response = await client.ConcordanceAsync(request);
+                //var request = new ConcordanceRequest { SourceText = "test", TargetText = "", CaseSensitive = false, MaxHits = 10 };
+                //request.TmIds.Add("1/_1_en_fr");
+                //var response = await client.ConcordanceAsync(request);
+                
+                var request = new ImportTmxRequest { TmId = "1/_1_en_fr", SourceLangIso6391 = "en", TargetLangIso6391 = "fr", 
+                    TmxContent = File.ReadAllText("C:\\Alpar\\test fr.tmx"), User = "2104", Speciality = 1 };
+                var response = await client.ImportTmxAsync(request);
 
                 //Assert.True(response);  // Or whatever your expected result is
             }

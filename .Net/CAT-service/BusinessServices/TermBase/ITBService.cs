@@ -5,9 +5,9 @@ namespace CAT.TB
 {
     public interface ITBService
     {
+        TBInfo CreateTB(TBType tbType, int idType, string[] langCodes);
         void AddLanguageToTB(int idTermbase, string langCode);
         int AddOrUpdateTBEntry(int idTermbase, TBEntry tbEntry);
-        TBInfo CreateTB(TBType tbType, int idType, string[] langCodes);
         void DeleteTBEntry(int idTermbase, int idEntry);
         TBInfo GetTBInfo(TBType tbType, int idType);
         TBInfo GetTBInfoById(int idTermbase);
