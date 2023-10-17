@@ -611,31 +611,38 @@ namespace CAT.BusinessServices
                     sqlConnection.Open();
                     using (var sqlCommand = new SQLiteCommand(sqlConnection))
                     {
+
                         sqlCommand.Connection = sqlConnection;
-                        sqlCommand.CommandText = @"
-                            INSERT INTO termbaseEntries (
-                                dateCreated,
-                                dateModified,
-                                comment,
-                                createdBy,
-                                modifiedBy
-                            ) VALUES (
-                                :date,
-                                :date,
-                                :comment,
-                                :user,
-                                :user
-                            );";
+                        sqlCommand.CommandText = "SELECT id FROM termbases WHERE tbType = :tbType AND IdType = :IdType;";
                         sqlCommand.CommandType = CommandType.Text;
+                        var result = sqlCommand.ExecuteScalar();
+                        var termbaseId = -1;
+                        if (result != null && result != DBNull.Value)
+                            termbaseId = Convert.ToInt32(result);
 
-                        //set the query params
-                        sqlCommand.Parameters.Add(new SQLiteParameter(":tbType", tbType));
-                        sqlCommand.Parameters.Add(new SQLiteParameter(":IdType", idType));
-                        sqlCommand.Parameters.Add(new SQLiteParameter(":languages", languages));
-                        sqlCommand.Parameters.Add(new SQLiteParameter() { ParameterName = ":id", DbType = DbType.Int32, Direction = ParameterDirection.Output });
+                        if (termbaseId > 0)
+                        {
+                            sqlCommand.CommandText = @"UPDATE termbases 
+                                SET dateUpdated = CURRENT_TIMESTAMP 
+                                WHERE tbType = :tbType AND IdType = :idType;";
 
-                        sqlCommand.ExecuteNonQuery();
-                        return (int)sqlConnection.LastInsertRowId;
+                            sqlCommand.Parameters.Add(new SQLiteParameter(":tbType", tbType));
+                            sqlCommand.Parameters.Add(new SQLiteParameter(":idType", idType));
+                            sqlCommand.ExecuteNonQuery();
+
+                            return termbaseId;
+                        }
+                        else
+                        {
+                            sqlCommand.CommandText = @"INSERT INTO termbases (dateCreated, dateUpdated, languages, tbType, IdType)
+                                VALUES (CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, :languages, :tbType, :idType);";
+
+                            sqlCommand.Parameters.Add(new SQLiteParameter(":tbType", tbType));
+                            sqlCommand.Parameters.Add(new SQLiteParameter(":idType", idType));
+                            sqlCommand.Parameters.Add(new SQLiteParameter(":languages", languages));
+                            sqlCommand.ExecuteNonQuery();
+                            return (int)sqlConnection.LastInsertRowId;
+                        }
                     }
                 }
                 catch (Exception e)
