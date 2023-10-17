@@ -8,7 +8,7 @@ package Proto;
 
 // The greeting service definition.
 service CAT {
-    //TM ervice
+    //TM service
 	rpc TMExists (TMExistsRequest) returns (TMExistsResponse);
 	rpc CreateTM (CreateTMRequest) returns (EmptyResponse);
 	rpc GetTMInfo(GetTMInfoRequest) returns (GetTMInfoResponse);
@@ -23,11 +23,17 @@ service CAT {
     rpc Concordance(ConcordanceRequest) returns (ConcordanceResponse);
     rpc ExportTmx(ExportTmxRequest) returns (ExportTmxResponse);
     rpc ImportTmx(ImportTmxRequest) returns (ImportTmxResponse);
+
+    //TB service
+	rpc CreateTB (CreateTBRequest) returns (CreateTBResponse);
+
+    //Okapi service
 }
 
 message EmptyResponse {
 }
 
+/*Translation memory*/
 //TMExists
 message TMExistsRequest {
   string tmId = 1;
@@ -55,13 +61,9 @@ enum TMType {
     PROFILE_PRIMARY = 3;
     PROFILE_SECONDARY = 4;
 }
+
 message GetTMInfoResponse {
-    string tmId = 1;
-    string langFrom = 2;
-    string langTo = 3;
-    int32 entryNumber = 4;
-    TMType tmType = 5;
-    google.protobuf.Timestamp lastAccess = 6; 
+    TMInfo tmInfo = 1; 
 }
 
 //GetTMList
@@ -237,3 +239,31 @@ message TMImportResult {
     int32 allItems = 1;
     int32 importedItems = 2;
 }
+
+/*Termbase*/
+message CreateTBRequest {
+    TBType tbType = 1;
+    int32 idType = 2;
+    repeated string langCodes = 3;
+}
+
+message CreateTBResponse {
+    TBInfo tbInfo = 1;
+}
+
+enum TBType {
+    CORPORATE = 0;
+    PROFILE = 1;
+    USER = 2;
+}
+
+message TBInfo {
+    int32 id = 1;
+    repeated string languages= 2; //ISO 639 1
+    string metadata = 3;
+}
+
+/*Okapi*/
+
+/*Misc*/
+
