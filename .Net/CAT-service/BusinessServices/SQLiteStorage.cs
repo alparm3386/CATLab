@@ -84,7 +84,7 @@ namespace CAT.BusinessServices
                 if (!Directory.Exists(dbFolder))
                     Directory.CreateDirectory(dbFolder);
                 var dbPath = Path.Combine(dbFolder, dbParams.dbName + ".db");
-                string connectionString = $"Data Source={dbPath};Version=3;";
+                string connectionString = $"Data Source={dbPath};Version=3;Pooling=True;";
                 //create the entries table
                 using (var sqlConnection = new SQLiteConnection(connectionString))
                 {
@@ -121,7 +121,7 @@ namespace CAT.BusinessServices
             if (!File.Exists(dbPath))
                 return false;
 
-            string connectionString = $"Data Source={dbPath};Version=3;";
+            string connectionString = $"Data Source={dbPath};Version=3;Pooling=True;";
             using (var sqlConnection = new SQLiteConnection(connectionString))
             {
                 sqlConnection.Open(); //it will create the database if it doesn't exists
@@ -140,7 +140,7 @@ namespace CAT.BusinessServices
             var dbParams = GetDBParams(tmPath);
             var dbPath = Path.Combine(_tmRepository, dbParams.dbName + "/SQLData/" + dbParams.dbName + ".db");
 
-            string connectionString = $"Data Source={dbPath};Version=3;";
+            string connectionString = $"Data Source={dbPath};Version=3;Pooling=True;";
             using (var sqlConnection = new SQLiteConnection(connectionString))
             {
                 try
@@ -165,7 +165,7 @@ namespace CAT.BusinessServices
         public DataSet GetTMListFromDatabase(string dbName)
         {
             var dbPath = Path.Combine(_tmRepository, dbName + "/SQLData/" + dbName + ".db");
-            string connectionString = $"Data Source={dbPath};Version=3;";
+            string connectionString = $"Data Source={dbPath};Version=3;Pooling=True;";
             using (var sqlConnection = new SQLiteConnection(connectionString))
             {
                 try
@@ -248,7 +248,7 @@ namespace CAT.BusinessServices
         {
             var dbParams = GetDBParams(tmPath);
             var dbPath = Path.Combine(_tmRepository, dbParams.dbName + "/SQLData/" + dbParams.dbName + ".db");
-            string connectionString = $"Data Source={dbPath};Version=3;";
+            string connectionString = $"Data Source={dbPath};Version=3;Pooling=True;";
             using (var sqlConnection = new SQLiteConnection(connectionString))
             {
                 try
@@ -280,7 +280,7 @@ namespace CAT.BusinessServices
         {
             var dbParams = GetDBParams(tmPath);
             var dbPath = Path.Combine(_tmRepository, dbParams.dbName + "/SQLData/" + dbParams.dbName + ".db");
-            string connectionString = $"Data Source={dbPath};Version=3;";
+            string connectionString = $"Data Source={dbPath};Version=3;Pooling=True;";
             using (var sqlConnection = new SQLiteConnection(connectionString))
             {
                 try
@@ -596,70 +596,64 @@ namespace CAT.BusinessServices
         #region term base
         public int CreateTB(int tbType, int IdType, String[] aLanguages)
         {
-            //String sLanguages = String.Join(",", aLanguages);
-            //using (SqlConnection sqlConnection = new SqlConnection(termbasesConnectionString))
-            //{
-            //    try
-            //    {
-            //        //open connection
-            //        sqlConnection.Open();
-            //        SqlCommand sqlCommand = new SqlCommand();
-            //        sqlCommand.Connection = sqlConnection;
-            //        sqlCommand.CommandText = "Insert_Termbase";
-            //        sqlCommand.CommandType = CommandType.StoredProcedure;
+            String sLanguages = String.Join(",", aLanguages);
+            using (var sqlConnection = new SQLiteConnection(_termbasesConnectionString))
+            {
+                try
+                {
+                    //open connection
+                    sqlConnection.Open();
+                    var sqlCommand = new SQLiteCommand();
+                    sqlCommand.Connection = sqlConnection;
+                    sqlCommand.CommandText = "Insert_Termbase";
+                    sqlCommand.CommandType = CommandType.StoredProcedure;
 
-            //        //set the query params
-            //        sqlCommand.Parameters.Add(new SqlParameter("@tbType", tbType));
-            //        sqlCommand.Parameters.Add(new SqlParameter("@IdType", IdType));
-            //        sqlCommand.Parameters.Add(new SqlParameter("@languages", sLanguages));
-            //        sqlCommand.Parameters.Add(new SqlParameter() { ParameterName = "@id", DbType = DbType.Int32, Direction = ParameterDirection.Output });
+                    //set the query params
+                    sqlCommand.Parameters.Add(new SQLiteParameter(":tbType", tbType));
+                    sqlCommand.Parameters.Add(new SQLiteParameter(":IdType", IdType));
+                    sqlCommand.Parameters.Add(new SQLiteParameter(":languages", sLanguages));
+                    sqlCommand.Parameters.Add(new SQLiteParameter() { ParameterName = "@id", DbType = DbType.Int32, Direction = ParameterDirection.Output });
 
-            //        sqlCommand.ExecuteNonQuery();
-            //        return (int)sqlCommand.Parameters["@id"].Value;
-            //    }
-            //    catch (Exception e)
-            //    {
-            //        logger.Log("DB Errors.log", "CreateTB: " + e + "\ntbType: " + tbType +
-            //            "\nIdType: " + IdType);
-            //        EmailHelper.SendDebugEmail("ERROR: " + e, "CreateTB", "alpar.meszaros@toppandigital.com");
-            //        throw e;
-            //    }
-            //}
-
-            return 0;
+                    sqlCommand.ExecuteNonQuery();
+                    return (int)sqlCommand.Parameters[":id"].Value;
+                }
+                catch (Exception e)
+                {
+                    _logger.LogError("CreateTB -> tbType: " + tbType + "IdType: " + IdType + " error: " + e);
+                    throw;
+                }
+            }
         }
 
         public DataSet GetTBInfo(int tbType, int idType)
         {
-            //using (SqlConnection sqlConnection = new SqlConnection(termbasesConnectionString))
-            //{
-            //    try
-            //    {
-            //        //open connection
-            //        sqlConnection.Open();
-            //        SqlCommand sqlCommand = new SqlCommand();
-            //        sqlCommand.Connection = sqlConnection;
-            //        sqlCommand.CommandText = "SELECT * from Termbases WHERE tbType = @tbType and idType=@idType";
-            //        sqlCommand.CommandType = CommandType.Text;
+            using (var sqlConnection = new SQLiteConnection(_termbasesConnectionString))
+            {
+                try
+                {
+                    //open connection
+                    sqlConnection.Open();
+                    var sqlCommand = new SQLiteCommand();
+                    sqlCommand.Connection = sqlConnection;
+                    sqlCommand.CommandText = "SELECT * from Termbases WHERE tbType = @tbType and idType=@idType";
+                    sqlCommand.CommandType = CommandType.Text;
 
-            //        //set the query params
-            //        sqlCommand.Parameters.Add(new SqlParameter("@tbType", tbType));
-            //        sqlCommand.Parameters.Add(new SqlParameter("@idType", idType));
+                    //set the query params
+                    sqlCommand.Parameters.Add(new SQLiteParameter(":tbType", tbType));
+                    sqlCommand.Parameters.Add(new SQLiteParameter(":idType", idType));
 
-            //        SqlDataAdapter adpt = new SqlDataAdapter(sqlCommand);
-            //        DataSet ds = new DataSet();
-            //        adpt.Fill(ds);
+                    var adpt = new SQLiteDataAdapter(sqlCommand);
+                    DataSet ds = new DataSet();
+                    adpt.Fill(ds);
 
-            //        return ds;
-            //    }
-            //    catch (SqlException e)
-            //    {
-            //        logger.Log("DB Errors.log", "GetTBInfo: " + e);
-            //        throw e;
-            //    }
-            //}
-
-            return null!;
+                    return ds;
+                }
+                catch (SQLiteException e)
+                {
+                    _logger.LogError("CreateTB -> tbType: " + tbType + "IdType: " + IdType + " error: " + e);
+                    throw;
+                }
+            }
         }
 
         public DataSet GetTBInfoById(int idTermbase)
