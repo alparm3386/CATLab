@@ -156,7 +156,7 @@ namespace CAT.BusinessServices
                 }
                 catch (SQLiteException ex)
                 {
-                    _logger.LogError("GetTMEntriesNumber -> tmPath: " + tmPath  + " error: " + ex);
+                    _logger.LogError("GetTMEntriesNumber -> tmPath: " + tmPath + " error: " + ex);
                     throw;
                 }
             }
@@ -188,7 +188,7 @@ namespace CAT.BusinessServices
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogError("GetTMListFromDatabase -> dbName " +dbName + " error: "+ ex);
+                    _logger.LogError("GetTMListFromDatabase -> dbName " + dbName + " error: " + ex);
                     throw;
                 }
             }
@@ -226,8 +226,14 @@ namespace CAT.BusinessServices
                     sqlCommand.Parameters.Add(new SQLiteParameter(":speciality", speciality));
 
                     //the metadata
-                    var metadata = JsonConvert.SerializeObject(new { jobId, createdBy = user, dateCreated = DateTime.UtcNow, modifiedBy = user, 
-                        dateModified = DateTime.UtcNow });
+                    var metadata = JsonConvert.SerializeObject(new
+                    {
+                        jobId,
+                        createdBy = user,
+                        dateCreated = DateTime.UtcNow,
+                        modifiedBy = user,
+                        dateModified = DateTime.UtcNow
+                    });
                     sqlCommand.Parameters.Add(new SQLiteParameter(":metadata", metadata));
 
                     var adpt = new SQLiteDataAdapter(sqlCommand);
@@ -594,32 +600,49 @@ namespace CAT.BusinessServices
         #endregion
 
         #region term base
-        public int CreateTB(int tbType, int IdType, String[] aLanguages)
+        public int CreateTB(int tbType, int idType, String[] aLanguages)
         {
-            String sLanguages = String.Join(",", aLanguages);
+            String languages = String.Join(",", aLanguages);
             using (var sqlConnection = new SQLiteConnection(_termbasesConnectionString))
             {
                 try
                 {
                     //open connection
                     sqlConnection.Open();
-                    var sqlCommand = new SQLiteCommand();
-                    sqlCommand.Connection = sqlConnection;
-                    sqlCommand.CommandText = "Insert_Termbase";
-                    sqlCommand.CommandType = CommandType.StoredProcedure;
+                    using (var sqlCommand = new SQLiteCommand(sqlConnection))
+                    {
+                        sqlCommand.Connection = sqlConnection;
+                        sqlCommand.CommandText = @"
+                            INSERT INTO termbaseEntries (
+                                idTermbase,
+                                dateCreated,
+                                dateModified,
+                                comment,
+                                createdBy,
+                                modifiedBy
+                            ) VALUES (
+                                @idTermbase,
+                                @date,
+                                @date,
+                                @comment,
+                                @user,
+                                @user
+                            );";
+                        sqlCommand.CommandType = CommandType.Text;
 
-                    //set the query params
-                    sqlCommand.Parameters.Add(new SQLiteParameter(":tbType", tbType));
-                    sqlCommand.Parameters.Add(new SQLiteParameter(":IdType", IdType));
-                    sqlCommand.Parameters.Add(new SQLiteParameter(":languages", sLanguages));
-                    sqlCommand.Parameters.Add(new SQLiteParameter() { ParameterName = "@id", DbType = DbType.Int32, Direction = ParameterDirection.Output });
+                        //set the query params
+                        sqlCommand.Parameters.Add(new SQLiteParameter(":tbType", tbType));
+                        sqlCommand.Parameters.Add(new SQLiteParameter(":IdType", idType));
+                        sqlCommand.Parameters.Add(new SQLiteParameter(":languages", languages));
+                        sqlCommand.Parameters.Add(new SQLiteParameter() { ParameterName = ":id", DbType = DbType.Int32, Direction = ParameterDirection.Output });
 
-                    sqlCommand.ExecuteNonQuery();
-                    return (int)sqlCommand.Parameters[":id"].Value;
+                        sqlCommand.ExecuteNonQuery();
+                        return (int)sqlConnection.LastInsertRowId;
+                    }
                 }
                 catch (Exception e)
                 {
-                    _logger.LogError("CreateTB -> tbType: " + tbType + "IdType: " + IdType + " error: " + e);
+                    _logger.LogError("CreateTB -> tbType: " + tbType + "idType: " + idType + " error: " + e);
                     throw;
                 }
             }
@@ -633,24 +656,26 @@ namespace CAT.BusinessServices
                 {
                     //open connection
                     sqlConnection.Open();
-                    var sqlCommand = new SQLiteCommand();
-                    sqlCommand.Connection = sqlConnection;
-                    sqlCommand.CommandText = "SELECT * from Termbases WHERE tbType = @tbType and idType=@idType";
-                    sqlCommand.CommandType = CommandType.Text;
+                    using (var sqlCommand = new SQLiteCommand(sqlConnection))
+                    {
+                        sqlCommand.Connection = sqlConnection;
+                        sqlCommand.CommandText = "SELECT * from Termbases WHERE tbType = @tbType and idType=:idType";
+                        sqlCommand.CommandType = CommandType.Text;
 
-                    //set the query params
-                    sqlCommand.Parameters.Add(new SQLiteParameter(":tbType", tbType));
-                    sqlCommand.Parameters.Add(new SQLiteParameter(":idType", idType));
+                        //set the query params
+                        sqlCommand.Parameters.Add(new SQLiteParameter(":tbType", tbType));
+                        sqlCommand.Parameters.Add(new SQLiteParameter(":idType", idType));
 
-                    var adpt = new SQLiteDataAdapter(sqlCommand);
-                    DataSet ds = new DataSet();
-                    adpt.Fill(ds);
+                        var adpt = new SQLiteDataAdapter(sqlCommand);
+                        DataSet ds = new DataSet();
+                        adpt.Fill(ds);
 
-                    return ds;
+                        return ds;
+                    }
                 }
                 catch (SQLiteException e)
                 {
-                    _logger.LogError("CreateTB -> tbType: " + tbType + "IdType: " + IdType + " error: " + e);
+                    _logger.LogError("CreateTB -> tbType: " + tbType + "IdType: " + idType + " error: " + e);
                     throw;
                 }
             }
