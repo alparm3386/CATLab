@@ -80,10 +80,14 @@ namespace CAT
                 //    TmxContent = File.ReadAllText("C:\\Alpar\\test fr.tmx"), User = "2104", Speciality = 1 };
                 //var response = await client.ImportTmxAsync(request);
 
-                var request = new CreateTBRequest { TbType = TBType.Profile, IdType = 1 };
-                request.LangCodes.Add(new string[] { "eng", "fre", "ger" });
-                var response = await client.CreateTBAsync(request);
+                //var request = new CreateTBRequest { TbType = TBType.Profile, IdType = 1 };
+                //request.LangCodes.Add(new string[] { "eng", "fre", "ger" });
+                //var response = await client.CreateTBAsync(request);
 
+                var request = new GetTBInfoRequest { TbType = TBType.Profile, IdType = 1 };
+                var response = await client.GetTBInfoAsync(request);
+                var request2 = new GetTBInfoByIdRequest { TermbaseId = 1 };
+                var response2 = await client.GetTBInfoByIdAsync(request2);
 
                 //Assert.True(response);  // Or whatever your expected result is
             }

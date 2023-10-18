@@ -26,6 +26,8 @@ service CAT {
 
     //TB service
 	rpc CreateTB (CreateTBRequest) returns (CreateTBResponse);
+	rpc GetTBInfo (GetTBInfoRequest) returns (GetTBInfoResponse);
+	rpc GetTBInfoById (GetTBInfoByIdRequest) returns (GetTBInfoByIdResponse);
 
     //Okapi service
 }
@@ -261,6 +263,25 @@ message TBInfo {
     int32 id = 1;
     repeated string languages= 2; //ISO 639 1
     string metadata = 3;
+}
+
+//GetTBInfo
+message GetTBInfoRequest {
+    TBType tbType = 1;
+    int32 idType = 2;
+}
+
+message GetTBInfoResponse {
+    TBInfo tbInfo = 1;
+}
+
+//GetTBInfoByIdRequest
+message GetTBInfoByIdRequest {
+    int32 termbaseId = 1;
+}
+
+message GetTBInfoByIdResponse {
+    TBInfo tbInfo = 1;
 }
 
 /*Okapi*/

@@ -35,6 +35,38 @@ namespace CAT.TB
         }
 
         /// <summary>
+        /// CreateTB
+        /// </summary>
+        /// <param name="tbType"></param>
+        /// <param name="idType"></param>
+        /// <param name="langCodes"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
+        public TBInfo CreateTB(TBType tbType, int idType, string[] langCodes)
+        {
+            langCodes = Array.ConvertAll(langCodes, lang => lang.ToLower());
+            //check the languages
+            if (!ValidateLanguages(langCodes))
+                throw new Exception("Invalid language(s).");
+            var tbInfo = GetTBInfo(tbType, idType);
+            if (tbInfo != null)
+            {
+                //update the languages
+                var tbLanguages = new HashSet<String>(tbInfo.languages);
+                tbLanguages.UnionWith(langCodes);
+
+                _dataStorage.UpdateLanguages(tbInfo.id, tbLanguages.ToArray());
+                tbInfo.languages = tbLanguages.ToArray();
+
+                return tbInfo;
+            }
+            var id = _dataStorage.CreateTB((int)tbType, idType, langCodes);
+            tbInfo = new TBInfo() { id = id, languages = langCodes, metadata = "" };
+
+            return tbInfo;
+        }
+
+        /// <summary>
         /// GetTBInfo
         /// </summary>
         /// <param name="tbType"></param>
@@ -49,7 +81,7 @@ namespace CAT.TB
                 return null!;
 
             var tbRow = dsTermbase?.Tables[0]?.Rows[0];
-            tbInfo.id = (int)tbRow!["id"];
+            tbInfo.id = (int)(long)tbRow!["id"];
             tbInfo.languages = tbRow["languages"].ToString()!.Split(',');
 
             //the metadata
@@ -91,30 +123,6 @@ namespace CAT.TB
                 { "dateUpdated", tbRow["dateUpdated"].ToString()! }
             };
             tbInfo.metadata = JsonConvert.SerializeObject(metadata);
-
-            return tbInfo;
-        }
-
-        public TBInfo CreateTB(TBType tbType, int idType, string[] langCodes)
-        {
-            langCodes = Array.ConvertAll(langCodes, lang => lang.ToLower());
-            //check the languages
-            if (!ValidateLanguages(langCodes))
-                throw new Exception("Invalid language(s).");
-            var tbInfo = GetTBInfo(tbType, idType);
-            if (tbInfo != null)
-            {
-                //update the languages
-                var tbLanguages = new HashSet<String>(tbInfo.languages);
-                tbLanguages.UnionWith(langCodes);
-
-                _dataStorage.UpdateLanguages(tbInfo.id, tbLanguages.ToArray());
-                tbInfo.languages = tbLanguages.ToArray();
-
-                return tbInfo;
-            }
-            var id = _dataStorage.CreateTB((int)tbType, idType, langCodes);
-            tbInfo = new TBInfo() { id = id, languages = langCodes, metadata = "" };
 
             return tbInfo;
         }
