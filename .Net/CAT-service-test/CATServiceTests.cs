@@ -84,11 +84,15 @@ namespace CAT
                 //request.LangCodes.Add(new string[] { "eng", "fre", "ger" });
                 //var response = await client.CreateTBAsync(request);
 
-                var request = new GetTBInfoRequest { TbType = TBType.Profile, IdType = 1 };
-                var response = await client.GetTBInfoAsync(request);
-                var request2 = new GetTBInfoByIdRequest { TermbaseId = 1 };
-                var response2 = await client.GetTBInfoByIdAsync(request2);
+                //var request = new GetTBInfoRequest { TbType = TBType.Profile, IdType = 1 };
+                //var response = await client.GetTBInfoAsync(request);
+                //var request2 = new GetTBInfoByIdRequest { TermbaseId = 1 };
+                //var response2 = await client.GetTBInfoByIdAsync(request2);
 
+                var request = new AddLanguageToTBRequest { TermbaseId = 1,  LangCode = "spa" };
+                var response = await client.AddLanguageToTBAsync(request);
+                var request2 = new RemoveLanguageFromTBRequest { TermbaseId = 1, LangCode = "spa"};
+                var response2 = await client.RemoveLanguageFromTBAsync(request2);
                 //Assert.True(response);  // Or whatever your expected result is
             }
             catch (Exception ex)

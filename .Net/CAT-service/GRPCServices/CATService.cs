@@ -428,7 +428,7 @@ namespace CAT.GRPCServices
         {
             try
             {
-                var tbInfo = _tbService.GetTBInfoById(request.TermbaseId);
+                var tbInfo = _tbService.GetTBInfo(request.TermbaseId);
                 var result = new GetTBInfoByIdResponse()
                 {
                     TbInfo = new TBInfo()
@@ -440,6 +440,36 @@ namespace CAT.GRPCServices
                 result.TbInfo.Languages.AddRange(tbInfo.languages);
 
                 return Task.FromResult(result);
+            }
+            catch (Exception ex) // Catching general exception
+            {
+                // Log the exception
+                throw new RpcException(new Status(StatusCode.Internal, "An internal error occurred."), ex.Message);
+            }
+        }
+
+        public override Task<EmptyResponse> AddLanguageToTB(AddLanguageToTBRequest request, ServerCallContext context)
+        {
+            try
+            {
+                _tbService.AddLanguageToTB(request.TermbaseId, request.LangCode);
+
+                return Task.FromResult(new EmptyResponse());
+            }
+            catch (Exception ex) // Catching general exception
+            {
+                // Log the exception
+                throw new RpcException(new Status(StatusCode.Internal, "An internal error occurred."), ex.Message);
+            }
+        }
+
+        public override Task<EmptyResponse> RemoveLanguageFromTB(RemoveLanguageFromTBRequest request, ServerCallContext context)
+        {
+            try
+            {
+                _tbService.RemoveLanguageFromTB(request.TermbaseId, request.LangCode);
+
+                return Task.FromResult(new EmptyResponse());
             }
             catch (Exception ex) // Catching general exception
             {

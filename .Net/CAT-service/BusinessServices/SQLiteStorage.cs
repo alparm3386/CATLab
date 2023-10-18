@@ -688,7 +688,7 @@ namespace CAT.BusinessServices
             }
         }
 
-        public DataSet GetTBInfoById(int termbaseId)
+        public DataSet GetTBInfo(int termbaseId)
         {
             using (var sqlConnection = new SQLiteConnection(_termbasesConnectionString))
             {
@@ -716,38 +716,6 @@ namespace CAT.BusinessServices
                     throw;
                 }
             }
-        }
-
-        public DataSet GetTBInfo(int termbaseId)
-        {
-            //using (SqlConnection sqlConnection = new SqlConnection(termbasesConnectionString))
-            //{
-            //    try
-            //    {
-            //        //open connection
-            //        sqlConnection.Open();
-            //        SqlCommand sqlCommand = new SqlCommand();
-            //        sqlCommand.Connection = sqlConnection;
-            //        sqlCommand.CommandText = "SELECT * from Termbases WHERE id = @termbaseId";
-            //        sqlCommand.CommandType = CommandType.Text;
-
-            //        //set the query params
-            //        sqlCommand.Parameters.Add(new SqlParameter("@termbaseId", termbaseId));
-
-            //        SqlDataAdapter adpt = new SqlDataAdapter(sqlCommand);
-            //        DataSet ds = new DataSet();
-            //        adpt.Fill(ds);
-
-            //        return ds;
-            //    }
-            //    catch (SqlException e)
-            //    {
-            //        logger.Log("DB Errors.log", "GetCommentsForTranslationUnit: " + e);
-            //        throw e;
-            //    }
-            //}
-
-            return null!;
         }
 
         public void UpdateLanguages(int termbaseId, String[] aLanguages)

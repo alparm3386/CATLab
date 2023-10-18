@@ -21,7 +21,6 @@ namespace CAT.BusinessServices
         DataSet GetTBEntry(int idEntry);
         DataSet GetTBInfo(int idTermbase);
         DataSet GetTBInfo(int tbType, int idType);
-        DataSet GetTBInfoById(int idTermbase);
         DataSet GetTMEntriesBySourceIds(string tmPath, int[] aIdSource);
         DataSet GetTMEntriesByTargetText(string tmPath, string sTarget);
         DataSet GetTMEntriesFromSyncSource(string backupSourceConnectionString, string dbName);

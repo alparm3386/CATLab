@@ -102,9 +102,9 @@ namespace CAT.TB
         /// </summary>
         /// <param name="idTermbase"></param>
         /// <returns></returns>
-        public TBInfo GetTBInfoById(int idTermbase)
+        public TBInfo GetTBInfo(int idTermbase)
         {
-            var dsTermbase = _dataStorage.GetTBInfoById(idTermbase);
+            var dsTermbase = _dataStorage.GetTBInfo(idTermbase);
 
             var tbInfo = new TBInfo();
             if (dsTermbase?.Tables[0]?.Rows.Count != 1)

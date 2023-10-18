@@ -740,38 +740,6 @@ namespace CAT.BusinessServices
             return null!;
         }
 
-        public DataSet GetTBInfoById(int idTermbase)
-        {
-            //using (SqlConnection sqlConnection = new SqlConnection(termbasesConnectionString))
-            //{
-            //    try
-            //    {
-            //        //open connection
-            //        sqlConnection.Open();
-            //        SqlCommand sqlCommand = new SqlCommand();
-            //        sqlCommand.Connection = sqlConnection;
-            //        sqlCommand.CommandText = "SELECT * from Termbases WHERE id=@idTermbase";
-            //        sqlCommand.CommandType = CommandType.Text;
-
-            //        //set the query params
-            //        sqlCommand.Parameters.Add(new SqlParameter("@idTermbase", idTermbase));
-
-            //        SqlDataAdapter adpt = new SqlDataAdapter(sqlCommand);
-            //        DataSet ds = new DataSet();
-            //        adpt.Fill(ds);
-
-            //        return ds;
-            //    }
-            //    catch (SqlException e)
-            //    {
-            //        logger.Log("DB Errors.log", "GetCommentsForTranslationUnit: " + e);
-            //        throw e;
-            //    }
-            //}
-
-            return null!;
-        }
-
         public DataSet GetTBInfo(int idTermbase)
         {
             //using (SqlConnection sqlConnection = new SqlConnection(termbasesConnectionString))
