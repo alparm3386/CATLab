@@ -613,7 +613,9 @@ namespace CAT.BusinessServices
                     {
 
                         sqlCommand.Connection = sqlConnection;
-                        sqlCommand.CommandText = "SELECT id FROM termbases WHERE tbType = :tbType AND IdType = :IdType;";
+                        sqlCommand.CommandText = "SELECT id FROM termbases WHERE tbType = :tbType AND idType = :idType;";
+                        sqlCommand.Parameters.Add(new SQLiteParameter(":tbType", tbType));
+                        sqlCommand.Parameters.Add(new SQLiteParameter(":idType", idType));
                         sqlCommand.CommandType = CommandType.Text;
                         var result = sqlCommand.ExecuteScalar();
                         var termbaseId = -1;

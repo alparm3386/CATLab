@@ -106,11 +106,8 @@ namespace CAT.TB
             {
                 //update the languages
                 var tbLanguages = new HashSet<String>(tbInfo.languages);
-                foreach (var lang in langCodes)
-                {
-                    if (!tbLanguages.Contains(lang))
-                        tbLanguages.Add(lang);
-                }
+                tbLanguages.UnionWith(langCodes);
+
                 _dataStorage.UpdateLanguages(tbInfo.id, tbLanguages.ToArray());
                 tbInfo.languages = tbLanguages.ToArray();
 
