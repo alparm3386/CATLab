@@ -682,13 +682,43 @@ namespace CAT.BusinessServices
                 }
                 catch (SQLiteException e)
                 {
-                    _logger.LogError("CreateTB -> tbType: " + tbType + "IdType: " + idType + " error: " + e);
+                    _logger.LogError("GetTBInfo -> tbType: " + tbType + "IdType: " + idType + " error: " + e);
                     throw;
                 }
             }
         }
 
-        public DataSet GetTBInfoById(int idTermbase)
+        public DataSet GetTBInfoById(int termbaseId)
+        {
+            using (var sqlConnection = new SQLiteConnection(_termbasesConnectionString))
+            {
+                try
+                {
+                    //open connection
+                    sqlConnection.Open();
+                    var sqlCommand = new SQLiteCommand();
+                    sqlCommand.Connection = sqlConnection;
+                    sqlCommand.CommandText = "SELECT * from Termbases WHERE id=:termbaseId";
+                    sqlCommand.CommandType = CommandType.Text;
+
+                    //set the query params
+                    sqlCommand.Parameters.Add(new SQLiteParameter(":termbaseId", termbaseId));
+
+                    var adpt = new SQLiteDataAdapter(sqlCommand);
+                    DataSet ds = new DataSet();
+                    adpt.Fill(ds);
+
+                    return ds;
+                }
+                catch (Exception e)
+                {
+                    _logger.LogError("GetTBInfoById ->  termbaseId: " + termbaseId + " error: " + e);
+                    throw;
+                }
+            }
+        }
+
+        public DataSet GetTBInfo(int termbaseId)
         {
             //using (SqlConnection sqlConnection = new SqlConnection(termbasesConnectionString))
             //{
@@ -698,11 +728,11 @@ namespace CAT.BusinessServices
             //        sqlConnection.Open();
             //        SqlCommand sqlCommand = new SqlCommand();
             //        sqlCommand.Connection = sqlConnection;
-            //        sqlCommand.CommandText = "SELECT * from Termbases WHERE id=@idTermbase";
+            //        sqlCommand.CommandText = "SELECT * from Termbases WHERE id = @termbaseId";
             //        sqlCommand.CommandType = CommandType.Text;
 
             //        //set the query params
-            //        sqlCommand.Parameters.Add(new SqlParameter("@idTermbase", idTermbase));
+            //        sqlCommand.Parameters.Add(new SqlParameter("@termbaseId", termbaseId));
 
             //        SqlDataAdapter adpt = new SqlDataAdapter(sqlCommand);
             //        DataSet ds = new DataSet();
@@ -720,39 +750,7 @@ namespace CAT.BusinessServices
             return null!;
         }
 
-        public DataSet GetTBInfo(int idTermbase)
-        {
-            //using (SqlConnection sqlConnection = new SqlConnection(termbasesConnectionString))
-            //{
-            //    try
-            //    {
-            //        //open connection
-            //        sqlConnection.Open();
-            //        SqlCommand sqlCommand = new SqlCommand();
-            //        sqlCommand.Connection = sqlConnection;
-            //        sqlCommand.CommandText = "SELECT * from Termbases WHERE id = @idTermbase";
-            //        sqlCommand.CommandType = CommandType.Text;
-
-            //        //set the query params
-            //        sqlCommand.Parameters.Add(new SqlParameter("@idTermbase", idTermbase));
-
-            //        SqlDataAdapter adpt = new SqlDataAdapter(sqlCommand);
-            //        DataSet ds = new DataSet();
-            //        adpt.Fill(ds);
-
-            //        return ds;
-            //    }
-            //    catch (SqlException e)
-            //    {
-            //        logger.Log("DB Errors.log", "GetCommentsForTranslationUnit: " + e);
-            //        throw e;
-            //    }
-            //}
-
-            return null!;
-        }
-
-        public void UpdateLanguages(int idTermbase, String[] aLanguages)
+        public void UpdateLanguages(int termbaseId, String[] aLanguages)
         {
             ////sort the languages
             //Array.Sort(aLanguages);
@@ -764,11 +762,11 @@ namespace CAT.BusinessServices
             //        sqlConnection.Open();
             //        SqlCommand sqlCommand = new SqlCommand();
             //        sqlCommand.Connection = sqlConnection;
-            //        sqlCommand.CommandText = "Update Termbases set languages=@languages WHERE id=@idTermbase";
+            //        sqlCommand.CommandText = "Update Termbases set languages=@languages WHERE id=@termbaseId";
             //        sqlCommand.CommandType = CommandType.Text;
 
             //        //set the query params
-            //        sqlCommand.Parameters.Add(new SqlParameter("@idTermbase", idTermbase));
+            //        sqlCommand.Parameters.Add(new SqlParameter("@termbaseId", termbaseId));
             //        sqlCommand.Parameters.Add(new SqlParameter("@languages", String.Join(",", aLanguages)));
 
             //        sqlCommand.ExecuteNonQuery();
@@ -781,7 +779,7 @@ namespace CAT.BusinessServices
             //}
         }
 
-        public void DeleteTBEntry(int idTermbase, int idEntry)
+        public void DeleteTBEntry(int termbaseId, int idEntry)
         {
             //using (SqlConnection sqlConnection = new SqlConnection(termbasesConnectionString))
             //{
@@ -791,11 +789,11 @@ namespace CAT.BusinessServices
             //        sqlConnection.Open();
             //        SqlCommand sqlCommand = new SqlCommand();
             //        sqlCommand.Connection = sqlConnection;
-            //        sqlCommand.CommandText = "Delete termbaseEntries where idTermbase = @idTermbase and id = @idEntry";
+            //        sqlCommand.CommandText = "Delete termbaseEntries where termbaseId = @termbaseId and id = @idEntry";
             //        sqlCommand.CommandType = CommandType.Text;
 
             //        //set the query params
-            //        sqlCommand.Parameters.Add(new SqlParameter("@idTermbase", idTermbase));
+            //        sqlCommand.Parameters.Add(new SqlParameter("@termbaseId", termbaseId));
             //        sqlCommand.Parameters.Add(new SqlParameter("@idEntry", idEntry));
 
             //        sqlCommand.ExecuteNonQuery();
@@ -808,7 +806,7 @@ namespace CAT.BusinessServices
             //}
         }
 
-        public void UpdateLastModified(int idTermbase)
+        public void UpdateLastModified(int termbaseId)
         {
             //using (SqlConnection sqlConnection = new SqlConnection(termbasesConnectionString))
             //{
@@ -818,11 +816,11 @@ namespace CAT.BusinessServices
             //        sqlConnection.Open();
             //        SqlCommand sqlCommand = new SqlCommand();
             //        sqlCommand.Connection = sqlConnection;
-            //        sqlCommand.CommandText = "Update Termbases set dateUpdated=@dateUpdated WHERE id = @idTermbase";
+            //        sqlCommand.CommandText = "Update Termbases set dateUpdated=@dateUpdated WHERE id = @termbaseId";
             //        sqlCommand.CommandType = CommandType.Text;
 
             //        //set the query params
-            //        sqlCommand.Parameters.Add(new SqlParameter("@idTermbase", idTermbase));
+            //        sqlCommand.Parameters.Add(new SqlParameter("@termbaseId", termbaseId));
             //        sqlCommand.Parameters.Add(new SqlParameter("@dateUpdated", DateTime.Now));
 
             //        sqlCommand.ExecuteNonQuery();
@@ -835,7 +833,7 @@ namespace CAT.BusinessServices
             //}
         }
 
-        public int InsertTBEntry(int idTermbase, String comment, String user)
+        public int InsertTBEntry(int termbaseId, String comment, String user)
         {
             //using (SqlConnection sqlConnection = new SqlConnection(termbasesConnectionString))
             //{
@@ -849,7 +847,7 @@ namespace CAT.BusinessServices
             //        sqlCommand.CommandType = CommandType.StoredProcedure;
 
             //        //set the query params
-            //        sqlCommand.Parameters.Add(new SqlParameter("@idTermbase", idTermbase));
+            //        sqlCommand.Parameters.Add(new SqlParameter("@termbaseId", termbaseId));
             //        sqlCommand.Parameters.Add(new SqlParameter("@comment", comment));
             //        sqlCommand.Parameters.Add(new SqlParameter("@user", user));
             //        sqlCommand.Parameters.Add(new SqlParameter() { ParameterName = "@id", DbType = DbType.Int32, Direction = ParameterDirection.Output });
@@ -859,7 +857,7 @@ namespace CAT.BusinessServices
             //    }
             //    catch (Exception e)
             //    {
-            //        logger.Log("DB Errors.log", "InsertTBEntry: " + e + "\nidTermbase: ");
+            //        logger.Log("DB Errors.log", "InsertTBEntry: " + e + "\ntermbaseId: ");
             //        EmailHelper.SendDebugEmail("ERROR: " + e, "CreateTB", "alpar.meszaros@toppandigital.com");
             //        throw e;
             //    }
@@ -893,7 +891,7 @@ namespace CAT.BusinessServices
             //    }
             //    catch (Exception e)
             //    {
-            //        logger.Log("DB Errors.log", "InsertTBEntry: " + e + "\nidTermbase: ");
+            //        logger.Log("DB Errors.log", "InsertTBEntry: " + e + "\ntermbaseId: ");
             //        EmailHelper.SendDebugEmail("ERROR: " + e, "CreateTB", "alpar.meszaros@toppandigital.com");
             //        throw e;
             //    }
@@ -902,7 +900,7 @@ namespace CAT.BusinessServices
             return 0;
         }
 
-        public void RemoveTerms(int idTermbase, String langCode)
+        public void RemoveTerms(int termbaseId, String langCode)
         {
             //using (SqlConnection sqlConnection = new SqlConnection(termbasesConnectionString))
             //{
@@ -916,14 +914,14 @@ namespace CAT.BusinessServices
             //        sqlCommand.CommandType = CommandType.StoredProcedure;
 
             //        //set the query params
-            //        sqlCommand.Parameters.Add(new SqlParameter("@idTermbase", idTermbase));
+            //        sqlCommand.Parameters.Add(new SqlParameter("@termbaseId", termbaseId));
             //        sqlCommand.Parameters.Add(new SqlParameter("@language", langCode));
 
             //        sqlCommand.ExecuteNonQuery();
             //    }
             //    catch (Exception e)
             //    {
-            //        logger.Log("DB Errors.log", "RemoveTerms: " + e + "\nidTermbase: ");
+            //        logger.Log("DB Errors.log", "RemoveTerms: " + e + "\ntermbaseId: ");
             //        EmailHelper.SendDebugEmail("ERROR: " + e, "RemoveTerms", "alpar.meszaros@toppandigital.com");
             //        throw e;
             //    }
@@ -960,7 +958,7 @@ namespace CAT.BusinessServices
             return null!;
         }
 
-        public DataSet ListTBEntries(int idTermbase, String[] languages)
+        public DataSet ListTBEntries(int termbaseId, String[] languages)
         {
             //using (SqlConnection sqlConnection = new SqlConnection(termbasesConnectionString))
             //{
@@ -970,7 +968,7 @@ namespace CAT.BusinessServices
             //        sqlConnection.Open();
             //        SqlCommand sqlCommand = new SqlCommand();
             //        sqlCommand.Connection = sqlConnection;
-            //        sqlCommand.CommandText = "Select termbaseEntries.id, termbaseEntries.dateCreated, termbaseEntries.dateModified, termbaseEntries.comment, termbaseEntries.createdBy, termbaseEntries.modifiedBy, termbaseTerms.language, termbaseTerms.term from Termbases inner join termbaseEntries on Termbases.id = termbaseEntries.idTermbase inner join termbaseTerms on termbaseTerms.idEntry = termbaseEntries.id where Termbases.id=@idTermbase";
+            //        sqlCommand.CommandText = "Select termbaseEntries.id, termbaseEntries.dateCreated, termbaseEntries.dateModified, termbaseEntries.comment, termbaseEntries.createdBy, termbaseEntries.modifiedBy, termbaseTerms.language, termbaseTerms.term from Termbases inner join termbaseEntries on Termbases.id = termbaseEntries.termbaseId inner join termbaseTerms on termbaseTerms.idEntry = termbaseEntries.id where Termbases.id=@termbaseId";
             //        if (languages?.Length > 0)
             //        {
             //            languages = Array.ConvertAll(languages, lang => "'" + lang + "'");
@@ -979,7 +977,7 @@ namespace CAT.BusinessServices
             //        sqlCommand.CommandType = CommandType.Text;
 
             //        //set the query params
-            //        sqlCommand.Parameters.Add(new SqlParameter("@idTermbase", idTermbase));
+            //        sqlCommand.Parameters.Add(new SqlParameter("@termbaseId", termbaseId));
 
             //        SqlDataAdapter adpt = new SqlDataAdapter(sqlCommand);
             //        DataSet ds = new DataSet();

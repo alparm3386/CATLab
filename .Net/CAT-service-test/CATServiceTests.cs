@@ -91,7 +91,7 @@ namespace CAT
 
                 //Assert.True(response);  // Or whatever your expected result is
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 throw;
             }

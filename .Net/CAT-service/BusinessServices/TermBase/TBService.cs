@@ -111,7 +111,7 @@ namespace CAT.TB
                 return null!;
 
             var tbRow = dsTermbase?.Tables[0]?.Rows[0];
-            tbInfo.id = (int)tbRow!["id"];
+            tbInfo.id = (int)(long)tbRow!["id"];
             tbInfo.languages = tbRow["languages"].ToString()!.Split(',');
 
             //the metadata
