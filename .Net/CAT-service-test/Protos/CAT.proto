@@ -32,7 +32,9 @@ service CAT {
 	rpc RemoveLanguageFromTB (RemoveLanguageFromTBRequest) returns (EmptyResponse);
 	rpc AddOrUpdateTBEntry (AddOrUpdateTBEntryRequest) returns (AddOrUpdateTBEntryResponse);
 	rpc DeleteTBEntry (DeleteTBEntryRequest) returns (EmptyResponse);
-
+	rpc ImportTB (ImportTBRequest) returns (ImportTBResponse);
+	rpc ImportTBEntries (ImportTBEntriesRequest) returns (ImportTBEntriesResponse);
+	rpc ListTBEntries (ListTBEntriesRequest) returns (ListTBEntriesResponse);
     //Okapi service
 }
 
@@ -321,6 +323,43 @@ message TBEntry {
 message DeleteTBEntryRequest {
     int32 termbaseId = 1;
     int32 entryId = 2;
+}
+
+//ImportTB
+message ImportTBRequest {
+    int32 termbaseId = 1;
+    string csvContent = 2;
+    string userId = 3;
+}
+
+message ImportTBResponse {
+    TBImportResult importResult = 1;
+}
+
+message TBImportResult {
+    int32 allItems = 1;
+    int32 newItems = 2;
+}
+
+//ImportTBEntries
+message ImportTBEntriesRequest {
+    int32 termbaseId = 1;
+    repeated TBEntry tbEntries = 2;
+    string userId = 3;
+}
+
+message ImportTBEntriesResponse {
+    TBImportResult importResult = 1;
+}
+
+//ListTBEntries
+message ListTBEntriesRequest {
+    int32 termbaseId = 1;
+    repeated string languages = 2;
+}
+
+message ListTBEntriesResponse {
+    repeated TBEntry tbEntries = 1;
 }
 
 /*Okapi*/
