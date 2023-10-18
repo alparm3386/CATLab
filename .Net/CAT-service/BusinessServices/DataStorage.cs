@@ -855,7 +855,7 @@ namespace CAT.BusinessServices
             //}
         }
 
-        public int InsertTBEntry(int idTermbase, String comment, String user)
+        public int InsertTBEntry(int idTermbase, String user)
         {
             //using (SqlConnection sqlConnection = new SqlConnection(termbasesConnectionString))
             //{

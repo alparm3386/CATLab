@@ -10,8 +10,8 @@ namespace CAT.TB
         TBInfo GetTBInfo(int termbaseId);
         void AddLanguageToTB(int termbaseId, string langCode);
         void RemoveLanguageFromTB(int termbaseId, string langCode);
-        int AddOrUpdateTBEntry(int termbaseId, TBEntry tbEntry);
-        void DeleteTBEntry(int termbaseId, int idEntry);
+        int AddOrUpdateTBEntry(int termbaseId, TBEntry tbEntry, String user);
+        void DeleteTBEntry(int termbaseId, int entryId);
         TBImportResult ImportTB(int termbaseId, string sCsvContent, string sUserId);
         TBImportResult ImportTBEntries(int termbaseId, TBEntry[] tbEntries);
         TBEntry[] ListTBEntries(int termbaseId, string[] languages);

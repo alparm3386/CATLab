@@ -323,7 +323,7 @@ namespace CAT.BusinessServices
             //    {
             //        //open connection
             //        sqlConnection.Open();
-            //        SqlCommand sqlCommand = new SqlCommand();
+            //        var sqlCommand = new SQLiteCommand();
             //        sqlCommand.Connection = sqlConnection;
             //        //sqlCommand.CommandText = "Select max(source) as source, idSource from [" + dbParams.tmTableName + "] group by idSource order by idSource";
             //        sqlCommand.CommandText = "Select source, idSource, speciality from [" + dbParams.tmTableName + "]";
@@ -336,9 +336,9 @@ namespace CAT.BusinessServices
 
             //        return ds;
             //    }
-            //    catch (SqlException ex)
+            //    catch (Exception ex)
             //    {
-            //        logger.Log("DB Errors.log", "GetSourceIndexData: " + ex);
+            //        _logger.LogError("DB Errors.log", "GetSourceIndexData: " + ex);
             //        throw ex;
             //    }
             //}
@@ -356,7 +356,7 @@ namespace CAT.BusinessServices
             //    {
             //        //open connection
             //        sqlConnection.Open();
-            //        SqlCommand sqlCommand = new SqlCommand();
+            //        var sqlCommand = new SQLiteCommand();
             //        sqlCommand.Connection = sqlConnection;
             //        sqlCommand.CommandText = "Select * from [" + dbParams.tmTableName + "]";
             //        sqlCommand.CommandType = CommandType.Text;
@@ -367,9 +367,9 @@ namespace CAT.BusinessServices
 
             //        return ds;
             //    }
-            //    catch (SqlException ex)
+            //    catch (Exception ex)
             //    {
-            //        logger.Log("DB Errors.log", "GetSourceIndexData: " + ex);
+            //        _logger.LogError("DB Errors.log", "GetSourceIndexData: " + ex);
             //        throw ex;
             //    }
             //}
@@ -390,12 +390,12 @@ namespace CAT.BusinessServices
             //        sSql = sSql.Replace("[TM_TABLE]", dbParams.tmTableName);
             //        //open connection
             //        sqlConnection.Open();
-            //        SqlCommand sqlCommand = new SqlCommand();
+            //        var sqlCommand = new SQLiteCommand();
             //        sqlCommand.Connection = sqlConnection;
             //        sqlCommand.CommandText = sSql;
             //        sqlCommand.CommandType = CommandType.Text;
 
-            //        SqlParameter queryTableParameter = new SqlParameter("@queryTable", queryTable);
+            //        SQLiteParameter queryTableParameter = new SQLiteParameter("@queryTable", queryTable);
             //        queryTableParameter.TypeName = "dbo.ContextMatchQueryTable";
             //        queryTableParameter.SqlDbType = SqlDbType.Structured;
             //        sqlCommand.Parameters.Add(queryTableParameter);
@@ -406,9 +406,9 @@ namespace CAT.BusinessServices
 
             //        return ds;
             //    }
-            //    catch (SqlException ex)
+            //    catch (Exception ex)
             //    {
-            //        logger.Log("DB Errors.log", "CheckIncontextMatches: " + ex);
+            //        _logger.LogError("DB Errors.log", "CheckIncontextMatches: " + ex);
             //        throw ex;
             //    }
             //}
@@ -426,13 +426,13 @@ namespace CAT.BusinessServices
             //    {
             //        //open connection
             //        sqlConnection.Open();
-            //        SqlCommand sqlCommand = new SqlCommand();
+            //        var sqlCommand = new SQLiteCommand();
             //        sqlCommand.Connection = sqlConnection;
             //        sqlCommand.CommandText = "Select * from [" + dbParams.tmTableName + "] where sourceHash=@sourceHash and context=@context and source=@source";
             //        sqlCommand.CommandType = CommandType.Text;
-            //        sqlCommand.Parameters.Add(new SqlParameter("@source", source));
-            //        sqlCommand.Parameters.Add(new SqlParameter("@sourceHash", CATUtils.djb2hash(source)));
-            //        sqlCommand.Parameters.Add(new SqlParameter("@context", context));
+            //        sqlCommand.Parameters.Add(new SQLiteParameter("@source", source));
+            //        sqlCommand.Parameters.Add(new SQLiteParameter("@sourceHash", CATUtils.djb2hash(source)));
+            //        sqlCommand.Parameters.Add(new SQLiteParameter("@context", context));
 
             //        SqlDataAdapter adpt = new SqlDataAdapter(sqlCommand);
             //        DataSet ds = new DataSet();
@@ -440,9 +440,9 @@ namespace CAT.BusinessServices
 
             //        return ds;
             //    }
-            //    catch (SqlException ex)
+            //    catch (Exception ex)
             //    {
-            //        logger.Log("DB Errors.log", "GetIncontextMatch: " + ex);
+            //        _logger.LogError("DB Errors.log", "GetIncontextMatch: " + ex);
             //        throw ex;
             //    }
             //}
@@ -458,7 +458,7 @@ namespace CAT.BusinessServices
             //    sqlConnection.Open();
             //    String sSql = "Select DB_ID(@dbName)";
             //    var cmd = new SqlCommand(sSql, sqlConnection);
-            //    cmd.Parameters.Add(new SqlParameter("@dbName", dbName));
+            //    cmd.Parameters.Add(new SQLiteParameter("@dbName", dbName));
             //    var dbId = cmd.ExecuteScalar();
 
             //    return dbId != DBNull.Value;
@@ -477,13 +477,13 @@ namespace CAT.BusinessServices
             //    {
             //        //open connection
             //        sqlConnection.Open();
-            //        SqlCommand sqlCommand = new SqlCommand();
+            //        var sqlCommand = new SQLiteCommand();
             //        sqlCommand.Connection = sqlConnection;
             //        sqlCommand.CommandText = "Select * from [" + dbParams.tmTableName + "] where sourceHash=@sourceHash and source=@source order by dateModified desc";
             //        sqlCommand.CommandType = CommandType.Text;
-            //        sqlCommand.Parameters.Add(new SqlParameter("@source", SqlDbType.NVarChar, 4000));
+            //        sqlCommand.Parameters.Add(new SQLiteParameter("@source", SqlDbType.NVarChar, 4000));
             //        sqlCommand.Parameters["@source"].Value = source;
-            //        sqlCommand.Parameters.Add(new SqlParameter("@sourceHash", CATUtils.djb2hash(source)));
+            //        sqlCommand.Parameters.Add(new SQLiteParameter("@sourceHash", CATUtils.djb2hash(source)));
 
             //        SqlDataAdapter adpt = new SqlDataAdapter(sqlCommand);
             //        DataSet ds = new DataSet();
@@ -491,9 +491,9 @@ namespace CAT.BusinessServices
 
             //        return ds;
             //    }
-            //    catch (SqlException ex)
+            //    catch (Exception ex)
             //    {
-            //        logger.Log("DB Errors.log", "GetIncontextMatch: " + ex);
+            //        _logger.LogError("DB Errors.log", "GetIncontextMatch: " + ex);
             //        throw ex;
             //    }
             //}
@@ -511,7 +511,7 @@ namespace CAT.BusinessServices
             //    {
             //        //open connection
             //        sqlConnection.Open();
-            //        SqlCommand sqlCommand = new SqlCommand();
+            //        var sqlCommand = new SQLiteCommand();
             //        sqlCommand.Connection = sqlConnection;
             //        sqlCommand.CommandType = CommandType.Text;
             //        //remove multiple whitespaces
@@ -527,9 +527,9 @@ namespace CAT.BusinessServices
 
             //        return ds;
             //    }
-            //    catch (SqlException ex)
+            //    catch (Exception ex)
             //    {
-            //        logger.Log("DB Errors.log", "GetTMEntriesByIdSource: " + ex);
+            //        _logger.LogError("DB Errors.log", "GetTMEntriesByIdSource: " + ex);
             //        throw ex;
             //    }
             //}
@@ -548,19 +548,19 @@ namespace CAT.BusinessServices
             //    {
             //        //open connection
             //        sqlConnection.Open();
-            //        SqlCommand sqlCommand = new SqlCommand();
+            //        var sqlCommand = new SQLiteCommand();
             //        sqlCommand.Connection = sqlConnection;
             //        sqlCommand.CommandText = "DBCC SHRINKDATABASE (@dbName)";
             //        sqlCommand.CommandType = CommandType.Text;
             //        sqlCommand.CommandTimeout = ShrinkDbTimeout;
             //        //set the query params
-            //        sqlCommand.Parameters.Add(new SqlParameter("@dbName", dbName));
+            //        sqlCommand.Parameters.Add(new SQLiteParameter("@dbName", dbName));
 
             //        int rows = sqlCommand.ExecuteNonQuery();
             //    }
-            //    catch (SqlException ex)
+            //    catch (Exception ex)
             //    {
-            //        logger.Log("DB Errors.log", "shrinkDatabase: " + ex);
+            //        _logger.LogError("DB Errors.log", "shrinkDatabase: " + ex);
             //        throw ex;
             //    }
             //}
@@ -581,16 +581,16 @@ namespace CAT.BusinessServices
                         sqlCmd.Connection = sqlConn;
                         sqlCmd.CommandText = "SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE='BASE TABLE' AND TABLE_CATALOG=@catalog";
                         sqlCmd.CommandType = CommandType.Text;
-                        sqlCmd.Parameters.Add(new SqlParameter("@catalog", dbName));
+                        sqlCmd.Parameters.Add(new SQLiteParameter("@catalog", dbName));
 
                         SqlDataAdapter adpt = new SqlDataAdapter(sqlCmd);
                         adpt.Fill(ds);
                         return ds;
                     }
                 }
-                catch (SqlException ex)
+                catch (Exception ex)
                 {
-                    logger.Log("DB Errors.log", "GetTMEntriesByIdSource: " + ex);
+                    _logger.LogError("DB Errors.log", "GetTMEntriesByIdSource: " + ex);
                     throw ex;
                 }
             }*/
@@ -720,195 +720,188 @@ namespace CAT.BusinessServices
 
         public void UpdateLanguages(int termbaseId, String[] aLanguages)
         {
-            ////sort the languages
-            //Array.Sort(aLanguages);
-            //using (SqlConnection sqlConnection = new SqlConnection(termbasesConnectionString))
-            //{
-            //    try
-            //    {
-            //        //open connection
-            //        sqlConnection.Open();
-            //        SqlCommand sqlCommand = new SqlCommand();
-            //        sqlCommand.Connection = sqlConnection;
-            //        sqlCommand.CommandText = "Update Termbases set languages=@languages WHERE id=@termbaseId";
-            //        sqlCommand.CommandType = CommandType.Text;
+            var sortedLanguages = aLanguages.Distinct().OrderBy(lang => lang).ToArray();
+            //sort the languages
+            using (var sqlConnection = new SQLiteConnection(_termbasesConnectionString))
+            {
+                try
+                {
+                    //open connection
+                    sqlConnection.Open();
+                    var sqlCommand = new SQLiteCommand();
+                    sqlCommand.Connection = sqlConnection;
+                    sqlCommand.CommandText = "Update Termbases set languages=:languages WHERE id=:termbaseId";
+                    sqlCommand.CommandType = CommandType.Text;
 
-            //        //set the query params
-            //        sqlCommand.Parameters.Add(new SqlParameter("@termbaseId", termbaseId));
-            //        sqlCommand.Parameters.Add(new SqlParameter("@languages", String.Join(",", aLanguages)));
+                    //set the query params
+                    sqlCommand.Parameters.Add(new SQLiteParameter(":termbaseId", termbaseId));
+                    sqlCommand.Parameters.Add(new SQLiteParameter(":languages", String.Join(",", sortedLanguages)));
 
-            //        sqlCommand.ExecuteNonQuery();
-            //    }
-            //    catch (SqlException e)
-            //    {
-            //        logger.Log("DB Errors.log", "GetCommentsForTranslationUnit: " + e);
-            //        throw e;
-            //    }
-            //}
-        }
-
-        public void DeleteTBEntry(int termbaseId, int idEntry)
-        {
-            //using (SqlConnection sqlConnection = new SqlConnection(termbasesConnectionString))
-            //{
-            //    try
-            //    {
-            //        //open connection
-            //        sqlConnection.Open();
-            //        SqlCommand sqlCommand = new SqlCommand();
-            //        sqlCommand.Connection = sqlConnection;
-            //        sqlCommand.CommandText = "Delete termbaseEntries where termbaseId = @termbaseId and id = @idEntry";
-            //        sqlCommand.CommandType = CommandType.Text;
-
-            //        //set the query params
-            //        sqlCommand.Parameters.Add(new SqlParameter("@termbaseId", termbaseId));
-            //        sqlCommand.Parameters.Add(new SqlParameter("@idEntry", idEntry));
-
-            //        sqlCommand.ExecuteNonQuery();
-            //    }
-            //    catch (SqlException e)
-            //    {
-            //        logger.Log("DB Errors.log", "GetCommentsForTranslationUnit: " + e);
-            //        throw e;
-            //    }
-            //}
+                    sqlCommand.ExecuteNonQuery();
+                }
+                catch (Exception e)
+                {
+                    _logger.LogError("DB Errors.log", "GetCommentsForTranslationUnit: " + e);
+                    throw;
+                }
+            }
         }
 
         public void UpdateLastModified(int termbaseId)
         {
-            //using (SqlConnection sqlConnection = new SqlConnection(termbasesConnectionString))
-            //{
-            //    try
-            //    {
-            //        //open connection
-            //        sqlConnection.Open();
-            //        SqlCommand sqlCommand = new SqlCommand();
-            //        sqlCommand.Connection = sqlConnection;
-            //        sqlCommand.CommandText = "Update Termbases set dateUpdated=@dateUpdated WHERE id = @termbaseId";
-            //        sqlCommand.CommandType = CommandType.Text;
+            using (var sqlConnection = new SQLiteConnection(_termbasesConnectionString))
+            {
+                try
+                {
+                    //open connection
+                    sqlConnection.Open();
+                    var sqlCommand = new SQLiteCommand();
+                    sqlCommand.Connection = sqlConnection;
+                    sqlCommand.CommandText = "Update Termbases set dateUpdated=:dateUpdated WHERE id = :termbaseId";
+                    sqlCommand.CommandType = CommandType.Text;
 
-            //        //set the query params
-            //        sqlCommand.Parameters.Add(new SqlParameter("@termbaseId", termbaseId));
-            //        sqlCommand.Parameters.Add(new SqlParameter("@dateUpdated", DateTime.Now));
+                    //set the query params
+                    sqlCommand.Parameters.Add(new SQLiteParameter(":termbaseId", termbaseId));
+                    sqlCommand.Parameters.Add(new SQLiteParameter(":dateUpdated", DateTime.Now));
 
-            //        sqlCommand.ExecuteNonQuery();
-            //    }
-            //    catch (SqlException e)
-            //    {
-            //        logger.Log("DB Errors.log", "GetCommentsForTranslationUnit: " + e);
-            //        throw e;
-            //    }
-            //}
-        }
-
-        public int InsertTBEntry(int termbaseId, String comment, String user)
-        {
-            //using (SqlConnection sqlConnection = new SqlConnection(termbasesConnectionString))
-            //{
-            //    try
-            //    {
-            //        //open connection
-            //        sqlConnection.Open();
-            //        SqlCommand sqlCommand = new SqlCommand();
-            //        sqlCommand.Connection = sqlConnection;
-            //        sqlCommand.CommandText = "Insert_TBEntry";
-            //        sqlCommand.CommandType = CommandType.StoredProcedure;
-
-            //        //set the query params
-            //        sqlCommand.Parameters.Add(new SqlParameter("@termbaseId", termbaseId));
-            //        sqlCommand.Parameters.Add(new SqlParameter("@comment", comment));
-            //        sqlCommand.Parameters.Add(new SqlParameter("@user", user));
-            //        sqlCommand.Parameters.Add(new SqlParameter() { ParameterName = "@id", DbType = DbType.Int32, Direction = ParameterDirection.Output });
-
-            //        sqlCommand.ExecuteNonQuery();
-            //        return (int)sqlCommand.Parameters["@id"].Value;
-            //    }
-            //    catch (Exception e)
-            //    {
-            //        logger.Log("DB Errors.log", "InsertTBEntry: " + e + "\ntermbaseId: ");
-            //        EmailHelper.SendDebugEmail("ERROR: " + e, "CreateTB", "alpar.meszaros@toppandigital.com");
-            //        throw e;
-            //    }
-            //}
-
-            return 0;
-        }
-
-        public int InsertTerm(int idEntry, KeyValuePair<String, String> term, String user)
-        {
-            //using (SqlConnection sqlConnection = new SqlConnection(termbasesConnectionString))
-            //{
-            //    try
-            //    {
-            //        //open connection
-            //        sqlConnection.Open();
-            //        SqlCommand sqlCommand = new SqlCommand();
-            //        sqlCommand.Connection = sqlConnection;
-            //        sqlCommand.CommandText = "Insert_Term";
-            //        sqlCommand.CommandType = CommandType.StoredProcedure;
-
-            //        //set the query params
-            //        sqlCommand.Parameters.Add(new SqlParameter("@idEntry", idEntry));
-            //        sqlCommand.Parameters.Add(new SqlParameter("@language", term.Key));
-            //        sqlCommand.Parameters.Add(new SqlParameter("@term", term.Value));
-            //        sqlCommand.Parameters.Add(new SqlParameter("@user", user));
-            //        sqlCommand.Parameters.Add(new SqlParameter() { ParameterName = "@id", DbType = DbType.Int32, Direction = ParameterDirection.Output });
-
-            //        sqlCommand.ExecuteNonQuery();
-            //        return (int)sqlCommand.Parameters["@id"].Value;
-            //    }
-            //    catch (Exception e)
-            //    {
-            //        logger.Log("DB Errors.log", "InsertTBEntry: " + e + "\ntermbaseId: ");
-            //        EmailHelper.SendDebugEmail("ERROR: " + e, "CreateTB", "alpar.meszaros@toppandigital.com");
-            //        throw e;
-            //    }
-            //}
-
-            return 0;
+                    sqlCommand.ExecuteNonQuery();
+                }
+                catch (Exception e)
+                {
+                    _logger.LogError("DB Errors.log", "GetCommentsForTranslationUnit: " + e);
+                    throw;
+                }
+            }
         }
 
         public void RemoveTerms(int termbaseId, String langCode)
         {
-            //using (SqlConnection sqlConnection = new SqlConnection(termbasesConnectionString))
+            using (var sqlConnection = new SQLiteConnection(_termbasesConnectionString))
+            {
+                try
+                {
+                    //open connection
+                    sqlConnection.Open();
+                    var sqlCommand = new SQLiteCommand();
+                    sqlCommand.Connection = sqlConnection;
+                    sqlCommand.CommandText = @"DELETE FROM termbaseTerms WHERE entryId IN (SELECT termbaseEntries.id FROM termbaseEntries 
+                        WHERE termbaseId = :termbaseId) AND language = :language;";
+                    sqlCommand.CommandType = CommandType.Text;
+
+                    //set the query params
+                    sqlCommand.Parameters.Add(new SQLiteParameter(":termbaseId", termbaseId));
+                    sqlCommand.Parameters.Add(new SQLiteParameter(":language", langCode));
+
+                    sqlCommand.ExecuteNonQuery();
+                }
+                catch (Exception e)
+                {
+                    _logger.LogError("DB Errors.log", "RemoveTerms: " + e + "\ntermbaseId: ");
+                    throw;
+                }
+            }
+        }
+
+        public void DeleteTBEntry(int termbaseId, int entryId)
+        {
+            //using (var sqlConnection = new SQLiteConnection(_termbasesConnectionString))
             //{
             //    try
             //    {
             //        //open connection
             //        sqlConnection.Open();
-            //        SqlCommand sqlCommand = new SqlCommand();
+            //        var sqlCommand = new SQLiteCommand();
             //        sqlCommand.Connection = sqlConnection;
-            //        sqlCommand.CommandText = "Remove_Terms";
-            //        sqlCommand.CommandType = CommandType.StoredProcedure;
+            //        sqlCommand.CommandText = "Delete termbaseEntries where termbaseId = :termbaseId and id = @entryId";
+            //        sqlCommand.CommandType = CommandType.Text;
 
             //        //set the query params
-            //        sqlCommand.Parameters.Add(new SqlParameter("@termbaseId", termbaseId));
-            //        sqlCommand.Parameters.Add(new SqlParameter("@language", langCode));
+            //        sqlCommand.Parameters.Add(new SQLiteParameter(":termbaseId", termbaseId));
+            //        sqlCommand.Parameters.Add(new SQLiteParameter("@entryId", entryId));
 
             //        sqlCommand.ExecuteNonQuery();
             //    }
             //    catch (Exception e)
             //    {
-            //        logger.Log("DB Errors.log", "RemoveTerms: " + e + "\ntermbaseId: ");
-            //        EmailHelper.SendDebugEmail("ERROR: " + e, "RemoveTerms", "alpar.meszaros@toppandigital.com");
+            //        _logger.LogError("DB Errors.log", "GetCommentsForTranslationUnit: " + e);
             //        throw e;
             //    }
             //}
         }
 
-        public DataSet GetTBEntry(int idEntry)
+        public int InsertTBEntry(int termbaseId, string metadata)
         {
-            //using (SqlConnection sqlConnection = new SqlConnection(termbasesConnectionString))
+            using (var sqlConnection = new SQLiteConnection(_termbasesConnectionString))
+            {
+                try
+                {
+                    //open connection
+                    sqlConnection.Open();
+                    var sqlCommand = new SQLiteCommand();
+                    sqlCommand.Connection = sqlConnection;
+                    sqlCommand.CommandText = "Insert_TBEntry";
+                    sqlCommand.CommandType = CommandType.StoredProcedure;
+
+                    //set the query params
+                    sqlCommand.Parameters.Add(new SQLiteParameter(":termbaseId", termbaseId));
+                    sqlCommand.Parameters.Add(new SQLiteParameter(":metadata", metadata));
+
+                    sqlCommand.ExecuteNonQuery();
+                    return (int)sqlConnection.LastInsertRowId;
+                }
+                catch (Exception e)
+                {
+                    _logger.LogError("InsertTBEntry -> termbaseId: " + termbaseId + " error: " + e.Message);
+                    throw;
+                }
+            }
+        }
+
+        public int InsertTerm(int entryId, KeyValuePair<String, String> term, string metadata)
+        {
+            using (var sqlConnection = new SQLiteConnection(_termbasesConnectionString))
+            {
+                try
+                {
+                    //open connection
+                    sqlConnection.Open();
+                    var sqlCommand = new SQLiteCommand();
+                    sqlCommand.Connection = sqlConnection;
+                    sqlCommand.CommandText = @"Delete dbo.termbaseTerms where entryId = :entryId and language = :language 
+                        INSERT INTO dbo.termbaseTerms (entryId, language, term, dateCreated, dateModified, createdBy, modifiedBy) 
+                        VALUES (:entryId, :language, :term, GETDATE(), GETDATE(), :user, :user);";
+                    sqlCommand.CommandType = CommandType.StoredProcedure;
+
+                    //set the query params
+                    sqlCommand.Parameters.Add(new SQLiteParameter(":entryId", entryId));
+                    sqlCommand.Parameters.Add(new SQLiteParameter(":language", term.Key));
+                    sqlCommand.Parameters.Add(new SQLiteParameter(":term", term.Value));
+                    sqlCommand.Parameters.Add(new SQLiteParameter(":metadata", metadata));
+
+                    sqlCommand.ExecuteNonQuery();
+                    return (int)sqlConnection.LastInsertRowId;
+                }
+                catch (Exception e)
+                {
+                    _logger.LogError("InsertTBEntry -> entryId: " + entryId + " error: " + e.Message);
+                    throw;
+                }
+            }
+        }
+
+        public DataSet GetTBEntry(int entryId)
+        {
+            //using (var sqlConnection = new SQLiteConnection(_termbasesConnectionString))
             //{
             //    try
             //    {
             //        //open connection
             //        sqlConnection.Open();
-            //        SqlCommand sqlCommand = new SqlCommand();
+            //        var sqlCommand = new SQLiteCommand();
             //        sqlCommand.Connection = sqlConnection;
-            //        sqlCommand.CommandText = "Select * from termbaseEntries where id=@idEntry";
+            //        sqlCommand.CommandText = "Select * from termbaseEntries where id=@entryId";
             //        //set the query params
-            //        sqlCommand.Parameters.Add(new SqlParameter("@idEntry", idEntry));
+            //        sqlCommand.Parameters.Add(new SQLiteParameter("@entryId", entryId));
 
             //        SqlDataAdapter adpt = new SqlDataAdapter(sqlCommand);
             //        DataSet ds = new DataSet();
@@ -916,9 +909,9 @@ namespace CAT.BusinessServices
 
             //        return ds;
             //    }
-            //    catch (SqlException e)
+            //    catch (Exception e)
             //    {
-            //        logger.Log("DB Errors.log", "GetCommentsForTranslationUnit: " + e);
+            //        _logger.LogError("DB Errors.log", "GetCommentsForTranslationUnit: " + e);
             //        throw e;
             //    }
             //}
@@ -928,15 +921,15 @@ namespace CAT.BusinessServices
 
         public DataSet ListTBEntries(int termbaseId, String[] languages)
         {
-            //using (SqlConnection sqlConnection = new SqlConnection(termbasesConnectionString))
+            //using (var sqlConnection = new SQLiteConnection(_termbasesConnectionString))
             //{
             //    try
             //    {
             //        //open connection
             //        sqlConnection.Open();
-            //        SqlCommand sqlCommand = new SqlCommand();
+            //        var sqlCommand = new SQLiteCommand();
             //        sqlCommand.Connection = sqlConnection;
-            //        sqlCommand.CommandText = "Select termbaseEntries.id, termbaseEntries.dateCreated, termbaseEntries.dateModified, termbaseEntries.comment, termbaseEntries.createdBy, termbaseEntries.modifiedBy, termbaseTerms.language, termbaseTerms.term from Termbases inner join termbaseEntries on Termbases.id = termbaseEntries.termbaseId inner join termbaseTerms on termbaseTerms.idEntry = termbaseEntries.id where Termbases.id=@termbaseId";
+            //        sqlCommand.CommandText = "Select termbaseEntries.id, termbaseEntries.dateCreated, termbaseEntries.dateModified, termbaseEntries.comment, termbaseEntries.createdBy, termbaseEntries.modifiedBy, termbaseTerms.language, termbaseTerms.term from Termbases inner join termbaseEntries on Termbases.id = termbaseEntries.termbaseId inner join termbaseTerms on termbaseTerms.entryId = termbaseEntries.id where Termbases.id=:termbaseId";
             //        if (languages?.Length > 0)
             //        {
             //            languages = Array.ConvertAll(languages, lang => "'" + lang + "'");
@@ -945,7 +938,7 @@ namespace CAT.BusinessServices
             //        sqlCommand.CommandType = CommandType.Text;
 
             //        //set the query params
-            //        sqlCommand.Parameters.Add(new SqlParameter("@termbaseId", termbaseId));
+            //        sqlCommand.Parameters.Add(new SQLiteParameter(":termbaseId", termbaseId));
 
             //        SqlDataAdapter adpt = new SqlDataAdapter(sqlCommand);
             //        DataSet ds = new DataSet();
@@ -953,9 +946,9 @@ namespace CAT.BusinessServices
 
             //        return ds;
             //    }
-            //    catch (SqlException e)
+            //    catch (Exception e)
             //    {
-            //        logger.Log("DB Errors.log", "GetCommentsForTranslationUnit: " + e);
+            //        _logger.LogError("DB Errors.log", "GetCommentsForTranslationUnit: " + e);
             //        throw e;
             //    }
             //}
@@ -963,7 +956,7 @@ namespace CAT.BusinessServices
             return null!;
         }
 
-        public void UpdateTMEntry(String tmPath, int idEntry, Dictionary<String, String> fieldsToUpdate)
+        public void UpdateTMEntry(String tmPath, int entryId, Dictionary<String, String> fieldsToUpdate)
         {
             //var dbParams = GetDBParams(tmPath);
             //var connectionString = String.Format(_translationMemoriesConnectionString, dbParams.dbName);
@@ -973,9 +966,9 @@ namespace CAT.BusinessServices
             //    {
             //        //open connection
             //        sqlConnection.Open();
-            //        SqlCommand sqlCommand = new SqlCommand();
+            //        var sqlCommand = new SQLiteCommand();
             //        sqlCommand.Connection = sqlConnection;
-            //        sqlCommand.CommandText = "Update [" + dbParams.tmTableName + "] set target=@target, targetHash=@targetHash, dateModified=@dateModified, modifiedBy=@modifiedBy where id=@idEntry";
+            //        sqlCommand.CommandText = "Update [" + dbParams.tmTableName + "] set target=@target, targetHash=@targetHash, dateModified=@dateModified, modifiedBy=@modifiedBy where id=@entryId";
             //        //sqlCommand.CommandText = "InsertTMEntry";
             //        sqlCommand.CommandType = CommandType.Text;
 
@@ -984,17 +977,17 @@ namespace CAT.BusinessServices
             //        var target = CATUtils.TmxSegmentToTextFragmentSimple(fieldsToUpdate["target"]).GetCodedText().Trim();
 
             //        //set the query params
-            //        sqlCommand.Parameters.Add(new SqlParameter("@target", target));
-            //        sqlCommand.Parameters.Add(new SqlParameter("@targetHash", CATUtils.djb2hash(target)));
-            //        sqlCommand.Parameters.Add(new SqlParameter("@dateModified", DateTime.Now));
-            //        sqlCommand.Parameters.Add(new SqlParameter("@modifiedBy", user));
-            //        sqlCommand.Parameters.Add(new SqlParameter("@idEntry", idEntry));
+            //        sqlCommand.Parameters.Add(new SQLiteParameter("@target", target));
+            //        sqlCommand.Parameters.Add(new SQLiteParameter("@targetHash", CATUtils.djb2hash(target)));
+            //        sqlCommand.Parameters.Add(new SQLiteParameter("@dateModified", DateTime.Now));
+            //        sqlCommand.Parameters.Add(new SQLiteParameter("@modifiedBy", user));
+            //        sqlCommand.Parameters.Add(new SQLiteParameter("@entryId", entryId));
 
             //        sqlCommand.ExecuteNonQuery();
             //    }
-            //    catch (SqlException ex)
+            //    catch (Exception ex)
             //    {
-            //        logger.Log("DB Errors.log", "InsertTMEntry: " + ex);
+            //        _logger.LogError("DB Errors.log", "InsertTMEntry: " + ex);
             //        throw ex;
             //    }
             //}
@@ -1011,7 +1004,7 @@ namespace CAT.BusinessServices
             //    {
             //        //open connection
             //        sqlConnection.Open();
-            //        SqlCommand sqlCommand = new SqlCommand();
+            //        var sqlCommand = new SQLiteCommand();
             //        sqlCommand.Connection = sqlConnection;
             //        sqlCommand.CommandText = "SELECT name FROM master.sys.databases WHERE database_id > 4";
             //        sqlCommand.CommandType = CommandType.Text;
@@ -1021,9 +1014,9 @@ namespace CAT.BusinessServices
             //        sqlAdapter.Fill(ds);
             //        return ds;
             //    }
-            //    catch (SqlException ex)
+            //    catch (Exception ex)
             //    {
-            //        logger.Log("DB Errors.log", "GetDbList: " + ex);
+            //        _logger.LogError("DB Errors.log", "GetDbList: " + ex);
             //        throw ex;
             //    }
             //}
@@ -1040,7 +1033,7 @@ namespace CAT.BusinessServices
             //    {
             //        //open connection
             //        sqlConnection.Open();
-            //        SqlCommand sqlCommand = new SqlCommand();
+            //        var sqlCommand = new SQLiteCommand();
             //        sqlCommand.Connection = sqlConnection;
             //        sqlCommand.CommandText = "SELECT name FROM master.sys.databases WHERE database_id > 4";
             //        sqlCommand.CommandType = CommandType.Text;
@@ -1050,9 +1043,9 @@ namespace CAT.BusinessServices
             //        sqlAdapter.Fill(ds);
             //        return ds;
             //    }
-            //    catch (SqlException ex)
+            //    catch (Exception ex)
             //    {
-            //        logger.Log("DB Errors.log", "GetDbList: " + ex);
+            //        _logger.LogError("DB Errors.log", "GetDbList: " + ex);
             //        throw ex;
             //    }
             //}
@@ -1069,7 +1062,7 @@ namespace CAT.BusinessServices
             //    {
             //        //open connection
             //        sqlConnection.Open();
-            //        SqlCommand sqlCommand = new SqlCommand();
+            //        var sqlCommand = new SQLiteCommand();
             //        sqlCommand.Connection = sqlConnection;
             //        sqlCommand.CommandText = "Select sysobjects.name tmName, sysindexes.rows entryNum from sysobjects inner join sysindexes on sysindexes.id = sysobjects.id and sysindexes.indid in (0,1) where sysobjects.xtype = 'U' ";
             //        sqlCommand.CommandType = CommandType.Text;
@@ -1079,9 +1072,9 @@ namespace CAT.BusinessServices
             //        sqlAdapter.Fill(ds);
             //        return ds;
             //    }
-            //    catch (SqlException ex)
+            //    catch (Exception ex)
             //    {
-            //        logger.Log("DB Errors.log", "GetDbList: " + ex);
+            //        _logger.LogError("DB Errors.log", "GetDbList: " + ex);
             //        throw ex;
             //    }
             //}
@@ -1098,21 +1091,21 @@ namespace CAT.BusinessServices
             //    {
             //        //open connection
             //        sqlConnection.Open();
-            //        SqlCommand sqlCommand = new SqlCommand();
+            //        var sqlCommand = new SQLiteCommand();
             //        sqlCommand.Connection = sqlConnection;
             //        sqlCommand.CommandType = CommandType.Text;
             //        sqlCommand.CommandText = "Backup database @dbName to disk=@backupPath WITH COMPRESSION, INIT";
             //        //sqlCommand.CommandText = "Backup database @dbName to disk=@backupPath"; //for SQL express
 
             //        var backupPath = Path.Combine(WebConfigurationManager.AppSettings["SQLBackupFolder"], dbName + ".bak");
-            //        sqlCommand.Parameters.Add(new SqlParameter("@dbName", dbName));
-            //        sqlCommand.Parameters.Add(new SqlParameter("@backupPath", backupPath));
+            //        sqlCommand.Parameters.Add(new SQLiteParameter("@dbName", dbName));
+            //        sqlCommand.Parameters.Add(new SQLiteParameter("@backupPath", backupPath));
 
             //        sqlCommand.ExecuteNonQuery();
             //    }
-            //    catch (SqlException ex)
+            //    catch (Exception ex)
             //    {
-            //        logger.Log("DB Errors.log", "BackupDatabase: " + dbName + "\n" + ex);
+            //        _logger.LogError("DB Errors.log", "BackupDatabase: " + dbName + "\n" + ex);
             //        throw ex;
             //    }
             //}
@@ -1157,7 +1150,7 @@ namespace CAT.BusinessServices
             //    {
             //        //open connection
             //        sqlConnection.Open();
-            //        SqlCommand sqlCommand = new SqlCommand();
+            //        var sqlCommand = new SQLiteCommand();
             //        sqlCommand.Connection = sqlConnection;
             //        sqlCommand.CommandText = "Select specialityId, description from TR_Specialities";
             //        sqlCommand.CommandType = CommandType.Text;
@@ -1168,9 +1161,9 @@ namespace CAT.BusinessServices
 
             //        return ds;
             //    }
-            //    catch (SqlException e)
+            //    catch (Exception e)
             //    {
-            //        logger.Log("DB Errors.log", "GetUserFullNameTask: " + e);
+            //        _logger.LogError("DB Errors.log", "GetUserFullNameTask: " + e);
             //        //throw e;
             //        return null!;
             //    }
@@ -1193,19 +1186,19 @@ namespace CAT.BusinessServices
             //    {
             //        //open connection
             //        sqlConnection.Open();
-            //        SqlCommand sqlCommand = new SqlCommand();
+            //        var sqlCommand = new SQLiteCommand();
             //        sqlCommand.Connection = sqlConnection;
             //        sqlCommand.CommandText = "SELECT TOP(1) value FROM [_SystemSettings] WHERE name = @SettingName";
-            //        sqlCommand.Parameters.Add(new SqlParameter("@SettingName", "Shrink_DB_Timeout"));
+            //        sqlCommand.Parameters.Add(new SQLiteParameter("@SettingName", "Shrink_DB_Timeout"));
             //        var value = (string) sqlCommand.ExecuteScalar();
             //        if(!String.IsNullOrEmpty(value) )
             //        {
             //            retval = Convert.ToInt32(value);
             //        }
             //    }
-            //    catch (SqlException e)
+            //    catch (Exception e)
             //    {
-            //        logger.Log("DB Errors.log", "GetShrinkDbTimeout: " + e);
+            //        _logger.LogError("DB Errors.log", "GetShrinkDbTimeout: " + e);
             //        //throw e;
             //    }
             //}

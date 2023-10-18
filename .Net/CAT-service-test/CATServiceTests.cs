@@ -89,10 +89,15 @@ namespace CAT
                 //var request2 = new GetTBInfoByIdRequest { TermbaseId = 1 };
                 //var response2 = await client.GetTBInfoByIdAsync(request2);
 
-                var request = new AddLanguageToTBRequest { TermbaseId = 1,  LangCode = "spa" };
-                var response = await client.AddLanguageToTBAsync(request);
-                var request2 = new RemoveLanguageFromTBRequest { TermbaseId = 1, LangCode = "spa"};
-                var response2 = await client.RemoveLanguageFromTBAsync(request2);
+                //var request = new AddLanguageToTBRequest { TermbaseId = 1,  LangCode = "spa" };
+                //var response = await client.AddLanguageToTBAsync(request);
+                //var request2 = new RemoveLanguageFromTBRequest { TermbaseId = 1, LangCode = "spa"};
+                //var response2 = await client.RemoveLanguageFromTBAsync(request2);
+
+                var request = new AddOrUpdateTBEntryRequest { TermbaseId = 1, LangCode = "spa" };
+                var response = await client.AddOrUpdateTBEntryAsync(request);
+                var request2 = new DeleteTBEntryRequest { TermbaseId = 1, LangCode = "spa" };
+                var response2 = await client.DeleteTBEntryAsync(request2);
                 //Assert.True(response);  // Or whatever your expected result is
             }
             catch (Exception ex)

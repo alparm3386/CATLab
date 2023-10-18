@@ -168,7 +168,7 @@ namespace CAT.TB
             }
         }
 
-        public int AddOrUpdateTBEntry(int idTermbase, TBEntry tbEntry)
+        public int AddOrUpdateTBEntry(int idTermbase, TBEntry tbEntry, string user)
         {
             var dsTermbase = _dataStorage.GetTBInfo(idTermbase);
             if (dsTermbase?.Tables[0]?.Rows.Count != 1)
@@ -177,11 +177,11 @@ namespace CAT.TB
             var languages = dsTermbase?.Tables[0]?.Rows[0]["languages"].ToString();
             var tbLanguages = new HashSet<String>(languages!.Split(','));
 
-            int idEntry = tbEntry.id;
-            if (idEntry <= 0)
+            int entryId = tbEntry.id;
+            if (entryId <= 0)
             {
                 //create entry
-                idEntry = _dataStorage.InsertTBEntry(idTermbase, tbEntry.comment, tbEntry.user);
+                entryId = _dataStorage.InsertTBEntry(idTermbase, tbEntry.metadata);
 
                 //insert the terms
                 foreach (var term in tbEntry.terms)
@@ -189,7 +189,7 @@ namespace CAT.TB
                     if (String.IsNullOrEmpty(term.Value))
                         continue;
                     var lang = term.Key.ToLower();
-                    _dataStorage.InsertTerm(idEntry, term, tbEntry.user);
+                    _dataStorage.InsertTerm(entryId, term, user);
                     if (!tbLanguages.Contains(lang))
                         tbLanguages.Add(lang);
                 }
@@ -197,9 +197,9 @@ namespace CAT.TB
             else
             {
                 //check if the entry exists
-                var dsEntry = _dataStorage.GetTBEntry(idEntry);
+                var dsEntry = _dataStorage.GetTBEntry(entryId);
                 if (dsEntry.Tables[0].Rows.Count == 0)
-                    idEntry = _dataStorage.InsertTBEntry(idTermbase, tbEntry.comment, tbEntry.user);
+                    entryId = _dataStorage.InsertTBEntry(idTermbase, tbEntry.metadata);
 
                 //update terms
                 foreach (var term in tbEntry.terms)
@@ -207,7 +207,7 @@ namespace CAT.TB
                     if (String.IsNullOrEmpty(term.Value))
                         continue;
                     var lang = term.Key.ToLower();
-                    _dataStorage.InsertTerm(idEntry, term, tbEntry.user);
+                    _dataStorage.InsertTerm(entryId, term, user);
                     if (!tbLanguages.Contains(lang))
                         tbLanguages.Add(lang);
                 }
@@ -218,17 +218,17 @@ namespace CAT.TB
                 _dataStorage.UpdateLanguages(idTermbase, tbLanguages.ToArray());
             _dataStorage.UpdateLastModified(idTermbase);
 
-            return idEntry;
+            return entryId;
         }
 
-        public void DeleteTBEntry(int idTermbase, int idEntry)
+        public void DeleteTBEntry(int idTermbase, int entryId)
         {
             var dsTermbase = _dataStorage.GetTBInfo(idTermbase);
             if (dsTermbase?.Tables[0]?.Rows.Count != 1)
                 throw new Exception("Termbase not found.");
 
             //delete the entry
-            _dataStorage.DeleteTBEntry(idTermbase, idEntry);
+            _dataStorage.DeleteTBEntry(idTermbase, entryId);
             //last modified
             _dataStorage.UpdateLastModified(idTermbase);
         }
@@ -251,11 +251,11 @@ namespace CAT.TB
                 while (cntr < tbEntries.Length)
                 {
                     var tbEntry = tbEntries[cntr];
-                    int idEntry = tbEntry.id;
-                    if (idEntry <= 0)
+                    int entryId = tbEntry.id;
+                    if (entryId <= 0)
                     {
                         //create entry
-                        idEntry = _dataStorage.InsertTBEntry(idTermbase, tbEntry.comment, tbEntry.user);
+                        entryId = _dataStorage.InsertTBEntry(idTermbase, tbEntry.metadata);
                         importResult.newItems++;
 
                         //insert the terms
@@ -264,7 +264,7 @@ namespace CAT.TB
                             if (String.IsNullOrEmpty(term.Value))
                                 continue;
                             var lang = term.Key.ToLower();
-                            _dataStorage.InsertTerm(idEntry, term, tbEntry.user);
+                            _dataStorage.InsertTerm(entryId, term, tbEntry.metadata);
                             if (!tbLanguages.Contains(lang))
                                 tbLanguages.Add(lang);
                         }
@@ -272,10 +272,10 @@ namespace CAT.TB
                     else
                     {
                         //check if the entry exists
-                        var dsEntry = _dataStorage.GetTBEntry(idEntry);
+                        var dsEntry = _dataStorage.GetTBEntry(entryId);
                         if (dsEntry.Tables[0].Rows.Count == 0 || idTermbase != (int)dsEntry.Tables[0].Rows[0]["idTermbase"])
                         {
-                            idEntry = _dataStorage.InsertTBEntry(idTermbase, tbEntry.comment, tbEntry.user);
+                            entryId = _dataStorage.InsertTBEntry(idTermbase, tbEntry.metadata);
                             importResult.newItems++;
                         }
 
@@ -285,7 +285,7 @@ namespace CAT.TB
                             if (String.IsNullOrEmpty(term.Value))
                                 continue;
                             var lang = term.Key.ToLower();
-                            _dataStorage.InsertTerm(idEntry, term, tbEntry.user);
+                            _dataStorage.InsertTerm(entryId, term, tbEntry.metadata);
                             if (!tbLanguages.Contains(lang))
                                 tbLanguages.Add(lang);
                         }
@@ -332,15 +332,8 @@ namespace CAT.TB
                     var tbEntry = new TBEntry
                     {
                         id = (int)tbRow["id"],
-                        comment = (String)tbRow["comment"],
                         //tbEntry.user = (String)tbRow["modifiedBy"];
-                        metadata = JsonConvert.SerializeObject(new
-                        {
-                            createdBy = (String)tbRow["createdBy"],
-                            dateCreated = (DateTime)tbRow["dateCreated"],
-                            modifiedBy = (String)tbRow["modifiedBy"],
-                            dateModified = (DateTime)tbRow["dateModified"],
-                        }),
+                        metadata = tbRow["metadata"].ToString()!,
                         terms = new Dictionary<String, String>
                         {
                             { (String)tbRow["language"], (String)tbRow["term"] }

@@ -477,6 +477,42 @@ namespace CAT.GRPCServices
                 throw new RpcException(new Status(StatusCode.Internal, "An internal error occurred."), ex.Message);
             }
         }
+
+        public override Task<AddOrUpdateTBEntryResponse> AddOrUpdateTBEntry(AddOrUpdateTBEntryRequest request, ServerCallContext context)
+        {
+            try
+            {
+                var tbEntry = new Models.TBEntry()
+                {
+                    id = request.TbEntry.Id,
+                    terms = request.TbEntry.Terms.ToDictionary(entry => entry.Key, entry => entry.Value),
+                    metadata = request.TbEntry.Metadata,
+                };
+                _tbService.AddOrUpdateTBEntry(request.TermbaseId, tbEntry, request.User);
+
+                return Task.FromResult(new AddOrUpdateTBEntryResponse());
+            }
+            catch (Exception ex) // Catching general exception
+            {
+                // Log the exception
+                throw new RpcException(new Status(StatusCode.Internal, "An internal error occurred."), ex.Message);
+            }
+        }
+
+        public override Task<EmptyResponse> DeleteTBEntry(DeleteTBEntryRequest request, ServerCallContext context)
+        {
+            try
+            {
+                _tbService.DeleteTBEntry(request.TermbaseId, request.EntryId);
+
+                return Task.FromResult(new EmptyResponse());
+            }
+            catch (Exception ex) // Catching general exception
+            {
+                // Log the exception
+                throw new RpcException(new Status(StatusCode.Internal, "An internal error occurred."), ex.Message);
+            }
+        }
         #endregion Termbase
     }
 }

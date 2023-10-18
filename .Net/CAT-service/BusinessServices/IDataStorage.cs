@@ -27,7 +27,7 @@ namespace CAT.BusinessServices
         int GetTMEntriesNumber(string tmPath);
         DataSet GetTMListFromDatabase(string dbName);
         DataSet GetTranslationMemoryData(string tmPath);
-        int InsertTBEntry(int idTermbase, string comment, string user);
+        int InsertTBEntry(int idTermbase, string user);
         int InsertTerm(int idEntry, KeyValuePair<string, string> term, string user);
         DataSet InsertTMEntry(string tmPath, TextFragment source, TextFragment target, string context, string user, int speciality, int idTranslation, DateTime dateCreated, DateTime dateModified, string extensionData);
         DataSet ListTBEntries(int idTermbase, string[] languages);

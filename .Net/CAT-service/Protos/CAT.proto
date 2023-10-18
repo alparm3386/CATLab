@@ -30,6 +30,8 @@ service CAT {
 	rpc GetTBInfoById (GetTBInfoByIdRequest) returns (GetTBInfoByIdResponse);
 	rpc AddLanguageToTB (AddLanguageToTBRequest) returns (EmptyResponse);
 	rpc RemoveLanguageFromTB (RemoveLanguageFromTBRequest) returns (EmptyResponse);
+	rpc AddOrUpdateTBEntry (AddOrUpdateTBEntryRequest) returns (AddOrUpdateTBEntryResponse);
+	rpc DeleteTBEntry (DeleteTBEntryRequest) returns (EmptyResponse);
 
     //Okapi service
 }
@@ -292,9 +294,33 @@ message AddLanguageToTBRequest {
     string langCode = 2;
 }
 
+//RemoveLanguageFromTBRequest
 message RemoveLanguageFromTBRequest {
     int32 termbaseId = 1;
     string langCode = 2;
+}
+
+//AddOrUpdateTBEntryRequest
+message AddOrUpdateTBEntryRequest {
+    int32 termbaseId = 1;
+    TBEntry tbEntry = 2;
+    string user = 3;
+}
+
+
+message AddOrUpdateTBEntryResponse {
+    int32 id = 1;
+}
+
+message TBEntry {
+    int32 id = 1;
+    map<string, string> terms = 2;
+    string metadata = 5;
+}
+
+message DeleteTBEntryRequest {
+    int32 termbaseId = 1;
+    int32 entryId = 2;
 }
 
 /*Okapi*/
