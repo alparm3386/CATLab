@@ -396,7 +396,7 @@ namespace CAT.BusinessServices
             //        sqlCommand.CommandType = CommandType.Text;
 
             //        SQLiteParameter queryTableParameter = new SQLiteParameter("@queryTable", queryTable);
-            //        queryTableParameter.TypeName = "dbo.ContextMatchQueryTable";
+            //        queryTableParameter.TypeName = "ContextMatchQueryTable";
             //        queryTableParameter.SqlDbType = SqlDbType.Structured;
             //        sqlCommand.Parameters.Add(queryTableParameter);
 
@@ -804,29 +804,29 @@ namespace CAT.BusinessServices
 
         public void DeleteTBEntry(int termbaseId, int entryId)
         {
-            //using (var sqlConnection = new SQLiteConnection(_termbasesConnectionString))
-            //{
-            //    try
-            //    {
-            //        //open connection
-            //        sqlConnection.Open();
-            //        var sqlCommand = new SQLiteCommand();
-            //        sqlCommand.Connection = sqlConnection;
-            //        sqlCommand.CommandText = "Delete termbaseEntries where termbaseId = :termbaseId and id = @entryId";
-            //        sqlCommand.CommandType = CommandType.Text;
+            using (var sqlConnection = new SQLiteConnection(_termbasesConnectionString))
+            {
+                try
+                {
+                    //open connection
+                    sqlConnection.Open();
+                    var sqlCommand = new SQLiteCommand();
+                    sqlCommand.Connection = sqlConnection;
+                    sqlCommand.CommandText = "Delete from termbaseEntries where termbaseId = :termbaseId and id = :entryId";
+                    sqlCommand.CommandType = CommandType.Text;
 
-            //        //set the query params
-            //        sqlCommand.Parameters.Add(new SQLiteParameter(":termbaseId", termbaseId));
-            //        sqlCommand.Parameters.Add(new SQLiteParameter("@entryId", entryId));
+                    //set the query params
+                    sqlCommand.Parameters.Add(new SQLiteParameter(":termbaseId", termbaseId));
+                    sqlCommand.Parameters.Add(new SQLiteParameter(":entryId", entryId));
 
-            //        sqlCommand.ExecuteNonQuery();
-            //    }
-            //    catch (Exception e)
-            //    {
-            //        _logger.LogError("DB Errors.log", "GetCommentsForTranslationUnit: " + e);
-            //        throw e;
-            //    }
-            //}
+                    sqlCommand.ExecuteNonQuery();
+                }
+                catch (Exception e)
+                {
+                    _logger.LogError("DeleteTBEntry -> termbaseId: " + termbaseId + " error: " + e);
+                    throw;
+                }
+            }
         }
 
         public int InsertTBEntry(int termbaseId, string metadata)
@@ -839,8 +839,9 @@ namespace CAT.BusinessServices
                     sqlConnection.Open();
                     var sqlCommand = new SQLiteCommand();
                     sqlCommand.Connection = sqlConnection;
-                    sqlCommand.CommandText = "Insert_TBEntry";
-                    sqlCommand.CommandType = CommandType.StoredProcedure;
+                    sqlCommand.CommandText = @"INSERT INTO termbaseEntries (termbaseId, metadata) 
+                        VALUES (:termbaseId, :metadata);";
+                    sqlCommand.CommandType = CommandType.Text;
 
                     //set the query params
                     sqlCommand.Parameters.Add(new SQLiteParameter(":termbaseId", termbaseId));
@@ -867,10 +868,11 @@ namespace CAT.BusinessServices
                     sqlConnection.Open();
                     var sqlCommand = new SQLiteCommand();
                     sqlCommand.Connection = sqlConnection;
-                    sqlCommand.CommandText = @"Delete dbo.termbaseTerms where entryId = :entryId and language = :language 
-                        INSERT INTO dbo.termbaseTerms (entryId, language, term, dateCreated, dateModified, createdBy, modifiedBy) 
-                        VALUES (:entryId, :language, :term, GETDATE(), GETDATE(), :user, :user);";
-                    sqlCommand.CommandType = CommandType.StoredProcedure;
+                    sqlCommand.CommandText = @"DELETE FROM termbaseTerms WHERE entryId = :entryId AND language = :language;
+                           INSERT INTO termbaseTerms (entryId, language, term, metadata) 
+                           VALUES (:entryId, :language, :term, :metadata);";
+
+                    sqlCommand.CommandType = CommandType.Text;
 
                     //set the query params
                     sqlCommand.Parameters.Add(new SQLiteParameter(":entryId", entryId));

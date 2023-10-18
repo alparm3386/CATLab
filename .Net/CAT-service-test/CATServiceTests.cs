@@ -94,9 +94,13 @@ namespace CAT
                 //var request2 = new RemoveLanguageFromTBRequest { TermbaseId = 1, LangCode = "spa"};
                 //var response2 = await client.RemoveLanguageFromTBAsync(request2);
 
-                var request = new AddOrUpdateTBEntryRequest { TermbaseId = 1, LangCode = "spa" };
+                var tbEntry = new TBEntry() { Metadata = "" };
+                tbEntry.Terms.Add("eng", "eng term");
+                tbEntry.Terms.Add("fre", "fre term");
+                tbEntry.Terms.Add("ger", "ger term");
+                var request = new AddOrUpdateTBEntryRequest { TermbaseId = 1, TbEntry = tbEntry };
                 var response = await client.AddOrUpdateTBEntryAsync(request);
-                var request2 = new DeleteTBEntryRequest { TermbaseId = 1, LangCode = "spa" };
+                var request2 = new DeleteTBEntryRequest { TermbaseId = 1, EntryId = 1 };
                 var response2 = await client.DeleteTBEntryAsync(request2);
                 //Assert.True(response);  // Or whatever your expected result is
             }

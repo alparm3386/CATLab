@@ -303,7 +303,6 @@ namespace CAT.TB
                 if (languages != String.Join(",", tbLanguages))
                     _dataStorage.UpdateLanguages(idTermbase, tbLanguages.ToArray());
                 _dataStorage.UpdateLastModified(idTermbase);
-
             }
 
             return importResult;
