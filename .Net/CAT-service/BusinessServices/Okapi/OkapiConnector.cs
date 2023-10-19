@@ -89,14 +89,14 @@ namespace CAT.BusinessServices.Okapi
             return channelFactory.CreateChannel();
         }
 
-        public string CreateXliffFromDocument(string sFileName, byte[] fileContent, string sFilterName, byte[] filterContent, string sourceLang,
+        public string CreateXliffFromDocument(string fileName, byte[] fileContent, string filterName, byte[] filterContent, string sourceLang,
                     string targetLang)
         {
             try
             {
                 //the client
                 var okapiClient = GetOkapiService();
-                string sXliffContent = okapiClient.createXliffAsync(new createXliffRequest(sFileName, fileContent, sFilterName, filterContent, sourceLang,
+                string sXliffContent = okapiClient.createXliffAsync(new createXliffRequest(fileName, fileContent, filterName, filterContent, sourceLang,
                     targetLang, null)).Result.createXliffReturn;
 
                 return sXliffContent;
@@ -108,15 +108,15 @@ namespace CAT.BusinessServices.Okapi
             }
         }
 
-        public byte[] CreateDocumentFromXliff(string sFileName, byte[] fileContent, string sFilterName, byte[] filterContent,
-            string sourceLangISO639_1, string targetLangISO639_1, string sXliffContent)
+        public byte[] CreateDocumentFromXliff(string fileName, byte[] fileContent, string filterName, byte[] filterContent,
+            string sourceLangISO639_1, string targetLangISO639_1, string xliffContent)
         {
             try
             {
                 //the client
                 var okapiClient = GetOkapiService();
-                var bytes = okapiClient.createDocumentFromXliffAsync(new createDocumentFromXliffRequest(sFileName, fileContent, sFilterName, filterContent, sourceLangISO639_1,
-                    targetLangISO639_1, sXliffContent)).Result.createDocumentFromXliffReturn;
+                var bytes = okapiClient.createDocumentFromXliffAsync(new createDocumentFromXliffRequest(fileName, fileContent, filterName, filterContent, sourceLangISO639_1,
+                    targetLangISO639_1, xliffContent)).Result.createDocumentFromXliffReturn;
 
                 return bytes;
             }

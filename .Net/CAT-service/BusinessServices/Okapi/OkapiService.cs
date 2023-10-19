@@ -22,6 +22,28 @@ namespace CAT.BusinessServices.Okapi
         }
 
         /// <summary>
+        /// CreateXliffFromDocument
+        /// </summary>
+        /// <param name="sFileName"></param>
+        /// <param name="fileContent"></param>
+        /// <param name="sFilterName"></param>
+        /// <param name="filterContent"></param>
+        /// <param name="sourceLangISO639_1"></param>
+        /// <param name="targetLangISO639_1"></param>
+        /// <param name="aTMAssignments"></param>
+        /// <returns></returns>
+        public string CreateXliffFromDocument(string sFileName, byte[] fileContent, string sFilterName, byte[] filterContent,
+            string sourceLangISO639_1, string targetLangISO639_1, TMAssignment[] aTMAssignments)
+        {
+            var xliffContent = _okapiConnector.CreateXliffFromDocument(sFileName, fileContent, sFilterName,
+                filterContent, sourceLangISO639_1, targetLangISO639_1);
+
+            var preTranslatedXliff = PreTranslateXliff(xliffContent, sourceLangISO639_1, targetLangISO639_1, aTMAssignments, 100);
+
+            return preTranslatedXliff;
+        }
+
+        /// <summary>
         /// CreateDocumentFromXliff
         /// </summary>
         /// <param name="sFileName"></param>
@@ -47,29 +69,6 @@ namespace CAT.BusinessServices.Okapi
             }
 
             return aBytes;
-        }
-
-        /// <summary>
-        /// CreateXliff
-        /// </summary>
-        /// <param name="sFileName"></param>
-        /// <param name="fileContent"></param>
-        /// <param name="sFilterName"></param>
-        /// <param name="filterContent"></param>
-        /// <param name="sourceLangISO639_1"></param>
-        /// <param name="targetLangISO639_1"></param>
-        /// <param name="aTMAssignments"></param>
-        /// <returns></returns>
-        public string CreateXliffFromDocument(string sFileName, byte[] fileContent, string sFilterName, byte[] filterContent,
-            string sourceLangISO639_1, string targetLangISO639_1, TMAssignment[] aTMAssignments)
-        {
-            long lStart = CATUtils.CurrentTimeMillis();
-            var sXliffContent = _okapiConnector.CreateXliffFromDocument(sFileName, fileContent, sFilterName,
-                filterContent, sourceLangISO639_1, targetLangISO639_1);
-
-            var sPreTranslatedXliff = PreTranslateXliff(sXliffContent, sourceLangISO639_1, targetLangISO639_1, aTMAssignments, 100);
-
-            return sPreTranslatedXliff;
         }
 
         /// <summary>

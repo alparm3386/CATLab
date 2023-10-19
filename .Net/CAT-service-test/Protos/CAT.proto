@@ -15,6 +15,7 @@ service CAT {
     rpc GetTMList (GetTMListRequest) returns (GetTMListResponse);
     rpc GetTMListFromDatabase (GetTMListFromDatabaseRequest) returns (GetTMListFromDatabaseResponse);
     rpc GetStatisticsForDocument(GetStatisticsForDocumentRequest) returns (GetStatisticsForDocumentResponse);
+    rpc PreTranslateXliff(PreTranslateXliffRequest) returns (PreTranslateXliffResponse);
     rpc GetTMMatches(GetTMMatchesRequest) returns (GetTMMatchesResponse);
     rpc GetExactMatch(GetExactMatchRequest) returns (GetExactMatchResponse);
     rpc AddTMEntries(AddTMEntriesRequest) returns (AddTMEntriesResponse);
@@ -38,7 +39,6 @@ service CAT {
     //Okapi service
     rpc CreateXliffFromDocument(CreateXliffFromDocumentRequest) returns (CreateXliffFromDocumentResponse);
     rpc CreateDocumentFromXliff(CreateDocumentFromXliffRequest) returns (CreateDocumentFromXliffResponse);
-    rpc PreTranslateXliff(PreTranslateXliffRequest) returns (PreTranslateXliffResponse);
 }
 
 message EmptyResponse {
@@ -137,6 +137,19 @@ message GetStatisticsForDocumentRequest {
 
 message GetStatisticsForDocumentResponse {
     repeated Statistics statistics = 1;
+}
+
+//PreTranslateXliff
+message PreTranslateXliffRequest {
+    string xliffContent = 1;
+    string langFrom_ISO639_1 = 2;
+    string langTo_ISO639_1 = 3;
+    repeated TMAssignment tmAssignments = 4;
+    int32 matchThreshold = 5;
+}
+
+message PreTranslateXliffResponse {
+    string xliffContent = 1;
 }
 
 //GetTMMatches
@@ -380,20 +393,7 @@ message CreateDocumentFromXliffRequest {
 }
 
 message CreateDocumentFromXliffResponse {
-    bytes result = 1;
-}
-
-//PreTranslateXliff
-message PreTranslateXliffRequest {
-    string xliffContent = 1;
-    string langFrom_ISO639_1 = 2;
-    string langTo_ISO639_1 = 3;
-    repeated TMAssignment tmAssignments = 4;
-    int32 matchThreshold = 5;
-}
-
-message PreTranslateXliffResponse {
-    string xliffContent = 1;
+    bytes document = 1;
 }
 
 

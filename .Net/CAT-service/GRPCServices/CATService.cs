@@ -5,6 +5,7 @@ using CAT.TM;
 using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
 using CAT.TB;
+using CAT.BusinessServices.Okapi;
 
 namespace CAT.GRPCServices
 {
@@ -14,12 +15,14 @@ namespace CAT.GRPCServices
         private readonly ITMService _tmService;
         private readonly ITBService _tbService;
         private readonly IMapper _mapper;
+        private readonly IOkapiConnector _okapiConnector;
 
-        public CATService(ILogger<CATService> logger, ITMService tmService, ITBService tbService, IMapper mapper)
+        public CATService(ILogger<CATService> logger, ITMService tmService, ITBService tbService, IMapper mapper, IOkapiConnector okapiConnector)
         {
             _logger = logger;
             _tmService = tmService;
             _tbService = tbService;
+            _okapiConnector = okapiConnector;
             _mapper = mapper;
         }
 
@@ -167,6 +170,33 @@ namespace CAT.GRPCServices
                     Match5074 = stat.match_50_74,
                     NoMatch = stat.no_match
                 }));
+
+                return Task.FromResult(response);
+            }
+            catch (Exception ex) // Catching general exception
+            {
+                // Log the exception
+                throw new RpcException(new Status(StatusCode.Internal, "An internal error occurred."), ex.Message);
+            }
+        }
+
+        public override Task<PreTranslateXliffResponse> PreTranslateXliff(PreTranslateXliffRequest request, ServerCallContext context)
+        {
+            try
+            {
+                //var tmAssignments = _mapper.Map<Models.TMAssignment[]>(request.TMAssignments);
+                var tmAssignments = request.TmAssignments.Select(tmAssignment => new Models.TMAssignment
+                {
+                    tmId = tmAssignment.TmId,
+                    penalty = tmAssignment.Penalty,
+                    speciality = tmAssignment.Speciality,
+                }).ToArray();
+
+                var xliffContent = _tmService.PreTranslateXliff(request.XliffContent, request.LangFromISO6391,
+                    request.LangToISO6391, tmAssignments, request.MatchThreshold);
+
+                var response = new PreTranslateXliffResponse();
+                response.XliffContent = xliffContent;
 
                 return Task.FromResult(response);
             }
@@ -533,7 +563,9 @@ namespace CAT.GRPCServices
         {
             try
             {
-                var response = new CreateXliffFromDocumentResponse();
+                var xliffContent = _okapiConnector.CreateXliffFromDocument(request.FileName, request.FileContent.ToArray(), 
+                    request.FilterName, request.FilterContent.ToArray(), request.SourceLangISO6391, request.TargetLangISO6391);
+                var response = new CreateXliffFromDocumentResponse() { XliffContent = xliffContent };
 
                 return Task.FromResult(response);
             }
@@ -548,34 +580,9 @@ namespace CAT.GRPCServices
         {
             try
             {
-                var response = new CreateDocumentFromXliffResponse();
-
-                return Task.FromResult(response);
-            }
-            catch (Exception ex) // Catching general exception
-            {
-                // Log the exception
-                throw new RpcException(new Status(StatusCode.Internal, "An internal error occurred."), ex.Message);
-            }
-        }
-
-        public override Task<PreTranslateXliffResponse> PreTranslateXliff(PreTranslateXliffRequest request, ServerCallContext context)
-        {
-            try
-            {
-                //var tmAssignments = _mapper.Map<Models.TMAssignment[]>(request.TMAssignments);
-                var tmAssignments = request.TmAssignments.Select(tmAssignment => new Models.TMAssignment
-                {
-                    tmId = tmAssignment.TmId,
-                    penalty = tmAssignment.Penalty,
-                    speciality = tmAssignment.Speciality,
-                }).ToArray();
-
-                var xliffContent = _tmService.PreTranslateXliff(request.XliffContent, request.LangFromISO6391, 
-                    request.LangToISO6391, tmAssignments, request.MatchThreshold);
-
-                var response = new PreTranslateXliffResponse();
-                response.XliffContent = xliffContent;
+                var bytes = _okapiConnector.CreateDocumentFromXliff(request.FileName, request.FileContent.ToArray(), request.FilterName, 
+                    request.FilterContent.ToArray(), request.SourceLangISO6391, request.TargetLangISO6391, request.XliffContent);
+                var response = new CreateDocumentFromXliffResponse() { Document = Google.Protobuf.ByteString.CopyFrom(bytes) };
 
                 return Task.FromResult(response);
             }

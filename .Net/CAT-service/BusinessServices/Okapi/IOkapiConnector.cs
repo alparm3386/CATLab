@@ -2,7 +2,7 @@
 {
     public interface IOkapiConnector
     {
-        byte[] CreateDocumentFromXliff(string sFileName, byte[] fileContent, string sFilterName, byte[] filterContent, string sourceLangISO639_1, string targetLangISO639_1, string sXliffContent);
-        string CreateXliffFromDocument(string sFileName, byte[] fileContent, string sFilterName, byte[] filterContent, string sourceLang, string targetLang);
+        byte[] CreateDocumentFromXliff(string fileName, byte[] fileContent, string filterName, byte[] filterContent, string sourceLangISO639_1, string targetLangISO639_1, string xliffContent);
+        string CreateXliffFromDocument(string fileName, byte[] fileContent, string filterName, byte[] filterContent, string sourceLang, string targetLang);
     }
 }
