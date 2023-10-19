@@ -513,6 +513,45 @@ namespace CAT.GRPCServices
                 throw new RpcException(new Status(StatusCode.Internal, "An internal error occurred."), ex.Message);
             }
         }
+
+        public override Task<ImportTBResponse> ImportTB(ImportTBRequest request, ServerCallContext context)
+        {
+            try
+            {
+                throw new NotImplementedException();
+            }
+            catch (Exception ex) // Catching general exception
+            {
+                // Log the exception
+                throw new RpcException(new Status(StatusCode.Internal, "An internal error occurred."), ex.Message);
+            }
+        }
+
+        public override Task<ImportTBEntriesResponse> ImportTBEntries(ImportTBEntriesRequest request, ServerCallContext context)
+        {
+            try
+            {
+                throw new NotImplementedException();
+            }
+            catch (Exception ex) // Catching general exception
+            {
+                // Log the exception
+                throw new RpcException(new Status(StatusCode.Internal, "An internal error occurred."), ex.Message);
+            }
+        }
+
+        public override Task<ListTBEntriesResponse> ListTBEntries(ListTBEntriesRequest request, ServerCallContext context)
+        {
+            try
+            {
+                throw new NotImplementedException();
+            }
+            catch (Exception ex) // Catching general exception
+            {
+                // Log the exception
+                throw new RpcException(new Status(StatusCode.Internal, "An internal error occurred."), ex.Message);
+            }
+        }
         #endregion Termbase
     }
 }
