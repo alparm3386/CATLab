@@ -177,32 +177,6 @@ namespace CAT.GRPCServices
             }
         }
 
-        public override Task<PreTranslateXliffResponse> PreTranslateXliff(PreTranslateXliffRequest request, ServerCallContext context)
-        {
-            try
-            {
-                //var tmAssignments = _mapper.Map<Models.TMAssignment[]>(request.TMAssignments);
-                var tmAssignments = request.TMAssignments.Select(tmAssignment => new Models.TMAssignment
-                {
-                    tmId = tmAssignment.TmId,
-                    penalty = tmAssignment.Penalty,
-                    speciality = tmAssignment.Speciality,
-                }).ToArray();
-
-                var xliffContent = _tmService.PreTranslateXliff(request.XliffContent, request.LangFrom, request.LangTo, tmAssignments, request.MatchThreshold);
-
-                var response = new PreTranslateXliffResponse();
-                response.XliffContent = xliffContent;
-
-                return Task.FromResult(response);
-            }
-            catch (Exception ex) // Catching general exception
-            {
-                // Log the exception
-                throw new RpcException(new Status(StatusCode.Internal, "An internal error occurred."), ex.Message);
-            }
-        }
-
         public override Task<GetTMMatchesResponse> GetTMMatches(GetTMMatchesRequest request, ServerCallContext context)
         {
             try
@@ -553,5 +527,64 @@ namespace CAT.GRPCServices
             }
         }
         #endregion Termbase
+
+        #region okapi
+        public override Task<CreateXliffFromDocumentResponse> CreateXliffFromDocument(CreateXliffFromDocumentRequest request, ServerCallContext context)
+        {
+            try
+            {
+                var response = new CreateXliffFromDocumentResponse();
+
+                return Task.FromResult(response);
+            }
+            catch (Exception ex) // Catching general exception
+            {
+                // Log the exception
+                throw new RpcException(new Status(StatusCode.Internal, "An internal error occurred."), ex.Message);
+            }
+        }
+
+        public override Task<CreateDocumentFromXliffResponse> CreateDocumentFromXliff(CreateDocumentFromXliffRequest request, ServerCallContext context)
+        {
+            try
+            {
+                var response = new CreateDocumentFromXliffResponse();
+
+                return Task.FromResult(response);
+            }
+            catch (Exception ex) // Catching general exception
+            {
+                // Log the exception
+                throw new RpcException(new Status(StatusCode.Internal, "An internal error occurred."), ex.Message);
+            }
+        }
+
+        public override Task<PreTranslateXliffResponse> PreTranslateXliff(PreTranslateXliffRequest request, ServerCallContext context)
+        {
+            try
+            {
+                //var tmAssignments = _mapper.Map<Models.TMAssignment[]>(request.TMAssignments);
+                var tmAssignments = request.TmAssignments.Select(tmAssignment => new Models.TMAssignment
+                {
+                    tmId = tmAssignment.TmId,
+                    penalty = tmAssignment.Penalty,
+                    speciality = tmAssignment.Speciality,
+                }).ToArray();
+
+                var xliffContent = _tmService.PreTranslateXliff(request.XliffContent, request.LangFromISO6391, 
+                    request.LangToISO6391, tmAssignments, request.MatchThreshold);
+
+                var response = new PreTranslateXliffResponse();
+                response.XliffContent = xliffContent;
+
+                return Task.FromResult(response);
+            }
+            catch (Exception ex) // Catching general exception
+            {
+                // Log the exception
+                throw new RpcException(new Status(StatusCode.Internal, "An internal error occurred."), ex.Message);
+            }
+        }
     }
+    #endregion okapi
 }

@@ -15,7 +15,6 @@ service CAT {
     rpc GetTMList (GetTMListRequest) returns (GetTMListResponse);
     rpc GetTMListFromDatabase (GetTMListFromDatabaseRequest) returns (GetTMListFromDatabaseResponse);
     rpc GetStatisticsForDocument(GetStatisticsForDocumentRequest) returns (GetStatisticsForDocumentResponse);
-    rpc PreTranslateXliff(PreTranslateXliffRequest) returns (PreTranslateXliffResponse);
     rpc GetTMMatches(GetTMMatchesRequest) returns (GetTMMatchesResponse);
     rpc GetExactMatch(GetExactMatchRequest) returns (GetExactMatchResponse);
     rpc AddTMEntries(AddTMEntriesRequest) returns (AddTMEntriesResponse);
@@ -35,7 +34,11 @@ service CAT {
 	rpc ImportTB (ImportTBRequest) returns (ImportTBResponse);
 	rpc ImportTBEntries (ImportTBEntriesRequest) returns (ImportTBEntriesResponse);
 	rpc ListTBEntries (ListTBEntriesRequest) returns (ListTBEntriesResponse);
+    
     //Okapi service
+    rpc CreateXliffFromDocument(CreateXliffFromDocumentRequest) returns (CreateXliffFromDocumentResponse);
+    rpc CreateDocumentFromXliff(CreateDocumentFromXliffRequest) returns (CreateDocumentFromXliffResponse);
+    rpc PreTranslateXliff(PreTranslateXliffRequest) returns (PreTranslateXliffResponse);
 }
 
 message EmptyResponse {
@@ -134,19 +137,6 @@ message GetStatisticsForDocumentRequest {
 
 message GetStatisticsForDocumentResponse {
     repeated Statistics statistics = 1;
-}
-
-//PreTranslateXliff
-message PreTranslateXliffRequest {
-    string xliffContent = 1;
-    string langFrom = 2;
-    string langTo = 3;
-    repeated TMAssignment TMAssignments = 4;
-    int32 matchThreshold = 5;
-}
-
-message PreTranslateXliffResponse {
-    string xliffContent = 1;
 }
 
 //GetTMMatches
@@ -363,6 +353,49 @@ message ListTBEntriesResponse {
 }
 
 /*Okapi*/
+//CreateXliffFromDocument
+message CreateXliffFromDocumentRequest {
+    string fileName = 1;
+    bytes fileContent = 2;
+    string filterName = 3;
+    bytes filterContent = 4;
+    string sourceLangISO639_1 = 5;
+    string targetLangISO639_1 = 6;
+    repeated TMAssignment tmAssignments = 7;
+}
+
+message CreateXliffFromDocumentResponse {
+    string xliffContent = 1;
+}
+
+//CreateDocumentFromXliff
+message CreateDocumentFromXliffRequest {
+    string fileName = 1;
+    bytes fileContent = 2;
+    string filterName = 3;
+    bytes filterContent = 4;
+    string sourceLangISO639_1 = 5;
+    string targetLangISO639_1 = 6;
+    string xliffContent = 7;
+}
+
+message CreateDocumentFromXliffResponse {
+    bytes result = 1;
+}
+
+//PreTranslateXliff
+message PreTranslateXliffRequest {
+    string xliffContent = 1;
+    string langFrom_ISO639_1 = 2;
+    string langTo_ISO639_1 = 3;
+    repeated TMAssignment tmAssignments = 4;
+    int32 matchThreshold = 5;
+}
+
+message PreTranslateXliffResponse {
+    string xliffContent = 1;
+}
+
 
 /*Misc*/
 
