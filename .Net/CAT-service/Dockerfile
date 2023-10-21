@@ -11,6 +11,9 @@ RUN dotnet restore
 # Publish the application to the /publish directory in Release configuration
 COPY . .
 
+# Set the DOTNET_ENVIRONMENT environment variable to Development
+ENV DOTNET_ENVIRONMENT Development
+
 RUN dotnet publish -c Debug -o /publish
 
 # Use the .NET runtime image for running the application
@@ -20,4 +23,6 @@ COPY --from=build-env /publish .
 
 EXPOSE 5082
 EXPOSE 7298
-ENTRYPOINT ["dotnet", "CAT-service.dll"]
+#ENTRYPOINT ["dotnet", "CAT-service.dll"]
+#ENTRYPOINT ["tail", "-f", "/dev/null"]
+ENTRYPOINT ["dotnet", "CAT-service.dll", "--server", "nmi"]

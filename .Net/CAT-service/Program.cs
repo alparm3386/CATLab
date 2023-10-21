@@ -8,19 +8,25 @@ using CAT.Infrastructure.Logging;
 using CAT.Services;
 using CAT.TB;
 using CAT.TM;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
+using System.Net;
 using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.WebHost.ConfigureKestrel(options =>
+{
+    options.Listen(IPAddress.Any, 5001, listenOptions =>
+    {
+        listenOptions.Protocols = HttpProtocols.Http2;
+    });
+});
 
 // Additional configuration is required to successfully run gRPC on macOS.
 // For instructions on how to configure Kestrel and gRPC clients on macOS, visit https://go.microsoft.com/fwlink/?linkid=2099682
 
 // Add services to the container.
 builder.Services.AddGrpc();
-//builder.Services.AddAutoMapper(cfg =>
-//    {
-//        cfg.ShouldMapProperty = pi => pi is PropertyInfo && pi.GetMethod != null && !pi.GetMethod.IsVirtual;
-//    }, typeof(AutoMapperProfile));
 builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
 
 builder.Services.AddSingleton<IDataStorage, SQLiteStorage>();

@@ -30,15 +30,6 @@
     <PackageReference Include="System.ServiceModel.Security" Version="4.10.*" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Reference Include="Lucene.Net">
-      <HintPath>..\Lucene.Net\src\Lucene.Net\bin\Release\net6.0\Lucene.Net.dll</HintPath>
-    </Reference>
-    <Reference Include="Lucene.Net.Analysis.Common">
-      <HintPath>..\Lucene.Net\src\Lucene.Net.Analysis.Common\bin\Release\net6.0\Lucene.Net.Analysis.Common.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-
   <PropertyGroup>
     <RootNamespace>CAT</RootNamespace>
   </PropertyGroup>
@@ -49,5 +40,14 @@
 
   <ItemGroup>
     <Protobuf Include="Protos\CAT.proto" GrpcServices="Server" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Lucene.Net">
+      <HintPath>Libraries\Lucene.Net.dll</HintPath>
+    </Reference>
+    <Reference Include="Lucene.Net.Analysis.Common">
+      <HintPath>Libraries\Lucene.Net.Analysis.Common.dll</HintPath>
+    </Reference>
   </ItemGroup>
 </Project>
