@@ -21,8 +21,7 @@ FROM mcr.microsoft.com/dotnet/aspnet:7.0 as runtime
 WORKDIR /app
 COPY --from=build-env /publish .
 
-EXPOSE 5082
-EXPOSE 7298
-#ENTRYPOINT ["dotnet", "CAT-service.dll"]
+EXPOSE 5001
+ENTRYPOINT ["dotnet", "CAT-service.dll"]
 #ENTRYPOINT ["tail", "-f", "/dev/null"]
-ENTRYPOINT ["dotnet", "CAT-service.dll", "--server", "nmi"]
+#ENTRYPOINT ["dotnet", "CAT-service.dll", "--server", "nmi"]
