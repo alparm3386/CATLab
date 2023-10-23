@@ -39,6 +39,17 @@ service CAT {
     //Okapi service
     rpc CreateXliffFromDocument(CreateXliffFromDocumentRequest) returns (CreateXliffFromDocumentResponse);
     rpc CreateDocumentFromXliff(CreateDocumentFromXliffRequest) returns (CreateDocumentFromXliffResponse);
+
+    //Misc.
+    rpc Test(TestRequest) returns (TestResponse);
+}
+
+message TestRequest {
+    string param = 1;
+}
+
+message TestResponse {
+    string result = 1;
 }
 
 message EmptyResponse {

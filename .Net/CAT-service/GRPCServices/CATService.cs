@@ -592,6 +592,24 @@ namespace CAT.GRPCServices
                 throw new RpcException(new Status(StatusCode.Internal, "An internal error occurred."), ex.Message);
             }
         }
+        #endregion okapi
+
+        #region Misc.
+        public override Task<TestResponse> Test(TestRequest request, ServerCallContext context)
+        {
+            try
+            {
+                var response = new TestResponse() { };
+
+                return Task.FromResult(response);
+            }
+            catch (Exception ex) // Catching general exception
+            {
+                // Log the exception
+                throw new RpcException(new Status(StatusCode.Internal, "An internal error occurred."), ex.Message);
+            }
+        }
+
+        #endregion Misc.
     }
-    #endregion okapi
 }

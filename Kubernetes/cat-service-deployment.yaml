@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cat-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: cat-service
+  template:
+    metadata:
+      labels:
+        app: cat-service
+    spec:
+      containers:
+        - name: cat-service
+          image: registry.digitalocean.com/languageops/cat-service
+          volumeMounts:
+            - name: cat-data-volume
+              mountPath: /data  # Mount path inside the container
+      volumes:
+        - name: cat-data-volume
+          persistentVolumeClaim:
+            claimName: cat-data-volume  # Name of the PVC
