@@ -6,6 +6,7 @@ using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
 using CAT.TB;
 using CAT.BusinessServices.Okapi;
+using Newtonsoft.Json;
 
 namespace CAT.GRPCServices
 {
@@ -599,7 +600,11 @@ namespace CAT.GRPCServices
         {
             try
             {
-                var response = new TestResponse() { };
+                var dataDirExists = Directory.Exists("/data");
+                var catDirExists = Directory.Exists("/data/CAT");
+
+                var jsonResult = JsonConvert.SerializeObject( new { dataDirExists, catDirExists }, Formatting.Indented);
+                var response = new TestResponse() { Result = jsonResult };
 
                 return Task.FromResult(response);
             }
