@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: cat-service
-          image: registry.digitalocean.com/languageops/cat-service
+          image: registry.digitalocean.com/languageops/cat-service:v2
           volumeMounts:
             - name: cat-data-volume
               mountPath: /data  # Mount path inside the container
