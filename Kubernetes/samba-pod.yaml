@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: samba-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: samba-server
+  template:
+    metadata:
+      labels:
+        app: samba-server
+    spec:
+      containers:
+        - name: samba-container
+          image: dperson/samba:latest
+          ports:
+            - containerPort: 139
+            - containerPort: 445
+          volumeMounts:
+            - name: shared-data
+              mountPath: /shared
+            - name: smb-config-volume
+              mountPath: /etc/samba/smb.conf
+              subPath: smb.conf
+      volumes:
+        - name: shared-data
+          persistentVolumeClaim:
+            claimName: cat-data-claim # Use the name of your PVC
+        - name: smb-config-volume
+          configMap:
+            name: smb-config

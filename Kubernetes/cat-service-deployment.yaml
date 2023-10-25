@@ -14,11 +14,11 @@ spec:
     spec:
       containers:
         - name: cat-service
-          image: registry.digitalocean.com/languageops/cat-service:v2
+          image: registry.digitalocean.com/languageops/cat-service
           volumeMounts:
             - name: cat-data-volume
               mountPath: /data  # Mount path inside the container
       volumes:
-        - name: cat-data-volume
+        - name: cat-data-claim
           persistentVolumeClaim:
-            claimName: cat-data-volume  # Name of the PVC
+            claimName: cat-data-claim  # Name of the PVC

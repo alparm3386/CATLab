@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: samba-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: samba
+  template:
+    metadata:
+      labels:
+        app: samba
+    spec:
+      containers:
+      - name: samba
+        image: dperson/samba:latest
+        ports:
+        - containerPort: 139  # NetBIOS
+        - containerPort: 445  # Microsoft-DS
+        volumeMounts:
+        - name: samba-volume
+          mountPath: /data
+        command:
+        - "/bin/sh"
+        - "-c"
+        - |
+          /usr/sbin/smbd -FS < /dev/null
+      volumes:
+      - name: samba-volume
+        persistentVolumeClaim:
+          claimName: cat-data-claim

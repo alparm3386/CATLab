@@ -7,6 +7,7 @@ using Grpc.Core;
 using CAT.TB;
 using CAT.BusinessServices.Okapi;
 using Newtonsoft.Json;
+using Microsoft.AspNetCore.Mvc;
 
 namespace CAT.GRPCServices
 {
@@ -611,7 +612,9 @@ namespace CAT.GRPCServices
             catch (Exception ex) // Catching general exception
             {
                 // Log the exception
-                throw new RpcException(new Status(StatusCode.Internal, "An internal error occurred."), ex.Message);
+                var response = new TestResponse() { Result = "Test error" };
+                return Task.FromResult(response);
+                //throw new RpcException(new Status(StatusCode.Internal, "An internal error occurred."), ex.Message);
             }
         }
 

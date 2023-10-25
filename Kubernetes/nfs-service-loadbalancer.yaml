@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: nfs-service
+spec:
+  selector:
+    role: nfs-server  # Match this label with your NFS server pod's labels
+  ports:
+    - protocol: TCP
+      port: 2049
+      targetPort: 2049
+  type: LoadBalancer  # Change the service type to LoadBalancer
+
+#\\NODE_IP:NodePort
