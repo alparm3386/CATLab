@@ -2,6 +2,10 @@
 
 # Use the .NET SDK as a base image for building the project
 FROM mcr.microsoft.com/dotnet/sdk:7.0 as build-env
+
+# Set the ASPNETCORE_ENVIRONMENT environment variable to Development
+ENV ASPNETCORE_ENVIRONMENT=Development
+
 WORKDIR /app
 
 # Copy the .csproj file and restore any dependencies (via dotnet restore)
