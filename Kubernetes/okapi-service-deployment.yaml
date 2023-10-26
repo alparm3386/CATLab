@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: okapi-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: okapi-service
+  template:
+    metadata:
+      labels:
+        app: okapi-service
+    spec:
+      containers:
+        - name: okapi-service
+          image: registry.digitalocean.com/languageops/okapi-service
+          volumeMounts:
+            - name: cat-data-claim
+              mountPath: /data  # Mount path inside the container
+      volumes:
+        - name: cat-data-claim
+          persistentVolumeClaim:
+            claimName: cat-data-claim  # Name of the PVC
