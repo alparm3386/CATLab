@@ -60,7 +60,7 @@ public class OkapiService implements IOkapiService {
 		try {
 			Context env;
 			var initContext = new InitialContext();
-			env = (Context)initContext.lookup("java:comp/env");
+			env = (Context) initContext.lookup("java:comp/env");
 			// Get a single value
 			TEMP_DIR = (String) env.lookup("TempDir");
 			SRX_FILE = (String) env.lookup("DefaultSrx");
@@ -70,189 +70,8 @@ public class OkapiService implements IOkapiService {
 		}
 	}
 
-	private static HashMap<String, String> CreateExtensionMap() {
-		var extensionsMap = new HashMap<String, String>();
-		// Instead create a map with extensions -> filter
-		extensionsMap.put(".docx", "okf_openxml");
-		extensionsMap.put(".pptx", "okf_openxml");
-		extensionsMap.put(".xlsx", "okf_openxml");
-
-		extensionsMap.put(".odt", "okf_openoffice");
-		extensionsMap.put(".swx", "okf_openoffice");
-		extensionsMap.put(".ods", "okf_openoffice");
-		extensionsMap.put(".swc", "okf_openoffice");
-		extensionsMap.put(".odp", "okf_openoffice");
-		extensionsMap.put(".sxi", "okf_openoffice");
-		extensionsMap.put(".odg", "okf_openoffice");
-		extensionsMap.put(".sxd", "okf_openoffice");
-
-		extensionsMap.put(".htm", "okf_html");
-		extensionsMap.put(".html", "okf_html");
-		extensionsMap.put(".xlf", "okf_xliff");
-		extensionsMap.put(".xlif", "okf_xliff");
-		extensionsMap.put(".xliff", "okf_xliff");
-		extensionsMap.put(".tmx", "okf_tmx");
-		extensionsMap.put(".properties", "okf_properties");
-		extensionsMap.put(".lang", "okf_properties-skypeLang");
-		extensionsMap.put(".po", "okf_po");
-		extensionsMap.put(".xml", "okf_xml");
-		extensionsMap.put(".resx", "okf_xml-resx");
-		extensionsMap.put(".srt", "okf_regex-srt");
-		extensionsMap.put(".dtd", "okf_dtd");
-		extensionsMap.put(".ent", "okf_dtd");
-		extensionsMap.put(".ts", "okf_ts");
-		extensionsMap.put(".txt", "okf_plaintext");
-		extensionsMap.put(".csv", "okf_table_csv");
-		extensionsMap.put(".ttx", "okf_ttx");
-		extensionsMap.put(".json", "okf_json");
-		extensionsMap.put(".pentm", "okf_pensieve");
-		extensionsMap.put(".yml", "okf_yaml");
-		extensionsMap.put(".idml", "okf_idml");
-		extensionsMap.put(".mif", "okf_mif");
-		extensionsMap.put(".txp", "okf_transifex");
-		extensionsMap.put(".rtf", "okf_tradosrtf");
-		extensionsMap.put(".zip", "okf_archive");
-		extensionsMap.put(".txml", "okf_txml");
-		extensionsMap.put(".md", "okf_markdown");
-
-		return extensionsMap;
-	}
-
-	private static IFilter createFilterForFile(String sFileExt, String sFilterName, byte[] aFilterContent)
-			throws Exception {
-		IFilter filter = null;
-		if (aFilterContent == null || aFilterContent.length == 0) { // create the filter by extension
-			switch (sFileExt.toLowerCase()) {
-				case "txt":
-					filter = new net.sf.okapi.filters.plaintext.PlainTextFilter();
-					break;
-				case "docx":
-				case "pptx":
-				case "xlsx":
-					filter = new net.sf.okapi.filters.openxml.OpenXMLFilter();
-					break;
-				case "odt":
-				case "swx":
-				case "ods":
-				case "swc":
-				case "odp":
-				case "sxi":
-				case "odg":
-				case "sxd":
-				case "ott":
-				case "odm":
-				case "ots":
-				case "otg":
-				case "otp":
-				case "odf":
-				case "odc":
-				case "odb":
-					filter = new net.sf.okapi.filters.openoffice.OpenOfficeFilter();
-					break;
-				case "htm":
-				case "html":
-					filter = new net.sf.okapi.filters.html.HtmlFilter();
-					break;
-				case "xlf":
-				case "xlif":
-				case "xliff":
-				case "mqxliff":
-				case "sdlxliff":
-					filter = new net.sf.okapi.filters.xliff.XLIFFFilter();
-					break;
-				case "xml":
-					filter = new net.sf.okapi.filters.xml.XMLFilter();
-					break;
-				case "pdf":
-					filter = new net.sf.okapi.filters.pdf.PdfFilter();
-					break;
-				case "json":
-					filter = new net.sf.okapi.filters.json.JSONFilter();
-					break;
-				case "idml":
-					filter = new net.sf.okapi.filters.idml.IDMLFilter();
-					break;
-				case "icml":
-					filter = new net.sf.okapi.filters.icml.ICMLFilter();
-					break;
-				case "zip":
-					filter = new net.sf.okapi.filters.archive.ArchiveFilter();
-					break;
-				case "docset":
-				case "dox":
-				case "doxy":
-					filter = new net.sf.okapi.filters.doxygen.DoxygenFilter();
-					break;
-				case "dtd":
-					filter = new net.sf.okapi.filters.dtd.DTDFilter();
-					break;
-				case "md":
-					filter = new net.sf.okapi.filters.markdown.MarkdownFilter();
-					break;
-				case "mif":
-					filter = new net.sf.okapi.filters.mif.MIFFilter();
-					break;
-				case "csv":
-					filter = new net.sf.okapi.filters.multiparsers.MultiParsersFilter();
-					break;
-				case "php":
-					filter = new net.sf.okapi.filters.php.PHPContentFilter();
-					break;
-				case "po":
-					filter = new net.sf.okapi.filters.po.POFilter();
-					break;
-				case "ts":
-					filter = new net.sf.okapi.filters.ts.TsFilter();
-					break;
-				case "ttx":
-					filter = new net.sf.okapi.filters.ttx.TTXFilter();
-					break;
-				//case "resx":
-				//	filter = new net.sf.okapi.filters...();
-				//	break;
-				case "yml":
-				case "yaml":
-					filter = new net.sf.okapi.filters.yaml.YamlFilter();
-					break;
-				default:
-					throw new Exception("File type is not supported.");
-			}
-		} else {
-			var fprmInputStream = new ByteArrayInputStream(aFilterContent);
-			filter = com.tm.okapi.filters.DefaultFilters.createFilterByFilterName(sFilterName);
-			var parameters = filter.getParameters();
-			parameters.load(fprmInputStream, true);
-			filter.setParameters(parameters);
-		}
-
-		// extensionsMap.Add(".tmx", "okf_tmx");
-		// extensionsMap.Add(".properties", "okf_properties");
-		// extensionsMap.Add(".lang", "okf_properties-skypeLang");
-		// extensionsMap.Add(".po", "okf_po");
-		// extensionsMap.Add(".resx", "okf_xml-resx");
-		// extensionsMap.Add(".srt", "okf_regex-srt");
-		// extensionsMap.Add(".dtd", "okf_dtd");
-		// extensionsMap.Add(".ent", "okf_dtd");
-		// extensionsMap.Add(".ts", "okf_ts");
-		// extensionsMap.Add(".txt", "okf_plaintext");
-		// extensionsMap.Add(".csv", "okf_table_csv");
-		// extensionsMap.Add(".ttx", "okf_ttx");
-		// extensionsMap.Add(".json", "okf_json");
-		// extensionsMap.Add(".pentm", "okf_pensieve");
-		// extensionsMap.Add(".yml", "okf_yaml");
-		// extensionsMap.Add(".idml", "okf_idml");
-		// extensionsMap.Add(".mif", "okf_mif");
-		// extensionsMap.Add(".txp", "okf_transifex");
-		// extensionsMap.Add(".rtf", "okf_tradosrtf");
-		// extensionsMap.Add(".zip", "okf_archive");
-		// extensionsMap.Add(".txml", "okf_txml");
-		// extensionsMap.Add(".md", "okf_markdown");
-
-		return filter;
-	}
-
 	public String createXliff(String sFileName, byte[] fileContent, String sFilterName, byte[] filterContent,
-							  String sourceLangISO639_1, String targetLangISO639_1, TMAssignment[] aTMAssignments) throws Exception {
+			String sourceLangISO639_1, String targetLangISO639_1, TMAssignment[] aTMAssignments) throws Exception {
 
 		String sXliffPath = Paths.get(TEMP_DIR, UUID.randomUUID().toString() + ".xliff").toString();
 		try {
@@ -288,8 +107,6 @@ public class OkapiService implements IOkapiService {
 			RawDocument rawDoc = new RawDocument(fis, "UTF-8", LocaleId.fromString(sourceLangISO639_1));
 			rawDoc.setTargetLocale(LocaleId.fromString(targetLangISO639_1));
 
-			// filter.open(rawDoc);
-
 			// The segmentation
 			var segStep = new SegmentationStep();
 			var segParams = (net.sf.okapi.steps.segmentation.Parameters) segStep.getParameters();
@@ -301,15 +118,15 @@ public class OkapiService implements IOkapiService {
 
 			PipelineDriver driver = new PipelineDriver();
 
-			// Raw document to filter events step
+// Raw document to filter events step
 			RawDocumentToFilterEventsStep rd2feStep = new RawDocumentToFilterEventsStep(filter);
 			driver.addStep(rd2feStep);
 
-			// Add segmentation step if requested
+// Add segmentation step if requested
 			if (!bXliff)
 				driver.addStep(segStep);
 
-			// Filter events to raw document final step (using the XLIFF writer)
+// Filter events to raw document final step (using the XLIFF writer)
 			FilterEventsWriterStep fewStep = new FilterEventsWriterStep();
 			XLIFFWriterParameters paramsXliff;
 			XLIFFWriter writer = new XLIFFWriter();
@@ -321,12 +138,12 @@ public class OkapiService implements IOkapiService {
 			paramsXliff.setCreateEmptyTarget(true);
 			paramsXliff.setPlaceholderMode(false); // don't use 'g' mode.
 
-			// fewStep.setDocumentRoots(rootDir);
+// fewStep.setDocumentRoots(rootDir);
 			driver.addStep(fewStep);
 
-			// Create the raw document and set the output
+// Create the raw document and set the output
 			driver.addBatchItem(rawDoc, new java.io.File(sXliffPath).toURI(), "UTF-8");
-			// Process
+// Process
 			driver.processBatch();
 
 			String sXliffContent = Files.readString(Path.of(sXliffPath));
@@ -337,18 +154,18 @@ public class OkapiService implements IOkapiService {
 			}
 
 			long lEnd = System.currentTimeMillis() - lStart;
-			System.out.println(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss").format(LocalDateTime.now()) +
-					" createXliff: " + sFileName + " -> " + lEnd + "ms");
-			Logging.Log("filtering.log", DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss").format(LocalDateTime.now()) +
-					" createXliff: " + sFileName + " -> " + lEnd + "ms");
+			System.out.println(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss").format(LocalDateTime.now())
+					+ " createXliff: " + sFileName + " -> " + lEnd + "ms");
+			Logging.Log("filtering.log", DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss").format(LocalDateTime.now())
+					+ " createXliff: " + sFileName + " -> " + lEnd + "ms");
 			return sXliffContent;
 		} catch (Exception ex) {
 			System.out.println("ERROR createXliff: " + sFileName + " -> " + ex.toString() + "ms");
-			Logging.Log("Errors.log", DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss").format(LocalDateTime.now()) +
-					" createXliff: " + sFileName + " -> " + ex.toString());
+			Logging.Log("Errors.log", DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss").format(LocalDateTime.now())
+					+ " createXliff: " + sFileName + " -> " + ex.toString());
 			throw ex;
 		} finally {
-			// cleanup
+// cleanup
 			var file = new File(sXliffPath);
 			if (file.exists())
 				try {
@@ -358,73 +175,8 @@ public class OkapiService implements IOkapiService {
 		}
 	}
 
-	private int countWords(TextFragment segment) throws Exception {
-		String sText = segment.getText();
-		// var wordIterator =
-		// (com.ibm.icu.text.RuleBasedBreakIterator)BreakIterator.getWordInstance(ULocale
-		// .createCanonical(srcLoc.toString()));
-		// com.ibm.icu.text.RuleBasedBreakIterator.registerInstance(srcWordIterator,
-		// srcLoc.toJavaLocale(),
-		// BreakIterator.KIND_WORD);
-
-		// long totalWordCount = 0;
-		// int current = 0;
-		// com.ibm.icu.text.RuleBasedBreakIterator wordIterator;
-
-		// if (Util.isEmpty(text))
-		// {
-		// return totalWordCount;
-		// }
-
-		// wordIterator = srcWordIterator;
-		// wordIterator.setText(text);
-
-		// while (true)
-		// {
-		// if (current == com.ibm.icu.text.BreakIterator.DONE)
-		// {
-		// break;
-		// }
-
-		// current = wordIterator.next();
-		// // don't count various space and punctuation
-		// if (wordIterator.getRuleStatus() !=
-		// com.ibm.icu.text.RuleBasedBreakIterator.WORD_NONE)
-		// {
-		// totalWordCount++;
-		// }
-		// }
-
-		// fix me! The dodgy word count
-		Pattern pattern = Pattern.compile("\\w+", Pattern.CASE_INSENSITIVE);
-		Matcher matcher = pattern.matcher(sText);
-		int totalWordCount = (int) matcher.results().count();
-
-		return totalWordCount;
-	}
-
-	public Statistics[] getStatisticsForDocument(String sFileName, byte[] fileContent, String sFilterName,
-												 byte[] filterContent, String sourceLangISO639_1, String[] aTargetLangsISO639_1,
-												 TMAssignment[] aTMAssignments) throws Exception {
-		throw new UnsupportedOperationException();
-	}
-
-	public static void changeTU(TextUnit tu) {
-		// if (true)
-		// return;
-		// Check if this unit can be modified
-		if (!tu.isTranslatable())
-			return; // If not, return without changes
-		TextContainer tc = tu.createTarget(LocaleId.fromString("fr"), false, IResource.COPY_ALL);
-		ISegments segs = tc.getSegments();
-		for (Segment seg : segs) {
-			TextFragment tf = seg.getContent();
-			tf.setCodedText(tf.getCodedText().toUpperCase());
-		}
-	}
-
 	public byte[] createDocumentFromXliff(String sFileName, byte[] fileContent, String sFilterName,
-										  byte[] filterContent, String sourceLangISO639_1, String targetLangISO639_1, String sXliffContent)
+			byte[] filterContent, String sourceLangISO639_1, String targetLangISO639_1, String sXliffContent)
 			throws Exception {
 		String sTempOutPath = null;
 		try {
@@ -503,8 +255,8 @@ public class OkapiService implements IOkapiService {
 			driver.processBatch();
 
 			var lElapsed = System.currentTimeMillis() - lStart;
-			System.out.println(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss").format(LocalDateTime.now()) +
-					" createDoc: " + sFileName + " -> " + lElapsed + "ms.");
+			System.out.println(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss").format(LocalDateTime.now())
+					+ " createDoc: " + sFileName + " -> " + lElapsed + "ms.");
 
 			var aRet = Files.readAllBytes(Path.of(sTempOutPath));
 			return aRet;
@@ -523,167 +275,230 @@ public class OkapiService implements IOkapiService {
 
 	}
 
-	public boolean tmExists(String sTMName) {
-		try {
-			var penTM = new PensieveTM();
+	private static HashMap<String, String> CreateExtensionMap() {
+		var extensionsMap = new HashMap<String, String>();
+		// Instead create a map with extensions -> filter
+		extensionsMap.put(".docx", "okf_openxml");
+		extensionsMap.put(".pptx", "okf_openxml");
+		extensionsMap.put(".xlsx", "okf_openxml");
 
-			return penTM.TMExists(sTMName);
-		} catch (Exception ex) {
-			// LOG("TMEntries.log", "ERROR: " + ex.ToString());
-			// throw new Exception(ex.Message);
-			return false;
+		extensionsMap.put(".odt", "okf_openoffice");
+		extensionsMap.put(".swx", "okf_openoffice");
+		extensionsMap.put(".ods", "okf_openoffice");
+		extensionsMap.put(".swc", "okf_openoffice");
+		extensionsMap.put(".odp", "okf_openoffice");
+		extensionsMap.put(".sxi", "okf_openoffice");
+		extensionsMap.put(".odg", "okf_openoffice");
+		extensionsMap.put(".sxd", "okf_openoffice");
+
+		extensionsMap.put(".htm", "okf_html");
+		extensionsMap.put(".html", "okf_html");
+		extensionsMap.put(".xlf", "okf_xliff");
+		extensionsMap.put(".xlif", "okf_xliff");
+		extensionsMap.put(".xliff", "okf_xliff");
+		extensionsMap.put(".tmx", "okf_tmx");
+		extensionsMap.put(".properties", "okf_properties");
+		extensionsMap.put(".lang", "okf_properties-skypeLang");
+		extensionsMap.put(".po", "okf_po");
+		extensionsMap.put(".xml", "okf_xml");
+		extensionsMap.put(".resx", "okf_xml-resx");
+		extensionsMap.put(".srt", "okf_regex-srt");
+		extensionsMap.put(".dtd", "okf_dtd");
+		extensionsMap.put(".ent", "okf_dtd");
+		extensionsMap.put(".ts", "okf_ts");
+		extensionsMap.put(".txt", "okf_plaintext");
+		extensionsMap.put(".csv", "okf_table_csv");
+		extensionsMap.put(".ttx", "okf_ttx");
+		extensionsMap.put(".json", "okf_json");
+		extensionsMap.put(".pentm", "okf_pensieve");
+		extensionsMap.put(".yml", "okf_yaml");
+		extensionsMap.put(".idml", "okf_idml");
+		extensionsMap.put(".mif", "okf_mif");
+		extensionsMap.put(".txp", "okf_transifex");
+		extensionsMap.put(".rtf", "okf_tradosrtf");
+		extensionsMap.put(".zip", "okf_archive");
+		extensionsMap.put(".txml", "okf_txml");
+		extensionsMap.put(".md", "okf_markdown");
+
+		return extensionsMap;
+	}
+
+	private static IFilter createFilterForFile(String sFileExt, String sFilterName, byte[] aFilterContent)
+			throws Exception {
+		IFilter filter = null;
+		if (aFilterContent == null || aFilterContent.length == 0) { // create the filter by extension
+			switch (sFileExt.toLowerCase()) {
+			case "txt":
+				filter = new net.sf.okapi.filters.plaintext.PlainTextFilter();
+				break;
+			case "docx":
+			case "pptx":
+			case "xlsx":
+				filter = new net.sf.okapi.filters.openxml.OpenXMLFilter();
+				break;
+			case "odt":
+			case "swx":
+			case "ods":
+			case "swc":
+			case "odp":
+			case "sxi":
+			case "odg":
+			case "sxd":
+			case "ott":
+			case "odm":
+			case "ots":
+			case "otg":
+			case "otp":
+			case "odf":
+			case "odc":
+			case "odb":
+				filter = new net.sf.okapi.filters.openoffice.OpenOfficeFilter();
+				break;
+			case "htm":
+			case "html":
+				filter = new net.sf.okapi.filters.html.HtmlFilter();
+				break;
+			case "xlf":
+			case "xlif":
+			case "xliff":
+			case "mqxliff":
+			case "sdlxliff":
+				filter = new net.sf.okapi.filters.xliff.XLIFFFilter();
+				break;
+			case "xml":
+				filter = new net.sf.okapi.filters.xml.XMLFilter();
+				break;
+			case "pdf":
+				filter = new net.sf.okapi.filters.pdf.PdfFilter();
+				break;
+			case "json":
+				filter = new net.sf.okapi.filters.json.JSONFilter();
+				break;
+			case "idml":
+				filter = new net.sf.okapi.filters.idml.IDMLFilter();
+				break;
+			case "icml":
+				filter = new net.sf.okapi.filters.icml.ICMLFilter();
+				break;
+			case "zip":
+				filter = new net.sf.okapi.filters.archive.ArchiveFilter();
+				break;
+			case "docset":
+			case "dox":
+			case "doxy":
+				filter = new net.sf.okapi.filters.doxygen.DoxygenFilter();
+				break;
+			case "dtd":
+				filter = new net.sf.okapi.filters.dtd.DTDFilter();
+				break;
+			case "md":
+				filter = new net.sf.okapi.filters.markdown.MarkdownFilter();
+				break;
+			case "mif":
+				filter = new net.sf.okapi.filters.mif.MIFFilter();
+				break;
+			case "csv":
+				filter = new net.sf.okapi.filters.multiparsers.MultiParsersFilter();
+				break;
+			case "php":
+				filter = new net.sf.okapi.filters.php.PHPContentFilter();
+				break;
+			case "po":
+				filter = new net.sf.okapi.filters.po.POFilter();
+				break;
+			case "ts":
+				filter = new net.sf.okapi.filters.ts.TsFilter();
+				break;
+			case "ttx":
+				filter = new net.sf.okapi.filters.ttx.TTXFilter();
+				break;
+			// case "resx":
+			// filter = new net.sf.okapi.filters...();
+			// break;
+			case "yml":
+			case "yaml":
+				filter = new net.sf.okapi.filters.yaml.YamlFilter();
+				break;
+			default:
+				throw new Exception("File type is not supported.");
+			}
+		} else {
+			var fprmInputStream = new ByteArrayInputStream(aFilterContent);
+			filter = com.tm.okapi.filters.DefaultFilters.createFilterByFilterName(sFilterName);
+			var parameters = filter.getParameters();
+			parameters.load(fprmInputStream, true);
+			filter.setParameters(parameters);
 		}
+
+		// extensionsMap.Add(".tmx", "okf_tmx");
+		// extensionsMap.Add(".properties", "okf_properties");
+		// extensionsMap.Add(".lang", "okf_properties-skypeLang");
+		// extensionsMap.Add(".po", "okf_po");
+		// extensionsMap.Add(".resx", "okf_xml-resx");
+		// extensionsMap.Add(".srt", "okf_regex-srt");
+		// extensionsMap.Add(".dtd", "okf_dtd");
+		// extensionsMap.Add(".ent", "okf_dtd");
+		// extensionsMap.Add(".ts", "okf_ts");
+		// extensionsMap.Add(".txt", "okf_plaintext");
+		// extensionsMap.Add(".csv", "okf_table_csv");
+		// extensionsMap.Add(".ttx", "okf_ttx");
+		// extensionsMap.Add(".json", "okf_json");
+		// extensionsMap.Add(".pentm", "okf_pensieve");
+		// extensionsMap.Add(".yml", "okf_yaml");
+		// extensionsMap.Add(".idml", "okf_idml");
+		// extensionsMap.Add(".mif", "okf_mif");
+		// extensionsMap.Add(".txp", "okf_transifex");
+		// extensionsMap.Add(".rtf", "okf_tradosrtf");
+		// extensionsMap.Add(".zip", "okf_archive");
+		// extensionsMap.Add(".txml", "okf_txml");
+		// extensionsMap.Add(".md", "okf_markdown");
+
+		return filter;
 	}
 
-	/// <summary>
-	/// CreateTM
-	/// </summary>
-	/// <param name="sTMName"></param>
-	/// <param name="sSourceLangIso639_1"></param>
-	/// <param name="sTargetLangIso639_1"></param>
-	/// <returns></returns>
-	public boolean createTM(String sTMName, String sSourceLangIso639_1, String sTargetLangIso639_1) {
-		try {
-			var penTM = new PensieveTM();
-			return penTM.CreateTM(sTMName, sSourceLangIso639_1, sTargetLangIso639_1);
+	private int countWords(TextFragment segment) throws Exception {
+		String sText = segment.getText();
+		// var wordIterator =
+		// (com.ibm.icu.text.RuleBasedBreakIterator)BreakIterator.getWordInstance(ULocale
+		// .createCanonical(srcLoc.toString()));
+		// com.ibm.icu.text.RuleBasedBreakIterator.registerInstance(srcWordIterator,
+		// srcLoc.toJavaLocale(),
+		// BreakIterator.KIND_WORD);
 
-		} catch (Exception ex) {
-			Logging.Log("TMErrors.log", "ERROR: " + ex.toString());
-			return false;
-		}
+		// long totalWordCount = 0;
+		// int current = 0;
+		// com.ibm.icu.text.RuleBasedBreakIterator wordIterator;
+
+		// if (Util.isEmpty(text))
+		// {
+		// return totalWordCount;
+		// }
+
+		// wordIterator = srcWordIterator;
+		// wordIterator.setText(text);
+
+		// while (true)
+		// {
+		// if (current == com.ibm.icu.text.BreakIterator.DONE)
+		// {
+		// break;
+		// }
+
+		// current = wordIterator.next();
+		// // don't count various space and punctuation
+		// if (wordIterator.getRuleStatus() !=
+		// com.ibm.icu.text.RuleBasedBreakIterator.WORD_NONE)
+		// {
+		// totalWordCount++;
+		// }
+		// }
+
+		// fix me! The dodgy word count
+		Pattern pattern = Pattern.compile("\\w+", Pattern.CASE_INSENSITIVE);
+		Matcher matcher = pattern.matcher(sText);
+		int totalWordCount = (int) matcher.results().count();
+
+		return totalWordCount;
 	}
-
-	public TMMatch[] getTMMatches(String[] aTMNames, String sSourceText, String sPrevText, String sNextText,
-								  byte matchThreshold, int maxHits) {
-		throw new UnsupportedOperationException();
-	}
-
-	public TMInfo[] getTMList(String sTMNameContains) throws Exception {
-		try {
-			var penTM = new PensieveTM();
-			return penTM.getTMList(sTMNameContains);
-		} catch (Exception ex) {
-			throw new Exception(ex.getMessage());
-		}
-	}
-
-	public int addTMEntries(String sTMName, TMEntry[] tmEntries) throws Exception {
-		try {
-			var penTM = new PensieveTM();
-			return penTM.AddTMEntries(sTMName, tmEntries);
-		} catch (Exception ex) {
-			Logging.Log("TMEntries.log", "ERROR: AddTMEntries TM name -> " + sTMName + "\n\n" + ex.toString());
-			throw new Exception(ex.getMessage());
-		}
-	}
-
-	public void updateTMEntry(String sTMName, int idEntry, String jsonData) throws Exception {
-		try {
-			var penTM = new PensieveTM();
-			penTM.updateTMEntry(sTMName, idEntry, jsonData);
-		} catch (Exception ex) {
-			Logging.Log("TMEntries.log", "ERROR: updateTMEntry TM name -> " + sTMName + "\n\n" + ex.toString());
-			throw new Exception(ex.getMessage());
-		}
-	}
-
-	public TMImportResult importTMX(String sTMName, String sTmxContent) throws Exception {
-		try {
-			var penTM = new PensieveTM();
-			return penTM.importTmx(sTMName, sTmxContent);
-		} catch (Exception ex) {
-			Logging.Log("TMEntries.log", "ERROR: importTMX TM name -> " + sTMName + "\n\n" + ex.toString());
-			throw new Exception(ex.getMessage());
-		}
-	}
-
-	public String exportTMX(String sTMName) throws Exception {
-		var penTM = new PensieveTM();
-		return penTM.exportTmx(sTMName);
-	}
-
-	public void setTMEntryCustomField(String sTMName, int key, String fieldName, String value) throws Exception {
-		try {
-		} catch (Exception ex) {
-			Logging.Log("TMEntries.log", "ERROR: SetTMEntryCustomField ->" + ex.toString());
-			throw new Exception(ex.getMessage());
-		}
-	}
-
-	public void deleteTMEntry(String sTMName, int idEntry) throws Exception {
-		try {
-			var penTM = new PensieveTM();
-			penTM.deleteTMEntry(sTMName, idEntry);
-		} catch (Exception ex) {
-			Logging.Log("TMEntries.log", "ERROR: DeleteTMEntry -> " + ex.toString());
-			throw new Exception(ex.getMessage());
-		}
-	}
-
-	public CorpusEntry[] concordance(String[] aTMNames, String sSourceText, String sTargetText, boolean bCaseSensitive,
-									 boolean bNumericEquivalenve, int nLimit) throws Exception {
-		try {
-			var penTM = new PensieveTM();
-			var entries = penTM.Concordance(aTMNames, sSourceText, sTargetText, bCaseSensitive, bNumericEquivalenve,
-					nLimit);
-			return entries;
-		} catch (Exception ex) {
-			Logging.Log("Concordance.log", "ERROR: " + ex.toString());
-			throw new Exception(ex.getMessage());
-		}
-	}
-
-	public Date getTMLastUpdated(String sTMName) {
-		return null;
-	}
-
-	public String preTranslateXliff(String sXliffContent, String sourceLangISO639_1, String targetLangISO639_1,
-									TMAssignment[] aTMAssignments, int matchThreshold) throws Exception {
-		try {
-			// The TM service client. Fix me! We should create a service factory for this.
-			var penTM = new PensieveTM();
-			var sPreTranslatedContent = penTM.PreTranslateXliff(sXliffContent, sourceLangISO639_1, targetLangISO639_1,
-					aTMAssignments, matchThreshold);
-
-			return sPreTranslatedContent;
-		} catch (Exception ex) {
-			throw ex;
-		}
-	}
-
-	public TMInfo getTMInfo(String sTMName) throws Exception {
-		try {
-			var penTM = new PensieveTM();
-			var tmInfo = penTM.GetTMInfo(sTMName, false);
-			return tmInfo;
-		} catch (Exception ex) {
-			Logging.Log("TMEntries.log", "ERROR: " + ex.toString());
-			throw new Exception(ex.getMessage());
-		}
-	}
-
-	public RepositoryInfo getRepositoryInfo() {
-		throw new UnsupportedOperationException();
-		/*
-		 * try { long length = 0;
-		 *
-		 * // listFiles() is used to list the // contents of the given folder File[]
-		 * files = folder.listFiles();
-		 *
-		 * int count = files.length;
-		 *
-		 * // loop for traversing the directory for (int i = 0; i < count; i++) { if
-		 * (files[i].isFile()) { length += files[i].length(); } else { length +=
-		 * getFolderSize(files[i]); } } return length;
-		 *
-		 * String sPath = ""; var directory = new DirectoryInfo(sPath); var files =
-		 * directory.GetFiles("*.*", SearchOption.AllDirectories); var lastAccessedFile
-		 * = files.OrderByDescending(f => f.LastWriteTime).First(); long size = 0;
-		 * foreach (FileInfo file in files) size += file.Length;
-		 *
-		 * return new RepositoryInfo() { files = files.Length, lastSave =
-		 * lastAccessedFile.LastWriteTime, size = size }; } catch (Exception ex) { throw
-		 * new Exception(ex.Message); }
-		 */ }
 
 }

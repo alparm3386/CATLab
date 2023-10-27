@@ -10,6 +10,11 @@
 		<okapi.version>1.42.0</okapi.version>
 	</properties>
 	<dependencies>
+		<dependency>
+			<groupId>org.sonarsource.scanner.maven</groupId>
+			<artifactId>sonar-maven-plugin</artifactId>
+			<version>3.10.0.2594</version>
+		</dependency>
 		<!-- https://mvnrepository.com/artifact/commons-io/commons-io -->
 		<dependency>
 			<groupId>commons-io</groupId>
@@ -70,11 +75,6 @@
 		<dependency>
 			<groupId>net.sf.okapi.filters</groupId>
 			<artifactId>okapi-filter-openxml</artifactId>
-			<version>${okapi.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>net.sf.okapi.filters</groupId>
-			<artifactId>okapi-filter-openoffice</artifactId>
 			<version>${okapi.version}</version>
 		</dependency>
 		<dependency>

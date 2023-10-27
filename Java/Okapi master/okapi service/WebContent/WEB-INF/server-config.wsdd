@@ -29,14 +29,14 @@
   <ns1:namespace>http://xml.apache.org/axis/wsdd/</ns1:namespace>
  </ns1:service>
  <ns1:service name="OkapiService" provider="java:RPC" style="wrapped" use="literal">
-  <ns2:operation name="getStatisticsForDocument" qname="ns1:getStatisticsForDocument" returnQName="ns1:getStatisticsForDocumentReturn" returnType="ns1:Statistics" soapAction="" xmlns:ns1="http://service.okapi.tm.com" xmlns:ns2="http://xml.apache.org/axis/wsdd/">
-   <ns2:parameter qname="ns1:sFileName" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema"/>
-   <ns2:parameter qname="ns1:fileContent" type="xsd:base64Binary" xmlns:xsd="http://www.w3.org/2001/XMLSchema"/>
-   <ns2:parameter qname="ns1:sFilterName" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema"/>
-   <ns2:parameter qname="ns1:filterContent" type="xsd:base64Binary" xmlns:xsd="http://www.w3.org/2001/XMLSchema"/>
-   <ns2:parameter qname="ns1:sourceLangISO639_1" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema"/>
-   <ns2:parameter qname="ns1:aTargetLangsISO639_1" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema"/>
-   <ns2:parameter qname="ns1:aTMAssignments" type="ns1:TMAssignment"/>
+  <ns2:operation name="createDocumentFromXliff" qname="ns1:createDocumentFromXliff" returnQName="ns1:createDocumentFromXliffReturn" returnType="xsd:base64Binary" soapAction="" xmlns:ns1="http://service.okapi.tm.com" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns2="http://xml.apache.org/axis/wsdd/">
+   <ns2:parameter qname="ns1:sFileName" type="xsd:string"/>
+   <ns2:parameter qname="ns1:fileContent" type="xsd:base64Binary"/>
+   <ns2:parameter qname="ns1:sFilterName" type="xsd:string"/>
+   <ns2:parameter qname="ns1:filterContent" type="xsd:base64Binary"/>
+   <ns2:parameter qname="ns1:sourceLangISO639_1" type="xsd:string"/>
+   <ns2:parameter qname="ns1:targetLangISO639_1" type="xsd:string"/>
+   <ns2:parameter qname="ns1:sXliffContent" type="xsd:string"/>
   </ns2:operation>
   <ns1:operation name="createXliff" qname="ns2:createXliff" returnQName="ns2:createXliffReturn" returnType="xsd:string" soapAction="" xmlns:ns2="http://service.okapi.tm.com" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
    <ns1:parameter qname="ns2:sFileName" type="xsd:string"/>
@@ -47,83 +47,7 @@
    <ns1:parameter qname="ns2:targetLangISO639_1" type="xsd:string"/>
    <ns1:parameter qname="ns2:aTMAssignments" type="ns2:TMAssignment"/>
   </ns1:operation>
-  <ns1:operation name="tmExists" qname="ns3:tmExists" returnQName="ns3:tmExistsReturn" returnType="xsd:boolean" soapAction="" xmlns:ns3="http://service.okapi.tm.com" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-   <ns1:parameter qname="ns3:sTMName" type="xsd:string"/>
-  </ns1:operation>
-  <ns1:operation name="createTM" qname="ns4:createTM" returnQName="ns4:createTMReturn" returnType="xsd:boolean" soapAction="" xmlns:ns4="http://service.okapi.tm.com" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-   <ns1:parameter qname="ns4:sTMName" type="xsd:string"/>
-   <ns1:parameter qname="ns4:sSourceLangIso639_1" type="xsd:string"/>
-   <ns1:parameter qname="ns4:sTargetLangIso639_1" type="xsd:string"/>
-  </ns1:operation>
-  <ns1:operation name="getTMMatches" qname="ns5:getTMMatches" returnQName="ns5:getTMMatchesReturn" returnType="ns5:TMMatch" soapAction="" xmlns:ns5="http://service.okapi.tm.com">
-   <ns1:parameter qname="ns5:aTMNames" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema"/>
-   <ns1:parameter qname="ns5:sSourceText" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema"/>
-   <ns1:parameter qname="ns5:sPrevText" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema"/>
-   <ns1:parameter qname="ns5:sNextText" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema"/>
-   <ns1:parameter qname="ns5:matchThreshold" type="xsd:byte" xmlns:xsd="http://www.w3.org/2001/XMLSchema"/>
-   <ns1:parameter qname="ns5:maxHits" type="xsd:int" xmlns:xsd="http://www.w3.org/2001/XMLSchema"/>
-  </ns1:operation>
-  <ns1:operation name="deleteTMEntry" qname="ns6:deleteTMEntry" soapAction="" xmlns:ns6="http://service.okapi.tm.com">
-   <ns1:parameter qname="ns6:sTMName" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema"/>
-   <ns1:parameter qname="ns6:idEntry" type="xsd:int" xmlns:xsd="http://www.w3.org/2001/XMLSchema"/>
-  </ns1:operation>
-  <ns1:operation name="updateTMEntry" qname="ns7:updateTMEntry" soapAction="" xmlns:ns7="http://service.okapi.tm.com">
-   <ns1:parameter qname="ns7:sTMName" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema"/>
-   <ns1:parameter qname="ns7:idEntry" type="xsd:int" xmlns:xsd="http://www.w3.org/2001/XMLSchema"/>
-   <ns1:parameter qname="ns7:jsonData" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema"/>
-  </ns1:operation>
-  <ns1:operation name="exportTMX" qname="ns8:exportTMX" returnQName="ns8:exportTMXReturn" returnType="xsd:string" soapAction="" xmlns:ns8="http://service.okapi.tm.com" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-   <ns1:parameter qname="ns8:sTMName" type="xsd:string"/>
-  </ns1:operation>
-  <ns1:operation name="concordance" qname="ns9:concordance" returnQName="ns9:concordanceReturn" returnType="ns9:CorpusEntry" soapAction="" xmlns:ns9="http://service.okapi.tm.com">
-   <ns1:parameter qname="ns9:aTMNames" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema"/>
-   <ns1:parameter qname="ns9:sSourceText" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema"/>
-   <ns1:parameter qname="ns9:sTargetText" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema"/>
-   <ns1:parameter qname="ns9:bCaseSensitive" type="xsd:boolean" xmlns:xsd="http://www.w3.org/2001/XMLSchema"/>
-   <ns1:parameter qname="ns9:bNumericEquivalenve" type="xsd:boolean" xmlns:xsd="http://www.w3.org/2001/XMLSchema"/>
-   <ns1:parameter qname="ns9:nLimit" type="xsd:int" xmlns:xsd="http://www.w3.org/2001/XMLSchema"/>
-  </ns1:operation>
-  <ns1:operation name="preTranslateXliff" qname="ns10:preTranslateXliff" returnQName="ns10:preTranslateXliffReturn" returnType="xsd:string" soapAction="" xmlns:ns10="http://service.okapi.tm.com" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-   <ns1:parameter qname="ns10:sXliffContent" type="xsd:string"/>
-   <ns1:parameter qname="ns10:sourceLangISO639_1" type="xsd:string"/>
-   <ns1:parameter qname="ns10:targetLangISO639_1" type="xsd:string"/>
-   <ns1:parameter qname="ns10:aTMAssignments" type="ns10:TMAssignment"/>
-   <ns1:parameter qname="ns10:matchThreshold" type="xsd:int"/>
-  </ns1:operation>
-  <ns1:operation name="getTMInfo" qname="ns11:getTMInfo" returnQName="ns11:getTMInfoReturn" returnType="ns11:TMInfo" soapAction="" xmlns:ns11="http://service.okapi.tm.com">
-   <ns1:parameter qname="ns11:sTMName" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema"/>
-  </ns1:operation>
-  <ns1:operation name="importTMX" qname="ns12:importTMX" returnQName="ns12:importTMXReturn" returnType="ns12:TMImportResult" soapAction="" xmlns:ns12="http://service.okapi.tm.com">
-   <ns1:parameter qname="ns12:sTMName" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema"/>
-   <ns1:parameter qname="ns12:sTmxContent" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema"/>
-  </ns1:operation>
-  <ns1:operation name="getTMLastUpdated" qname="ns13:getTMLastUpdated" returnQName="ns13:getTMLastUpdatedReturn" returnType="xsd:dateTime" soapAction="" xmlns:ns13="http://service.okapi.tm.com" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-   <ns1:parameter qname="ns13:sTMName" type="xsd:string"/>
-  </ns1:operation>
-  <ns1:operation name="addTMEntries" qname="ns14:addTMEntries" returnQName="ns14:addTMEntriesReturn" returnType="xsd:int" soapAction="" xmlns:ns14="http://service.okapi.tm.com" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-   <ns1:parameter qname="ns14:sTMName" type="xsd:string"/>
-   <ns1:parameter qname="ns14:tmEntries" type="ns14:TMEntry"/>
-  </ns1:operation>
-  <ns1:operation name="getTMList" qname="ns15:getTMList" returnQName="ns15:getTMListReturn" returnType="ns15:TMInfo" soapAction="" xmlns:ns15="http://service.okapi.tm.com">
-   <ns1:parameter qname="ns15:sTMNameContains" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema"/>
-  </ns1:operation>
-  <ns1:operation name="getRepositoryInfo" qname="ns16:getRepositoryInfo" returnQName="ns16:getRepositoryInfoReturn" returnType="ns16:RepositoryInfo" soapAction="" xmlns:ns16="http://service.okapi.tm.com"/>
-  <ns1:operation name="setTMEntryCustomField" qname="ns17:setTMEntryCustomField" soapAction="" xmlns:ns17="http://service.okapi.tm.com">
-   <ns1:parameter qname="ns17:sTMName" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema"/>
-   <ns1:parameter qname="ns17:key" type="xsd:int" xmlns:xsd="http://www.w3.org/2001/XMLSchema"/>
-   <ns1:parameter qname="ns17:fieldName" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema"/>
-   <ns1:parameter qname="ns17:value" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema"/>
-  </ns1:operation>
-  <ns1:operation name="createDocumentFromXliff" qname="ns18:createDocumentFromXliff" returnQName="ns18:createDocumentFromXliffReturn" returnType="xsd:base64Binary" soapAction="" xmlns:ns18="http://service.okapi.tm.com" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-   <ns1:parameter qname="ns18:sFileName" type="xsd:string"/>
-   <ns1:parameter qname="ns18:fileContent" type="xsd:base64Binary"/>
-   <ns1:parameter qname="ns18:sFilterName" type="xsd:string"/>
-   <ns1:parameter qname="ns18:filterContent" type="xsd:base64Binary"/>
-   <ns1:parameter qname="ns18:sourceLangISO639_1" type="xsd:string"/>
-   <ns1:parameter qname="ns18:targetLangISO639_1" type="xsd:string"/>
-   <ns1:parameter qname="ns18:sXliffContent" type="xsd:string"/>
-  </ns1:operation>
-  <ns1:parameter name="allowedMethods" value="getRepositoryInfo setTMEntryCustomField getTMMatches exportTMX getTMList addTMEntries getStatisticsForDocument importTMX deleteTMEntry tmExists createDocumentFromXliff createTM getTMInfo createXliff preTranslateXliff getTMLastUpdated updateTMEntry concordance"/>
+  <ns1:parameter name="allowedMethods" value="createDocumentFromXliff createXliff"/>
   <ns1:parameter name="typeMappingVersion" value="1.2"/>
   <ns1:parameter name="wsdlPortType" value="OkapiService"/>
   <ns1:parameter name="className" value="com.tm.okapi.service.OkapiService"/>
@@ -131,14 +55,7 @@
   <ns1:parameter name="schemaQualified" value="http://service.okapi.tm.com"/>
   <ns1:parameter name="wsdlTargetNamespace" value="http://service.okapi.tm.com"/>
   <ns1:parameter name="wsdlServiceElement" value="OkapiServiceService"/>
-  <ns1:typeMapping deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory" encodingStyle="" qname="ns19:TMEntry" serializer="org.apache.axis.encoding.ser.BeanSerializerFactory" type="java:com.tm.okapi.service.TMEntry" xmlns:ns19="http://service.okapi.tm.com"/>
-  <ns1:typeMapping deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory" encodingStyle="" qname="ns20:TMMatch" serializer="org.apache.axis.encoding.ser.BeanSerializerFactory" type="java:com.tm.okapi.service.TMMatch" xmlns:ns20="http://service.okapi.tm.com"/>
-  <ns1:typeMapping deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory" encodingStyle="" qname="ns21:TMAssignment" serializer="org.apache.axis.encoding.ser.BeanSerializerFactory" type="java:com.tm.okapi.service.TMAssignment" xmlns:ns21="http://service.okapi.tm.com"/>
-  <ns1:typeMapping deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory" encodingStyle="" qname="ns22:CorpusEntry" serializer="org.apache.axis.encoding.ser.BeanSerializerFactory" type="java:com.tm.okapi.service.CorpusEntry" xmlns:ns22="http://service.okapi.tm.com"/>
-  <ns1:typeMapping deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory" encodingStyle="" qname="ns23:RepositoryInfo" serializer="org.apache.axis.encoding.ser.BeanSerializerFactory" type="java:com.tm.okapi.service.RepositoryInfo" xmlns:ns23="http://service.okapi.tm.com"/>
-  <ns1:typeMapping deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory" encodingStyle="" qname="ns24:TMImportResult" serializer="org.apache.axis.encoding.ser.BeanSerializerFactory" type="java:com.tm.okapi.service.TMImportResult" xmlns:ns24="http://service.okapi.tm.com"/>
-  <ns1:typeMapping deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory" encodingStyle="" qname="ns25:Statistics" serializer="org.apache.axis.encoding.ser.BeanSerializerFactory" type="java:com.tm.okapi.service.Statistics" xmlns:ns25="http://service.okapi.tm.com"/>
-  <ns1:typeMapping deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory" encodingStyle="" qname="ns26:TMInfo" serializer="org.apache.axis.encoding.ser.BeanSerializerFactory" type="java:com.tm.okapi.service.TMInfo" xmlns:ns26="http://service.okapi.tm.com"/>
+  <ns1:typeMapping deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory" encodingStyle="" qname="ns3:TMAssignment" serializer="org.apache.axis.encoding.ser.BeanSerializerFactory" type="java:com.tm.okapi.service.TMAssignment" xmlns:ns3="http://service.okapi.tm.com"/>
  </ns1:service>
  <ns1:service name="Version" provider="java:RPC">
   <ns1:parameter name="allowedMethods" value="getVersion"/>
