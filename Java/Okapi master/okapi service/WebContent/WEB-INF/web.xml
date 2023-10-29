@@ -7,22 +7,22 @@
   <env-entry>
     <env-entry-name>TMPath</env-entry-name>
     <env-entry-type>java.lang.String</env-entry-type>
-    <env-entry-value>C:\CAT\</env-entry-value>
+    <env-entry-value>/data/CAT/</env-entry-value>
   </env-entry>
   <env-entry>
     <env-entry-name>LogFolder</env-entry-name>
     <env-entry-type>java.lang.String</env-entry-type>
-    <env-entry-value>C:\CAT\Log\</env-entry-value>
+    <env-entry-value>/data/CAT/Log/</env-entry-value>
   </env-entry>
   <env-entry>
     <env-entry-name>TempDir</env-entry-name>
     <env-entry-type>java.lang.String</env-entry-type>
-    <env-entry-value>C:\CAT\Temp\</env-entry-value>
+    <env-entry-value>/data/CAT/Temp/</env-entry-value>
   </env-entry>
   <env-entry>
     <env-entry-name>DefaultSrx</env-entry-name>
     <env-entry-type>java.lang.String</env-entry-type>
-    <env-entry-value>C:\CAT\Resources\All languages segmentation.srx</env-entry-value>
+    <env-entry-value>/data/CAT/Resources/All languages segmentation.srx</env-entry-value>
   </env-entry>
   <servlet>
     <display-name>Apache-Axis Servlet</display-name>

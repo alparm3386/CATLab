@@ -1,11 +1,14 @@
 # Use the official Tomcat base image from DockerHub
-FROM tomcat:9.0.80-jdk21-openjdk-slim
+FROM tomcat:8.5.95-jdk17-corretto-al2
 
 # Remove the default Tomcat example apps
 RUN rm -rf /usr/local/tomcat/webapps/*
 
+# Copy your custom tomcat-users.xml to the Tomcat configuration directory
+#COPY tomcat-users.xml /usr/local/tomcat/conf/
+
 # Copy your WAR file to the expected location
-COPY OkapiService-1.1.0-SNAPSHOT.war /usr/local/tomcat/webapps/ROOT.war
+COPY OkapiService-1.1.0-SNAPSHOT.war /usr/local/tomcat/webapps/OkapiService.war
 
 # Expose the default Tomcat port
 EXPOSE 8080
