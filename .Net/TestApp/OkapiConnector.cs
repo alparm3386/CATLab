@@ -35,7 +35,7 @@ namespace TestApp
         private EndpointAddress GetOkapiServiceEndpoint()
         {
             //var endPointAddr = "http://159.223.246.57:8080/services/OkapiService";
-            var endPointAddr = "http://localhost:8080/services/OkapiService";
+            var endPointAddr = "http://localhost:8080/OkapiService/services/OkapiService";
 
             //create the endpoint address for the 
             return new EndpointAddress(endPointAddr);
