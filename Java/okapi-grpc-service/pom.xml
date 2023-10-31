@@ -9,7 +9,17 @@
 	<version>1.0</version>
 	<packaging>jar</packaging>
 
+	<properties>
+		<okapi.version>1.42.0</okapi.version>
+		<org.apache.axis.version>1.4</org.apache.axis.version>
+	</properties>
+
 	<dependencies>
+		<dependency>
+			<groupId>org.apache.axis</groupId>
+			<artifactId>axis</artifactId>
+			<version>${org.apache.axis.version}</version>
+		</dependency>
 		<dependency>
 			<groupId>javax.annotation</groupId>
 			<artifactId>javax.annotation-api</artifactId>
@@ -31,6 +41,178 @@
 			<artifactId>grpc-stub</artifactId>
 			<version>1.16.1</version>
 		</dependency>
+		
+		<!-- https://mvnrepository.com/artifact/commons-io/commons-io -->
+		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+			<version>2.11.0</version>
+		</dependency>
+
+		<dependency>
+			<groupId>net.sf.okapi</groupId>
+			<artifactId>okapi-core</artifactId>
+			<version>${okapi.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>net.sf.okapi</groupId>
+			<artifactId>okapi-core-ui</artifactId>
+			<version>${okapi.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>net.sf.okapi.steps</groupId>
+			<artifactId>okapi-step-segmentation</artifactId>
+			<version>${okapi.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>net.sf.okapi.filters</groupId>
+			<artifactId>okapi-filter-tmx</artifactId>
+			<version>${okapi.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>net.sf.okapi.filters</groupId>
+			<artifactId>okapi-filter-autoxliff</artifactId>
+			<version>${okapi.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>net.sf.okapi.steps</groupId>
+			<artifactId>okapi-step-common</artifactId>
+			<version>${okapi.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>net.sf.okapi.connectors</groupId>
+			<artifactId>okapi-connector-pensieve</artifactId>
+			<version>${okapi.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>net.sf.okapi.steps</groupId>
+			<artifactId>okapi-step-formatconversion</artifactId>
+			<version>${okapi.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>net.sf.okapi.filters</groupId>
+			<artifactId>okapi-filter-openxml</artifactId>
+			<version>${okapi.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>net.sf.okapi.filters</groupId>
+			<artifactId>okapi-filter-html</artifactId>
+			<version>${okapi.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>net.sf.okapi.filters</groupId>
+			<artifactId>okapi-filter-its</artifactId>
+			<version>${okapi.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>net.sf.okapi.filters</groupId>
+			<artifactId>okapi-filter-plaintext</artifactId>
+			<version>${okapi.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>net.sf.okapi.filters</groupId>
+			<artifactId>okapi-filter-regex</artifactId>
+			<version>${okapi.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>net.sf.okapi.filters</groupId>
+			<artifactId>okapi-filter-pdf</artifactId>
+			<version>${okapi.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>net.sf.okapi.filters</groupId>
+			<artifactId>okapi-filter-json</artifactId>
+			<version>${okapi.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>net.sf.okapi.filters</groupId>
+			<artifactId>okapi-filter-idml</artifactId>
+			<version>${okapi.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>net.sf.okapi.filters</groupId>
+			<artifactId>okapi-filter-icml</artifactId>
+			<version>${okapi.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>net.sf.okapi.filters</groupId>
+			<artifactId>okapi-filter-archive</artifactId>
+			<version>${okapi.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>net.sf.okapi.filters</groupId>
+			<artifactId>okapi-filter-doxygen</artifactId>
+			<version>${okapi.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>net.sf.okapi.filters</groupId>
+			<artifactId>okapi-filter-dtd</artifactId>
+			<version>${okapi.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>net.sf.okapi.filters</groupId>
+			<artifactId>okapi-filter-markdown</artifactId>
+			<version>${okapi.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>net.sf.okapi.filters</groupId>
+			<artifactId>okapi-filter-mif</artifactId>
+			<version>${okapi.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>net.sf.okapi.filters</groupId>
+			<artifactId>okapi-filter-multiparsers</artifactId>
+			<version>${okapi.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>net.sf.okapi.filters</groupId>
+			<artifactId>okapi-filter-openoffice</artifactId>
+			<version>${okapi.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>net.sf.okapi.filters</groupId>
+			<artifactId>okapi-filter-php</artifactId>
+			<version>${okapi.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>net.sf.okapi.filters</groupId>
+			<artifactId>okapi-filter-po</artifactId>
+			<version>${okapi.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>net.sf.okapi.filters</groupId>
+			<artifactId>okapi-filter-ts</artifactId>
+			<version>${okapi.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>net.sf.okapi.filters</groupId>
+			<artifactId>okapi-filter-ttx</artifactId>
+			<version>${okapi.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>net.sf.okapi.filters</groupId>
+			<artifactId>okapi-filter-txml</artifactId>
+			<version>${okapi.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>net.sf.okapi.filters</groupId>
+			<artifactId>okapi-filter-yaml</artifactId>
+			<version>${okapi.version}</version>
+		</dependency>
+
+
+
+		<dependency>
+			<groupId>net.sf.okapi.steps</groupId>
+			<artifactId>okapi-step-wordcount</artifactId>
+			<version>${okapi.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>net.sf.okapi.steps</groupId>
+			<artifactId>okapi-step-scopingreport</artifactId>
+			<version>${okapi.version}</version>
+		</dependency>
+
 	</dependencies>
 
 	<build>

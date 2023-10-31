@@ -7,6 +7,7 @@ import static io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall;
 import com.cat.grpc.OkapiGrpc.OkapiImplBase;
 import com.cat.grpc.OkapiService.*;
 import com.google.protobuf.ByteString;
+import io.grpc.*;
 
 public class OkapiGrpcService extends OkapiImplBase {
 	@Override
@@ -17,22 +18,40 @@ public class OkapiGrpcService extends OkapiImplBase {
 		responseObserver.onNext(response);
 		responseObserver.onCompleted();
 	}
-
-	@Override
-	public void createDocumentFromXliff(com.cat.grpc.OkapiService.CreateDocumentFromXliffRequest request,
-			io.grpc.stub.StreamObserver<com.cat.grpc.OkapiService.CreateDocumentFromXliffResponse> responseObserver) {
-		var okapiService = new com.tm.okapi.service.OkapiService();
-		okapiService.createXliffFromDocument(request.getFileName(), "", sFilterName, filterContent, sourceLangISO639_1, targetLangISO639_1)
-		var response = CreateDocumentFromXliffResponse.newBuilder().setCreatedDocument(ByteString.copyFrom(new byte[] {10, 20})).build();
-		responseObserver.onNext(response);
-		responseObserver.onCompleted();
-	}
-
+	
 	@Override
 	public void createXliffFromDocument(com.cat.grpc.OkapiService.CreateXliffFromDocumentRequest request,
 			io.grpc.stub.StreamObserver<com.cat.grpc.OkapiService.CreateXliffFromDocumentResponse> responseObserver) {
-		var response = CreateXliffFromDocumentResponse.newBuilder().setXliffContent("xliff content comes here.").build();
-		responseObserver.onNext(response);
-		responseObserver.onCompleted();
+		try {
+			var okapiService = new com.tm.okapi.service.OkapiService();
+			var xliffContent = okapiService.createXliffFromDocument(request.getFileName(), request.getFileContent().toByteArray(), 
+					request.getFilterName(), request.getFilterContent().toByteArray(), 
+					request.getSourceLangISO6391(), request.getTargetLangISO6391());
+			
+			var response = CreateXliffFromDocumentResponse.newBuilder().setXliffContent(xliffContent).build();
+			responseObserver.onNext(response);
+			responseObserver.onCompleted();
+		} catch (Exception ex) {
+	        // Return an error to the gRPC client
+	        responseObserver.onError(Status.INTERNAL.withDescription("An error occurred during document creation").asException());			
+		}		
+	}
+
+	@Override
+	public void createDocumentFromXliff(com.cat.grpc.OkapiService.CreateDocumentFromXliffRequest request,
+			io.grpc.stub.StreamObserver<com.cat.grpc.OkapiService.CreateDocumentFromXliffResponse> responseObserver) {		
+		try {
+			var okapiService = new com.tm.okapi.service.OkapiService();
+			var bytes = okapiService.createDocumentFromXliff(request.getFileName(), request.getFileContent().toByteArray(), 
+					request.getFilterName(), request.getFilterContent().toByteArray(), request.getSourceLangISO6391(), 
+					request.getTargetLangISO6391(), request.getXliffContent());
+			
+			var response = CreateDocumentFromXliffResponse.newBuilder().setCreatedDocument(ByteString.copyFrom(bytes)).build();
+			responseObserver.onNext(response);
+			responseObserver.onCompleted();
+		} catch (Exception ex) {
+	        // Return an error to the gRPC client
+	        responseObserver.onError(Status.INTERNAL.withDescription("An error occurred during document creation").asException());			
+		}		
 	}
 }
