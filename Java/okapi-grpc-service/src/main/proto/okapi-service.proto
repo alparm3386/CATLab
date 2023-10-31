@@ -2,8 +2,10 @@ syntax = "proto3";
 
 package com.cat.grpc;
 
-service OkapiService {
+service Okapi {
     rpc SayHello (HelloRequest) returns (HelloResponse);
+    rpc CreateDocumentFromXliff (CreateDocumentFromXliffRequest) returns (CreateDocumentFromXliffResponse);
+    rpc CreateXliffFromDocument (CreateXliffFromDocumentRequest) returns (CreateXliffFromDocumentResponse);
 }
 
 message HelloRequest {
@@ -12,4 +14,31 @@ message HelloRequest {
 
 message HelloResponse {
     string message = 1;
+}
+
+message CreateDocumentFromXliffRequest {
+    string sFileName = 1;
+    bytes fileContent = 2;
+    string sFilterName = 3;
+    bytes filterContent = 4;
+    string sourceLangISO639_1 = 5;
+    string targetLangISO639_1 = 6;
+    string sXliffContent = 7;
+}
+
+message CreateDocumentFromXliffResponse {
+    bytes createdDocument = 1;
+}
+
+message CreateXliffFromDocumentRequest {
+    string sFileName = 1;
+    bytes fileContent = 2;
+    string sFilterName = 3;
+    bytes filterContent = 4;
+    string sourceLangISO639_1 = 5;
+    string targetLangISO639_1 = 6;
+}
+
+message CreateXliffFromDocumentResponse {
+    string xliffContent = 1;
 }

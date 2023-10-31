@@ -6,7 +6,7 @@ import io.grpc.ServerBuilder;
 public class GrpcServer {
     public static void main(String[] args) throws Exception {
         Server server = ServerBuilder.forPort(50051) // Choose a port
-            .addService(new OkapiService()) // Add your gRPC service implementation
+            .addService(new OkapiGrpcService()) // Add your gRPC service implementation
             .build();
 
         server.start();

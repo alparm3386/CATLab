@@ -1,6 +1,6 @@
 package com.tm.okapi.filters.cascading;
 
-import com.tm.utils.StringUtils;
+import com.tm.okapi.utils.StringUtils;
 import net.sf.okapi.common.exceptions.OkapiException;
 import org.apache.axis.utils.XMLUtils;
 import org.eclipse.swt.widgets.Dialog;
@@ -124,24 +124,15 @@ public class XliffViewer extends Dialog {
             for (int i = 0; i < tus.getLength(); i++) {
                 var tu = (Element) tus.item(i);
                 var lstSource = tu.getElementsByTagName("seg-source");
-                if (lstSource.getLength() == 0) {
-                    //no seg-source
-                    lstSource = tu.getElementsByTagName("source");
-                }
-
                 var source = (Element) lstSource.item(0);
                 var segments = source.getElementsByTagName("mrk");
-                if (segments.getLength() == 0)
-                    segments = lstSource;
-
                 var srcGoggle = "";
-                //if (segments.getLength() == 0) {
-                //    srcGoggle = xmlTags2GoogleTags(source).trim();
-                //    srcGoggle = StringUtils.encodeHtml(srcGoggle);
-                //    srcGoggle = srcGoggle.replaceAll("(\\{\\/*\\d*\\/*})", "<span style=\"color:red\">$1</span>");
-                //    sbHtml.append("<div>" + srcGoggle + "</div><hr/>\r\n");
-                //} else
-                {
+                if (segments.getLength() == 0) {
+                    srcGoggle = xmlTags2GoogleTags(source).trim();
+                    srcGoggle = StringUtils.encodeHtml(srcGoggle);
+                    srcGoggle = srcGoggle.replaceAll("(\\{\\/*\\d*\\/*})", "<span style=\"color:red\">$1</span>");
+                    sbHtml.append("<div>" + srcGoggle + "</div><hr/>\r\n");
+                } else {
                     for (int j = 0; j < segments.getLength(); j++) {
                         var seg = (Element) segments.item(j);
                         srcGoggle = xmlTags2GoogleTags(seg).trim();

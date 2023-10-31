@@ -1,10 +1,10 @@
 package com.cat.grpc;
 
 import io.grpc.stub.StreamObserver;
-import com.cat.grpc.OkapiServiceGrpc.OkapiServiceImplBase;
-import com.cat.grpc.OkapiServiceOuterClass.*;
+import com.cat.grpc.OkapiGrpc.OkapiImplBase;
+import com.cat.grpc.OkapiService.*;
 
-public class OkapiService extends OkapiServiceImplBase {
+public class OkapiGrpcService extends OkapiImplBase {
     @Override
     public void sayHello(HelloRequest request, StreamObserver<HelloResponse> responseObserver) {
         String greeting = "Hello, " + request.getName() + "!";
