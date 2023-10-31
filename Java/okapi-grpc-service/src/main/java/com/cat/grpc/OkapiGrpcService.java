@@ -21,6 +21,8 @@ public class OkapiGrpcService extends OkapiImplBase {
 	@Override
 	public void createDocumentFromXliff(com.cat.grpc.OkapiService.CreateDocumentFromXliffRequest request,
 			io.grpc.stub.StreamObserver<com.cat.grpc.OkapiService.CreateDocumentFromXliffResponse> responseObserver) {
+		var okapiService = new com.tm.okapi.service.OkapiService();
+		okapiService.createXliffFromDocument(request.getFileName(), "", sFilterName, filterContent, sourceLangISO639_1, targetLangISO639_1)
 		var response = CreateDocumentFromXliffResponse.newBuilder().setCreatedDocument(ByteString.copyFrom(new byte[] {10, 20})).build();
 		responseObserver.onNext(response);
 		responseObserver.onCompleted();

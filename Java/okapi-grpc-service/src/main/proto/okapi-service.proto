@@ -17,13 +17,13 @@ message HelloResponse {
 }
 
 message CreateDocumentFromXliffRequest {
-    string sFileName = 1;
+    string fileName = 1;
     bytes fileContent = 2;
-    string sFilterName = 3;
+    string filterName = 3;
     bytes filterContent = 4;
     string sourceLangISO639_1 = 5;
     string targetLangISO639_1 = 6;
-    string sXliffContent = 7;
+    string xliffContent = 7;
 }
 
 message CreateDocumentFromXliffResponse {
@@ -31,9 +31,9 @@ message CreateDocumentFromXliffResponse {
 }
 
 message CreateXliffFromDocumentRequest {
-    string sFileName = 1;
+    string fileName = 1;
     bytes fileContent = 2;
-    string sFilterName = 3;
+    string filterName = 3;
     bytes filterContent = 4;
     string sourceLangISO639_1 = 5;
     string targetLangISO639_1 = 6;
