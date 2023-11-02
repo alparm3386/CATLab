@@ -7,7 +7,8 @@ using static Com.Cat.Grpc.Okapi;
 
 Console.WriteLine("Hello, World!");
 
-string ServerAddress = "http://localhost:50051"; // Adjust the address/port as needed
+//string ServerAddress = "http://localhost:50051"; // Adjust the address/port as needed
+string ServerAddress = "http://188.166.136.248:50051"; // Adjust the address/port as needed
 using var channel = GrpcChannel.ForAddress(ServerAddress);
 var client = new OkapiClient(channel);
 var request = new CreateXliffFromDocumentRequest

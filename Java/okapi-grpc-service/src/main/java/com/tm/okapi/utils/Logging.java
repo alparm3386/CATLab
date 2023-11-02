@@ -10,22 +10,10 @@ import javax.naming.*;
  *
  */
 public class Logging {
-	private static String LOG_FOLDER = "";
+	private static String LOG_FOLDER = "/data/CAT/Log";
 
 	public synchronized static void Log(String sFileName, String sMsg) {
 		Log(sFileName, sMsg, false);
-	}
-
-	static {
-		try {
-			Context env;
-			env = (Context) new InitialContext().lookup("java:comp/env");
-			// Get a single value
-			LOG_FOLDER = (String) env.lookup("LogFolder");
-		} catch (NamingException ex) {
-			// TODO Auto-generated catch block
-			ex.printStackTrace();
-		}
 	}
 
 	public synchronized static void Log(String sFileName, String sMsg, boolean bSeparator) {
