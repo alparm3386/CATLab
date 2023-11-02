@@ -1,23 +1,29 @@
 ﻿using CAT.Models;
 using CAT.TM;
 using CAT.Utils;
+using Com.Cat.Grpc;
+using Google.Protobuf;
+using Grpc.Net.Client;
 using System.Diagnostics;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml;
+using static Com.Cat.Grpc.Okapi;
 
 namespace CAT.BusinessServices.Okapi
 {
     public class OkapiService : IOkapiService
     {
-        private readonly IOkapiConnector _okapiConnector;
         private readonly ITMService _tmService;
         private readonly ILogger _logger;
+        private readonly IOkapiService _okapiService;
+        private readonly IConfiguration _configuration;
 
-        public OkapiService(IOkapiConnector okapiConnector, ITMService tmService, ILogger<OkapiService> logger)
+        public OkapiService(IOkapiService okapiService, ITMService tmService, IConfiguration configuration, ILogger<OkapiService> logger)
         {
-            _okapiConnector = okapiConnector;
+            _okapiService = okapiService;
             _tmService = tmService;
+            _configuration = configuration;
             _logger = logger;
         }
 
@@ -32,15 +38,35 @@ namespace CAT.BusinessServices.Okapi
         /// <param name="targetLangISO639_1"></param>
         /// <param name="aTMAssignments"></param>
         /// <returns></returns>
-        public string CreateXliffFromDocument(string sFileName, byte[] fileContent, string sFilterName, byte[] filterContent,
+        public string CreateXliffFromDocument(string fileName, byte[] fileContent, string filterName, byte[] filterContent,
             string sourceLangISO639_1, string targetLangISO639_1, TMAssignment[] aTMAssignments)
         {
-            var xliffContent = _okapiConnector.CreateXliffFromDocument(sFileName, fileContent, sFilterName,
+            var xliffContent = CreateXliffFromDocument(fileName, fileContent, filterName,
                 filterContent, sourceLangISO639_1, targetLangISO639_1);
 
             var preTranslatedXliff = PreTranslateXliff(xliffContent, sourceLangISO639_1, targetLangISO639_1, aTMAssignments, 100);
 
             return preTranslatedXliff;
+        }
+
+        public string CreateXliffFromDocument(string fileName, byte[] fileContent, string filterName, byte[] filterContent,
+            string sourceLangISO639_1, string targetLangISO639_1)
+        {
+            var okapiServer = _configuration["OkapiServer"]!.ToString();
+            using var channel = GrpcChannel.ForAddress(okapiServer);
+            var client = new OkapiClient(channel);
+            var request = new CreateXliffFromDocumentRequest
+            {
+                FileName = fileName,
+                FileContent = ByteString.CopyFrom(fileContent),
+                FilterContent = ByteString.CopyFrom(filterContent),
+                FilterName = filterName,
+                SourceLangISO6391 = sourceLangISO639_1,
+                TargetLangISO6391 = targetLangISO639_1
+            };
+            var response = client.CreateXliffFromDocument(request);
+
+            return response.XliffContent;
         }
 
         /// <summary>
@@ -54,21 +80,25 @@ namespace CAT.BusinessServices.Okapi
         /// <param name="targetLangISO639_1"></param>
         /// <param name="sXliffContent"></param>
         /// <returns></returns>
-        public byte[] CreateDocumentFromXliff(string sFileName, byte[] fileContent, string sFilterName, byte[] filterContent,
-            string sourceLangISO639_1, string targetLangISO639_1, string sXliffContent)
+        public byte[] CreateDocumentFromXliff(string fileName, byte[] fileContent, string filterName, byte[] filterContent,
+            string sourceLangISO639_1, string targetLangISO639_1, string xliffContent)
         {
-            byte[] aBytes = _okapiConnector.CreateDocumentFromXliff(sFileName, fileContent, sFilterName, filterContent,
-                sourceLangISO639_1, targetLangISO639_1, sXliffContent);
-            var sExt = Path.GetExtension(sFileName).ToLower();
-            if (sExt == ".mqxliff")
+            var okapiServer = _configuration["OkapiServer"]!.ToString();
+            using var channel = GrpcChannel.ForAddress(okapiServer);
+            var client = new OkapiClient(channel);
+            var request = new CreateDocumentFromXliffRequest
             {
-                //set the status for memoQ xliff files
-                var xliffContent = Encoding.UTF8.GetString(aBytes);
-                xliffContent = xliffContent.Replace("mq:status=\"NotStarted\"", "mq:status=\"ManuallyConfirmed\"");
-                aBytes = Encoding.UTF8.GetBytes(xliffContent);
-            }
+                FileName = fileName,
+                FileContent = ByteString.CopyFrom(fileContent),
+                FilterContent = ByteString.CopyFrom(filterContent),
+                FilterName = filterName,
+                SourceLangISO6391 = sourceLangISO639_1,
+                TargetLangISO6391 = targetLangISO639_1,
+                XliffContent = xliffContent,
+            };
+            var response = client.CreateDocumentFromXliff(request);
 
-            return aBytes;
+            return response.CreatedDocument.ToByteArray();
         }
 
         /// <summary>

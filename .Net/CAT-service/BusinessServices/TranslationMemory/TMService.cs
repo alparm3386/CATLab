@@ -33,16 +33,16 @@ namespace CAT.TM
         private Dictionary<string, TMConnector> TMConnectionPool;
         private readonly string RepositoryFolder;
         private readonly IConfiguration _configuration;
+        private readonly IOkapiService _okapiService;
         private readonly ILogger _logger;
         private readonly IDataStorage _dataStorage;
-        private readonly IOkapiConnector _okapiConnector;
         private readonly int NGramLength = 4;
         private Dictionary<int, string> specialities;
 
-        public TMService(IOkapiConnector okapiConnector, IDataStorage dataStorage, IConfiguration configuration, ILogger<TMService> logger)
+        public TMService(IDataStorage dataStorage, IOkapiService okapiService, IConfiguration configuration, ILogger<TMService> logger)
         {
-            _okapiConnector = okapiConnector;
             _dataStorage = dataStorage;
+            _okapiService = okapiService;
             _configuration = configuration;
             _logger = logger;
 
@@ -159,7 +159,7 @@ namespace CAT.TM
         {
             //long lStart = CATUtils.CurrentTimeMillis();
             //convert the document to xliff
-            var sXliffContent = _okapiConnector.CreateXliffFromDocument(sFileName, fileContent, sFilterName, filterContent, sourceLangISO639_1, "fr"); //we can use a dummy language here
+            var sXliffContent = _okapiService.CreateXliffFromDocument(sFileName, fileContent, sFilterName, filterContent, sourceLangISO639_1, "fr"); //we can use a dummy language here
 
             //get the text fragments
             var tmpXliff = new XmlDocument();

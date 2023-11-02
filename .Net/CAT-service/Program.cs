@@ -30,7 +30,6 @@ builder.Services.AddGrpc();
 builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
 
 builder.Services.AddSingleton<IDataStorage, SQLiteStorage>();
-builder.Services.AddSingleton<IOkapiConnector, OkapiConnector>();
 builder.Services.AddSingleton<IOkapiService, OkapiService>();
 builder.Services.AddSingleton<ITMService, TMService>();
 builder.Services.AddSingleton<ITBService, TBService>();

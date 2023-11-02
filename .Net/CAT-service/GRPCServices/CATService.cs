@@ -1,5 +1,4 @@
 using AutoMapper;
-using CAT.ConnectedServices.OkapiService;
 using Proto;
 using CAT.TM;
 using Google.Protobuf.WellKnownTypes;
@@ -17,14 +16,12 @@ namespace CAT.GRPCServices
         private readonly ITMService _tmService;
         private readonly ITBService _tbService;
         private readonly IMapper _mapper;
-        private readonly IOkapiConnector _okapiConnector;
 
-        public CATService(ILogger<CATService> logger, ITMService tmService, ITBService tbService, IMapper mapper, IOkapiConnector okapiConnector)
+        public CATService(ILogger<CATService> logger, ITMService tmService, ITBService tbService, IMapper mapper)
         {
             _logger = logger;
             _tmService = tmService;
             _tbService = tbService;
-            _okapiConnector = okapiConnector;
             _mapper = mapper;
         }
 
