@@ -27,3 +27,5 @@ obj
 .settings
 /Java/Okapi master/okapi test/target
 /Archive
+/Docker/Okapi service/okapi-grpc-service-1.0-jar-with-dependencies.jar
+/Java/okapi-grpc-service/*.log
