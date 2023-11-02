@@ -1,0 +1,412 @@
+syntax = "proto3";
+import "google/protobuf/timestamp.proto";
+
+//option csharp_namespace = "CAT.Proto";
+
+package Proto;
+
+
+// The greeting service definition.
+service CAT {
+    //TM service
+	rpc TMExists (TMExistsRequest) returns (TMExistsResponse);
+	rpc CreateTM (CreateTMRequest) returns (EmptyResponse);
+	rpc GetTMInfo(GetTMInfoRequest) returns (GetTMInfoResponse);
+    rpc GetTMList (GetTMListRequest) returns (GetTMListResponse);
+    rpc GetTMListFromDatabase (GetTMListFromDatabaseRequest) returns (GetTMListFromDatabaseResponse);
+    rpc GetStatisticsForDocument(GetStatisticsForDocumentRequest) returns (GetStatisticsForDocumentResponse);
+    rpc PreTranslateXliff(PreTranslateXliffRequest) returns (PreTranslateXliffResponse);
+    rpc GetTMMatches(GetTMMatchesRequest) returns (GetTMMatchesResponse);
+    rpc GetExactMatch(GetExactMatchRequest) returns (GetExactMatchResponse);
+    rpc AddTMEntries(AddTMEntriesRequest) returns (AddTMEntriesResponse);
+    rpc DeleteTMEntry(DeleteTMEntryRequest) returns (EmptyResponse);
+    rpc Concordance(ConcordanceRequest) returns (ConcordanceResponse);
+    rpc ExportTmx(ExportTmxRequest) returns (ExportTmxResponse);
+    rpc ImportTmx(ImportTmxRequest) returns (ImportTmxResponse);
+
+    //TB service
+	rpc CreateTB (CreateTBRequest) returns (CreateTBResponse);
+	rpc GetTBInfo (GetTBInfoRequest) returns (GetTBInfoResponse);
+	rpc GetTBInfoById (GetTBInfoByIdRequest) returns (GetTBInfoByIdResponse);
+	rpc AddLanguageToTB (AddLanguageToTBRequest) returns (EmptyResponse);
+	rpc RemoveLanguageFromTB (RemoveLanguageFromTBRequest) returns (EmptyResponse);
+	rpc AddOrUpdateTBEntry (AddOrUpdateTBEntryRequest) returns (AddOrUpdateTBEntryResponse);
+	rpc DeleteTBEntry (DeleteTBEntryRequest) returns (EmptyResponse);
+	rpc ImportTB (ImportTBRequest) returns (ImportTBResponse);
+	rpc ImportTBEntries (ImportTBEntriesRequest) returns (ImportTBEntriesResponse);
+	rpc ListTBEntries (ListTBEntriesRequest) returns (ListTBEntriesResponse);
+    
+    //Okapi service
+    rpc CreateXliffFromDocument(CreateXliffFromDocumentRequest) returns (CreateXliffFromDocumentResponse);
+    rpc CreateDocumentFromXliff(CreateDocumentFromXliffRequest) returns (CreateDocumentFromXliffResponse);
+
+    //Misc.
+    rpc Test(TestRequest) returns (TestResponse);
+}
+
+message TestRequest {
+    string param = 1;
+}
+
+message TestResponse {
+    string result = 1;
+}
+
+message EmptyResponse {
+}
+
+/*Translation memory*/
+//TMExists
+message TMExistsRequest {
+  string tmId = 1;
+}
+
+message TMExistsResponse {
+  bool exists = 1;
+}
+
+//CreateTM
+message CreateTMRequest {
+  string tmId = 1;
+}
+
+//GetTMInfo
+message GetTMInfoRequest {
+    string tmId = 1;
+    bool fullInfo = 2;
+}
+
+enum TMType {
+    GLOBAL = 0;
+    GROUP_PRIMARY = 1;
+    GROUP_SECONDARY = 2;
+    PROFILE_PRIMARY = 3;
+    PROFILE_SECONDARY = 4;
+}
+
+message GetTMInfoResponse {
+    TMInfo tmInfo = 1; 
+}
+
+//GetTMList
+message TMInfo {
+    string tmId = 1;
+    string langFrom = 2;
+    string langTo = 3;
+    int32 entryNumber = 4;
+    TMType tmType = 5;
+    google.protobuf.Timestamp lastAccess = 6;
+}
+
+message GetTMListRequest {
+    bool fullInfo = 1;
+}
+
+message GetTMListResponse {
+    repeated TMInfo tmInfoList = 1;  // This will store an array of TMInfo objects
+}
+
+//GetTMListFromDatabase
+message GetTMListFromDatabaseRequest {
+    string dbName = 1;
+    bool fullInfo = 2;
+}
+
+message GetTMListFromDatabaseResponse {
+    repeated TMInfo tmInfoList = 1;  // This will store an array of TMInfo objects
+}
+
+//GetStatisticsForDocument
+message Statistics {
+    string sourceLang = 1;
+    string targetLang = 2;
+    int32 repetitions = 3;
+    int32 match_101 = 4;
+    int32 match_100 = 5;
+    int32 match_95_99 = 6;
+    int32 match_85_94 = 7;
+    int32 match_75_84 = 8;
+    int32 match_50_74 = 9;
+    int32 no_match = 10;
+}
+
+message TMAssignment {
+    string tmId = 1;
+    int32 penalty = 2;
+    int32 speciality = 3;
+}
+
+message GetStatisticsForDocumentRequest {
+    string fileName = 1;
+    bytes fileContent = 2;
+    string filterName = 3;
+    bytes filterContent = 4;
+    string sourceLangISO639_1 = 5;
+    repeated string targetLangsISO639_1 = 6;
+    repeated TMAssignment TMAssignments = 7;
+}
+
+message GetStatisticsForDocumentResponse {
+    repeated Statistics statistics = 1;
+}
+
+//PreTranslateXliff
+message PreTranslateXliffRequest {
+    string xliffContent = 1;
+    string langFrom_ISO639_1 = 2;
+    string langTo_ISO639_1 = 3;
+    repeated TMAssignment tmAssignments = 4;
+    int32 matchThreshold = 5;
+}
+
+message PreTranslateXliffResponse {
+    string xliffContent = 1;
+}
+
+//GetTMMatches
+message GetTMMatchesRequest {
+    repeated TMAssignment TMAssignments = 1;
+    string sourceText = 2;
+    string prevText = 3;
+    string nextText = 4;
+    int32 matchThreshold = 5;
+    int32 maxHits = 6;
+}
+
+message TMMatch {
+    string id = 1;
+    string source = 2;
+    string target = 3;
+    string origin = 4;
+    int32 quality = 5;
+    string metadata = 6;
+}
+
+message GetTMMatchesResponse {
+    repeated TMMatch TMMatches = 1;
+}
+
+//GetExactMatch
+message GetExactMatchRequest {
+    repeated TMAssignment TMAssignments = 1;
+    string sourceText = 2;
+    string prevText = 3;
+    string nextText = 4;
+}
+
+message GetExactMatchResponse {
+    TMMatch TMMatch = 1;
+}
+
+//AddTMEntries
+message AddTMEntriesRequest {
+    string tmId = 1;
+    repeated TMEntry TMEntries = 2;
+}
+
+message AddTMEntriesResponse {
+    int32 entriesNum = 1;
+}
+
+message TMEntry {
+    int32 id = 1;
+    string source = 2;
+    string target = 3;
+    string metadata = 4;
+}
+
+//DeleteTMEntry
+message DeleteTMEntryRequest {
+    string tmId = 1;
+    int32 entryId = 2;
+}
+
+//Concordance
+message ConcordanceRequest {
+    repeated string tmIds = 1;
+    string sourceText = 2;
+    string targetText = 3;
+    bool caseSensitive = 4;
+    int32 maxHits = 5;
+}
+
+message ConcordanceResponse {
+    repeated TMEntry tmEntries = 1;
+}
+
+//ExportTmx
+message ExportTmxRequest {
+    string tmId = 1;
+}
+
+message ExportTmxResponse {
+    string tmxContent = 1;
+}
+
+//ImportTmx
+message ImportTmxRequest {
+    string tmId = 1;
+    string sourceLangIso639_1 = 2;
+    string targetLangIso639_1 = 3;
+    string tmxContent = 4;
+    string user = 5;
+    int32 speciality = 6; 
+}
+
+message ImportTmxResponse {
+    TMImportResult tmxImportResult = 1;
+}
+
+message TMImportResult {
+    int32 allItems = 1;
+    int32 importedItems = 2;
+}
+
+/*Termbase*/
+message CreateTBRequest {
+    TBType tbType = 1;
+    int32 idType = 2;
+    repeated string langCodes = 3;
+}
+
+message CreateTBResponse {
+    TBInfo tbInfo = 1;
+}
+
+enum TBType {
+    CORPORATE = 0;
+    PROFILE = 1;
+    USER = 2;
+}
+
+message TBInfo {
+    int32 id = 1;
+    repeated string languages= 2; //ISO 639 1
+    string metadata = 3;
+}
+
+//GetTBInfo
+message GetTBInfoRequest {
+    TBType tbType = 1;
+    int32 idType = 2;
+}
+
+message GetTBInfoResponse {
+    TBInfo tbInfo = 1;
+}
+
+//GetTBInfoByIdRequest
+message GetTBInfoByIdRequest {
+    int32 termbaseId = 1;
+}
+
+message GetTBInfoByIdResponse {
+    TBInfo tbInfo = 1;
+}
+
+//AddLanguageToTB
+message AddLanguageToTBRequest {
+    int32 termbaseId = 1;
+    string langCode = 2;
+}
+
+//RemoveLanguageFromTBRequest
+message RemoveLanguageFromTBRequest {
+    int32 termbaseId = 1;
+    string langCode = 2;
+}
+
+//AddOrUpdateTBEntryRequest
+message AddOrUpdateTBEntryRequest {
+    int32 termbaseId = 1;
+    TBEntry tbEntry = 2;
+    string user = 3;
+}
+
+
+message AddOrUpdateTBEntryResponse {
+    int32 id = 1;
+}
+
+message TBEntry {
+    int32 id = 1;
+    map<string, string> terms = 2;
+    string metadata = 5;
+}
+
+message DeleteTBEntryRequest {
+    int32 termbaseId = 1;
+    int32 entryId = 2;
+}
+
+//ImportTB
+message ImportTBRequest {
+    int32 termbaseId = 1;
+    string csvContent = 2;
+    string userId = 3;
+}
+
+message ImportTBResponse {
+    TBImportResult importResult = 1;
+}
+
+message TBImportResult {
+    int32 allItems = 1;
+    int32 newItems = 2;
+}
+
+//ImportTBEntries
+message ImportTBEntriesRequest {
+    int32 termbaseId = 1;
+    repeated TBEntry tbEntries = 2;
+    string userId = 3;
+}
+
+message ImportTBEntriesResponse {
+    TBImportResult importResult = 1;
+}
+
+//ListTBEntries
+message ListTBEntriesRequest {
+    int32 termbaseId = 1;
+    repeated string languages = 2;
+}
+
+message ListTBEntriesResponse {
+    repeated TBEntry tbEntries = 1;
+}
+
+/*Okapi*/
+//CreateXliffFromDocument
+message CreateXliffFromDocumentRequest {
+    string fileName = 1;
+    bytes fileContent = 2;
+    string filterName = 3;
+    bytes filterContent = 4;
+    string sourceLangISO639_1 = 5;
+    string targetLangISO639_1 = 6;
+    repeated TMAssignment tmAssignments = 7;
+}
+
+message CreateXliffFromDocumentResponse {
+    string xliffContent = 1;
+}
+
+//CreateDocumentFromXliff
+message CreateDocumentFromXliffRequest {
+    string fileName = 1;
+    bytes fileContent = 2;
+    string filterName = 3;
+    bytes filterContent = 4;
+    string sourceLangISO639_1 = 5;
+    string targetLangISO639_1 = 6;
+    string xliffContent = 7;
+}
+
+message CreateDocumentFromXliffResponse {
+    bytes document = 1;
+}
+
+
+/*Misc*/
+
