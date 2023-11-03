@@ -1,9 +1,11 @@
 ﻿using CAT.Models;
+using CAT.Okapi.Resources;
 using CAT.TM;
 using CAT.Utils;
 using Com.Cat.Grpc;
 using Google.Protobuf;
 using Grpc.Net.Client;
+using System.Data;
 using System.Diagnostics;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -99,6 +101,104 @@ namespace CAT.BusinessServices.Okapi
             var response = client.CreateDocumentFromXliff(request);
 
             return response.CreatedDocument.ToByteArray();
+        }
+
+
+        /// <summary>
+        /// GetStatisticsForDocument
+        /// </summary>
+        /// <param name="sFileName"></param>
+        /// <param name="fileContent"></param>
+        /// <param name="sFilterName"></param>
+        /// <param name="filterContent"></param>
+        /// <param name="sourceLangISO639_1"></param>
+        /// <param name="aTargetLangsISO639_1"></param>
+        /// <param name="aTMAssignments"></param>
+        /// <returns></returns>
+        public Statistics[] GetStatisticsForDocument(string sFileName, byte[] fileContent, string sFilterName, byte[] filterContent,
+            string sourceLangISO639_1, string[] aTargetLangsISO639_1, TMAssignment[] aTMAssignments)
+        {
+            //long lStart = CATUtils.CurrentTimeMillis();
+            //convert the document to xliff
+            var sXliffContent = _okapiService.CreateXliffFromDocument(sFileName, fileContent, sFilterName, filterContent, sourceLangISO639_1, "fr"); //we can use a dummy language here
+
+            //get the text fragments
+            var tmpXliff = new XmlDocument();
+            tmpXliff.LoadXml(sXliffContent);
+            XmlNamespaceManager xmlnsmgr = new XmlNamespaceManager(tmpXliff.NameTable);
+            xmlnsmgr.AddNamespace("x", tmpXliff!.DocumentElement!.NamespaceURI);
+
+            var lstTranslationUnits = new List<TranslationUnit>();
+            var tus = tmpXliff.GetElementsByTagName("trans-unit");
+            for (int i = 0; i < tus.Count; i++)
+            {
+                var tu = (XmlElement)tus![i]!; // check the segmentation
+                if (tu.Attributes["translate"]?.Value.ToLower() == "no")
+                    continue; //skip non-translatables
+                XmlNodeList segmentNodes;
+                var ssNode = tu["seg-source"]!;
+                if (ssNode == null)
+                    segmentNodes = tu!.SelectNodes("x:source", xmlnsmgr)!;
+                else
+                    segmentNodes = ssNode!.SelectNodes("x:mrk", xmlnsmgr)!;
+                for (int j = 0; j < segmentNodes.Count; j++)
+                {
+                    var segmentNode = (XmlElement)segmentNodes[j]!; // the source segment
+                    if (segmentNode!.Attributes["translate"]?.Value.ToLower() == "no")
+                        continue; //skip non-translatables
+
+                    var sourceText = segmentNode.InnerXml.Trim();
+                    if (string.IsNullOrEmpty(sourceText))
+                        continue;
+                    var source = CATUtils.XliffSegmentToTextFragmentSimple(sourceText);
+                    var transUnit = new TranslationUnit(source, null!, null!);
+                    lstTranslationUnits.Add(transUnit);
+                }
+            }
+
+            //set the contexts
+            for (int i = 0; i < lstTranslationUnits.Count; i++)
+            {
+                string prev = "";
+                string next = "";
+                if (i != 0)
+                    prev = lstTranslationUnits[i - 1].source.GetCodedText();
+                if (i < lstTranslationUnits.Count - 1)
+                    next = lstTranslationUnits[i + 1].source.GetCodedText();
+                //the context
+                lstTranslationUnits[i].context = CATUtils.djb2hash(prev + next).ToString();
+            }
+
+            var lstStats = new List<Statistics>();
+            foreach (var sTargetLang in aTargetLangsISO639_1)
+            {
+                //TMs for the current language pair
+                TMAssignment[] currentTMAssignments = null!;
+                //check the languages for the TMs
+                if (aTMAssignments != null)
+                {
+                    var lstTmpTMs = new List<TMAssignment>();
+                    foreach (var tmAssignment in aTMAssignments)
+                    {
+                        var tmInfo = _tmService.GetTMInfo(tmAssignment.tmId, false);
+                        if (tmInfo.langFrom.ToLower() == sourceLangISO639_1.ToLower() && tmInfo.langTo.ToLower() == sTargetLang.ToLower())
+                            lstTmpTMs.Add(tmAssignment);
+                    }
+                    currentTMAssignments = lstTmpTMs.ToArray();
+                }
+                else
+                    aTMAssignments = new TMAssignment[0];
+
+                //the statistics
+                var stat = _tmService.GetStatisticsForTranslationUnits(lstTranslationUnits, sourceLangISO639_1, currentTMAssignments!, true);
+                stat.sourceLang = sourceLangISO639_1;
+                stat.targetLang = sTargetLang;
+                lstStats.Add(stat);
+            }
+
+            //long lElapsed = CATUtils.CurrentTimeMillis() - lStart;
+
+            return lstStats.ToArray();
         }
 
         /// <summary>

@@ -1,10 +1,13 @@
 ﻿using CAT.Enums;
 using CAT.Models;
+using CAT.Okapi.Resources;
 
 namespace CAT.TM
 {
     public interface ITMService
     {
+        Statistics GetStatisticsForTranslationUnits(List<TranslationUnit> transUnits, string sourceLangISO639_1, TMAssignment[] aTMAssignments, bool bWithHomogeneity);
+
         bool TMExists(string tmId);
 
         void CreateTM(string tmId);
@@ -14,12 +17,6 @@ namespace CAT.TM
         TMInfo[] GetTMList(bool bFullInfo);
 
         TMInfo[] GetTMListFromDatabase(string dbName, bool bFullInfo);
-
-        Statistics[] GetStatisticsForDocument(string sFileName, byte[] fileContent, string sFilterName, byte[] filterContent, 
-            string sourceLangISO639_1, string[] aTargetLangsISO639_1, TMAssignment[] aTMAssignments);
-
-        string PreTranslateXliff(string sXliffContent, string langFrom_ISO639_1, string langTo_ISO639_1, 
-            TMAssignment[] aTMAssignments, int matchThreshold);
 
         TMMatch[] GetTMMatches(TMAssignment[] aTMAssignments, string sourceText, string prevText, string nextText, byte matchThreshold, int maxHits);
 

@@ -15,10 +15,12 @@ namespace CAT.GRPCServices
         private readonly ILogger<CATService> _logger;
         private readonly ITMService _tmService;
         private readonly ITBService _tbService;
+        private readonly IOkapiService _okapiService;
         private readonly IMapper _mapper;
 
-        public CATService(ILogger<CATService> logger, ITMService tmService, ITBService tbService, IMapper mapper)
+        public CATService(ILogger<CATService> logger, ITMService tmService, ITBService tbService, IOkapiService okapiService, IMapper mapper)
         {
+            _okapiService = okapiService;
             _logger = logger;
             _tmService = tmService;
             _tbService = tbService;
@@ -150,7 +152,7 @@ namespace CAT.GRPCServices
                     speciality = tmAssignment.Speciality,
                 }).ToArray();
 
-                var stats = _tmService.GetStatisticsForDocument(request.FileName, request.FileContent.ToByteArray(), request.FilterName,
+                var stats = _okapiService.GetStatisticsForDocument(request.FileName, request.FileContent.ToByteArray(), request.FilterName,
                     request.FilterContent.ToByteArray(), request.SourceLangISO6391, request.TargetLangsISO6391.ToArray(), tmAssignments);
 
                 var response = new GetStatisticsForDocumentResponse();
@@ -191,7 +193,7 @@ namespace CAT.GRPCServices
                     speciality = tmAssignment.Speciality,
                 }).ToArray();
 
-                var xliffContent = _tmService.PreTranslateXliff(request.XliffContent, request.LangFromISO6391,
+                var xliffContent = _okapiService.PreTranslateXliff(request.XliffContent, request.LangFromISO6391,
                     request.LangToISO6391, tmAssignments, request.MatchThreshold);
 
                 var response = new PreTranslateXliffResponse();
@@ -562,7 +564,7 @@ namespace CAT.GRPCServices
         {
             try
             {
-                var xliffContent = _okapiConnector.CreateXliffFromDocument(request.FileName, request.FileContent.ToArray(), 
+                var xliffContent = _okapiService.CreateXliffFromDocument(request.FileName, request.FileContent.ToArray(), 
                     request.FilterName, request.FilterContent.ToArray(), request.SourceLangISO6391, request.TargetLangISO6391);
                 var response = new CreateXliffFromDocumentResponse() { XliffContent = xliffContent };
 
@@ -579,7 +581,7 @@ namespace CAT.GRPCServices
         {
             try
             {
-                var bytes = _okapiConnector.CreateDocumentFromXliff(request.FileName, request.FileContent.ToArray(), request.FilterName, 
+                var bytes = _okapiService.CreateDocumentFromXliff(request.FileName, request.FileContent.ToArray(), request.FilterName, 
                     request.FilterContent.ToArray(), request.SourceLangISO6391, request.TargetLangISO6391, request.XliffContent);
                 var response = new CreateDocumentFromXliffResponse() { Document = Google.Protobuf.ByteString.CopyFrom(bytes) };
 
@@ -606,7 +608,7 @@ namespace CAT.GRPCServices
 
                 return Task.FromResult(response);
             }
-            catch (Exception ex) // Catching general exception
+            catch (Exception) // Catching general exception
             {
                 // Log the exception
                 var response = new TestResponse() { Result = "Test error" };
