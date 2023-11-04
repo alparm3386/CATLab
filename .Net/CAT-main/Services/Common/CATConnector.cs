@@ -1,33 +1,23 @@
-﻿using Microsoft.AspNetCore.Identity;
-using System.ComponentModel.DataAnnotations;
-using System.Configuration;
-using System.Data;
+﻿using System.Data;
 using System.Diagnostics;
-using System.Security.Principal;
 using System.ServiceModel;
 using System.ServiceModel.Description;
 using System.Text.RegularExpressions;
-using System.Transactions;
-using static ICSharpCode.SharpZipLib.Zip.ZipEntryFactory;
 using System.Xml;
 using CAT.Enums;
 using CAT.Services.MT;
-using Microsoft.Extensions.Options;
 using CAT.Models.Common;
 using Statistics = CAT.Models.Common.Statistics;
 using TMAssignment = CAT.Models.Common.TMAssignment;
 using AutoMapper;
-using System.Security.AccessControl;
-using Microsoft.CodeAnalysis.Differencing;
-using ICSharpCode.SharpZipLib.Tar;
-using Newtonsoft.Json;
 using CAT.Data;
-using CAT.Areas.Identity.Data;
-using CATService;
 using CAT.Helpers;
 using Microsoft.EntityFrameworkCore;
 using CAT.Models.Entities.TranslationUnits;
-using CAT.Models;
+using Grpc.Net.Client;
+using static Proto.CAT;
+using Google.Protobuf;
+using Proto;
 
 namespace CAT.Services.Common
 {
@@ -40,6 +30,7 @@ namespace CAT.Services.Common
         private readonly ILogger _logger;
         private readonly IDocumentProcessor _documentProcessor;
         private readonly ILanguageService _languageService;
+        private readonly string _catServerAddress;
 
         //private static int MATCH_THRESHOLD = 50;
 
@@ -56,67 +47,8 @@ namespace CAT.Services.Common
             _logger = logger;
             _documentProcessor = documentProcessor;
             _languageService = languageService;
-        }
 
-        private EndpointAddress GetCATServiceEndpoint()
-        {
-            var endPointAddr = "net.tcp://10.0.20.55:8086";
-
-            //local test
-            //endPointAddr = "net.tcp://localhost:8086";
-            //create the endpoint address
-            return new EndpointAddress(endPointAddr);
-        }
-
-        /// <summary>
-        /// GetCATServiceBinding
-        /// </summary>
-        /// <returns></returns>
-        private static NetTcpBinding GetCATServiceBinding(int timeoutInMinutes)
-        {
-            TimeSpan timeSpan;
-            if (timeoutInMinutes > 0)
-                timeSpan = new TimeSpan(0, timeoutInMinutes, 0); // new TimeSpan(timeout * 10000);
-            else
-                timeSpan = new TimeSpan(0, 5, 0); // 5 minutes
-
-            //set up the binding for the TCP connection
-            NetTcpBinding tcpBinding = new NetTcpBinding();
-
-            tcpBinding.Name = "NetTcpBinding_ICATService";
-            tcpBinding.CloseTimeout = timeSpan;
-            tcpBinding.OpenTimeout = timeSpan;
-            tcpBinding.ReceiveTimeout = timeSpan;
-            tcpBinding.SendTimeout = timeSpan;
-            tcpBinding.TransferMode = TransferMode.Buffered;
-            tcpBinding.MaxBufferPoolSize = 524288 * 1000;
-            tcpBinding.MaxBufferSize = 65536 * 10000;
-            tcpBinding.ReaderQuotas.MaxDepth = 32;
-            tcpBinding.ReaderQuotas.MaxStringContentLength = 8192 * 100000;
-            tcpBinding.ReaderQuotas.MaxArrayLength = 16384 * 10000;
-            tcpBinding.ReaderQuotas.MaxBytesPerRead = 4096000;
-            tcpBinding.ReaderQuotas.MaxNameTableCharCount = 1638400000;
-            tcpBinding.ReliableSession.Ordered = true;
-            tcpBinding.ReliableSession.InactivityTimeout = new TimeSpan(0, 10, 0);
-            tcpBinding.ReliableSession.Enabled = false;
-            tcpBinding.Security.Mode = SecurityMode.None;
-
-            return tcpBinding;
-        }
-
-        private ICATService GetCATService()
-        {
-            ChannelFactory<ICATService> channelFactory =
-                new ChannelFactory<ICATService>(GetCATServiceBinding(5), GetCATServiceEndpoint());
-
-            foreach (OperationDescription op in channelFactory.Endpoint.Contract.Operations)
-            {
-                var dataContractBehavior = op.Behaviors.Find<DataContractSerializerOperationBehavior>();
-                if (dataContractBehavior != null)
-                    dataContractBehavior.MaxItemsInObjectGraph = int.MaxValue;
-            }
-
-            return channelFactory.CreateChannel();
+            _catServerAddress = _configuration!["CatServer"]!;
         }
 
         public bool CanBeParsed(String sFilePath)
@@ -160,7 +92,7 @@ namespace CAT.Services.Common
         }
 
         public async Task<Statistics[]> GetStatisticsForDocument(string sFilePath, string sFilterPath, int sourceLang,
-            int[] aTargetLangs, TMAssignment[] aTMAssignments)
+            int[] aTargetLangs, TMAssignment[] tmAssignments)
         {
             List<String> lstFilesToDelete = new List<String>();
             try
@@ -173,8 +105,6 @@ namespace CAT.Services.Common
                 //filter
                 if (String.IsNullOrEmpty(sFilterPath))
                     sFilterPath = GetDefaultFilter(sFilePath);
-
-                var client = GetCATService();
 
                 if (CATUtils.IsCompressedMemoQXliff(sFilePath))
                 {
@@ -190,9 +120,8 @@ namespace CAT.Services.Common
                 if (File.Exists(sFilterPath))
                     filterContent = File.ReadAllBytes(sFilterPath);
 
-                //var aTMs = _mapper.Map<CATService.TMAssignment[]>(aTMAssignments);
-                var aTMs = Array.ConvertAll(aTMAssignments, 
-                    tma => new CATService.TMAssignment() { penalty = tma.penalty, speciality = tma.speciality, tmPath = tma.tmId });
+                var aTMs = Array.ConvertAll(tmAssignments, 
+                    tma => new Proto.TMAssignment() {  Penalty = tma.penalty, Speciality = tma.speciality, TmId = tma.tmId });
 
                 //the target language array
                 var lstTargetLangs = new List<String>();
@@ -201,18 +130,30 @@ namespace CAT.Services.Common
                 {
                     var targetLanguageIso639_1 = await _languageService.GetLanguageCodeIso639_1(targetLang);
                     var sourceLanguageIso639_1 = await _languageService.GetLanguageCodeIso639_1(sourceLang);
-                    var stats = client.GetStatisticsForDocument(sFilename, fileContent, sFiltername, filterContent,
-                        sourceLanguageIso639_1, new string[] { targetLanguageIso639_1 }, aTMs);
+                    var grpcChannel = GrpcChannel.ForAddress(_catServerAddress);
+                    var catClient = new CATClient(grpcChannel);
+                    var request = new Proto.GetStatisticsForDocumentRequest
+                    {
+                        FileName = sFilename,
+                        FileContent = ByteString.CopyFrom(fileContent),
+                        FilterName = sFiltername ?? "",
+                        FilterContent = filterContent != null ? ByteString.CopyFrom(filterContent) : ByteString.Empty,
+                        SourceLangISO6391 = sourceLanguageIso639_1,
+                        TargetLangsISO6391 = { targetLanguageIso639_1 },
+                        TMAssignments = { aTMs }
+                    };
+
+                    var stats = catClient.GetStatisticsForDocument(request).Statistics;
                     aRet.Add(new Statistics()
                     {
-                        repetitions = stats[0].repetitions,
-                        match_101 = stats[0].match_101,
-                        match_100 = stats[0].match_100,
-                        match_95_99 = stats[0].match_95_99,
-                        match_85_94 = stats[0].match_85_94,
-                        match_75_84 = stats[0].match_75_84,
-                        match_50_74 = stats[0].match_50_74,
-                        no_match = stats[0].no_match,
+                        repetitions = stats[0].Repetitions,
+                        match_101 = stats[0].Match101,
+                        match_100 = stats[0].Match100,
+                        match_95_99 = stats[0].Match9599,
+                        match_85_94 = stats[0].Match8594,
+                        match_75_84 = stats[0].Match7584,
+                        match_50_74 = stats[0].Match5074,
+                        no_match = stats[0].NoMatch,
                         targetLang = targetLang
                     });
 
@@ -242,7 +183,7 @@ namespace CAT.Services.Common
 
         public void CreateXliffFromDocument(String sTranslationDir,
             String sOutFileName, String sFilePath, String sFilterPath, string sourceLang,
-            string targetLang, int iGoodMatchRate)
+            string targetLang, int iGoodMatchRate, TMAssignment[] tmAssignments)
         {
             try
             {
@@ -251,15 +192,28 @@ namespace CAT.Services.Common
                     sFilterPath = GetDefaultFilter(sFilePath);
 
                 var matchThreshold = (iGoodMatchRate >= 50 && iGoodMatchRate <= 101) ? iGoodMatchRate : 99;
-                var client = GetCATService();
                 //set the parameters
                 String sFilename = Path.GetFileName(sFilePath);
                 byte[] fileContent = File.ReadAllBytes(sFilePath);
 
                 String? sFiltername = File.Exists(sFilterPath) ? Path.GetFileName(sFilterPath) : null;
                 byte[]? filterContent = sFiltername != null ? File.ReadAllBytes(sFilterPath) : null;
-                var aTMs = new CATService.TMAssignment[] { new CATService.TMAssignment() { tmPath = "29610/__35462_en_fr" } };
-                String sXliffContent = client.CreateXliff(sFilename, fileContent, sFiltername, filterContent, sourceLang, targetLang, aTMs);
+                var aTMs = Array.ConvertAll(tmAssignments,
+                    tma => new Proto.TMAssignment() { Penalty = tma.penalty, Speciality = tma.speciality, TmId = tma.tmId });
+                var grpcChannel = GrpcChannel.ForAddress(_catServerAddress);
+                var catClient = new CATClient(grpcChannel);
+                var request = new Proto.CreateXliffFromDocumentRequest
+                {
+                    FileName = sFilename,
+                    FileContent = ByteString.CopyFrom(fileContent),
+                    FilterName = sFiltername ?? "",
+                    FilterContent = filterContent != null ? ByteString.CopyFrom(filterContent) : ByteString.Empty,
+                    SourceLangISO6391 = sourceLang,
+                    TargetLangISO6391 = targetLang,
+                    TmAssignments = { aTMs }
+                };
+
+                String sXliffContent = catClient.CreateXliffFromDocument(request).XliffContent;
 
                 var sOutXliffPath = Path.Combine(sTranslationDir, sOutFileName);
                 File.WriteAllText(sOutXliffPath, sXliffContent);
@@ -352,9 +306,10 @@ namespace CAT.Services.Common
                     var aTMAssignments = GetTMAssignments(job!.Order!.ClientId, 
                         _languageService.GetLanguageCodeIso639_1(job!.Quote!.SourceLanguage!).Result,
                         new string[] { _languageService.GetLanguageCodeIso639_1(job!.Quote!.TargetLanguage!).Result }, job.Quote.Speciality, true);
+
                     CreateXliffFromDocument(jobDataFolder, Path.GetFileName(sXlifFilePath), filePath, filterPath,
                         _languageService.GetLanguageCodeIso639_1(job!.Quote!.SourceLanguage!).Result, 
-                        _languageService.GetLanguageCodeIso639_1(job!.Quote!.TargetLanguage!).Result, iThreshold);
+                        _languageService.GetLanguageCodeIso639_1(job!.Quote!.TargetLanguage!).Result, iThreshold, aTMAssignments);
 
                     //parse the xliff file
                     var xliff = new XmlDocument();
@@ -486,7 +441,6 @@ namespace CAT.Services.Common
             try
             {
                 //get the service
-                var client = GetCATService();
                 var jobDataFolder = CATUtils.GetJobDataFolder(idJob, _configuration["JobDataBaseFolder"]!);
                 int iThreshold = 100;
 
@@ -528,7 +482,7 @@ namespace CAT.Services.Common
                     //create the xliff file
                     CreateXliffFromDocument(jobDataFolder, Path.GetFileName(xlifFilePath), filePath, filterPath,
                         _languageService.GetLanguageCodeIso639_1(sourceLanguage).Result,
-                        _languageService.GetLanguageCodeIso639_1(targetLanguage).Result, iThreshold);
+                        _languageService.GetLanguageCodeIso639_1(targetLanguage).Result, iThreshold, null!);
                 }
 
                 //get the translated texts
@@ -542,7 +496,7 @@ namespace CAT.Services.Common
                 var xmlnsManager = new XmlNamespaceManager(xlfFile.NameTable);
                 xmlnsManager.AddNamespace("x", xlfFile.DocumentElement!.NamespaceURI);
                 var transUnits = xlfFile.SelectNodes("//x:trans-unit", xmlnsManager);
-                var tmEntries = new List<CATService.TMEntry>();
+                var tmEntries = new List<TMEntry>();
                 int tuid = 1;
                 foreach (XmlNode tu in transUnits!)
                 {
@@ -609,9 +563,9 @@ namespace CAT.Services.Common
                         targetSegment!.InnerXml = sStartingWhiteSpaces + sTranslatedText + sEndingWhiteSpaces;
 
                         //create a TMEntry for the segment
-                        var tmEntry = new CATService.TMEntry();
-                        tmEntry.source = CATUtils.XliffTags2TMXTags(sourceSegment.InnerXml);
-                        tmEntry.target = CATUtils.XliffTags2TMXTags(sTranslatedText);
+                        var tmEntry = new Proto.TMEntry();
+                        tmEntry.Source = CATUtils.XliffTags2TMXTags(sourceSegment.InnerXml);
+                        tmEntry.Target = CATUtils.XliffTags2TMXTags(sTranslatedText);
 
                         tmEntries.Add(tmEntry);
                         tuid++;

@@ -1,12 +1,5 @@
 ﻿using AutoMapper;
-using CAT.Areas.Identity.Data;
 using CAT.Data;
-using CATService;
-using CAT.Models;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Caching.Memory;
-using System.Diagnostics;
-using static ICSharpCode.SharpZipLib.Zip.ZipEntryFactory;
 using CAT.Models.Common;
 
 namespace CAT.Services.Common
