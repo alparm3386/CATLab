@@ -31,14 +31,37 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 var identityConnectionString = builder.Configuration.GetConnectionString("IdentityDbConnection");
+//builder.Services.AddDbContext<IdentityDbContext>(options =>
+//    options.UseMySql(identityConnectionString, new MySqlServerVersion(new Version(8, 0, 34))));
 builder.Services.AddDbContext<IdentityDbContext>(options =>
-    options.UseMySql(identityConnectionString, new MySqlServerVersion(new Version(8, 0, 34))));
+{
+    options.UseMySql(identityConnectionString, new MySqlServerVersion(new Version(8, 0, 34)), mySqlOptions =>
+    {
+        mySqlOptions.EnableRetryOnFailure();
+    });
+});
 var mainConnectionString = builder.Configuration.GetConnectionString("MainDbConnection");
+//builder.Services.AddDbContext<MainDbContext>(options =>
+//    options.UseMySql(mainConnectionString, new MySqlServerVersion(new Version(8, 0, 34))));
 builder.Services.AddDbContext<MainDbContext>(options =>
-    options.UseMySql(mainConnectionString, new MySqlServerVersion(new Version(8, 0, 34))));
+{
+    options.UseMySql(mainConnectionString, new MySqlServerVersion(new Version(8, 0, 34)), mySqlOptions =>
+    {
+        mySqlOptions.EnableRetryOnFailure();
+    });
+});
+
 var translationUnitsConnectionString = builder.Configuration.GetConnectionString("TranslationUnitsDbConnection");
+//builder.Services.AddDbContext<TranslationUnitsDbContext>(options =>
+//    options.UseMySql(translationUnitsConnectionString, new MySqlServerVersion(new Version(8, 0, 34))));
 builder.Services.AddDbContext<TranslationUnitsDbContext>(options =>
-    options.UseMySql(translationUnitsConnectionString, new MySqlServerVersion(new Version(8, 0, 34))));
+{
+    options.UseMySql(translationUnitsConnectionString, new MySqlServerVersion(new Version(8, 0, 34)), mySqlOptions =>
+    {
+        mySqlOptions.EnableRetryOnFailure();
+    });
+});
+
 
 builder.Services.AddTransient<DbContextContainer>();
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();

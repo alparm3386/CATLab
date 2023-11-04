@@ -34,7 +34,7 @@ string ServerAddress = "http://localhost:50051"; // Adjust the address/port as n
 //var response2 = await client2.TMExistsAsync(request1);
 
 
-var channel3 = GrpcChannel.ForAddress("http://159.89.249.226:5001");
+var channel3 = GrpcChannel.ForAddress("http://143.198.240.169:5001");
 var client3 = new CATClient(channel3);
 var request3 = new Proto.CreateXliffFromDocumentRequest
 {
