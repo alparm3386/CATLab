@@ -12,7 +12,7 @@ namespace CAT.Data
     /// <summary>
     /// TranslationsDbContextFactory
     /// </summary>
-    public class MainDbContextFactory : IDbContextFactory<MainDbContext>
+    public class MainDbContextFactory__ : IDbContextFactory<MainDbContext>
     {
         public MainDbContext CreateDbContext()
         {

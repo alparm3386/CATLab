@@ -79,9 +79,10 @@ builder.Services.AddScoped<IMonitoringService, MonitoringService>();
 builder.Services.AddScoped<IAdminService, AdminService>();
 builder.Services.AddScoped<IWorkflowService, WorkflowService>();
 builder.Services.AddScoped<IUserService, UserService>();
+//builder.Services.AddSingleton<MainDbContextFactory>();
+builder.Services.AddScoped<ILanguageService, LanguageService>();
+
 builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
-builder.Services.AddSingleton<MainDbContextFactory>();
-builder.Services.AddSingleton<ILanguageService, LanguageService>();
 
 //builder.Services.AddSingleton<ConstantRepository>();
 builder.Services.AddControllersWithViews().AddRazorRuntimeCompilation();
@@ -97,8 +98,6 @@ builder.Services.AddHangfire(config => config
     .UseStorage(new MySqlStorage(builder.Configuration.GetConnectionString("HangfireConnection"), new MySqlStorageOptions()
     {
     })));
-
-builder.Services.AddHangfireServer();
 
 
 builder.Services.TryAddEnumerable(new[]
@@ -150,11 +149,11 @@ builder.Services.AddTransient<IEmailSender, SmtpEmailSender>();
 //use lowercase urls
 //builder.Services.AddRouting(options => options.LowercaseUrls = true);
 
-builder.Services.AddHangfireServer();
+//builder.Services.AddHangfireServer();
 var app = builder.Build();
 
-//hangfire
-app.UseHangfireDashboard();
+////hangfire
+//app.UseHangfireDashboard();
 
 //EnsureRoleCreated(app).Wait();
 

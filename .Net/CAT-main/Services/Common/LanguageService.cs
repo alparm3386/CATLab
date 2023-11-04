@@ -7,15 +7,15 @@ namespace CAT.Services.Common
 {
     public class LanguageService : ILanguageService
     {
-        private readonly MainDbContextFactory _mainDbContextFactory;
+        private readonly DbContextContainer _dbContextContainer;
         private readonly ILogger<JobService> _logger;
 
         private static Dictionary<int, Language> _languageIdCache = new Dictionary<int, Language>();
         private static Dictionary<string, Language> _languageCodeIso639_1Cache = new Dictionary<string, Language>();
 
-        public LanguageService(MainDbContextFactory mainDbContextFactory, ILogger<JobService> logger)
+        public LanguageService(DbContextContainer dbContextContainer, ILogger<JobService> logger)
         {
-            _mainDbContextFactory = mainDbContextFactory;
+            _dbContextContainer = dbContextContainer;
             _logger = logger;
         }
 
@@ -24,10 +24,7 @@ namespace CAT.Services.Common
             //caching
             if (_languageIdCache.Count == 0)
             {
-                using (var mainDbContext = _mainDbContextFactory.CreateDbContext())
-                {
-                    _languageIdCache = await mainDbContext.Languages.AsNoTracking().ToDictionaryAsync(l => l.Id, l => l);
-                }
+                _languageIdCache = await _dbContextContainer.MainContext.Languages.AsNoTracking().ToDictionaryAsync(l => l.Id, l => l);
             }
 
             return _languageIdCache[languageId].ISO639_1;
@@ -38,10 +35,7 @@ namespace CAT.Services.Common
             //caching
             if (_languageCodeIso639_1Cache.Count == 0)
             {
-                using (var mainDbContext = _mainDbContextFactory.CreateDbContext())
-                {
-                    _languageCodeIso639_1Cache = await mainDbContext.Languages.AsNoTracking().ToDictionaryAsync(l => l.ISO639_1, l => l);
-                }
+                _languageCodeIso639_1Cache = await _dbContextContainer.MainContext.Languages.AsNoTracking().ToDictionaryAsync(l => l.ISO639_1, l => l);
             }
 
             return _languageCodeIso639_1Cache[laguageCode].Id;
@@ -52,10 +46,7 @@ namespace CAT.Services.Common
             //caching
             if (_languageIdCache.Count == 0)
             {
-                using (var mainDbContext = _mainDbContextFactory.CreateDbContext())
-                {
-                    _languageIdCache = await mainDbContext.Languages.AsNoTracking().ToDictionaryAsync(l => l.Id, l => l);
-                }
+                _languageIdCache = await _dbContextContainer.MainContext.Languages.AsNoTracking().ToDictionaryAsync(l => l.Id, l => l);
             }
 
             return _languageIdCache;
