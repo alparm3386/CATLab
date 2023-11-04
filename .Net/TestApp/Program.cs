@@ -14,8 +14,8 @@ string ServerAddress = "http://localhost:50051"; // Adjust the address/port as n
 //string ServerAddress = "http://159.89.249.226:5001"; // Adjust the address/port as needed
 
 //using var channel = GrpcChannel.ForAddress("http://localhost:50051");
-//var client = new OkapiClient(channel);
-//var request2 = new Com.Cat.Grpc.CreateXliffFromDocumentRequest
+//var client1 = new OkapiClient(channel);
+//var request1 = new Com.Cat.Grpc.CreateXliffFromDocumentRequest
 //{
 //    FileName = "text.txt",
 //    FileContent = ByteString.CopyFrom(File.ReadAllBytes("C:\\Alpar\\Test.txt")),
@@ -24,19 +24,19 @@ string ServerAddress = "http://localhost:50051"; // Adjust the address/port as n
 //    SourceLangISO6391 = "en",
 //    TargetLangISO6391 = "fr"
 //};
-//var response = await client.CreateXliffFromDocumentAsync(request2);
+//var response = await client1.CreateXliffFromDocumentAsync(request1);
 
 
 //var channel2 = GrpcChannel.ForAddress(ServerAddress);
 //var client2 = new CATClient(channel);
 
-//var request1 = new TMExistsRequest { TmId = "1/_1_en_fr_marketing" };
-//var response1 = await client2.TMExistsAsync(request1);
+//var request2 = new TMExistsRequest { TmId = "1/_1_en_fr_marketing" };
+//var response2 = await client2.TMExistsAsync(request1);
 
 
-var channel = GrpcChannel.ForAddress(ServerAddress);
-var client3 = new CATClient(channel);
-var request = new Proto.CreateXliffFromDocumentRequest
+var channel3 = GrpcChannel.ForAddress("http://159.89.249.226:5001");
+var client3 = new CATClient(channel3);
+var request3 = new Proto.CreateXliffFromDocumentRequest
 {
     FileName = "text.txt",
     FileContent = ByteString.CopyFrom(File.ReadAllBytes("C:\\Alpar\\Test.txt")),
@@ -45,6 +45,6 @@ var request = new Proto.CreateXliffFromDocumentRequest
     SourceLangISO6391 = "en",
     TargetLangISO6391 = "fr"
 };
-var response3 = await client3.CreateXliffFromDocumentAsync(request);
+var response3 = await client3.CreateXliffFromDocumentAsync(request3);
 
 Console.WriteLine("End.");

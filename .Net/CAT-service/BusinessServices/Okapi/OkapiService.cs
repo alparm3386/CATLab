@@ -18,12 +18,10 @@ namespace CAT.BusinessServices.Okapi
     {
         private readonly ITMService _tmService;
         private readonly ILogger _logger;
-        private readonly IOkapiService _okapiService;
         private readonly IConfiguration _configuration;
 
-        public OkapiService(IOkapiService okapiService, ITMService tmService, IConfiguration configuration, ILogger<OkapiService> logger)
+        public OkapiService(ITMService tmService, IConfiguration configuration, ILogger<OkapiService> logger)
         {
-            _okapiService = okapiService;
             _tmService = tmService;
             _configuration = configuration;
             _logger = logger;
@@ -120,7 +118,7 @@ namespace CAT.BusinessServices.Okapi
         {
             //long lStart = CATUtils.CurrentTimeMillis();
             //convert the document to xliff
-            var sXliffContent = _okapiService.CreateXliffFromDocument(sFileName, fileContent, sFilterName, filterContent, sourceLangISO639_1, "fr"); //we can use a dummy language here
+            var sXliffContent = CreateXliffFromDocument(sFileName, fileContent, sFilterName, filterContent, sourceLangISO639_1, "fr"); //we can use a dummy language here
 
             //get the text fragments
             var tmpXliff = new XmlDocument();
