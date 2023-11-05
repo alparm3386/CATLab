@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using CAT.Data;
+using CAT.Enums;
 using CAT.Models.Common;
 using CAT.Models.Entities.Main;
 using Humanizer;
@@ -45,8 +46,8 @@ namespace CAT.Services.Common
             return storedQuote;
         }
 
-        public async Task<List<TempQuote>> CreateTempQuotesAsync(int storedQuoteId, int clientId, int sourceLanguage,
-            int[] targetLanguages, int speciality, int service, int tempDocumentId, bool clientReview)
+        public async Task<List<TempQuote>> CreateTempQuotesAsync(int storedQuoteId, int clientId, int sourceLang,
+            int[] targetLangs, Speciality speciality, Service service, ServiceSpeed speed, int tempDocumentId, bool clientReview)
         {
             try
             {
@@ -66,10 +67,10 @@ namespace CAT.Services.Common
                 }
 
                 //get the analisys
-                var tmAssignments = new List<TMAssignment>() { new TMAssignment() { tmId = "29610/__35462_en_fr" } };
-                _catConnector.GetTMAssignments();
-                var stats = await _catConnector.GetStatisticsForDocument(filePath, filterPath!, sourceLanguage,
-                    targetLanguages, tmAssignments.ToArray());
+                var client = _dbContextContainer.MainContext.Clients.FirstOrDefault(client => client.Id == clientId)!;
+                var tmAssignments = _catConnector.GetTMAssignments(client.CompanyId, sourceLang, targetLangs, (int)speciality, false);
+                var stats = await _catConnector.GetStatisticsForDocument(filePath, filterPath!, sourceLang,
+                    targetLangs, tmAssignments.ToArray());
 
                 var tempQuotes = new List<TempQuote>();
                 foreach (var stat in stats)
@@ -78,12 +79,13 @@ namespace CAT.Services.Common
                     var tempQuote = new TempQuote()
                     {
                         StoredQuoteId = storedQuoteId,
-                        SourceLanguage = sourceLanguage,
+                        SourceLanguage = sourceLang,
                         TargetLanguage = stat.targetLang,
-                        SpecialityId = speciality,
+                        SpecialityId = (int)speciality,
                         DateCreated = DateTime.Now,
-                        Service = service,
-                        Fee = 10.0,
+                        Service = (int)service,
+                        Speed = (int)speed,
+                        Fee = CalculateClientFee(clientId, stats[0], service, speed),
                         TempDocumentId = tempDocumentId,
                         Analysis = JsonConvert.SerializeObject(stat),
                         ClientReview = clientReview
@@ -134,7 +136,7 @@ namespace CAT.Services.Common
             return tempQuote;
         }
 
-        public async Task DeleteStoredQuoteAsync(StoredQuote storedQuote)
+        public async System.Threading.Tasks.Task DeleteStoredQuoteAsync(StoredQuote storedQuote)
         {
             _dbContextContainer!.MainContext!.StoredQuotes!.Remove(storedQuote);
             await _dbContextContainer.MainContext.SaveChangesAsync();
@@ -176,6 +178,42 @@ namespace CAT.Services.Common
             await _dbContextContainer.MainContext.SaveChangesAsync();
 
             return quote;
+        }
+
+        private double CalculateClientFee(int clientId, Statistics stats, Service service, ServiceSpeed speed)
+        {
+            //double clientFee = 0.0;
+            var translationFee = stats.WordCount * 75 / 1000;
+
+            return translationFee;
+            //if (service == Service.AI)
+            //{
+            //    //rateToClient stats.WordCount
+            //}
+            //else if (service == Service.AIWithRevision)
+            //{
+            //}
+            //else if (service == Service.AIWithTranslationAndRevision)
+            //{
+            //    //AI process
+
+            //    //translation
+            //    //revision
+
+            //    //client review
+            //}
+            //else if (service == Service.TranslationWithRevision)
+            //{
+            //    //translation
+
+            //    //revision
+
+            //    //client review
+            //}
+            //else
+            //    throw new NotImplementedException();
+
+            //return clientFee;
         }
     }
 }

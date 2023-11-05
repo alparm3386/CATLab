@@ -6,6 +6,7 @@
     [Serializable()]
     public class Statistics
     {
+        public int sourceLang;
         public int targetLang;
         public int repetitions = 0;
         public int match_100 = 0;

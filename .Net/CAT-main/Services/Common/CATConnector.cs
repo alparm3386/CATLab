@@ -158,6 +158,7 @@ namespace CAT.Services.Common
                         match_75_84 = stats[0].Match7584,
                         match_50_74 = stats[0].Match5074,
                         no_match = stats[0].NoMatch,
+                        sourceLang = sourceLang,
                         targetLang = targetLang
                     });
 
