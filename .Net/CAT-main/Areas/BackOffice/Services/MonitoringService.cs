@@ -66,23 +66,25 @@ namespace CAT.Areas.BackOffice.Services
                 };
 
                 //join into the documents table 
-                var jobsWithDocuments = (from j in dsOrder.Jobs
-                                         join d in _dbContextContainer.MainContext.Documents on j.SourceDocumentId equals d.Id
+                var jobsWithDocuments = (from job in dsOrder.Jobs
+                                         join doc in _dbContextContainer.MainContext.Documents on job.SourceDocumentId equals doc.Id
+                                         join sourceLang in _dbContextContainer.MainContext.Languages on job.Quote!.SourceLanguage equals sourceLang.Id
+                                         join targetLang in _dbContextContainer.MainContext.Languages on job.Quote!.SourceLanguage equals targetLang.Id
                                          select new
                                          {
-                                             jobId = j.Id,
-                                             dateProcessed = j.DateProcessed,
-                                             sourceLanguage = j.Quote!.SourceLanguage,
-                                             targetLanguage = j.Quote.TargetLanguage,
-                                             speciality = j.Quote.Speciality,
-                                             speed = j.Quote.Speed,
-                                             service = j.Quote.Service,
-                                             documentId = d.Id,
-                                             originalFileName = d.OriginalFileName,
-                                             fileName = d.FileName,
-                                             words = j.Quote.Words,
-                                             fee = j.Quote.Fee,
-                                             workflowSteps = j.WorkflowSteps
+                                             jobId = job.Id,
+                                             dateProcessed = job.DateProcessed,
+                                             sourceLanguage = sourceLang.Name,
+                                             targetLanguage = targetLang.Name,
+                                             speciality = job.Quote!.Speciality,
+                                             speed = job.Quote.Speed,
+                                             service = job.Quote.Service,
+                                             documentId = doc.Id,
+                                             originalFileName = doc.OriginalFileName,
+                                             fileName = doc.FileName,
+                                             words = job.Quote.Words,
+                                             fee = job.Quote.Fee,
+                                             workflowSteps = job.WorkflowSteps
                                          }).ToList();
 
                 foreach (var dsJob in jobsWithDocuments)
