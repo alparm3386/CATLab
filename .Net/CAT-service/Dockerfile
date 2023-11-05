@@ -2,6 +2,10 @@
 
 # Use the .NET SDK as a base image for building the project
 FROM mcr.microsoft.com/dotnet/sdk:7.0 as build-env
+
+# Install the package that provides libdl.so (example for Ubuntu)
+#RUN apt-get update && apt-get install -y libc6
+
 WORKDIR /app
 
 # Copy the .csproj file and restore any dependencies (via dotnet restore)

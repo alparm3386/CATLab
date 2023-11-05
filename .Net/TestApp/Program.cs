@@ -34,17 +34,35 @@ string ServerAddress = "http://localhost:50051"; // Adjust the address/port as n
 //var response2 = await client2.TMExistsAsync(request1);
 
 
-var channel3 = GrpcChannel.ForAddress("http://143.198.240.169:5001");
-var client3 = new CATClient(channel3);
-var request3 = new Proto.CreateXliffFromDocumentRequest
+//var channel3 = GrpcChannel.ForAddress("http://143.198.240.169:5001");
+var channel3 = GrpcChannel.ForAddress("http://localhost:5001");
+//var client3 = new CATClient(channel3);
+//var request3 = new Proto.CreateXliffFromDocumentRequest
+//{
+//    //FileName = "text.txt",
+//    //FileContent = ByteString.CopyFrom(File.ReadAllBytes("C:\\Alpar\\Test.txt")),
+//    FileName = "Janet Yellen.docx",
+//    FileContent = ByteString.CopyFrom(File.ReadAllBytes("C:\\Alpar\\Janet Yellen.docx")),
+//    FilterName = "okf_openxml@default-okf_openxml.fprm",
+//    FilterContent = ByteString.CopyFrom(File.ReadAllBytes("C:\\Development\\CATLab\\contents\\filters\\okf_openxml@default-okf_openxml.fprm")),
+//    SourceLangISO6391 = "en",
+//    TargetLangISO6391 = "fr"
+//};
+//var response3 = await client3.CreateXliffFromDocumentAsync(request3);
+
+var client4 = new CATClient(channel3);
+var request4 = new Proto.GetStatisticsForDocumentRequest
 {
-    FileName = "text.txt",
-    FileContent = ByteString.CopyFrom(File.ReadAllBytes("C:\\Alpar\\Test.txt")),
-    FilterContent = ByteString.Empty,
-    FilterName = "",
+    //FileName = "text.txt",
+    //FileContent = ByteString.CopyFrom(File.ReadAllBytes("C:\\Alpar\\Test.txt")),
+    FileName = "Janet Yellen.docx",
+    FileContent = ByteString.CopyFrom(File.ReadAllBytes("C:\\Alpar\\Janet Yellen.docx")),
+    FilterName = "okf_openxml@default-okf_openxml.fprm",
+    FilterContent = ByteString.CopyFrom(File.ReadAllBytes("C:\\Development\\CATLab\\contents\\filters\\okf_openxml@default-okf_openxml.fprm")),
     SourceLangISO6391 = "en",
-    TargetLangISO6391 = "fr"
+    TargetLangsISO6391 = { "fr" }
 };
-var response3 = await client3.CreateXliffFromDocumentAsync(request3);
+
+var response4 = await client4.GetStatisticsForDocumentAsync(request4);
 
 Console.WriteLine("End.");

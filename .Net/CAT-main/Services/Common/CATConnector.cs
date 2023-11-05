@@ -48,7 +48,7 @@ namespace CAT.Services.Common
             _documentProcessor = documentProcessor;
             _languageService = languageService;
 
-            _catServerAddress = _configuration!["CatServer"]!;
+            _catServerAddress = _configuration!["CATServer"]!;
         }
 
         public bool CanBeParsed(String sFilePath)
@@ -140,7 +140,7 @@ namespace CAT.Services.Common
                         FilterContent = filterContent != null ? ByteString.CopyFrom(filterContent) : ByteString.Empty,
                         SourceLangISO6391 = sourceLanguageIso639_1,
                         TargetLangsISO6391 = { targetLanguageIso639_1 },
-                        TMAssignments = { aTMs }
+                        //TMAssignments = { aTMs }
                     };
 
                     var stats = catClient.GetStatisticsForDocument(request).Statistics;
@@ -688,9 +688,9 @@ namespace CAT.Services.Common
                         var tmFilePath = Path.Combine(sTempDir, "document.mqxliff");
                         sFilename = Path.GetFileName(tmFilePath);
                         fileContent = File.ReadAllBytes(tmFilePath);
-                        aOutFileBytes = client.CreateDocumentFromXliff(sFilename, fileContent, sFiltername,
-                            filterContent, _languageService.GetLanguageCodeIso639_1(sourceLanguage).Result,
-                            _languageService.GetLanguageCodeIso639_1(targetLanguage).Result, xlfFile.OuterXml);
+                        aOutFileBytes = null;// client.CreateDocumentFromXliff(sFilename, fileContent, sFiltername,
+                            //filterContent, _languageService.GetLanguageCodeIso639_1(sourceLanguage).Result,
+                            //_languageService.GetLanguageCodeIso639_1(targetLanguage).Result, xlfFile.OuterXml);
                         var mqXliffContent = System.Text.Encoding.UTF8.GetString(aOutFileBytes);
                         mqXliffContent = mqXliffContent.Replace("mq:status=\"NotStarted\"", "mq:status=\"ManuallyConfirmed\"");
                         File.WriteAllText(Path.Combine(sTempDir, "document.mqxliff"), mqXliffContent);
@@ -704,9 +704,9 @@ namespace CAT.Services.Common
                     }
                     else
                     {
-                        aOutFileBytes = client.CreateDocumentFromXliff(sFilename, fileContent, sFiltername,
-                            filterContent, _languageService.GetLanguageCodeIso639_1(sourceLanguage).Result,
-                            _languageService.GetLanguageCodeIso639_1(targetLanguage).Result, xlfFile.OuterXml);
+                        aOutFileBytes = null;// client.CreateDocumentFromXliff(sFilename, fileContent, sFiltername,
+                            //filterContent, _languageService.GetLanguageCodeIso639_1(sourceLanguage).Result,
+                            //_languageService.GetLanguageCodeIso639_1(targetLanguage).Result, xlfFile.OuterXml);
                     }
                 }
 

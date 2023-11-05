@@ -27,28 +27,6 @@ namespace CAT.BusinessServices.Okapi
             _logger = logger;
         }
 
-        /// <summary>
-        /// CreateXliffFromDocument
-        /// </summary>
-        /// <param name="sFileName"></param>
-        /// <param name="fileContent"></param>
-        /// <param name="sFilterName"></param>
-        /// <param name="filterContent"></param>
-        /// <param name="sourceLangISO639_1"></param>
-        /// <param name="targetLangISO639_1"></param>
-        /// <param name="aTMAssignments"></param>
-        /// <returns></returns>
-        public string CreateXliffFromDocument(string fileName, byte[] fileContent, string filterName, byte[] filterContent,
-            string sourceLangISO639_1, string targetLangISO639_1, TMAssignment[] aTMAssignments)
-        {
-            var xliffContent = CreateXliffFromDocument(fileName, fileContent, filterName,
-                filterContent, sourceLangISO639_1, targetLangISO639_1);
-
-            var preTranslatedXliff = PreTranslateXliff(xliffContent, sourceLangISO639_1, targetLangISO639_1, aTMAssignments, 100);
-
-            return preTranslatedXliff;
-        }
-
         public string CreateXliffFromDocument(string fileName, byte[] fileContent, string filterName, byte[] filterContent,
             string sourceLangISO639_1, string targetLangISO639_1)
         {

@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace CAT.Utils
@@ -13,8 +14,8 @@ namespace CAT.Utils
         private BreakIterator _breakIterator;
         public SimpleWordcount(String localeId)
         {
-            _locale = new Icu.Locale(localeId);
-            _breakIterator = BreakIterator.CreateWordInstance(_locale);
+            //_locale = new Icu.Locale(localeId);
+            //_breakIterator = BreakIterator.CreateWordInstance(_locale);
         }
 
         /// <summary>
@@ -38,28 +39,36 @@ namespace CAT.Utils
         /// <returns></returns>
         public int CountWords(String text)
         {
-            int wordCount = 0;
-            using (_breakIterator)
-            {
-                _breakIterator.SetText(text);
-                int current = _breakIterator.MoveNext();
-                while (true)
-                {
-                    if (current == BreakIterator.DONE)
-                    {
-                        break;
-                    }
-                    // don't count various space and punctuation
-                    int status = _breakIterator.GetRuleStatus();
-                    if (status != (int)RuleBasedBreakIterator.UWordBreak.NONE)
-                    {
-                        wordCount++;
-                    }
-                    current = _breakIterator.MoveNext();
-                }
-            }
+            string pattern = @"\b\w+\b";
 
-            return wordCount;
+            // Use Regex.Matches to find all matches in the input text
+            var matches = Regex.Matches(text, pattern);
+
+            // Return the count of matches, which represents the number of words
+            return matches.Count;
+            
+            //int wordCount = 0;
+            //using (_breakIterator)
+            //{
+            //    _breakIterator.SetText(text);
+            //    int current = _breakIterator.MoveNext();
+            //    while (true)
+            //    {
+            //        if (current == BreakIterator.DONE)
+            //        {
+            //            break;
+            //        }
+            //        // don't count various space and punctuation
+            //        int status = _breakIterator.GetRuleStatus();
+            //        if (status != (int)RuleBasedBreakIterator.UWordBreak.NONE)
+            //        {
+            //            wordCount++;
+            //        }
+            //        current = _breakIterator.MoveNext();
+            //    }
+            //}
+
+            //return wordCount;
         }
     }
 }
