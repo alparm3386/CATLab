@@ -18,10 +18,14 @@ using Grpc.Net.Client;
 using static Proto.CAT;
 using Google.Protobuf;
 using Proto;
+using System.Transactions;
+using TMType = CAT.Enums.TMType;
+using Microsoft.AspNetCore.Mvc.Filters;
+using Microsoft.IdentityModel.Protocols.WsTrust;
 
 namespace CAT.Services.Common
 {
-    public class CATConnector
+    public class CATConnector : ICATConnector
     {
         private readonly DbContextContainer _dbContextContainer;
         private readonly IConfiguration _configuration;
@@ -120,8 +124,8 @@ namespace CAT.Services.Common
                 if (File.Exists(sFilterPath))
                     filterContent = File.ReadAllBytes(sFilterPath);
 
-                var aTMs = Array.ConvertAll(tmAssignments, 
-                    tma => new Proto.TMAssignment() {  Penalty = tma.penalty, Speciality = tma.speciality, TmId = tma.tmId });
+                var aTMs = Array.ConvertAll(tmAssignments,
+                    tma => new Proto.TMAssignment() { Penalty = tma.penalty, Speciality = tma.speciality, TmId = tma.tmId });
 
                 //the target language array
                 var lstTargetLangs = new List<String>();
@@ -265,7 +269,8 @@ namespace CAT.Services.Common
                 {
 
                     //get the translation details
-                    var job = _dbContextContainer.MainContext.Jobs.Include(j => j.Quote).Include(j => j.Order).FirstOrDefault(j => j.Id == idJob);
+                    var job = _dbContextContainer.MainContext.Jobs.AsNoTracking().Include(j => j.Quote)
+                        .Include(j => j.Order).ThenInclude(c => c!.Client).FirstOrDefault(j => j.Id == idJob);
                     var document = _dbContextContainer.MainContext.Documents.Find(job!.SourceDocumentId);
 
                     //check if it is parsed already
@@ -303,12 +308,11 @@ namespace CAT.Services.Common
                     }
 
                     //get the TMs
-                    var aTMAssignments = GetTMAssignments(job!.Order!.ClientId, 
-                        _languageService.GetLanguageCodeIso639_1(job!.Quote!.SourceLanguage!).Result,
-                        new string[] { _languageService.GetLanguageCodeIso639_1(job!.Quote!.TargetLanguage!).Result }, job.Quote.Speciality, true);
+                    var aTMAssignments = GetTMAssignments(job!.Order!.Client.CompanyId, job!.Quote!.SourceLanguage,
+                        new int[] { job!.Quote!.TargetLanguage }, job.Quote.Speciality, true);
 
                     CreateXliffFromDocument(jobDataFolder, Path.GetFileName(sXlifFilePath), filePath, filterPath,
-                        _languageService.GetLanguageCodeIso639_1(job!.Quote!.SourceLanguage!).Result, 
+                        _languageService.GetLanguageCodeIso639_1(job!.Quote!.SourceLanguage!).Result,
                         _languageService.GetLanguageCodeIso639_1(job!.Quote!.TargetLanguage!).Result, iThreshold, aTMAssignments);
 
                     //parse the xliff file
@@ -689,8 +693,8 @@ namespace CAT.Services.Common
                         sFilename = Path.GetFileName(tmFilePath);
                         fileContent = File.ReadAllBytes(tmFilePath);
                         aOutFileBytes = null;// client.CreateDocumentFromXliff(sFilename, fileContent, sFiltername,
-                            //filterContent, _languageService.GetLanguageCodeIso639_1(sourceLanguage).Result,
-                            //_languageService.GetLanguageCodeIso639_1(targetLanguage).Result, xlfFile.OuterXml);
+                                             //filterContent, _languageService.GetLanguageCodeIso639_1(sourceLanguage).Result,
+                                             //_languageService.GetLanguageCodeIso639_1(targetLanguage).Result, xlfFile.OuterXml);
                         var mqXliffContent = System.Text.Encoding.UTF8.GetString(aOutFileBytes);
                         mqXliffContent = mqXliffContent.Replace("mq:status=\"NotStarted\"", "mq:status=\"ManuallyConfirmed\"");
                         File.WriteAllText(Path.Combine(sTempDir, "document.mqxliff"), mqXliffContent);
@@ -705,8 +709,8 @@ namespace CAT.Services.Common
                     else
                     {
                         aOutFileBytes = null;// client.CreateDocumentFromXliff(sFilename, fileContent, sFiltername,
-                            //filterContent, _languageService.GetLanguageCodeIso639_1(sourceLanguage).Result,
-                            //_languageService.GetLanguageCodeIso639_1(targetLanguage).Result, xlfFile.OuterXml);
+                                             //filterContent, _languageService.GetLanguageCodeIso639_1(sourceLanguage).Result,
+                                             //_languageService.GetLanguageCodeIso639_1(targetLanguage).Result, xlfFile.OuterXml);
                     }
                 }
 
@@ -738,10 +742,58 @@ namespace CAT.Services.Common
             }
         }
 
-        private TMAssignment[] GetTMAssignments(int idCorporateProfile, string sourceLanguage, string[] targetLanguages, int speciality, bool createTM)
+        public TMAssignment[] GetTMAssignments(int companyId, int sourceLang, int[] targetLangs, int speciality, bool createTM)
         {
-            return null!;
+            var tmAssignments = new List<TMAssignment>();
+            //only company TM
+            var grpcChannel = GrpcChannel.ForAddress(_catServerAddress);
+            var catClient = new CATClient(grpcChannel);
+            foreach (var targetLang in targetLangs)
+            {
+                var tmId = CreateTMId(companyId, companyId, sourceLang, targetLang, TMType.ProfilePrimary);
+                var tmExistsRequest = new TMExistsRequest { TmId = tmId };
+                var exists = catClient.TMExists(tmExistsRequest).Exists;
+                if (!exists && createTM)
+                {
+                    var createTMRequest = new CreateTMRequest() { TmId = tmId };
+                    catClient.CreateTM(createTMRequest);
+                    exists = true;
+                }
+
+                if (exists)
+                {
+                    var tmAssignment = new TMAssignment()
+                    {
+                        isGlobal = false,
+                        isReadonly = false,
+                        penalty = 0,
+                        speciality = speciality,
+                        tmId = tmId
+                    };
+                    tmAssignments.Add(tmAssignment);
+                };
+            }
+
+            return tmAssignments.ToArray();
         }
 
+        private String CreateTMId(int groupId, int companyId, int sourceLang, int targetLang, TMType type)
+        {
+            var sourceLangIso639_1 = _languageService.GetLanguageCodeIso639_1(sourceLang);
+            var targetLangIso639_1 = _languageService.GetLanguageCodeIso639_1(targetLang);
+            var tmPrefix = "";
+            if (type == TMType.Global)
+                tmPrefix = "$_";
+            else if (type == TMType.GroupPrimary)
+                tmPrefix = "_";
+            else if (type == TMType.GroupSecondary)
+                tmPrefix = "_sec_";
+            else if (type == TMType.ProfilePrimary)
+                tmPrefix = "__";
+            else if (type == TMType.ProfileSecondary)
+                tmPrefix = "__sec_";
+
+            return groupId + "/" + tmPrefix + companyId + "_" + sourceLangIso639_1 + "_" + targetLangIso639_1;
+        }
     }
 }

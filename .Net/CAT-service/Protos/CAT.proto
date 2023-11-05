@@ -80,8 +80,8 @@ enum TMType {
     GLOBAL = 0;
     GROUP_PRIMARY = 1;
     GROUP_SECONDARY = 2;
-    PROFILE_PRIMARY = 3;
-    PROFILE_SECONDARY = 4;
+    COMPANY_PRIMARY = 3;
+    COMPANY_SECONDARY = 4;
 }
 
 message GetTMInfoResponse {

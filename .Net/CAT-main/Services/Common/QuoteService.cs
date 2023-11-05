@@ -12,14 +12,14 @@ namespace CAT.Services.Common
     {
         private readonly DbContextContainer _dbContextContainer;
         private readonly IConfiguration _configuration;
-        private readonly CATConnector _catConnector;
+        private readonly ICATConnector _catConnector;
         private readonly IDocumentService _documentService;
         private readonly IMapper _mapper;
         private readonly ILogger _logger;
         private readonly ILanguageService _languageService;
 
 
-        public QuoteService(DbContextContainer dbContextContainer, IConfiguration configuration, CATConnector catConnector, 
+        public QuoteService(DbContextContainer dbContextContainer, IConfiguration configuration, ICATConnector catConnector, 
             IDocumentService documentService, ILanguageService languageService, IMapper mapper, ILogger<JobService> logger)
         {
             _dbContextContainer = dbContextContainer;
@@ -67,6 +67,7 @@ namespace CAT.Services.Common
 
                 //get the analisys
                 var tmAssignments = new List<TMAssignment>() { new TMAssignment() { tmId = "29610/__35462_en_fr" } };
+                _catConnector.GetTMAssignments();
                 var stats = await _catConnector.GetStatisticsForDocument(filePath, filterPath!, sourceLanguage,
                     targetLanguages, tmAssignments.ToArray());
 

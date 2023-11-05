@@ -105,4 +105,14 @@ namespace CAT.Enums
         [Display(Name = "Technical")]
         Technical = 3
     }
+
+    enum TMType
+    {
+        Global = 0,
+        GroupPrimary = 1,
+        GroupSecondary = 2,
+        ProfilePrimary = 3,
+        ProfileSecondary = 4,
+    }
+
 }

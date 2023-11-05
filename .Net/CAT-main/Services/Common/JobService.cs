@@ -8,12 +8,12 @@ namespace CAT.Services.Common
     {
         private readonly DbContextContainer _dbContextContainer;
         private readonly IConfiguration _configuration;
-        private readonly CATConnector _catConnector;
+        private readonly ICATConnector _catConnector;
         private readonly IMapper _mapper;
         private readonly ILogger _logger;
 
 
-        public JobService(DbContextContainer dbContextContainer, IConfiguration configuration, CATConnector catConnector, 
+        public JobService(DbContextContainer dbContextContainer, IConfiguration configuration, ICATConnector catConnector, 
             IMapper mapper, ILogger<JobService> logger)
         {
             _dbContextContainer = dbContextContainer;
