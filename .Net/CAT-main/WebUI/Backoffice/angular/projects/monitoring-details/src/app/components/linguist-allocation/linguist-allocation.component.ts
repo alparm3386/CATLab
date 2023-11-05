@@ -46,8 +46,8 @@ export class LinguistAllocationComponent {
 
   getLinguists(): void {
     const searchParams = {
-      sourceLanguageId: this.jobData.sourceLanguage,
-      targetLanguageId: this.jobData.targetLanguage,
+      sourceLanguageId: this.jobData.sourceLangId,
+      targetLanguageId: this.jobData.targetLangId,
       speciality: this.jobData.speciality,
       task: this.task
     }

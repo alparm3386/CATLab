@@ -207,13 +207,6 @@ namespace CAT.Areas.BackOffice.Services
 
 
             //get the language names
-            var aaa = (from sourceLang in _dbContextContainer.MainContext.Languages
-                                   where sourceLang.Id == job.Quote!.SourceLanguage
-                                   select new
-                                   {
-                                       sourceLang = sourceLang.Name,
-                                   }).ToList();
-
             var languages = await (from sourceLang in _dbContextContainer.MainContext.Languages
                             join targetLang in _dbContextContainer.MainContext.Languages on job.Quote!.TargetLanguage equals targetLang.Id
                             where sourceLang.Id == job.Quote!.SourceLanguage
@@ -231,6 +224,8 @@ namespace CAT.Areas.BackOffice.Services
                 dateProcessed = job.DateProcessed,
                 sourceLanguage = languages!.sourceLang,
                 targetLanguage = languages.targetLang,
+                sourceLangId = job.Quote!.SourceLanguage,
+                targetLangId = job.Quote!.TargetLanguage,
                 speciality = job.Quote!.Speciality,
                 specialityName = EnumHelper.GetDisplayName((Speciality)job.Quote.Speciality),
                 speed = EnumHelper.GetDisplayName((ServiceSpeed)job.Quote.Speed),
