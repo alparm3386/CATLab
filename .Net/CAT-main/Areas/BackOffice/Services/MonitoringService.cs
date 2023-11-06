@@ -118,7 +118,8 @@ namespace CAT.Areas.BackOffice.Services
                             startDate = dsWorkflowStep.StartDate,
                             scheduledDate = dsWorkflowStep.ScheduledDate,
                             completionDate = dsWorkflowStep.CompletionDate,
-                            fee = dsWorkflowStep.Fee
+                            fee = dsWorkflowStep.Fee,
+                            stepOrder = dsWorkflowStep.StepOrder
                         };
                         job.workflowSteps.Add(workflowStep);
                     }
@@ -240,6 +241,7 @@ namespace CAT.Areas.BackOffice.Services
                 companyName = job.Order!.Client.Company.Name,
                 companyId = job.Order!.Client.Company.Id,
                 projectManager = pmUser!.FullName,
+                pmId = job!.Order!.Client.Company.PMId,
                 allocations = allocations
             };
 

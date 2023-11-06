@@ -24,13 +24,8 @@ using Microsoft.Extensions.FileProviders;
 
 var builder = WebApplication.CreateBuilder(args);
 
-
-builder.Services.AddDbContext<IdentityDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("IdentityDbConnection") ?? throw new InvalidOperationException("Connection string 'IdentityDbConnection' not found.")));
-builder.Services.AddDbContext<MainDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("MainDbConnection") ?? throw new InvalidOperationException("Connection string 'MainDbConnection' not found.")));
-builder.Services.AddDbContext<TranslationUnitsDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("TranslationUnitsDbConnection") ?? throw new InvalidOperationException("Connection string 'TranslationUnitsDbConnection' not found.")));
+//AddSQLServerContext(builder);
+AddMySqlContext(builder);
 
 builder.Services.AddTransient<DbContextContainer>();
 
@@ -152,3 +147,42 @@ app.Use(async (context, next) =>
 });
 
 app.Run();
+
+void AddMySqlContext(WebApplicationBuilder builder)
+{
+    var identityConnectionString = builder.Configuration.GetConnectionString("IdentityDbConnection");
+    builder.Services.AddDbContext<IdentityDbContext>(options =>
+    {
+        options.UseMySql(identityConnectionString, new MySqlServerVersion(new Version(8, 0, 34)), mySqlOptions =>
+        {
+            mySqlOptions.EnableRetryOnFailure();
+        });
+    });
+    var mainConnectionString = builder.Configuration.GetConnectionString("MainDbConnection");
+    builder.Services.AddDbContext<MainDbContext>(options =>
+    {
+        options.UseMySql(mainConnectionString, new MySqlServerVersion(new Version(8, 0, 34)), mySqlOptions =>
+        {
+            mySqlOptions.EnableRetryOnFailure();
+        });
+    });
+
+    var translationUnitsConnectionString = builder.Configuration.GetConnectionString("TranslationUnitsDbConnection");
+    builder.Services.AddDbContext<TranslationUnitsDbContext>(options =>
+    {
+        options.UseMySql(translationUnitsConnectionString, new MySqlServerVersion(new Version(8, 0, 34)), mySqlOptions =>
+        {
+            mySqlOptions.EnableRetryOnFailure();
+        });
+    });
+}
+
+void AddSQLServerContext(WebApplicationBuilder builder)
+{
+    builder.Services.AddDbContext<IdentityDbContext>(options =>
+        options.UseSqlServer(builder.Configuration.GetConnectionString("IdentityDbConnection") ?? throw new InvalidOperationException("Connection string 'IdentityDbConnection' not found.")));
+    builder.Services.AddDbContext<MainDbContext>(options =>
+        options.UseSqlServer(builder.Configuration.GetConnectionString("MainDbConnection") ?? throw new InvalidOperationException("Connection string 'MainDbConnection' not found.")));
+    builder.Services.AddDbContext<TranslationUnitsDbContext>(options =>
+        options.UseSqlServer(builder.Configuration.GetConnectionString("TranslationUnitsDbConnection") ?? throw new InvalidOperationException("Connection string 'TranslationUnitsDbConnection' not found.")));
+}

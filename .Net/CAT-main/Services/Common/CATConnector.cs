@@ -255,7 +255,7 @@ namespace CAT.Services.Common
             return "ParseDoc_" + idJob.ToString();
         }
 
-        public async void ParseDoc(int idJob)
+        public void ParseDoc(int idJob)
         {
             if (IsLocked(String.Intern(GetParseDocLockString(idJob))))
                 throw new Exception("Translation is locked: " + idJob.ToString());
@@ -270,7 +270,7 @@ namespace CAT.Services.Common
                 {
 
                     //get the translation details
-                    var job = _dbContextContainer.MainContext.Jobs.AsNoTracking().Include(j => j.Quote)
+                    var job = _dbContextContainer.MainContext.Jobs.Include(j => j.Quote)
                         .Include(j => j.Order).ThenInclude(c => c!.Client).FirstOrDefault(j => j.Id == idJob);
                     var document = _dbContextContainer.MainContext.Documents.Find(job!.SourceDocumentId);
 
@@ -780,8 +780,8 @@ namespace CAT.Services.Common
 
         private String CreateTMId(int groupId, int companyId, int sourceLang, int targetLang, TMType type)
         {
-            var sourceLangIso639_1 = _languageService.GetLanguageCodeIso639_1(sourceLang);
-            var targetLangIso639_1 = _languageService.GetLanguageCodeIso639_1(targetLang);
+            var sourceLangIso639_1 = _languageService.GetLanguageCodeIso639_1(sourceLang).Result;
+            var targetLangIso639_1 = _languageService.GetLanguageCodeIso639_1(targetLang).Result;
             var tmPrefix = "";
             if (type == TMType.Global)
                 tmPrefix = "$_";

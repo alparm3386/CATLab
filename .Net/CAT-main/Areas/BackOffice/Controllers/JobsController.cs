@@ -338,19 +338,23 @@ namespace CAT.Areas.BackOffice.Controllers
             if (id == null)
                 return Problem("Invalid job ID.");
 
-            try
+            var error = "";
+            await System.Threading.Tasks.Task.Run(() =>
             {
-                await System.Threading.Tasks.Task.Run(() =>
+                try
                 {
                     _jobService.ProcessJob((int)id);
-                });
-            }
-            catch (Exception ex)
-            {
-                return Problem(title: "An error occurred while processing the job." + ex.Message);
-            }
+                }
+                catch (Exception ex)
+                {
+                    error = "An error occurred while processing the job." + ex.Message;
+                }
+            });
 
-            return Json(new { success = true, message = "Job processed successfully." });
+            if (String.IsNullOrEmpty(error))
+                return Json(new { success = true, message = "Job processed successfully." });
+            else
+                return Problem(title: "An error occurred while processing the job." + error);
         }
 
     }

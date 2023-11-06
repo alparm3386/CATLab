@@ -1,6 +1,12 @@
 <div>
-  <div class="form-control">
-    <label>Project manager: </label> <span class="text-primary"> {{jobData.projectManager}} </span>
+  <div class="form-control d-flex">
+    <!--<div class="profile-image-container">
+    <img [src]="'/api/common/GetProfilePicture/' + jobData.pmId" alt="Profile Image">
+  </div>-->
+    <div>
+      <label>Project manager: </label>
+      <span class="text-primary"> {{jobData.projectManager}} </span>
+    </div>
   </div>
   <div *ngIf="hasTask(TaskEnum.Translation)" class="form-control mt-2">
     <app-task-allocation [jobData]="jobData" [task]="TaskEnum.Translation"></app-task-allocation>
