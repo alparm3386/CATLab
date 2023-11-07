@@ -34,9 +34,9 @@ namespace CAT.BusinessServices
         }
 
         #region Translation memory
-        private DBParams GetDBParams(String tmPath)
+        private DBParams GetDBParams(String tmIds)
         {
-            var aPathElements = tmPath.Split('/');
+            var aPathElements = tmIds.Split('/');
             var dbName = aPathElements[0];
             var tmTableName = aPathElements[1];
 
@@ -72,11 +72,11 @@ namespace CAT.BusinessServices
             _sqlCommands.Add("CreateTMTable", command);
         }
 
-        public void CreateTranslationMemory(String tmPath)
+        public void CreateTranslationMemory(String tmId)
         {
             try
             {
-                var dbParams = GetDBParams(tmPath);
+                var dbParams = GetDBParams(tmId);
                 var tmTableName = dbParams.tmTableName;
 
                 var dbFolder = Path.Combine(_tmRepository, dbParams.dbName, "SQLData");
@@ -109,14 +109,14 @@ namespace CAT.BusinessServices
             }
             catch (Exception ex)
             {
-                _logger.LogError("CreateTranslationMemory -> tmPath: " + tmPath + " error: " + ex.Message);
+                _logger.LogError("CreateTranslationMemory -> tmId: " + tmId + " error: " + ex.Message);
                 throw;
             }
         }
 
-        public bool TMExists(String tmPath)
+        public bool TMExists(String tmId)
         {
-            var dbParams = GetDBParams(tmPath);
+            var dbParams = GetDBParams(tmId);
             var dbPath = Path.Combine(_tmRepository, dbParams.dbName + "/SQLData/" + dbParams.dbName + ".db");
             if (!File.Exists(dbPath))
                 return false;
@@ -135,9 +135,9 @@ namespace CAT.BusinessServices
             }
         }
 
-        public int GetTMEntriesNumber(String tmPath)
+        public int GetTMEntriesNumber(String tmId)
         {
-            var dbParams = GetDBParams(tmPath);
+            var dbParams = GetDBParams(tmId);
             var dbPath = Path.Combine(_tmRepository, dbParams.dbName + "/SQLData/" + dbParams.dbName + ".db");
 
             string connectionString = $"Data Source={dbPath};Version=3;Pooling=True;";
@@ -156,7 +156,7 @@ namespace CAT.BusinessServices
                 }
                 catch (SQLiteException ex)
                 {
-                    _logger.LogError("GetTMEntriesNumber -> tmPath: " + tmPath + " error: " + ex);
+                    _logger.LogError("GetTMEntriesNumber -> tmId: " + tmId + " error: " + ex);
                     throw;
                 }
             }
@@ -194,10 +194,10 @@ namespace CAT.BusinessServices
             }
         }
 
-        public DataSet InsertTMEntry(String tmPath, TextFragment source, TextFragment target, String context, String user, int speciality,
+        public DataSet InsertTMEntry(String tmId, TextFragment source, TextFragment target, String context, String user, int speciality,
             int jobId, DateTime dateCreated, DateTime dateModified, String extensionData)
         {
-            var dbParams = GetDBParams(tmPath);
+            var dbParams = GetDBParams(tmId);
             var dbPath = Path.Combine(_tmRepository, dbParams.dbName + "/SQLData/" + dbParams.dbName + ".db");
             string connectionString = $"Data Source={dbPath};Version=3;Pooling=True;";
             using (var sqlConnection = new SQLiteConnection(connectionString))
@@ -244,15 +244,15 @@ namespace CAT.BusinessServices
                 }
                 catch (SQLiteException ex)
                 {
-                    _logger.LogError("InsertTMEntry -> tmPath: " + tmPath + " error: " + ex);
+                    _logger.LogError("InsertTMEntry -> tmId: " + tmId + " error: " + ex);
                     throw ex;
                 }
             }
         }
 
-        public int DeleteTMEntry(String tmPath, int entryId)
+        public int DeleteTMEntry(String tmId, int entryId)
         {
-            var dbParams = GetDBParams(tmPath);
+            var dbParams = GetDBParams(tmId);
             var dbPath = Path.Combine(_tmRepository, dbParams.dbName + "/SQLData/" + dbParams.dbName + ".db");
             string connectionString = $"Data Source={dbPath};Version=3;Pooling=True;";
             using (var sqlConnection = new SQLiteConnection(connectionString))
@@ -276,15 +276,15 @@ namespace CAT.BusinessServices
                 }
                 catch (SQLiteException ex)
                 {
-                    _logger.LogError("InsertTMEntry -> tmId: " + tmPath + " error: " + ex);
+                    _logger.LogError("InsertTMEntry -> tmId: " + tmId + " error: " + ex);
                     throw ex;
                 }
             }
         }
 
-        public DataSet GetTMEntriesBySourceIds(String tmPath, int[] aSourceIds)
+        public DataSet GetTMEntriesBySourceIds(String tmId, int[] aSourceIds)
         {
-            var dbParams = GetDBParams(tmPath);
+            var dbParams = GetDBParams(tmId);
             var dbPath = Path.Combine(_tmRepository, dbParams.dbName + "/SQLData/" + dbParams.dbName + ".db");
             string connectionString = $"Data Source={dbPath};Version=3;Pooling=True;";
             using (var sqlConnection = new SQLiteConnection(connectionString))
@@ -307,15 +307,15 @@ namespace CAT.BusinessServices
                 }
                 catch (SQLiteException ex)
                 {
-                    _logger.LogError("InsertTMEntry -> tmId: " + tmPath + " error: " + ex);
+                    _logger.LogError("InsertTMEntry -> tmId: " + tmId + " error: " + ex);
                     throw ex;
                 }
             }
         }
 
-        public DataSet GetSourceIndexData(String tmPath)
+        public DataSet GetSourceIndexData(String tmId)
         {
-            //var dbParams = GetDBParams(tmPath);
+            //var dbParams = GetDBParams(tmId);
             //var connectionString = String.Format(_translationMemoriesConnectionString, dbParams.dbName);
             //using (SqlConnection sqlConnection = new SqlConnection(connectionString))
             //{
@@ -346,9 +346,9 @@ namespace CAT.BusinessServices
             throw new NotImplementedException();
         }
 
-        public DataSet GetTranslationMemoryData(String tmPath)
+        public DataSet GetTranslationMemoryData(String tmId)
         {
-            //var dbParams = GetDBParams(tmPath);
+            //var dbParams = GetDBParams(tmId);
             //var connectionString = String.Format(_translationMemoriesConnectionString, dbParams.dbName);
             //using (SqlConnection sqlConnection = new SqlConnection(connectionString))
             //{
@@ -377,9 +377,9 @@ namespace CAT.BusinessServices
             throw new NotImplementedException();
         }
 
-        public DataSet CheckIncontextMatches(String tmPath, DataTable queryTable) //is there a nicer parameter name? : )
+        public DataSet CheckIncontextMatches(String tmId, DataTable queryTable) //is there a nicer parameter name? : )
         {
-            //var dbParams = GetDBParams(tmPath);
+            //var dbParams = GetDBParams(tmId);
             //var connectionString = String.Format(_translationMemoriesConnectionString, dbParams.dbName);
             //using (SqlConnection sqlConnection = new SqlConnection(connectionString))
             //{
@@ -416,9 +416,9 @@ namespace CAT.BusinessServices
             throw new NotImplementedException();
         }
 
-        public DataSet GetIncontextMatch(String tmPath, String source, String context)
+        public DataSet GetIncontextMatch(String tmId, String source, String context)
         {
-            //var dbParams = GetDBParams(tmPath);
+            //var dbParams = GetDBParams(tmId);
             //var connectionString = String.Format(_translationMemoriesConnectionString, dbParams.dbName);
             //using (SqlConnection sqlConnection = new SqlConnection(connectionString))
             //{
@@ -467,9 +467,9 @@ namespace CAT.BusinessServices
             throw new NotImplementedException();
         }
 
-        public DataSet GetExactMatchesBySource(String tmPath, String source)
+        public DataSet GetExactMatchesBySource(String tmId, String source)
         {
-            //var dbParams = GetDBParams(tmPath);
+            //var dbParams = GetDBParams(tmId);
             //var connectionString = String.Format(_translationMemoriesConnectionString, dbParams.dbName);
             //using (SqlConnection sqlConnection = new SqlConnection(connectionString))
             //{
@@ -501,9 +501,9 @@ namespace CAT.BusinessServices
             throw new NotImplementedException();
         }
 
-        public DataSet GetTMEntriesByTargetText(String tmPath, String sTarget)
+        public DataSet GetTMEntriesByTargetText(String tmId, String sTarget)
         {
-            //var dbParams = GetDBParams(tmPath);
+            //var dbParams = GetDBParams(tmId);
             //var connectionString = String.Format(_translationMemoriesConnectionString, dbParams.dbName);
             //using (SqlConnection sqlConnection = new SqlConnection(connectionString))
             //{
@@ -958,9 +958,9 @@ namespace CAT.BusinessServices
             return null!;
         }
 
-        public void UpdateTMEntry(String tmPath, int entryId, Dictionary<String, String> fieldsToUpdate)
+        public void UpdateTMEntry(String tmId, int entryId, Dictionary<String, String> fieldsToUpdate)
         {
-            //var dbParams = GetDBParams(tmPath);
+            //var dbParams = GetDBParams(tmId);
             //var connectionString = String.Format(_translationMemoriesConnectionString, dbParams.dbName);
             //using (SqlConnection sqlConnection = new SqlConnection(connectionString))
             //{

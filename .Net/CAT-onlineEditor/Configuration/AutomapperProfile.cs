@@ -9,10 +9,10 @@ namespace CAT.Configuration
         public AutoMapperProfile()
         {
             //CAT service
-            CreateMap<Proto.TMMatch, Models.Common.TMMatch>().ReverseMap();
-            CreateMap<Proto.TBEntry, Models.Common.TBEntry>().ReverseMap();
-            CreateMap<Proto.TMAssignment, Models.Common.TMAssignment>().ReverseMap();
-            CreateMap<TranslationUnit, TranslationUnitDTO>().ReverseMap();
+            //CreateMap<Proto.TMMatch, Models.Common.TMMatch>().ReverseMap();
+            //CreateMap<Proto.TBEntry, Models.Common.TBEntry>().ReverseMap();
+            //CreateMap<Proto.TMAssignment, Models.Common.TMAssignment>().ReverseMap();
+            //CreateMap<TranslationUnit, TranslationUnitDTO>().ReverseMap();
         }
     }
 

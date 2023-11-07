@@ -58,7 +58,13 @@ namespace CAT.Services.Common
         public TMMatch[] GetTMMatches(TMAssignment[] tmAssignments, string sourceXml, string prevXml, string nextXml, string contextID)
         {
             //we can't send over null value
-            var aTms = _mapper.Map<Proto.TMAssignment[]>(tmAssignments);
+            //var aTms = _mapper.Map<Proto.TMAssignment[]>(tmAssignments);
+            var tms = Array.ConvertAll(tmAssignments, tma => new Proto.TMAssignment()
+            {
+                TmId = tma.tmId,
+                Penalty = tma.penalty,
+                Speciality = tma.speciality
+            });
 
             var grpcChannel = GrpcChannel.ForAddress(_catServerAddress);
             var catClient = new CATClient(grpcChannel);
@@ -70,11 +76,19 @@ namespace CAT.Services.Common
                 NextText = nextXml,
                 MatchThreshold = MATCH_THRESHOLD,
                 MaxHits = maxHits,
-                TMAssignments = { aTms }
+                TMAssignments = { tms }
             };
 
-            var matches = catClient.GetTMMatches(request);
-            var tmMatches = _mapper.Map<TMMatch[]>(matches);
+            var response = catClient.GetTMMatches(request);
+            var tmMatches = Array.ConvertAll(response.TMMatches.ToArray(), match => new TMMatch()
+            {
+                id = int.Parse(match.Id),
+                source = match.Source,
+                target = match.Target,
+                origin = match.Origin,
+                quality = match.Quality,
+                metadata = match.Metadata
+            });
 
             //convert and remove duplicates
             var finalTMMatches = new Dictionary<String, TMMatch>();
@@ -96,7 +110,7 @@ namespace CAT.Services.Common
         public TMMatch[] GetConcordance(TMAssignment[] tmAssignments, string searchText, bool caseSensitive, bool searchInTarget)
         {
             //we can't send over null value
-            var tmIds = Array.ConvertAll(tmAssignments, tma => tma.tmPath);
+            var tmIds = Array.ConvertAll(tmAssignments, tma => tma.tmId);
             var grpcChannel = GrpcChannel.ForAddress(_catServerAddress);
             var catClient = new CATClient(grpcChannel);
             var request = new Proto.ConcordanceRequest
@@ -180,13 +194,13 @@ namespace CAT.Services.Common
                 var request = new Proto.AddTMEntriesRequest
                 {
                     TMEntries = { newEntry },
-                    TmId = tmAssignment.tmPath
+                    TmId = tmAssignment.tmId
                 };
                 catClient.AddTMEntries(request);
             }
             catch (Exception ex)
             {
-                _logger.LogInformation("TM name: " + tmAssignment.tmPath + " AddTMEntry Error: " + ex.ToString());
+                _logger.LogInformation("TM name: " + tmAssignment.tmId + " AddTMEntry Error: " + ex.ToString());
             }
         }
     }
