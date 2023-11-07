@@ -136,7 +136,7 @@ namespace CAT.Services.Common
                     var sourceLanguageIso639_1 = await _languageService.GetLanguageCodeIso639_1(sourceLang);
                     var grpcChannel = GrpcChannel.ForAddress(_catServerAddress);
                     var catClient = new CATClient(grpcChannel);
-                    var request = new Proto.GetStatisticsForDocumentRequest
+                    var request = new GetStatisticsForDocumentRequest
                     {
                         FileName = sFilename,
                         FileContent = ByteString.CopyFrom(fileContent),
@@ -144,7 +144,7 @@ namespace CAT.Services.Common
                         FilterContent = filterContent != null ? ByteString.CopyFrom(filterContent) : ByteString.Empty,
                         SourceLangISO6391 = sourceLanguageIso639_1,
                         TargetLangsISO6391 = { targetLanguageIso639_1 },
-                        //TMAssignments = { aTMs }
+                        TMAssignments = { aTMs }
                     };
 
                     var stats = catClient.GetStatisticsForDocument(request).Statistics;
@@ -761,7 +761,7 @@ namespace CAT.Services.Common
             var catClient = new CATClient(grpcChannel);
             foreach (var targetLang in targetLangs)
             {
-                var tmId = CreateTMId(companyId, companyId, sourceLang, targetLang, TMType.ProfilePrimary);
+                var tmId = CreateTMId(companyId, companyId, sourceLang, targetLang, TMType.CompanyPrimary);
                 var tmExistsRequest = new TMExistsRequest { TmId = tmId };
                 var exists = catClient.TMExists(tmExistsRequest).Exists;
                 if (!exists && createTM)
@@ -799,9 +799,9 @@ namespace CAT.Services.Common
                 tmPrefix = "_";
             else if (type == TMType.GroupSecondary)
                 tmPrefix = "_sec_";
-            else if (type == TMType.ProfilePrimary)
+            else if (type == TMType.CompanyPrimary)
                 tmPrefix = "__";
-            else if (type == TMType.ProfileSecondary)
+            else if (type == TMType.CompanySecondary)
                 tmPrefix = "__sec_";
 
             return groupId + "/" + tmPrefix + companyId + "_" + sourceLangIso639_1 + "_" + targetLangIso639_1;

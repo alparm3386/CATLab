@@ -111,8 +111,8 @@ namespace CAT.Enums
         Global = 0,
         GroupPrimary = 1,
         GroupSecondary = 2,
-        ProfilePrimary = 3,
-        ProfileSecondary = 4,
+        CompanyPrimary = 3,
+        CompanySecondary = 4,
     }
 
 }

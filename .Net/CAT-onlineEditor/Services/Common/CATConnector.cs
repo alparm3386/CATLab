@@ -28,6 +28,7 @@ using CAT.Models.Entities;
 using CAT.Areas.Identity.Data;
 using Grpc.Net.Client;
 using static Proto.CAT;
+using Proto;
 
 namespace CAT.Services.Common
 {
@@ -202,6 +203,60 @@ namespace CAT.Services.Common
             {
                 _logger.LogInformation("TM name: " + tmAssignment.tmId + " AddTMEntry Error: " + ex.ToString());
             }
+        }
+
+        public TMAssignment[] GetTMAssignments(int companyId, int sourceLang, int[] targetLangs, int speciality, bool createTM)
+        {
+            var tmAssignments = new List<TMAssignment>();
+            //only company TM
+            var grpcChannel = GrpcChannel.ForAddress(_catServerAddress);
+            var catClient = new CATClient(grpcChannel);
+            foreach (var targetLang in targetLangs)
+            {
+                var tmId = CreateTMId(companyId, companyId, sourceLang, targetLang, TMType.ProfilePrimary);
+                var tmExistsRequest = new TMExistsRequest { TmId = tmId };
+                var exists = catClient.TMExists(tmExistsRequest).Exists;
+                if (!exists && createTM)
+                {
+                    var createTMRequest = new CreateTMRequest() { TmId = tmId };
+                    catClient.CreateTM(createTMRequest);
+                    exists = true;
+                }
+
+                if (exists)
+                {
+                    var tmAssignment = new TMAssignment()
+                    {
+                        isGlobal = false,
+                        isReadonly = false,
+                        penalty = 0,
+                        speciality = speciality,
+                        tmId = tmId
+                    };
+                    tmAssignments.Add(tmAssignment);
+                };
+            }
+
+            return tmAssignments.ToArray();
+        }
+
+        private String CreateTMId(int groupId, int companyId, int sourceLang, int targetLang, TMType type)
+        {
+            var sourceLangIso639_1 = _languageService.GetLanguageCodeIso639_1(sourceLang).Result;
+            var targetLangIso639_1 = _languageService.GetLanguageCodeIso639_1(targetLang).Result;
+            var tmPrefix = "";
+            if (type == TMType.Global)
+                tmPrefix = "$_";
+            else if (type == TMType.GroupPrimary)
+                tmPrefix = "_";
+            else if (type == TMType.GroupSecondary)
+                tmPrefix = "_sec_";
+            else if (type == TMType.ProfilePrimary)
+                tmPrefix = "__";
+            else if (type == TMType.ProfileSecondary)
+                tmPrefix = "__sec_";
+
+            return groupId + "/" + tmPrefix + companyId + "_" + sourceLangIso639_1 + "_" + targetLangIso639_1;
         }
     }
 }

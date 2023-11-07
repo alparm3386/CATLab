@@ -49,8 +49,11 @@ namespace CAT.Services.Common
                 tu.isEditAllowed = true;
             }
 
-            var sourceFilesFolder = Path.Combine(_configuration["SourceFilesFolder"]!);
-            var fileFiltersFolder = Path.Combine(_configuration["FileFiltersFolder"]!);
+            //get the TMs
+            var order = await _dbContextContainer.MainContext.Orders.Include(o => o.Client).AsNoTracking().Where(o => o.Id == job.OrderId).FirstAsync();
+            var tmAssignments = _catConnector.GetTMAssignments(order.Client., sourceLang, targetLangs, (int)speciality, false);
+            var aTMs = Array.ConvertAll(tmAssignments,
+                 tma => new Proto.TMAssignment() { Penalty = tma.penalty, Speciality = tma.speciality, TmId = tma.tmId });
 
             var jobData = new JobData
             {
