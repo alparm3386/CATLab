@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using CATService;
 using CAT.Controllers.Api;
 using CAT.Data;
 using CAT.Enums;

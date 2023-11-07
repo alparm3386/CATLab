@@ -278,6 +278,16 @@ namespace CAT.Services.Common
                     if (job?.DateProcessed != null)
                         throw new Exception("Already processed.");
 
+                    //check the translation units
+                    var tuNum = _dbContextContainer.TranslationUnitsContext.TranslationUnit
+                                     .Where(tu => tu.idJob == idJob).OrderBy(tu => tu.tuid).Count();
+                    if (tuNum > 0)
+                    {
+                        job!.DateProcessed = DateTime.Now;
+                        _dbContextContainer.MainContext.SaveChanges();
+                        return;
+                    }
+
                     //Get the document
                     var sourceFilesFolder = Path.Combine(_configuration["SourceFilesFolder"]!);
                     string filePath = Path.Combine(sourceFilesFolder, document!.FileName!);

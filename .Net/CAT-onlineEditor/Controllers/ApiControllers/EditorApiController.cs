@@ -18,7 +18,6 @@ using System.Security.Claims;
 using System.Text;
 using System.Web;
 using AutoMapper;
-using CATService;
 
 namespace CAT.Controllers.Api
 {
