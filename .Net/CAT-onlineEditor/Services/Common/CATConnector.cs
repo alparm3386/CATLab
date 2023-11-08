@@ -30,12 +30,14 @@ using Grpc.Net.Client;
 using static Proto.CAT;
 using Proto;
 using Microsoft.CodeAnalysis.Host;
+using TMType = CAT.Enums.TMType;
 
 namespace CAT.Services.Common
 {
     public class CATConnector
     {
         private readonly DbContextContainer _dbContextContainer;
+        private readonly ILanguageService _languageService;
         private readonly IConfiguration _configuration;
         private readonly string _catServerAddress;
         private readonly IMapper _mapper;
@@ -46,10 +48,11 @@ namespace CAT.Services.Common
         /// <summary>
         /// CATClientService
         /// </summary>
-        public CATConnector(DbContextContainer dbContextContainer,
+        public CATConnector(DbContextContainer dbContextContainer, ILanguageService languageService,
             IConfiguration configuration, IMapper mapper, ILogger<CATConnector> logger)
         {
             _dbContextContainer = dbContextContainer;
+            _languageService = languageService;
             _configuration = configuration;
             _mapper = mapper;
             _logger = logger;
@@ -206,37 +209,35 @@ namespace CAT.Services.Common
             }
         }
 
-        public TMAssignment[] GetTMAssignments(int companyId, int sourceLang, int[] targetLangs, int speciality, bool createTM)
+        public TMAssignment[] GetTMAssignments(int companyId, int sourceLang, int targetLang, int speciality, bool createTM)
         {
             var tmAssignments = new List<TMAssignment>();
             //only company TM
             var grpcChannel = GrpcChannel.ForAddress(_catServerAddress);
             var catClient = new CATClient(grpcChannel);
-            foreach (var targetLang in targetLangs)
-            {
-                var tmId = CreateTMId(companyId, companyId, sourceLang, targetLang, TMType.ProfilePrimary);
-                var tmExistsRequest = new TMExistsRequest { TmId = tmId };
-                var exists = catClient.TMExists(tmExistsRequest).Exists;
-                if (!exists && createTM)
-                {
-                    var createTMRequest = new CreateTMRequest() { TmId = tmId };
-                    catClient.CreateTM(createTMRequest);
-                    exists = true;
-                }
 
-                if (exists)
-                {
-                    var tmAssignment = new TMAssignment()
-                    {
-                        isGlobal = false,
-                        isReadonly = false,
-                        penalty = 0,
-                        speciality = speciality,
-                        tmId = tmId
-                    };
-                    tmAssignments.Add(tmAssignment);
-                };
+            var tmId = CreateTMId(companyId, companyId, sourceLang, targetLang, TMType.CompanyPrimary);
+            var tmExistsRequest = new TMExistsRequest { TmId = tmId };
+            var exists = catClient.TMExists(tmExistsRequest).Exists;
+            if (!exists && createTM)
+            {
+                var createTMRequest = new CreateTMRequest() { TmId = tmId };
+                catClient.CreateTM(createTMRequest);
+                exists = true;
             }
+
+            if (exists)
+            {
+                var tmAssignment = new TMAssignment()
+                {
+                    isGlobal = false,
+                    isReadonly = false,
+                    penalty = 0,
+                    speciality = speciality,
+                    tmId = tmId
+                };
+                tmAssignments.Add(tmAssignment);
+            };
 
             return tmAssignments.ToArray();
         }
@@ -252,9 +253,9 @@ namespace CAT.Services.Common
                 tmPrefix = "_";
             else if (type == TMType.GroupSecondary)
                 tmPrefix = "_sec_";
-            else if (type == TMType.ProfilePrimary)
+            else if (type == TMType.CompanyPrimary)
                 tmPrefix = "__";
-            else if (type == TMType.ProfileSecondary)
+            else if (type == TMType.CompanySecondary)
                 tmPrefix = "__sec_";
 
             return groupId + "/" + tmPrefix + companyId + "_" + sourceLangIso639_1 + "_" + targetLangIso639_1;

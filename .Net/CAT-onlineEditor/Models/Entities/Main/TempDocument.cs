@@ -3,14 +3,12 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CAT.Models.Entities.Main
 {
-    [Table("Documents")]
-    public class Document
+    [Table("TempDocuments")]
+    public class TempDocument
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
-
-        public int JobId { get; set; }
 
         public int DocumentType { get; set; }
 
@@ -19,5 +17,7 @@ namespace CAT.Models.Entities.Main
         public string FileName { get; set; } = default!;
 
         public string? MD5Hash { get; set; }
+
+        public int FilterId { get; set; }
     }
 }

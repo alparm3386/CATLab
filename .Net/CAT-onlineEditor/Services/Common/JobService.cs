@@ -17,16 +17,16 @@ namespace CAT.Services.Common
     {
         private readonly DbContextContainer _dbContextContainer;
         private readonly IConfiguration _configuration;
-        private readonly CATConnector _catClientService;
+        private readonly CATConnector _catConnector;
         private readonly IMapper _mapper;
         private readonly ILogger _logger;
 
-        public JobService(DbContextContainer dbContextContainer, IConfiguration configuration, CATConnector catClientService, 
+        public JobService(DbContextContainer dbContextContainer, IConfiguration configuration, CATConnector catConnector, 
             IMapper mapper, ILogger<JobService> logger)
         {
             _dbContextContainer = dbContextContainer;
             _configuration = configuration;
-            _catClientService = catClientService;
+            _catConnector = catConnector;
             _logger = logger;
             _mapper = mapper;
         }
@@ -51,7 +51,8 @@ namespace CAT.Services.Common
 
             //get the TMs
             var order = await _dbContextContainer.MainContext.Orders.Include(o => o.Client).AsNoTracking().Where(o => o.Id == job.OrderId).FirstAsync();
-            var tmAssignments = _catConnector.GetTMAssignments(order.Client., sourceLang, targetLangs, (int)speciality, false);
+            var tmAssignments = _catConnector.GetTMAssignments(order.Client.CompanyId, job.Quote!.SourceLanguage, job.Quote!.TargetLanguage,
+                job.Quote!.Speciality, true);
             var aTMs = Array.ConvertAll(tmAssignments,
                  tma => new Proto.TMAssignment() { Penalty = tma.penalty, Speciality = tma.speciality, TmId = tma.tmId });
 
@@ -219,7 +220,8 @@ namespace CAT.Services.Common
                             var idSpeciality = 14;
                             var metadata = new Dictionary<String, String>() { { "user", user },
                             { "idTranslation", jobData.idJob.ToString() }, { "speciality", idSpeciality.ToString() } };
-                            _catClientService.AddTMEntry(tmAssignment, sourceXml, targetXml, precedingXml, followingXml, metadata);
+                            _catConnector.AddTMEntry(tmAssignment, sourceXml, targetXml, precedingXml, followingXml, metadata);
+                            _catConnector.AddTMEntry(tmAssignment, sourceXml, targetXml, precedingXml, followingXml, metadata);
                         }
                     }
                 }
