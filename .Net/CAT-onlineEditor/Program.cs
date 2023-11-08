@@ -33,6 +33,7 @@ builder.Services.AddTransient<DbContextContainer>();
 builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<JwtService>();
 builder.Services.AddScoped<JobService>();
+builder.Services.AddScoped<ILanguageService, LanguageService>();
 builder.Services.AddScoped<CATConnector>();
 builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
 builder.Services.AddHttpClient();

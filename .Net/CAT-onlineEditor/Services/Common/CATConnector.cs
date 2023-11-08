@@ -29,6 +29,7 @@ using CAT.Areas.Identity.Data;
 using Grpc.Net.Client;
 using static Proto.CAT;
 using Proto;
+using Microsoft.CodeAnalysis.Host;
 
 namespace CAT.Services.Common
 {
