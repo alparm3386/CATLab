@@ -31,9 +31,9 @@ namespace CAT.Services.Common
             _mapper = mapper;
         }
 
-        public async Task<JobData> GetJobData(int idJob)
+        public async Task<JobData> GetJobData(int jobId)
         {
-            var job = await _dbContextContainer.MainContext.Jobs.FindAsync(idJob);
+            var job = await _dbContextContainer.MainContext.Jobs.Include(j => j.Quote).Where(j => j.Id == jobId).FirstOrDefaultAsync();
 
             //check if the job was processed
             if (job?.DateProcessed == null)
@@ -41,7 +41,7 @@ namespace CAT.Services.Common
 
             //load the translation units
             var translationUnits = await _dbContextContainer.TranslationUnitsContext.TranslationUnit
-                             .Where(tu => tu.idJob == idJob).OrderBy(tu => tu.tuid).ToListAsync();
+                             .Where(tu => tu.idJob == jobId).OrderBy(tu => tu.tuid).ToListAsync();
 
             var translationUnitDTOs = _mapper.Map<TranslationUnitDTO[]>(translationUnits);
             foreach (var tu in translationUnitDTOs)
@@ -58,7 +58,7 @@ namespace CAT.Services.Common
 
             var jobData = new JobData
             {
-                idJob = idJob,
+                idJob = jobId,
                 translationUnits = translationUnitDTOs.ToList(),
                 tmAssignments =
                     new List<Models.Common.TMAssignment>() { new Models.Common.TMAssignment() { tmId = "29610/__35462_en_fr" } },
