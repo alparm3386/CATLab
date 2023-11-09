@@ -35,6 +35,8 @@ builder.Services.AddScoped<JwtService>();
 builder.Services.AddScoped<JobService>();
 builder.Services.AddScoped<ILanguageService, LanguageService>();
 builder.Services.AddScoped<CATConnector>();
+builder.Services.AddSingleton<CatClientFactory>();
+
 builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
 builder.Services.AddHttpClient();
 

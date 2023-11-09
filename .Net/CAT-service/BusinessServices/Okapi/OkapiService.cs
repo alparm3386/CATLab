@@ -19,20 +19,30 @@ namespace CAT.BusinessServices.Okapi
         private readonly ITMService _tmService;
         private readonly ILogger _logger;
         private readonly IConfiguration _configuration;
+        private readonly Lazy<GrpcChannel> _catChannel;
 
         public OkapiService(ITMService tmService, IConfiguration configuration, ILogger<OkapiService> logger)
         {
             _tmService = tmService;
             _configuration = configuration;
             _logger = logger;
+
+            _catChannel = new Lazy<GrpcChannel>(() =>
+            {
+                // Create and configure the channel here
+                return GrpcChannel.ForAddress(_configuration["OkapiServer"]!.ToString());
+            });
+        }
+
+        private OkapiClient GetOkapiClient()
+        {
+            return new OkapiClient(_catChannel.Value);
         }
 
         public string CreateXliffFromDocument(string fileName, byte[] fileContent, string filterName, byte[] filterContent,
             string sourceLangISO639_1, string targetLangISO639_1)
         {
-            var okapiServer = _configuration["OkapiServer"]!.ToString();
-            using var channel = GrpcChannel.ForAddress(okapiServer);
-            var client = new OkapiClient(channel);
+            var client = GetOkapiClient();
             var request = new CreateXliffFromDocumentRequest
             {
                 FileName = fileName,
@@ -61,9 +71,7 @@ namespace CAT.BusinessServices.Okapi
         public byte[] CreateDocumentFromXliff(string fileName, byte[] fileContent, string filterName, byte[] filterContent,
             string sourceLangISO639_1, string targetLangISO639_1, string xliffContent)
         {
-            var okapiServer = _configuration["OkapiServer"]!.ToString();
-            using var channel = GrpcChannel.ForAddress(okapiServer);
-            var client = new OkapiClient(channel);
+            var client = GetOkapiClient();
             var request = new CreateDocumentFromXliffRequest
             {
                 FileName = fileName,

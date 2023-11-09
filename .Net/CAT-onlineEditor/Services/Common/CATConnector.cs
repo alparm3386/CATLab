@@ -39,7 +39,7 @@ namespace CAT.Services.Common
         private readonly DbContextContainer _dbContextContainer;
         private readonly ILanguageService _languageService;
         private readonly IConfiguration _configuration;
-        private readonly string _catServerAddress;
+        private readonly CatClientFactory _catClientFactory;
         private readonly IMapper _mapper;
         private readonly ILogger _logger;
 
@@ -49,14 +49,19 @@ namespace CAT.Services.Common
         /// CATClientService
         /// </summary>
         public CATConnector(DbContextContainer dbContextContainer, ILanguageService languageService,
-            IConfiguration configuration, IMapper mapper, ILogger<CATConnector> logger)
+            IConfiguration configuration, CatClientFactory catClientFactory, IMapper mapper, ILogger<CATConnector> logger)
         {
             _dbContextContainer = dbContextContainer;
             _languageService = languageService;
             _configuration = configuration;
+            _catClientFactory = catClientFactory;
             _mapper = mapper;
             _logger = logger;
-            _catServerAddress = _configuration!["CATServer"]!;
+        }
+
+        private CATClient GetCatClient()
+        {
+            return _catClientFactory.CreateClient();
         }
 
 
@@ -71,8 +76,7 @@ namespace CAT.Services.Common
                 Speciality = tma.speciality
             });
 
-            var grpcChannel = GrpcChannel.ForAddress(_catServerAddress);
-            var catClient = new CATClient(grpcChannel);
+            var catClient = GetCatClient();
             var maxHits = 10;
             var request = new Proto.GetTMMatchesRequest
             {
@@ -116,8 +120,7 @@ namespace CAT.Services.Common
         {
             //we can't send over null value
             var tmIds = Array.ConvertAll(tmAssignments, tma => tma.tmId);
-            var grpcChannel = GrpcChannel.ForAddress(_catServerAddress);
-            var catClient = new CATClient(grpcChannel);
+            var catClient = GetCatClient();
             var request = new Proto.ConcordanceRequest
             {
                 SourceText = searchInTarget ? "" : searchText,
@@ -194,8 +197,7 @@ namespace CAT.Services.Common
                     Metadata = JsonConvert.SerializeObject(metadata)
                 };
 
-                var grpcChannel = GrpcChannel.ForAddress(_catServerAddress);
-                var catClient = new CATClient(grpcChannel);
+                var catClient = GetCatClient();
                 var request = new Proto.AddTMEntriesRequest
                 {
                     TMEntries = { newEntry },
@@ -213,8 +215,7 @@ namespace CAT.Services.Common
         {
             var tmAssignments = new List<TMAssignment>();
             //only company TM
-            var grpcChannel = GrpcChannel.ForAddress(_catServerAddress);
-            var catClient = new CATClient(grpcChannel);
+            var catClient = GetCatClient();
 
             var tmId = CreateTMId(companyId, companyId, sourceLang, targetLang, TMType.CompanyPrimary);
             var tmExistsRequest = new TMExistsRequest { TmId = tmId };
