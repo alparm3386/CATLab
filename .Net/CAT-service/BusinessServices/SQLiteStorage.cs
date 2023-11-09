@@ -220,12 +220,9 @@ namespace CAT.BusinessServices
 
                     var isNew = sqlCommand.ExecuteScalar() == null;
                     // Close the connection before opening it again
-                    sqlConnection.Close();
 
                     sSql = _sqlCommands["InsertTMEntry"];
                     sSql = sSql.Replace("[TM_TABLE]", dbParams.tmTableName);
-                    //open connection
-                    sqlConnection.Open();
                     sqlCommand = new SQLiteCommand();
                     sqlCommand.Connection = sqlConnection;
                     sqlCommand.CommandText = sSql;
@@ -256,6 +253,19 @@ namespace CAT.BusinessServices
                     DataSet ds = new DataSet();
                     adpt.Fill(ds);
                     ds.Tables[0].Rows[0]["isNew"] = isNew;
+
+                    //update the sourceId
+                    sSql = "UPDATE [TM_TABLE] SET sourceId = last_insert_rowid() WHERE id=:id;";
+                    sSql = sSql.Replace("[TM_TABLE]", dbParams.tmTableName);
+                    sqlCommand = new SQLiteCommand();
+                    sqlCommand.Connection = sqlConnection;
+                    sqlCommand.CommandText = sSql;
+                    sqlCommand.CommandType = CommandType.Text;
+
+                    //set the query params
+                    sqlCommand.Parameters.Add(new SQLiteParameter(":id", DbType.Int32) 
+                        { Value = (int)(long)ds.Tables[0].Rows[0]["sourceId"] });
+                    sqlCommand.ExecuteNonQuery();
 
                     return ds;
                 }
@@ -314,7 +324,7 @@ namespace CAT.BusinessServices
                     sqlCommand.Connection = sqlConnection;
                     sqlCommand.CommandType = CommandType.Text;
                     var idSourceList = String.Join(",", aSourceIds);
-                    sqlCommand.CommandText = "Select * from [" + dbParams.tmTableName + "] where idSource in (" + idSourceList + ");";
+                    sqlCommand.CommandText = "Select * from [" + dbParams.tmTableName + "] where sourceId in (" + idSourceList + ");";
 
                     var adpt = new SQLiteDataAdapter(sqlCommand);
                     DataSet ds = new DataSet();

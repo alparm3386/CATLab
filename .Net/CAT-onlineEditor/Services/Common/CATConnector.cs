@@ -77,8 +77,8 @@ namespace CAT.Services.Common
             var request = new Proto.GetTMMatchesRequest
             {
                 SourceText = sourceXml,
-                PrevText = prevXml,
-                NextText = nextXml,
+                PrevText = prevXml ?? "",
+                NextText = nextXml ?? "",
                 MatchThreshold = MATCH_THRESHOLD,
                 MaxHits = maxHits,
                 TMAssignments = { tms }
