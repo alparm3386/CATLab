@@ -721,7 +721,7 @@ namespace CAT.Services.Common
                         String sTempDir = _configuration!["TempFolder"]! + Guid.NewGuid();
                         ZipHelper.UnZipFiles(filePath, sTempDir, null);
                         var tmFilePath = Path.Combine(sTempDir, "document.mqxliff");
-                        sFilename = Path.GetFileName(tmFilePath);
+                        fileName = Path.GetFileName(tmFilePath);
                         fileContent = File.ReadAllBytes(tmFilePath);
                         aOutFileBytes = null;// client.CreateDocumentFromXliff(sFilename, fileContent, sFiltername,
                                              //filterContent, _languageService.GetLanguageCodeIso639_1(sourceLanguage).Result,
