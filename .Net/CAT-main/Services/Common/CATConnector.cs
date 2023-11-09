@@ -484,6 +484,10 @@ namespace CAT.Services.Common
                     filterPath = Path.Combine(fileFiltersFolder, filter.FilterName!);
                 }
 
+                if (String.IsNullOrEmpty(filterPath))
+                    filterPath = GetDefaultFilter(filePath);
+
+
                 //pre-process the document
                 String tmpFilePath = _documentProcessor.PreProcessDocument(filePath, filterPath!);
                 if (tmpFilePath != null)
@@ -494,6 +498,8 @@ namespace CAT.Services.Common
 
                 var sourceLanguage = job!.Quote!.SourceLanguage!;
                 var targetLanguage = job!.Quote!.TargetLanguage!;
+                var sourceLangIso639_1 = _languageService.GetLanguageCodeIso639_1(sourceLanguage).Result;
+                var targetLangIso639_1 = _languageService.GetLanguageCodeIso639_1(targetLanguage).Result;
                 var xlifFilePath = CATUtils.CreateXlfFilePath(idJob, DocumentType.Original, _configuration["JobDataBaseFolder"]!, false);
                 if (!File.Exists(xlifFilePath))
                 {
@@ -505,8 +511,7 @@ namespace CAT.Services.Common
 
                     //create the xliff file
                     CreateXliffFromDocument(jobDataFolder, Path.GetFileName(xlifFilePath), filePath, filterPath,
-                        _languageService.GetLanguageCodeIso639_1(sourceLanguage).Result,
-                        _languageService.GetLanguageCodeIso639_1(targetLanguage).Result, iThreshold, null!);
+                        sourceLangIso639_1, targetLangIso639_1, iThreshold, null!);
                 }
 
                 //get the translated texts
@@ -601,6 +606,7 @@ namespace CAT.Services.Common
 
 
                 //update the TMs
+                var catClient = GetCatClient();
                 if (updateTM)
                 {
                     //prepare the TM entries
@@ -625,7 +631,6 @@ namespace CAT.Services.Common
                     //update the TMs
                     var TMs = GetTMAssignments(1044, job!.Quote!.SourceLanguage, new int[] { job!.Quote!.TargetLanguage! },
                         job!.Quote!.Speciality, true);
-                    var catClient = GetCatClient();
                     foreach (var tm in TMs)
                     {
                         if (!tm.isReadonly)
@@ -659,16 +664,14 @@ namespace CAT.Services.Common
                 xlfFile.Save(sXlfFilePath);
 
                 //create the document
-                String sFilename = Path.GetFileName(filePath);
+                String fileName = Path.GetFileName(filePath);
                 byte[] fileContent = File.ReadAllBytes(filePath);
-                String? sFiltername = null;
+                String? filterName = null;
                 byte[]? filterContent = null;
-                if (String.IsNullOrEmpty(filterPath))
-                    filterPath = GetDefaultFilter(filePath);
 
                 if (!String.IsNullOrEmpty(filterPath))
                 {
-                    sFiltername = Path.GetFileName(filterPath);
+                    filterName = Path.GetFileName(filterPath);
                     filterContent = File.ReadAllBytes(filterPath);
                 }
 
@@ -736,19 +739,22 @@ namespace CAT.Services.Common
                     }
                     else
                     {
-                        aOutFileBytes = null;// client.CreateDocumentFromXliff(sFilename, fileContent, sFiltername,
-                                             //filterContent, _languageService.GetLanguageCodeIso639_1(sourceLanguage).Result,
-                                             //_languageService.GetLanguageCodeIso639_1(targetLanguage).Result, xlfFile.OuterXml);
+                        var request = new CreateDocumentFromXliffRequest()
+                        {
+                            FileName = fileName,
+                            FileContent = ByteString.CopyFrom(File.ReadAllBytes(filePath)),
+                            FilterName = filterName ?? "",
+                            FilterContent = filterContent != null ? ByteString.CopyFrom(filterContent) : ByteString.Empty,
+                            SourceLangISO6391 = sourceLangIso639_1,
+                            TargetLangISO6391 = targetLangIso639_1,
+                            XliffContent = xlfFile.OuterXml
+                        };
+
+                        aOutFileBytes = catClient.CreateDocumentFromXliff(request).Document.ToByteArray();
                     }
                 }
-
-                /*tmpFilePath = Path.Combine(_configuration!["TempFolder"]!, Guid.NewGuid().ToString());
-                //save the output file
-                File.WriteAllBytes(tmpFilePath, aOutFileBytes);
-                lstFilesToDelete.Add(tmpFilePath);
-
                 //post-process document
-                sOutFilePath = DocumentProcessor.PostProcessDocument(idJob, tmpFilePath);*/
+                //sOutFilePath = DocumentProcessor.PostProcessDocument(idJob, tmpFilePath);
 
                 var fileData = new FileData()
                 {
