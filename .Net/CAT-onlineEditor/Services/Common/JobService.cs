@@ -10,6 +10,7 @@ using Microsoft.Extensions.Caching.Memory;
 using System.Diagnostics;
 using static ICSharpCode.SharpZipLib.Zip.ZipEntryFactory;
 using CAT.Models.Entities.TranslationUnits;
+using CAT.Models.Common;
 
 namespace CAT.Services.Common
 {
@@ -53,16 +54,13 @@ namespace CAT.Services.Common
             var order = await _dbContextContainer.MainContext.Orders.Include(o => o.Client).AsNoTracking().Where(o => o.Id == job.OrderId).FirstAsync();
             var tmAssignments = _catConnector.GetTMAssignments(order.Client.CompanyId, job.Quote!.SourceLanguage, job.Quote!.TargetLanguage,
                 job.Quote!.Speciality, true);
-            var aTMs = Array.ConvertAll(tmAssignments,
-                 tma => new Proto.TMAssignment() { Penalty = tma.penalty, Speciality = tma.speciality, TmId = tma.tmId });
 
             var jobData = new JobData
             {
                 idJob = jobId,
                 translationUnits = translationUnitDTOs.ToList(),
-                tmAssignments =
-                    new List<Models.Common.TMAssignment>() { new Models.Common.TMAssignment() { tmId = "29610/__35462_en_fr" } },
-                tbAssignments = null
+                tmAssignments = new List<TMAssignment>(tmAssignments),
+                tbAssignments = null!
             };
 
             return jobData;
@@ -203,7 +201,7 @@ namespace CAT.Services.Common
                         tagsMap = CATUtils.GetTagsMap(tu.source!);
                         precedingXml = CATUtils.CodedTextToTmx(tu.source!);
                     }
-                    String followingXml = null;
+                    String followingXml = null!;
                     if (ix < jobData.translationUnits.Count - 1)
                     {
                         tu = jobData.translationUnits[ix + 1];
@@ -217,11 +215,10 @@ namespace CAT.Services.Common
                         if (!tmAssignment.isReadonly && !tmAssignment.isGlobal)
                         {
                             var user = "0_2104";
-                            var idSpeciality = 14;
+                            var idSpeciality = 1;
                             var metadata = new Dictionary<String, String>() { { "user", user },
-                            { "idTranslation", jobData.idJob.ToString() }, { "speciality", idSpeciality.ToString() } };
-                            _catConnector.AddTMEntry(tmAssignment, sourceXml, targetXml, precedingXml, followingXml, metadata);
-                            _catConnector.AddTMEntry(tmAssignment, sourceXml, targetXml, precedingXml, followingXml, metadata);
+                            { "jobId", jobData.idJob.ToString() }, { "speciality", idSpeciality.ToString() } };
+                            _catConnector.AddTMEntry(tmAssignment, sourceXml, targetXml, precedingXml!, followingXml!, metadata);
                         }
                     }
                 }

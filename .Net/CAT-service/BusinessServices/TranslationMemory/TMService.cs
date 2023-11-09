@@ -970,11 +970,7 @@ namespace CAT.TM
                 var start = CATUtils.CurrentTimeMillis();
                 //check the TM
                 if (!TMExists(tmId))
-                {
-                    //create the TM
-                    CreateTM(tmId);
-                    //throw new Exception("The TM doesn't exist.");
-                }
+                    throw new Exception("The TM doesn't exist.");
 
                 var transactionOptions = new TransactionOptions();
                 transactionOptions.IsolationLevel = System.Transactions.IsolationLevel.ReadCommitted;
@@ -1001,11 +997,11 @@ namespace CAT.TM
                         int speciality = 0;
                         if (metadata.ContainsKey("speciality"))
                             int.TryParse(metadata["speciality"], out speciality);
-                        int idTranslation = -1;
-                        if (metadata.ContainsKey("idTranslation"))
-                            int.TryParse(metadata["idTranslation"], out idTranslation);
+                        int jobId = -1;
+                        if (metadata.ContainsKey("jobId"))
+                            int.TryParse(metadata["jobId"], out jobId);
                         //insert into SQL server
-                        var dsResult = _dataStorage.InsertTMEntry(tmId, source, target, context.ToString(), idUser!, speciality, idTranslation,
+                        var dsResult = _dataStorage.InsertTMEntry(tmId, source, target, context.ToString(), idUser!, speciality, jobId,
                             DateTime.Now, DateTime.Now, metadata.ContainsKey("metadata") ? metadata["metadata"] : "");
                         //var dsResult = _dataStorage.InsertTMEntry(tmId, source, target, context.ToString(), idUser, speciality, idTranslation,
                         //    DateTime.Now, DateTime.Now, ""); //[AM:29/09/2023] hotfix

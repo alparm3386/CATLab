@@ -194,8 +194,8 @@ namespace CAT.BusinessServices
             }
         }
 
-        public DataSet InsertTMEntry(String tmId, TextFragment source, TextFragment target, String context, String user, int speciality,
-            int jobId, DateTime dateCreated, DateTime dateModified, String extensionData)
+        public DataSet InsertTMEntry(String tmId, TextFragment source, TextFragment target, String context, String user, 
+            int speciality, int jobId, DateTime dateCreated, DateTime dateModified, String extensionData)
         {
             var dbParams = GetDBParams(tmId);
             var dbPath = Path.Combine(_tmRepository, dbParams.dbName + "/SQLData/" + dbParams.dbName + ".db");
@@ -204,18 +204,34 @@ namespace CAT.BusinessServices
             {
                 try
                 {
-                    var sSql = _sqlCommands["InsertTMEntry"];
+                    //check if the source exists
+                    var sSql = "Select * from [TM_TABLE] where sourcehash=:sourceHash and source=:source";
                     sSql = sSql.Replace("[TM_TABLE]", dbParams.tmTableName);
                     //open connection
                     sqlConnection.Open();
                     var sqlCommand = new SQLiteCommand();
                     sqlCommand.Connection = sqlConnection;
                     sqlCommand.CommandText = sSql;
-                    //sqlCommand.CommandText = "InsertTMEntry";
+                    sqlCommand.CommandType = CommandType.Text;
+                    //set the query params
+                    var sourceText = source.GetCodedText();
+                    sqlCommand.Parameters.Add(new SQLiteParameter(":source", DbType.String) { Value = sourceText });
+                    sqlCommand.Parameters.Add(new SQLiteParameter(":sourceHash", CATUtils.djb2hash(sourceText)));
+
+                    var isNew = sqlCommand.ExecuteScalar() == null;
+                    // Close the connection before opening it again
+                    sqlConnection.Close();
+
+                    sSql = _sqlCommands["InsertTMEntry"];
+                    sSql = sSql.Replace("[TM_TABLE]", dbParams.tmTableName);
+                    //open connection
+                    sqlConnection.Open();
+                    sqlCommand = new SQLiteCommand();
+                    sqlCommand.Connection = sqlConnection;
+                    sqlCommand.CommandText = sSql;
                     sqlCommand.CommandType = CommandType.Text;
 
                     //set the query params
-                    var sourceText = source.GetCodedText();
                     var targetText = target.GetCodedText();
                     //this trick forces the execution plan reuse
                     sqlCommand.Parameters.Add(new SQLiteParameter(":source", DbType.String) { Value = sourceText });
@@ -239,6 +255,7 @@ namespace CAT.BusinessServices
                     var adpt = new SQLiteDataAdapter(sqlCommand);
                     DataSet ds = new DataSet();
                     adpt.Fill(ds);
+                    ds.Tables[0].Rows[0]["isNew"] = isNew;
 
                     return ds;
                 }
