@@ -22,6 +22,7 @@ using System.Transactions;
 using TMType = CAT.Enums.TMType;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.IdentityModel.Protocols.WsTrust;
+using Newtonsoft.Json;
 
 namespace CAT.Services.Common
 {
@@ -34,7 +35,7 @@ namespace CAT.Services.Common
         private readonly ILogger _logger;
         private readonly IDocumentProcessor _documentProcessor;
         private readonly ILanguageService _languageService;
-        private readonly string _catServerAddress;
+        private readonly CatClientFactory _catClientFactory;
 
         //private static int MATCH_THRESHOLD = 50;
 
@@ -42,7 +43,7 @@ namespace CAT.Services.Common
         /// CATClientService
         /// </summary>
         public CATConnector(DbContextContainer dbContextContainer, IConfiguration configuration, IEnumerable<IMachineTranslator> machineTranslators,
-            ILanguageService languageService, IMapper mapper, ILogger<CATConnector> logger, IDocumentProcessor documentProcessor)
+            ILanguageService languageService, CatClientFactory catClientFactory, IMapper mapper, ILogger<CATConnector> logger, IDocumentProcessor documentProcessor)
         {
             _dbContextContainer = dbContextContainer;
             _configuration = configuration;
@@ -51,8 +52,12 @@ namespace CAT.Services.Common
             _logger = logger;
             _documentProcessor = documentProcessor;
             _languageService = languageService;
+            _catClientFactory = catClientFactory;
+        }
 
-            _catServerAddress = _configuration!["CATServer"]!;
+        private CATClient GetCatClient()
+        {
+            return _catClientFactory.CreateClient();
         }
 
         public bool CanBeParsed(String sFilePath)
@@ -134,8 +139,7 @@ namespace CAT.Services.Common
                 {
                     var targetLanguageIso639_1 = await _languageService.GetLanguageCodeIso639_1(targetLang);
                     var sourceLanguageIso639_1 = await _languageService.GetLanguageCodeIso639_1(sourceLang);
-                    var grpcChannel = GrpcChannel.ForAddress(_catServerAddress);
-                    var catClient = new CATClient(grpcChannel);
+                    var catClient = GetCatClient();
                     var request = new GetStatisticsForDocumentRequest
                     {
                         FileName = sFilename,
@@ -205,8 +209,7 @@ namespace CAT.Services.Common
                 byte[]? filterContent = sFiltername != null ? File.ReadAllBytes(sFilterPath) : null;
                 var aTMs = Array.ConvertAll(tmAssignments,
                     tma => new Proto.TMAssignment() { Penalty = tma.penalty, Speciality = tma.speciality, TmId = tma.tmId });
-                var grpcChannel = GrpcChannel.ForAddress(_catServerAddress);
-                var catClient = new CATClient(grpcChannel);
+                var catClient = GetCatClient();
                 var request = new Proto.CreateXliffFromDocumentRequest
                 {
                     FileName = sFilename,
@@ -291,12 +294,16 @@ namespace CAT.Services.Common
                     //Get the document
                     var sourceFilesFolder = Path.Combine(_configuration["SourceFilesFolder"]!);
                     string filePath = Path.Combine(sourceFilesFolder, document!.FileName!);
-                    var fileFiltersFolder = Path.Combine(_configuration["FileFiltersFolder"]!);
 
                     //get the filter
-                    string filterPath = "";
-                    //if (!String.IsNullOrEmpty(job.FilterName))
-                    //    filterPath = Path.Combine(sourceFilesFolder, job.FilterName);
+                    string? filterPath = null;
+                    var docfFilter = _dbContextContainer.MainContext.DocumentFilters.FirstOrDefault(docFilter => docFilter.DocumentId == document.Id);
+                    if (docfFilter != null)
+                    {
+                        var filter = _dbContextContainer.MainContext.Filters.FirstOrDefault(filter => filter.Id == docfFilter.FilterId)!;
+                        var fileFiltersFolder = Path.Combine(_configuration["FileFiltersFolder"]!);
+                        filterPath = Path.Combine(fileFiltersFolder, filter.FilterName!);
+                    }
 
                     var jobDataFolder = CATUtils.GetJobDataFolder(idJob, _configuration["JobDataBaseFolder"]!);
 
@@ -305,7 +312,7 @@ namespace CAT.Services.Common
                     String sXlifFilePath = CATUtils.CreateXlfFilePath(idJob, DocumentType.Original, _configuration["JobDataBaseFolder"]!, true); //we do a backup of the original xliff
 
                     //pre-process the document
-                    String tmpFilePath = null!;// DocumentProcessor.PreProcessDocument(sFilePath, idFilter, idFrom, idTo);
+                    String tmpFilePath = _documentProcessor.PreProcessDocument(filePath, filterPath);
                     if (tmpFilePath != null)
                     {
                         filePath = tmpFilePath;
@@ -322,7 +329,7 @@ namespace CAT.Services.Common
                     var aTMAssignments = GetTMAssignments(job!.Order!.Client.CompanyId, job!.Quote!.SourceLanguage,
                         new int[] { job!.Quote!.TargetLanguage }, job.Quote.Speciality, true);
 
-                    CreateXliffFromDocument(jobDataFolder, Path.GetFileName(sXlifFilePath), filePath, filterPath,
+                    CreateXliffFromDocument(jobDataFolder, Path.GetFileName(sXlifFilePath), filePath, filterPath!,
                         _languageService.GetLanguageCodeIso639_1(job!.Quote!.SourceLanguage!).Result,
                         _languageService.GetLanguageCodeIso639_1(job!.Quote!.TargetLanguage!).Result, iThreshold, aTMAssignments);
 
@@ -468,15 +475,17 @@ namespace CAT.Services.Common
                 string filePath = Path.Combine(sourceFilesFolder, document!.FileName!);
 
                 //get the filter
-                var fileFiltersFolder = Path.Combine(_configuration["FileFiltersFolder"]!);
-
-                //get the filter
-                string filterPath = "";
-                //if (!String.IsNullOrEmpty(job.FilterName))
-                //    filterPath = Path.Combine(sourceFilesFolder, job.FilterName);
+                string? filterPath = null;
+                var docfFilter = _dbContextContainer.MainContext.DocumentFilters.FirstOrDefault(docFilter => docFilter.DocumentId == document.Id);
+                if (docfFilter != null)
+                {
+                    var filter = _dbContextContainer.MainContext.Filters.FirstOrDefault(filter => filter.Id == docfFilter.FilterId)!;
+                    var fileFiltersFolder = Path.Combine(_configuration["FileFiltersFolder"]!);
+                    filterPath = Path.Combine(fileFiltersFolder, filter.FilterName!);
+                }
 
                 //pre-process the document
-                String tmpFilePath = _documentProcessor.PreProcessDocument(filePath, filterPath);
+                String tmpFilePath = _documentProcessor.PreProcessDocument(filePath, filterPath!);
                 if (tmpFilePath != null)
                 {
                     filePath = tmpFilePath;
@@ -592,36 +601,44 @@ namespace CAT.Services.Common
 
 
                 //update the TMs
-                /*if (updateTM)
+                if (updateTM)
                 {
                     //prepare the TM entries
                     for (int i = 0; i < tmEntries.Count; i++)
                     {
                         var metadata = new Dictionary<String, String>();
-                        if (user != null)
-                            metadata.Add("user", (int)user.m_utProfile + "_" + user.m_iUserID.ToString());
-                        metadata.Add("speciality", translation.idSpeciality.ToString());
-                        metadata.Add("idTranslation", idTranslation.ToString());
+                        if (userId != null)
+                            metadata.Add("user", userId.ToString());
+                        metadata.Add("speciality", job.Quote.Speciality.ToString());
+                        metadata.Add("jobId", job.Id.ToString());
 
                         //preceding segment
                         if (i > 0)
-                            metadata.Add("prevSegment", tmEntries[i - 1].source);
+                            metadata.Add("prevSegment", tmEntries[i - 1].Source);
                         //following segment 
                         if (i < tmEntries.Count - 1)
-                            metadata.Add("nextSegment", tmEntries[i + 1].source);
+                            metadata.Add("nextSegment", tmEntries[i + 1].Source);
 
-                        tmEntries[i].metadata = JsonConvert.SerializeObject(metadata);
+                        tmEntries[i].Metadata = JsonConvert.SerializeObject(metadata);
                     }
 
                     //update the TMs
-                    var TMs = GetTMAssignments(1044, job!.Quote!.SourceLanguage, new string[] { job!.Quote!.TargetLanguage! },
+                    var TMs = GetTMAssignments(1044, job!.Quote!.SourceLanguage, new int[] { job!.Quote!.TargetLanguage! },
                         job!.Quote!.Speciality, true);
+                    var catClient = GetCatClient();
                     foreach (var tm in TMs)
                     {
                         if (!tm.isReadonly)
-                            client.AddTMEntries(tm.name, tmEntries.ToArray());
+                        {
+                            var request = new Proto.AddTMEntriesRequest
+                            {
+                                TMEntries = { tmEntries },
+                                TmId = tm.tmId
+                            };
+                            catClient.AddTMEntries(request);
+                        }
                     }
-                }*/
+                }
 
                 //save the intermediate xlf file.
                 var docType = DocumentType.Unspecified;
@@ -757,8 +774,7 @@ namespace CAT.Services.Common
         {
             var tmAssignments = new List<TMAssignment>();
             //only company TM
-            var grpcChannel = GrpcChannel.ForAddress(_catServerAddress);
-            var catClient = new CATClient(grpcChannel);
+            var catClient = GetCatClient();
             foreach (var targetLang in targetLangs)
             {
                 var tmId = CreateTMId(companyId, companyId, sourceLang, targetLang, TMType.CompanyPrimary);

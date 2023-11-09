@@ -50,6 +50,8 @@ builder.Services.AddScoped<IAdminService, AdminService>();
 builder.Services.AddScoped<IWorkflowService, WorkflowService>();
 builder.Services.AddScoped<IUserService, UserService>();
 //builder.Services.AddSingleton<MainDbContextFactory>();
+builder.Services.AddSingleton<CatClientFactory>();
+
 builder.Services.AddScoped<ILanguageService, LanguageService>();
 
 builder.Services.AddAutoMapper(typeof(AutoMapperProfile));

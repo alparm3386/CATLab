@@ -28,9 +28,9 @@ namespace CAT.Services.Common
             _catConnector.ParseDoc(idJob);
         }
 
-        public FileData CreateDocument(int idJob)
+        public FileData CreateDocument(int idJob, string userId, bool updateTM)
         {
-            return _catConnector.CreateDoc(idJob, Guid.NewGuid().ToString(), false);
+            return _catConnector.CreateDoc(idJob, userId, updateTM);
         }
     }
 }
