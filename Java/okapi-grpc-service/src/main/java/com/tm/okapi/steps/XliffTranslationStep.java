@@ -122,7 +122,7 @@ public class XliffTranslationStep extends BasePipelineStep {
 					tfTranslation.setCodedText(tfTranslation.getCodedText(), sourceSegment.getContent().getClonedCodes());
 				} else {
 					tfTranslation = sourceSegment.text.clone();
-				}	
+				}
 
 				targetSegment.setContent(tfTranslation);
 			}
@@ -133,5 +133,42 @@ public class XliffTranslationStep extends BasePipelineStep {
 		}
 
 		return super.handleTextUnit(theEvent);
+	}
+
+	public static String getInnerXMLString(Node node) {
+		StringBuilder innerXML = new StringBuilder();
+		NodeList childNodes = node.getChildNodes();
+
+		for (int i = 0; i < childNodes.getLength(); i++) {
+			Node childNode = childNodes.item(i);
+			innerXML.append(nodeToString(childNode));
+		}
+
+		return innerXML.toString();
+	}
+
+	public static String nodeToString(Node node) {
+		StringBuilder xml = new StringBuilder();
+
+		if (node.getNodeType() == Node.ELEMENT_NODE) {
+			xml.append("<").append(node.getNodeName()).append(">");
+		}
+
+		if (node.getNodeType() == Node.TEXT_NODE) {
+			xml.append(node.getTextContent());
+		}
+
+		NodeList childNodes = node.getChildNodes();
+
+		for (int i = 0; i < childNodes.getLength(); i++) {
+			Node childNode = childNodes.item(i);
+			xml.append(nodeToString(childNode));
+		}
+
+		if (node.getNodeType() == Node.ELEMENT_NODE) {
+			xml.append("</").append(node.getNodeName()).append(">");
+		}
+
+		return xml.toString();
 	}
 }
