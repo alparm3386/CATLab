@@ -31,6 +31,8 @@ public class TestFixture
 
     public Mock<IDocumentProcessor> MockDocumentProcessor { get; }
 
+    public Mock<CatClientFactory> MockCatClientFactory { get; }
+
     public TestFixture()
     {
         //identity

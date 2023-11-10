@@ -43,7 +43,8 @@ namespace CAT.Services.Common
         /// CATClientService
         /// </summary>
         public CATConnector(DbContextContainer dbContextContainer, IConfiguration configuration, IEnumerable<IMachineTranslator> machineTranslators,
-            ILanguageService languageService, CatClientFactory catClientFactory, IMapper mapper, ILogger<CATConnector> logger, IDocumentProcessor documentProcessor)
+            ILanguageService languageService, CatClientFactory catClientFactory, IMapper mapper, ILogger<CATConnector> logger, 
+            IDocumentProcessor documentProcessor)
         {
             _dbContextContainer = dbContextContainer;
             _configuration = configuration;
