@@ -51,7 +51,8 @@ public class OkapiGrpcService extends OkapiImplBase {
 			responseObserver.onCompleted();
 		} catch (Exception ex) {
 	        // Return an error to the gRPC client
-	        responseObserver.onError(Status.INTERNAL.withDescription("An error occurred during document creation").asException());			
+	        responseObserver.onError(Status.INTERNAL.withDescription("An error occurred during document creation" 
+	        		+ ex.getMessage()).asException());			
 		}		
 	}
 }
