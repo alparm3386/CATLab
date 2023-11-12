@@ -6,7 +6,7 @@ using NuGet.Common;
 
 namespace CAT.Controllers.Api
 {
-    [Route("api/[controller]")]
+    [Route("onlineeditor/api/[controller]")]
     [ApiController]
     public class AuthController : ControllerBase
     {

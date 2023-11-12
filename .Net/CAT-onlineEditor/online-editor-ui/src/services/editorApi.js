@@ -5,6 +5,7 @@ const editorApi = (function () {
     let _apiClient = null;
     let _jwt = '';
     let _urlParams = '';
+    let _baseUrl = '/onlineeditor/api';
 
     return {
         initializeApiClient: (urlParams, jwt, errorHandler) => {
@@ -35,12 +36,12 @@ const editorApi = (function () {
         },
 
         login: (username, password) => {
-            return _apiClient.post('/api/auth/login', { Email: username, Password: password });
+            return _apiClient.post(_baseUrl + '/auth/login', { Email: username, Password: password });
         },
 
         getJobData: () => {
             // Ensure _jwt is a string (or handle other cases as needed)
-            return _apiClient.get('/api/EditorApi/GetEditorData?urlParams=' + encodeURIComponent(_urlParams), {
+            return _apiClient.get(_baseUrl + '/editorApi/GetEditorData?urlParams=' + encodeURIComponent(_urlParams), {
                 headers: {
                     'Authorization': `Bearer ${_jwt}`
                 }
@@ -49,7 +50,7 @@ const editorApi = (function () {
 
         getTMMatches: async (tuid) => {
             try {
-                const response = await _apiClient.post('/api/EditorApi/getTMMatches', { urlParams: _urlParams, tuid }, {
+                const response = await _apiClient.post(_baseUrl + '/editorApi/getTMMatches', { urlParams: _urlParams, tuid }, {
                     headers: {
                         'Authorization': `Bearer ${_jwt}`
                     }
@@ -66,7 +67,7 @@ const editorApi = (function () {
 
         getConcordance: async (searchText, caseSensitive, searchInTarget) => {
             try {
-                const response = await _apiClient.post('/api/EditorApi/getConcordance', { urlParams: _urlParams, searchText, caseSensitive, searchInTarget }, {
+                const response = await _apiClient.post(_baseUrl + '/editorApi/getConcordance', { urlParams: _urlParams, searchText, caseSensitive, searchInTarget }, {
                     headers: {
                         'Authorization': `Bearer ${_jwt}`
                     }
@@ -83,7 +84,7 @@ const editorApi = (function () {
 
         saveSegment: async (tuid, target, confirmed, propagate) => {
             try {
-                const response = await _apiClient.post('/api/EditorApi/saveSegment', { urlParams: _urlParams, tuid, target, confirmed, propagate }, {
+                const response = await _apiClient.post(_baseUrl + '/editorApi/saveSegment', { urlParams: _urlParams, tuid, target, confirmed, propagate }, {
                     headers: {
                         'Authorization': `Bearer ${_jwt}`
                     }
@@ -100,7 +101,7 @@ const editorApi = (function () {
 
         downloadJob: () => {
             // Ensure _jwt is a string (or handle other cases as needed)
-            return _apiClient.get('/api/EditorApi/DownloadJob?urlParams=' + encodeURIComponent(_urlParams), {
+            return _apiClient.get(_baseUrl + '/EditorApi/DownloadJob?urlParams=' + encodeURIComponent(_urlParams), {
                 headers: {
                     'Authorization': `Bearer ${_jwt}`
                 },

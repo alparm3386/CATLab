@@ -21,9 +21,9 @@ using AutoMapper;
 
 namespace CAT.Controllers.Api
 {
-    [Authorize]
+    //[Authorize]
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("onlineeditor/api/[controller]")]
     public class EditorApiController : ControllerBase
     {
         private readonly CATConnector _catClientService;

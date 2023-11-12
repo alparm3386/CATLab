@@ -267,6 +267,7 @@ app.Use(async (context, next) =>
 app.UseMiddleware<AuthDebugMiddleware>();
 //TransactionManager.ImplicitDistributedTransactionsEnabled = true;
 //app.UseMiddleware<TransactionMiddleware>();
+app.UseMiddleware<OnlineEditorMiddleware>();
 
 app.Run();
 

@@ -97,5 +97,34 @@ namespace CAT.Areas.API.Internal.Controllers
                 return Problem("System error");
             }
         }
+
+        [Route("GetOnlineEditorIP")]
+        [HttpGet]
+        public IActionResult GetOnlineEditorIP()
+        {
+            try
+            {
+                return Ok(Middleware.OnlineEditorMiddleware.TargetServerBaseUrl);
+            }
+            catch (Exception)
+            {
+                return Problem("System error");
+            }
+        }
+
+        [Route("SetOnlineEditorIP")]
+        [HttpPut]
+        public IActionResult SetOnlineEditorIP(String ip)
+        {
+            try
+            {
+                Middleware.OnlineEditorMiddleware.TargetServerBaseUrl = ip;
+                return Ok();
+            }
+            catch (Exception)
+            {
+                return Problem("System error");
+            }
+        }
     }
 }

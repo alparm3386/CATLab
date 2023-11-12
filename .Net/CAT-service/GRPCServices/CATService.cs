@@ -52,7 +52,7 @@ namespace CAT.GRPCServices
             catch (Exception ex) // Catching general exception
             {
                 // Log the exception
-                throw new RpcException(new Status(StatusCode.Internal, "An internal error occurred."), ex.Message);
+                throw new RpcException(new Status(StatusCode.Internal, "An internal error occurred. " + ex.Message), ex.Message);
             }
 
         }

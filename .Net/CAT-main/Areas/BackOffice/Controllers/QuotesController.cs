@@ -146,6 +146,7 @@ namespace CAT.Areas.BackOffice.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError("QuoteController Create ERROR:" + ex.Message);
                 try
                 {
                     model.Client = await _userService.GetClient(model.ClientId);

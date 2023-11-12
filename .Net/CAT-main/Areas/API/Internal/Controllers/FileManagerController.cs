@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace CAT.Areas.API.Internal.Controllers
 {
@@ -13,7 +14,7 @@ namespace CAT.Areas.API.Internal.Controllers
             _configuration = configuration;
         }
 
-        [HttpGet("list")]
+        [HttpGet("list-directory")]
         public IActionResult ListFilesAndDirectories(string directoryPath = "")
         {
             try
@@ -56,6 +57,26 @@ namespace CAT.Areas.API.Internal.Controllers
             }
         }
 
+        [HttpGet("get-file")]
+        public IActionResult GetFile(string filePath = "")
+        {
+            try
+            {
+                var mountPath = _configuration["MountPath"]!.ToString();
+                filePath = Path.Combine(mountPath, filePath);
+
+                if (!System.IO.File.Exists(filePath))
+                    return NotFound($"File not found: {filePath}");
+
+                // Return the file as a FileResult
+                return PhysicalFile(filePath, "application/octet-stream");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"An error occurred: {ex.Message}");
+            }
+        }
+
         [HttpPost("create-directory")]
         public IActionResult CreateDirectory(string directoryPath)
         {
@@ -81,8 +102,8 @@ namespace CAT.Areas.API.Internal.Controllers
             {
                 var mountPath = _configuration["MountPath"]!.ToString();
                 directoryPath = Path.Combine(mountPath, directoryPath);
-                if (!Directory.Exists(directoryPath))
-                    Directory.Delete(directoryPath);
+                //if (Directory.Exists(directoryPath))
+                    Directory.Delete(directoryPath, true);
 
                 return Ok();
             }
