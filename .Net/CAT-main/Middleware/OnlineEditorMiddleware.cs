@@ -8,7 +8,7 @@ namespace CAT.Middleware
     {
         private readonly RequestDelegate _next;
         private readonly HttpClient _httpClient;
-        public static string TargetServerBaseUrl = "http://10.244.0.112";
+        public static string TargetServerBaseUrl = "http://10.244.0.66";
 
         public OnlineEditorMiddleware(RequestDelegate next)
         {
@@ -52,14 +52,36 @@ namespace CAT.Middleware
                     // Send the request to the target server and get the response
                     var targetResponse = await _httpClient.SendAsync(targetRequest);
 
-                    // Copy the target server's response to the original response
-                    context.Response.StatusCode = (int)targetResponse.StatusCode;
+                    //// Copy the target server's response to the original response
+                    //context.Response.StatusCode = (int)targetResponse.StatusCode;
+                    var sHeader = "";
                     foreach (var (key, value) in targetResponse.Headers)
                     {
-                        context.Response.Headers[key] = value.ToArray();
+                        //context.Response.Headers[key] = value.ToArray();
+                        sHeader += "key: " + String.Join(',', value.ToArray()) + "\n";
                     }
 
+                    try { File.WriteAllText("/data/contents/OE.log", sHeader); } catch (Exception) { }
+
                     await targetResponse.Content.CopyToAsync(context.Response.Body);
+                    return;
+
+                    //context.Response.StatusCode = 500;
+                    //context.Response.Headers["Content-Type"] = "text/html";
+
+                    //// Manually read and write the response content
+                    //using (var targetResponseStream = await targetResponse.Content.ReadAsStreamAsync())
+                    //using (var streamReader = new StreamReader(targetResponseStream))
+                    //{
+                    //    while (!streamReader.EndOfStream)
+                    //    {
+                    //        var line = await streamReader.ReadLineAsync();
+                    //        line = "status: " + (int)targetResponse.StatusCode + "\ncontent type: " + sHeader + 
+                    //            "\n" + line;
+                    //        await context.Response.WriteAsync(line!);
+                    //    }
+                    //}
+                    //return;
                 }
                 catch (Exception ex)
                 {
