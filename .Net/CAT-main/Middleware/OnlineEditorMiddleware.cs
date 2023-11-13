@@ -53,7 +53,7 @@ namespace CAT.Middleware
                     var targetResponse = await _httpClient.SendAsync(targetRequest);
 
                     //// Copy the target server's response to the original response
-                    //context.Response.StatusCode = (int)targetResponse.StatusCode;
+                    context.Response.StatusCode = (int)targetResponse.StatusCode;
                     var sHeader = "";
                     foreach (var (key, value) in targetResponse.Headers)
                     {
