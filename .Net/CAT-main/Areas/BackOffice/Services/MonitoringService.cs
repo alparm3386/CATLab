@@ -25,7 +25,7 @@ namespace CAT.Areas.BackOffice.Services
         private readonly ILogger _logger;
 
         public MonitoringService(DbContextContainer dbContextContainer, IConfiguration configuration,
-            IMapper mapper, ILogger<JobService> logger)
+            IMapper mapper, ILogger<MonitoringService> logger)
         {
             _dbContextContainer = dbContextContainer;
             _configuration = configuration;

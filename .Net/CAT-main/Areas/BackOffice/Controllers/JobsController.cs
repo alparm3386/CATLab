@@ -26,12 +26,12 @@ namespace CAT.Areas.BackOffice.Controllers
     {
         private readonly DbContextContainer _dbContextContainer;
         private readonly IConfiguration _configuration;
-        private readonly JobService _jobService;
+        private readonly IJobService _jobService;
         private readonly IMapper _mapper;
         private readonly ILogger _logger;
 
         public JobsController(DbContextContainer dbContextContainer, MainDbContext mainDbContext, TranslationUnitsDbContext translationUnitsDbContext,
-            IConfiguration configuration, JobService jobService, IMapper mapper, ILogger<JobService> logger)
+            IConfiguration configuration, IJobService jobService, IMapper mapper, ILogger<JobService> logger)
         {
             _dbContextContainer = dbContextContainer;
             _configuration = configuration;

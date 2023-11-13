@@ -15,12 +15,12 @@ namespace CAT.Areas.API.Internal.Controllers
     public class EditorApiController : ControllerBase
     {
         private readonly IConfiguration _configuration;
-        private readonly JobService _jobService;
+        private readonly IJobService _jobService;
         private readonly IMapper _mapper;
         private readonly ILogger _logger;
 
         public EditorApiController(IConfiguration configuration,
-            JobService jobService, IMapper mapper, ILogger<JobService> logger)
+            IJobService jobService, IMapper mapper, ILogger<JobService> logger)
         {
             _configuration = configuration;
             _jobService = jobService;

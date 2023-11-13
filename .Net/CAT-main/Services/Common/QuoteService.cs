@@ -21,7 +21,7 @@ namespace CAT.Services.Common
 
 
         public QuoteService(DbContextContainer dbContextContainer, IConfiguration configuration, ICATConnector catConnector, 
-            IDocumentService documentService, ILanguageService languageService, IMapper mapper, ILogger<JobService> logger)
+            IDocumentService documentService, ILanguageService languageService, IMapper mapper, ILogger<QuoteService> logger)
         {
             _dbContextContainer = dbContextContainer;
             _configuration = configuration;

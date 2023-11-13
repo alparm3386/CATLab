@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using CAT.Data;
 using CAT.Models.Entities.Main;
+using Hangfire;
+using Microsoft.EntityFrameworkCore;
 
 namespace CAT.Services.Common
 {
@@ -11,15 +13,18 @@ namespace CAT.Services.Common
         private readonly IQuoteService _quoteService;
         private readonly IDocumentService _documentService;
         private readonly IWorkflowService _workflowService;
+        private readonly IJobService _jobService;
         private readonly IMapper _mapper;
         private readonly ILogger _logger;
 
         public OrderService(DbContextContainer dbContextContainer, IConfiguration configuration,
-            IDocumentService documentService, IWorkflowService workflowService, IQuoteService quoteService, IMapper mapper, ILogger<JobService> logger) 
+            IDocumentService documentService, IWorkflowService workflowService, IQuoteService quoteService,
+            IJobService jobService, IMapper mapper, ILogger<OrderService> logger) 
         {
             _dbContextContainer = dbContextContainer;
             _configuration = configuration;
             _quoteService = quoteService;
+            _jobService = jobService;
             _documentService = documentService;
             _workflowService = workflowService;
             _logger = logger;
@@ -90,7 +95,16 @@ namespace CAT.Services.Common
 
         public async Task FinalizeOrderAsync(int orderId)
         {
+            //create workflow
             await _workflowService.CreateWorkflowAsync(orderId);
+
+            var jobs = await _dbContextContainer.MainContext.Jobs.Where(j => j.OrderId == orderId).Include(j => j.Quote).ToListAsync();
+
+            //Process the jobs
+            foreach (var job in jobs)
+            {
+                BackgroundJob.Enqueue(() => _jobService.ProcessJob(job.Id));
+            }
         }
     }
 }

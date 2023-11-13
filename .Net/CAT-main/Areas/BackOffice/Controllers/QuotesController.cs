@@ -29,7 +29,7 @@ namespace CAT.Areas.BackOffice.Controllers
         private readonly ILogger _logger;
 
         public QuotesController(IConfiguration configuration, IUserService userService, IQuoteService quoteService, ILanguageService languageService,
-            IDocumentService documentService, IOrderService orderService, IMapper mapper, ILogger<JobService> logger)
+            IDocumentService documentService, IOrderService orderService, IMapper mapper, ILogger<QuotesController> logger)
         {
             _configuration = configuration;
             _quoteService = quoteService;

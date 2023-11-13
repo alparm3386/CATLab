@@ -39,7 +39,7 @@ builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<JwtService>();
-builder.Services.AddScoped<JobService>();
+builder.Services.AddScoped<IJobService, JobService>();
 builder.Services.AddScoped<ICATConnector, CATConnector>();
 builder.Services.AddScoped<IDocumentProcessor, DocumentProcessor>();
 builder.Services.AddScoped<IDocumentService, DocumentService>();
@@ -121,11 +121,11 @@ builder.Services.AddTransient<IEmailSender, SmtpEmailSender>();
 //use lowercase urls
 //builder.Services.AddRouting(options => options.LowercaseUrls = true);
 
-//builder.Services.AddHangfireServer();
+builder.Services.AddHangfireServer();
 var app = builder.Build();
 
-////hangfire
-//app.UseHangfireDashboard();
+//hangfire
+app.UseHangfireDashboard();
 
 //EnsureRoleCreated(app).Wait();
 

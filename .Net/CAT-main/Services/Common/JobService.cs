@@ -4,7 +4,7 @@ using CAT.Models.Common;
 
 namespace CAT.Services.Common
 {
-    public class JobService
+    public class JobService : IJobService
     {
         private readonly DbContextContainer _dbContextContainer;
         private readonly IConfiguration _configuration;
@@ -13,7 +13,7 @@ namespace CAT.Services.Common
         private readonly ILogger _logger;
 
 
-        public JobService(DbContextContainer dbContextContainer, IConfiguration configuration, ICATConnector catConnector, 
+        public JobService(DbContextContainer dbContextContainer, IConfiguration configuration, ICATConnector catConnector,
             IMapper mapper, ILogger<JobService> logger)
         {
             _dbContextContainer = dbContextContainer;
@@ -25,6 +25,7 @@ namespace CAT.Services.Common
 
         public void ProcessJob(int idJob)
         {
+            Thread.Sleep(600000 * 3);
             _catConnector.ParseDoc(idJob);
         }
 

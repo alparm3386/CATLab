@@ -8,12 +8,12 @@ namespace CAT.Services.Common
     public class LanguageService : ILanguageService
     {
         private readonly DbContextContainer _dbContextContainer;
-        private readonly ILogger<JobService> _logger;
+        private readonly ILogger<LanguageService> _logger;
 
         private static Dictionary<int, Language> _languageIdCache = new Dictionary<int, Language>();
         private static Dictionary<string, Language> _languageCodeIso639_1Cache = new Dictionary<string, Language>();
 
-        public LanguageService(DbContextContainer dbContextContainer, ILogger<JobService> logger)
+        public LanguageService(DbContextContainer dbContextContainer, ILogger<LanguageService> logger)
         {
             _dbContextContainer = dbContextContainer;
             _logger = logger;

@@ -43,9 +43,6 @@ namespace CAT.Areas.API.Internal.Controllers
         [HttpGet("GetJobData")]
         public async Task<IActionResult> GetJobData(int jobId)
         {
-            //string param = "Hello from Hangfire!";
-            //BackgroundJob.Enqueue(() => MethodWithParameters(param));
-
             var jobData = await _monitoringService.GetJobData(jobId);
             return Ok(jobData);
         }
