@@ -221,22 +221,44 @@ namespace CAT.BusinessServices
                     var isNew = sqlCommand.ExecuteScalar() == null;
                     // Close the connection before opening it again
 
-                    sSql = _sqlCommands["InsertTMEntry"];
-                    sSql = sSql.Replace("[TM_TABLE]", dbParams.tmTableName);
-                    sqlCommand = new SQLiteCommand();
-                    sqlCommand.Connection = sqlConnection;
-                    sqlCommand.CommandText = sSql;
-                    sqlCommand.CommandType = CommandType.Text;
+                    if (isNew)
+                    {
+                        sSql = _sqlCommands["InsertTMEntry"];
+                        sSql = sSql.Replace("[TM_TABLE]", dbParams.tmTableName);
+                        sqlCommand = new SQLiteCommand();
+                        sqlCommand.Connection = sqlConnection;
+                        sqlCommand.CommandText = sSql;
+                        sqlCommand.CommandType = CommandType.Text;
 
-                    //set the query params
-                    var targetText = target.GetCodedText();
-                    //this trick forces the execution plan reuse
-                    sqlCommand.Parameters.Add(new SQLiteParameter(":source", DbType.String) { Value = sourceText });
-                    sqlCommand.Parameters.Add(new SQLiteParameter(":sourceHash", CATUtils.djb2hash(sourceText)));
-                    sqlCommand.Parameters.Add(new SQLiteParameter(":target", DbType.String) { Value = targetText });
-                    sqlCommand.Parameters.Add(new SQLiteParameter(":targetHash", CATUtils.djb2hash(targetText)));
-                    sqlCommand.Parameters.Add(new SQLiteParameter(":context", DbType.String) { Value = context });
-                    sqlCommand.Parameters.Add(new SQLiteParameter(":speciality", speciality));
+                        //set the query params
+                        var targetText = target.GetCodedText();
+                        //this trick forces the execution plan reuse
+                        sqlCommand.Parameters.Add(new SQLiteParameter(":source", DbType.String) { Value = sourceText });
+                        sqlCommand.Parameters.Add(new SQLiteParameter(":sourceHash", CATUtils.djb2hash(sourceText)));
+                        sqlCommand.Parameters.Add(new SQLiteParameter(":target", DbType.String) { Value = targetText });
+                        sqlCommand.Parameters.Add(new SQLiteParameter(":targetHash", CATUtils.djb2hash(targetText)));
+                        sqlCommand.Parameters.Add(new SQLiteParameter(":context", DbType.String) { Value = context });
+                        sqlCommand.Parameters.Add(new SQLiteParameter(":speciality", speciality));
+                    }
+                    else
+                    {
+                        sSql = "Update [TM_TABLE] set target=:target, targetHash=:targetHash, context=:context, speciality=:speciality, metadata=:metadata where sourcehash=:sourceHash and source=:source; \r\nSelect -1 as id, -1 as sourceId, false AS isNew, '' AS oldSpecialities, '' AS newSpecialities;";
+                        sSql = sSql.Replace("[TM_TABLE]", dbParams.tmTableName);
+                        sqlCommand = new SQLiteCommand();
+                        sqlCommand.Connection = sqlConnection;
+                        sqlCommand.CommandText = sSql;
+                        sqlCommand.CommandType = CommandType.Text;
+
+                        //set the query params
+                        var targetText = target.GetCodedText();
+                        //this trick forces the execution plan reuse
+                        sqlCommand.Parameters.Add(new SQLiteParameter(":source", DbType.String) { Value = sourceText });
+                        sqlCommand.Parameters.Add(new SQLiteParameter(":sourceHash", CATUtils.djb2hash(sourceText)));
+                        sqlCommand.Parameters.Add(new SQLiteParameter(":target", DbType.String) { Value = targetText });
+                        sqlCommand.Parameters.Add(new SQLiteParameter(":targetHash", CATUtils.djb2hash(targetText)));
+                        sqlCommand.Parameters.Add(new SQLiteParameter(":context", DbType.String) { Value = context });
+                        sqlCommand.Parameters.Add(new SQLiteParameter(":speciality", speciality));
+                    }
 
                     //the metadata
                     var metadata = JsonConvert.SerializeObject(new
@@ -303,7 +325,7 @@ namespace CAT.BusinessServices
                 }
                 catch (SQLiteException ex)
                 {
-                    _logger.LogError("InsertTMEntry -> tmId: " + tmId + " error: " + ex);
+                    _logger.LogError("DeleteTMEntry -> tmId: " + tmId + " error: " + ex);
                     throw ex;
                 }
             }
@@ -334,7 +356,7 @@ namespace CAT.BusinessServices
                 }
                 catch (SQLiteException ex)
                 {
-                    _logger.LogError("InsertTMEntry -> tmId: " + tmId + " error: " + ex);
+                    _logger.LogError("GetTMEntriesBySourceIds -> tmId: " + tmId + " error: " + ex);
                     throw ex;
                 }
             }
