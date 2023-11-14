@@ -28,7 +28,6 @@ namespace CAT.TM
         //private readonly String SourceField = "SOURCE";
         private readonly int NGramLength = 4;
         private IndexWriter indexWriter;
-        private ILogger _logger;
 
         /**
          * Creates a TMWriter
@@ -36,14 +35,12 @@ namespace CAT.TM
          * @param indexDirectory   - the Lucene Directory implementation of choice.
          * @throws IOException if the indexDirectory can not load
          */
-        public TMWriter(Directory indexDirectory, bool createNewTmIndex, ILogger logger)
+        public TMWriter(Directory indexDirectory, bool createNewTmIndex)
         {
             IndexWriterConfig conf = new IndexWriterConfig(Lucene.Net.Util.LuceneVersion.LUCENE_48, new NgramAnalyzer(NGramLength));
             conf.OpenMode = createNewTmIndex ? OpenMode.CREATE : OpenMode.APPEND;
             conf.Similarity = new DefaultSimilarity(); //new BooleanSimilarity();
             indexWriter = new IndexWriter(indexDirectory, conf);
-
-            _logger = logger;
         }
 
         /**
@@ -69,7 +66,6 @@ namespace CAT.TM
                 }
                 catch (IOException ignored)
                 {
-                    _logger.LogWarning("Exception closing Pensieve IndexWriter." + ignored.ToString()); //$NON-NLS-1$
                 }
             }
         }

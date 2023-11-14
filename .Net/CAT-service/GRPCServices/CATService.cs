@@ -12,19 +12,19 @@ namespace CAT.GRPCServices
 {
     public class CATService : Proto.CAT.CATBase
     {
-        private readonly ILogger<CATService> _logger;
         private readonly ITMService _tmService;
         private readonly ITBService _tbService;
         private readonly IOkapiService _okapiService;
         private readonly IMapper _mapper;
+        private readonly ILogger<CATService> _logger;
 
-        public CATService(ILogger<CATService> logger, ITMService tmService, ITBService tbService, IOkapiService okapiService, IMapper mapper)
+        public CATService(ITMService tmService, ITBService tbService, IOkapiService okapiService, IMapper mapper, ILogger<CATService> logger)
         {
             _okapiService = okapiService;
-            _logger = logger;
             _tmService = tmService;
             _tbService = tbService;
             _mapper = mapper;
+            _logger = logger;
         }
 
         #region Translation memory
@@ -234,11 +234,15 @@ namespace CAT.GRPCServices
                     Metadata = tmMatch.metadata
                 }));
 
+                var settings = new JsonSerializerSettings { Formatting = Formatting.Indented };
+                _logger.LogDebug("GetTMMatches -> request: " + JsonConvert.SerializeObject(request, settings) +
+                    " \nresponse: " + JsonConvert.SerializeObject(response, settings) + "\n");
                 return Task.FromResult(response);
             }
             catch (Exception ex) // Catching general exception
             {
                 // Log the exception
+                _logger.LogDebug(ex.ToString());
                 throw new RpcException(new Status(StatusCode.Internal, "An internal error occurred. " + ex.Message), ex.Message);
             }
         }
@@ -564,7 +568,7 @@ namespace CAT.GRPCServices
         {
             try
             {
-                var xliffContent = _okapiService.CreateXliffFromDocument(request.FileName, request.FileContent.ToArray(), 
+                var xliffContent = _okapiService.CreateXliffFromDocument(request.FileName, request.FileContent.ToArray(),
                     request.FilterName, request.FilterContent.ToArray(), request.SourceLangISO6391, request.TargetLangISO6391);
                 var response = new CreateXliffFromDocumentResponse() { XliffContent = xliffContent };
 
@@ -581,7 +585,7 @@ namespace CAT.GRPCServices
         {
             try
             {
-                var bytes = _okapiService.CreateDocumentFromXliff(request.FileName, request.FileContent.ToArray(), request.FilterName, 
+                var bytes = _okapiService.CreateDocumentFromXliff(request.FileName, request.FileContent.ToArray(), request.FilterName,
                     request.FilterContent.ToArray(), request.SourceLangISO6391, request.TargetLangISO6391, request.XliffContent);
                 var response = new CreateDocumentFromXliffResponse() { Document = Google.Protobuf.ByteString.CopyFrom(bytes) };
 
@@ -603,7 +607,7 @@ namespace CAT.GRPCServices
                 var dataDirExists = Directory.Exists("/data");
                 var catDirExists = Directory.Exists("/data/CAT");
 
-                var jsonResult = JsonConvert.SerializeObject( new { dataDirExists, catDirExists }, Formatting.Indented);
+                var jsonResult = JsonConvert.SerializeObject(new { dataDirExists, catDirExists }, Formatting.Indented);
                 var response = new TestResponse() { Result = jsonResult };
 
                 return Task.FromResult(response);

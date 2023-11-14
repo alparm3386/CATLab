@@ -10,7 +10,7 @@ namespace CAT.TM
 {
     public class TmWriterFactory
     {
-        public static TMWriter CreateFileBasedTmWriter(String indexDirectoryPath, bool createNewTmIndex, ILogger logger)
+        public static TMWriter CreateFileBasedTmWriter(String indexDirectoryPath, bool createNewTmIndex)
         {
             try
             {
@@ -19,11 +19,11 @@ namespace CAT.TM
                     throw new IOException(indexDirectoryPath + " does not exist");
                 }
 
-                return new TMWriter(FSDirectory.Open(indexDirectoryPath), createNewTmIndex, logger);
+                return new TMWriter(FSDirectory.Open(indexDirectoryPath), createNewTmIndex);
             }
-            catch (IOException ex)
+            catch (IOException)
             {
-                throw new IOException("Trouble creating FSDirectory with the given path: " + indexDirectoryPath, ex);
+                throw;
             }
             catch (Exception)
             {
@@ -31,18 +31,18 @@ namespace CAT.TM
             }
         }
 
-        public static TMWriter CreateRAMBasedTmWriter(ILogger logger)
+        public static TMWriter CreateRAMBasedTmWriter()
         {
             try
             {
                 //ByteBuffersDirectory directory = new ByteBuffersDirectory();
                 RAMDirectory directory = new RAMDirectory();
-                TMWriter writer = new TMWriter(directory, true, logger);
+                TMWriter writer = new TMWriter(directory, true);
                 return writer;
             }
             catch (Exception)
             {
-                throw new Exception("Failed to create RAM directory.");
+                throw;
             }
         }
     }

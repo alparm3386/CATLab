@@ -18,6 +18,7 @@ using CAT.Services.Common;
 using AutoMapper;
 using Task = CAT.Enums.Task;
 using CAT.Areas.BackOffice.Models.ViewModels;
+using Hangfire;
 
 namespace CAT.Areas.BackOffice.Controllers
 {
@@ -343,7 +344,7 @@ namespace CAT.Areas.BackOffice.Controllers
             {
                 try
                 {
-                    _jobService.ProcessJob((int)id);
+                    BackgroundJob.Enqueue(() => _jobService.ProcessJob((int)id));
                 }
                 catch (Exception ex)
                 {
