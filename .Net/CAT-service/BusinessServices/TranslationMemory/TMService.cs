@@ -415,7 +415,7 @@ namespace CAT.TM
                 if (!System.IO.Directory.Exists(sourceIndexDirectory))
                 {
                     System.IO.Directory.CreateDirectory(sourceIndexDirectory);
-                    var tmWriter = TmWriterFactory.CreateFileBasedTmWriter(sourceIndexDirectory, true, _logger);
+                    var tmWriter = TmWriterFactory.CreateFileBasedTmWriter(sourceIndexDirectory, true);
                     tmWriter.Commit();
                     tmWriter.Close();
                 }
@@ -1494,7 +1494,7 @@ namespace CAT.TM
                         }
 
                         // create new connection
-                        tmWriter = TmWriterFactory.CreateFileBasedTmWriter(sourceIndexDir, false, _logger);
+                        tmWriter = TmWriterFactory.CreateFileBasedTmWriter(sourceIndexDir, false);
                         TMConnector tmConnector = new TMConnector();
                         tmConnector.id = tmId;
                         tmConnector.tmWriter = tmWriter;
@@ -1551,7 +1551,7 @@ namespace CAT.TM
                         TMConnectionPool.Remove(tmId);
                     }
 
-                    var tmWriter = TmWriterFactory.CreateFileBasedTmWriter(sourceIndexDir, true, _logger);
+                    var tmWriter = TmWriterFactory.CreateFileBasedTmWriter(sourceIndexDir, true);
                     tmWriter.Commit();
 
                     var sourceLookup = new Dictionary<int, dynamic>();
