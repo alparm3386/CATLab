@@ -53,8 +53,8 @@ public class OkapiService implements IOkapiService {
 	private static int LOG_TIMEOUT = 1000;
 	private static String TEMP_DIR = "/data/CAT/Temp";
 	private static String SRX_FILE = "/data/CAT/Resources/All languages segmentation.srx";
-	//private static String TEMP_DIR = "C:/CAT/CAT/Temp";
-	//private static String SRX_FILE = "C:/CAT/CAT/Resources/All languages segmentation.srx";
+	//private static String TEMP_DIR = "C:/CAT/Temp";
+	//private static String SRX_FILE = "C:/CAT/Resources/All languages segmentation.srx";
 
 	public String createXliffFromDocument(String sFileName, byte[] fileContent, String sFilterName, byte[] filterContent,
 			String sourceLangISO639_1, String targetLangISO639_1) throws Exception {

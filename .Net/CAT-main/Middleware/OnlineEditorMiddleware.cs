@@ -8,7 +8,7 @@ namespace CAT.Middleware
     {
         private readonly RequestDelegate _next;
         private readonly HttpClient _httpClient;
-        public static string TargetServerBaseUrl = "http://localhost:7155";
+        public static string TargetServerBaseUrl = "https://localhost:7155";
 
         public OnlineEditorMiddleware(RequestDelegate next)
         {

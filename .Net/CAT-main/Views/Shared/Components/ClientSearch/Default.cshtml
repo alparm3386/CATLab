@@ -10,29 +10,19 @@
 
 <script>
     $(document).ready(function () {
-        let isDropdownClicked = false;
         $('#searchInput').attr('autocomplete', 'off');
 
         $('#searchInput').on('focus', function () {
-            $('#searchDropdown').dropdown('show');
+            //$('#searchDropdown').dropdown('show');
         }).on('blur', function () {
-            // If dropdown was clicked, don't hide
-            if (true /*!isDropdownClicked*/) {
-                setTimeout(() => {
-                    if (true /*!isDropdownClicked*/) {
-                        $('#searchDropdown').dropdown('hide');
-                    }
-                    $('#searchDropdown').dropdown('hide');
-                }, 100); // slight delay to handle dropdown item clicks
-            }
-            isDropdownClicked = false; // Reset the flag
+            setTimeout(() => {
+                $('#searchDropdown').dropdown('hide');
+            }, 100); // slight delay to handle dropdown item clicks
         });
 
         $('#searchDropdown').on('mousedown', function () {
-            isDropdownClicked = true;
-    
-        }); 
-        
+        });
+
         $('#searchInput').on('input', _.throttle(function () {
             const query = $(this).val();
             $('input[name="ClientId"]').val(null);
@@ -48,10 +38,11 @@
                 $(this).removeClass('is-invalid');
             }
 
+
             $.ajax({
                 url: "/api/Common/GetFilteredClients",
                 type: 'GET',
-                data: { term: query,  },
+                data: { term: query, },
                 success: function (data) {
                     const dropdown = $('#searchDropdown');
                     dropdown.empty();
@@ -68,9 +59,11 @@
                     });
 
                     if (data.length > 0) {
-                        $('.input-group-append .dropdown-toggle').dropdown('show');
+                        $('#searchDropdown').dropdown('show');
+                        //$('.input-group-append .dropdown-toggle').dropdown('show');
                     } else {
-                        $('.input-group-append .dropdown-toggle').dropdown('hide');
+                        $('#searchDropdown').dropdown('hide');
+                       //$('.input-group-append .dropdown-toggle').dropdown('hide');
                     }
                 },
                 error: function (error) {

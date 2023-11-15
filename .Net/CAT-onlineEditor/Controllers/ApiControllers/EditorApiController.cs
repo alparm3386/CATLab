@@ -18,6 +18,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Web;
 using AutoMapper;
+using System.Configuration;
 
 namespace CAT.Controllers.Api
 {
@@ -29,17 +30,19 @@ namespace CAT.Controllers.Api
         private readonly CATConnector _catClientService;
         private readonly ILogger _logger;
         private readonly JobService _jobService;
+        private readonly IConfiguration _configuration;
         private readonly IMapper _mapper;
         private readonly IHttpClientFactory _httpClientFactory;
 
-        public EditorApiController(CATConnector catClientService, JobService jobService, IMapper mapper, ILogger<EditorApiController> logger, 
-            IHttpClientFactory httpClientFactory)
+        public EditorApiController(CATConnector catClientService, JobService jobService, IConfiguration configuration, IMapper mapper, 
+            ILogger<EditorApiController> logger, IHttpClientFactory httpClientFactory)
         {
             _catClientService = catClientService;
             _jobService = jobService;
             _mapper = mapper;
             _logger = logger;
             _httpClientFactory = httpClientFactory;
+            _configuration = configuration;
         }
 
         private void SaveJobDataToSession(JobData jobData)
@@ -218,7 +221,8 @@ namespace CAT.Controllers.Api
             var idJob = int.Parse(queryParams["idJob"]!);
 
             var httpClient = _httpClientFactory.CreateClient();
-            var response = await httpClient.GetAsync($"https://localhost:7096/api/editorApi/downloadDocument/{idJob}");
+            var catMainBaseUrl = _configuration["CATMainBaseUrl"];
+            var response = await httpClient.GetAsync($"{catMainBaseUrl}/{idJob}");
 
             if (response.IsSuccessStatusCode)
             {
@@ -229,8 +233,7 @@ namespace CAT.Controllers.Api
                 return File(fileByteArray, "application/octet-stream", fileName);
             }
 
-            return BadRequest("Could not download the file.");
-            
+            return BadRequest("Could not download the file.");            
         }
     }
 }
