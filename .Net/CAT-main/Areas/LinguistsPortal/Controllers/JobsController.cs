@@ -37,11 +37,13 @@ namespace CAT.Areas.Linguists.Controllers
             //join into the documents table 
             var jobsWithDocuments = await (from j in jobs
                                            join d in _mainDbcontext.Documents on j.SourceDocumentId equals d.Id
+                                           join jp in _mainDbcontext.JobProcesses on j.Id equals jp.JobId into jobProcessesGroup
+                                           from jp in jobProcessesGroup.DefaultIfEmpty()
                                            select new
                                            {
                                                orderId = j.OrderId,
                                                jobId = j.Id,
-                                               dateProcessed = j.DateProcessed,
+                                               dateProcessed = jp != null ? jp.ProcessEnded : (DateTime?)null,
                                                sourceLanguage = j.Quote!.SourceLanguage,
                                                targetLanguage = j.Quote.TargetLanguage,
                                                speciality = j.Quote.Speciality,

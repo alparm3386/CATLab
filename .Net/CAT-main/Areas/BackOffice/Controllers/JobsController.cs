@@ -58,12 +58,14 @@ namespace CAT.Areas.BackOffice.Controllers
 
                 var jobsViewModels = await (from job in _dbContextContainer.MainContext.Jobs
                                             join document in _dbContextContainer.MainContext.Documents on job.SourceDocumentId equals document.Id
+                                            join jobProcess in _dbContextContainer.MainContext.JobProcesses on job.Id equals jobProcess.JobId 
+                                            into jobProcessesGroup from jobProcess in jobProcessesGroup.DefaultIfEmpty()
                                             select new JobViewModel
                                             {
                                                 Id = job.Id,
                                                 Analysis = "",
                                                 DateCreated = job.Order!.DateCreated,
-                                                DateProcessed = job.DateProcessed,
+                                                DateProcessed = jobProcess != null ? jobProcess.ProcessEnded : (DateTime?)null,
                                                 Fee = job.Quote!.Fee,
                                                 OriginalFileName = document.OriginalFileName
                                             }).ToListAsync();
@@ -86,13 +88,15 @@ namespace CAT.Areas.BackOffice.Controllers
 
             var jobsViewModels = await (from job in _dbContextContainer.MainContext.Jobs
                                         join document in _dbContextContainer.MainContext.Documents on job.SourceDocumentId equals document.Id
+                                        join jobProcess in _dbContextContainer.MainContext.JobProcesses on job.Id equals jobProcess.JobId 
+                                        into jobProcessesGroup from jobProcess in jobProcessesGroup.DefaultIfEmpty()
                                         where job.Id == id
                                         select new JobViewModel
                                         {
                                             Id = job.Id,
                                             Analysis = "",
                                             DateCreated = job.Order!.DateCreated,
-                                            DateProcessed = job.DateProcessed,
+                                            DateProcessed = jobProcess != null ? jobProcess.ProcessEnded : (DateTime?)null,
                                             Fee = job.Quote!.Fee,
                                             OriginalFileName = document.OriginalFileName
                                         }).FirstOrDefaultAsync();

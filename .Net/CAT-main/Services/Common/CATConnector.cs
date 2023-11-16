@@ -236,7 +236,6 @@ namespace CAT.Services.Common
             }
         }
 
-
         protected static bool IsLocked(Object syncRoot)
         {
             bool acquired = false;
@@ -259,10 +258,10 @@ namespace CAT.Services.Common
             return "ParseDoc_" + idJob.ToString();
         }
 
-        public void ParseDoc(int idJob)
+        public void ParseDoc(int jobId)
         {
-            if (IsLocked(String.Intern(GetParseDocLockString(idJob))))
-                throw new Exception("Translation is locked: " + idJob.ToString());
+            if (IsLocked(String.Intern(GetParseDocLockString(jobId))))
+                throw new Exception("Translation is locked: " + jobId.ToString());
 
             int nIdx = 1;
             List<String> filesToDelete = new List<String>();
@@ -270,24 +269,26 @@ namespace CAT.Services.Common
 
             try
             {
-                lock (String.Intern(GetParseDocLockString(idJob))) //lock on the job id
+                lock (String.Intern(GetParseDocLockString(jobId))) //lock on the job id
                 {
-
                     //get the translation details
                     var job = _dbContextContainer.MainContext.Jobs.Include(j => j.Quote)
-                        .Include(j => j.Order).ThenInclude(c => c!.Client).FirstOrDefault(j => j.Id == idJob);
+                        .Include(j => j.Order).ThenInclude(c => c!.Client).FirstOrDefault(j => j.Id == jobId);
+                    //document
                     var document = _dbContextContainer.MainContext.Documents.Find(job!.SourceDocumentId);
+                    //job process
+                    var jobProcess = _dbContextContainer.MainContext.JobProcesses.Where(jp => jp.JobId == jobId).FirstOrDefault();
 
                     //check if it is parsed already
-                    if (job?.DateProcessed != null)
+                    if (jobProcess?.ProcessEnded != null)
                         throw new Exception("Already processed.");
 
                     //check the translation units
                     var tuNum = _dbContextContainer.TranslationUnitsContext.TranslationUnit
-                                     .Where(tu => tu.idJob == idJob).OrderBy(tu => tu.tuid).Count();
+                                     .Where(tu => tu.idJob == jobId).OrderBy(tu => tu.tuid).Count();
                     if (tuNum > 0)
                     {
-                        job!.DateProcessed = DateTime.Now;
+                        jobProcess!.ProcessEnded = DateTime.Now;
                         _dbContextContainer.MainContext.SaveChanges();
                         return;
                     }
@@ -306,11 +307,11 @@ namespace CAT.Services.Common
                         filterPath = Path.Combine(fileFiltersFolder, filter.FilterName!);
                     }
 
-                    var jobDataFolder = CATUtils.GetJobDataFolder(idJob, _configuration["JobDataBaseFolder"]!);
+                    var jobDataFolder = CATUtils.GetJobDataFolder(jobId, _configuration["JobDataBaseFolder"]!);
 
                     //var aContentForMT = new List<MTContent>();
 
-                    String sXlifFilePath = CATUtils.CreateXlfFilePath(idJob, DocumentType.Original, _configuration["JobDataBaseFolder"]!, true); //we do a backup of the original xliff
+                    String sXlifFilePath = CATUtils.CreateXlfFilePath(jobId, DocumentType.Original, _configuration["JobDataBaseFolder"]!, true); //we do a backup of the original xliff
 
                     //pre-process the document
                     String tmpFilePath = _documentProcessor.PreProcessDocument(filePath, filterPath);
@@ -360,7 +361,7 @@ namespace CAT.Services.Common
                         {
                             var translationUnit = new TranslationUnit();
                             translationUnit.tuid = nIdx;
-                            translationUnit.idJob = idJob;
+                            translationUnit.idJob = jobId;
 
                             if (CATUtils.IsSegmentEmptyOrWhiteSpaceOnly(sourceSegment.InnerXml.Trim()))
                                 continue;
@@ -442,7 +443,7 @@ namespace CAT.Services.Common
                     // Save changes in the context to the database
                     _dbContextContainer.TranslationUnitsContext.SaveChanges();
 
-                    job.DateProcessed = DateTime.Now;
+                    jobProcess!.ProcessEnded = DateTime.Now;
                     _dbContextContainer.MainContext.SaveChanges();
                 }
             }

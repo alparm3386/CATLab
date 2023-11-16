@@ -332,9 +332,6 @@ namespace CAT.Migrations.MainDb
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<DateTime?>("DateProcessed")
-                        .HasColumnType("datetime(6)");
-
                     b.Property<int>("FinalDocumentId")
                         .HasColumnType("int");
 
@@ -354,6 +351,29 @@ namespace CAT.Migrations.MainDb
                     b.HasIndex("QuoteId");
 
                     b.ToTable("Jobs");
+                });
+
+            modelBuilder.Entity("CAT.Models.Entities.Main.JobProcess", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<int>("JobId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("ProcessEnded")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<DateTime>("ProcessId")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<DateTime>("ProcessStarted")
+                        .HasColumnType("datetime(6)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("JobProcesses");
                 });
 
             modelBuilder.Entity("CAT.Models.Entities.Main.Language", b =>

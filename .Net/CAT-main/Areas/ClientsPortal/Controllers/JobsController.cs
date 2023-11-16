@@ -35,13 +35,15 @@ namespace CAT.Areas.ClientsPortal.Controllers
             var jobs = _mainDbcontext.Jobs.Include(j => j.Order).Include(j => j.Quote).Where(j => j.Order!.ClientId == clientId);
 
             //join into the documents table 
-            var jobsWithDocuments = await (from j in jobs
+            var jobsExtended = await (from j in jobs
                                            join d in _mainDbcontext.Documents on j.SourceDocumentId equals d.Id
-                                           select new
+                                      join jp in _mainDbcontext.JobProcesses on j.Id equals jp.JobId into jobProcessesGroup 
+                                      from jp in jobProcessesGroup.DefaultIfEmpty()
+                                      select new
                                            {
                                                orderId = j.OrderId,
                                                jobId = j.Id,
-                                               dateProcessed = j.DateProcessed,
+                                               dateProcessed = jp != null ? jp.ProcessEnded : (DateTime?)null,
                                                sourceLanguage = j.Quote!.SourceLanguage,
                                                targetLanguage = j.Quote.TargetLanguage,
                                                speciality = j.Quote.Speciality,
@@ -55,7 +57,7 @@ namespace CAT.Areas.ClientsPortal.Controllers
                                                workflowSteps = j.WorkflowSteps,
                                            }).ToListAsync();
 
-            var viewData = new { jobsWithDocuments, name = "" };
+            var viewData = new { jobsExtended, name = "" };
             return View(viewData);
         }
 
