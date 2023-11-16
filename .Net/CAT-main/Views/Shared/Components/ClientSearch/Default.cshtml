@@ -1,10 +1,10 @@
 ﻿<div class="input-group">
-    <input type="text" class="form-control" id="searchInput" placeholder="Search..." required title="Please select a client.">
+    <input type="text" class="form-control dropdown-toggle" id="searchInput" placeholder="Search..." required title="Please select a client."
+        @*data-bs-toggle="dropdown"*@>
     <div class="dropdown-menu" id="searchDropdown">
         <!-- Autofill results will appear here -->
     </div>
 </div>
-
 
 <script src="~/lib/jquery/dist/jquery.min.js"></script>
 
@@ -13,14 +13,9 @@
         $('#searchInput').attr('autocomplete', 'off');
 
         $('#searchInput').on('focus', function () {
-            //$('#searchDropdown').dropdown('show');
         }).on('blur', function () {
-            setTimeout(() => {
-                $('#searchDropdown').dropdown('hide');
-            }, 100); // slight delay to handle dropdown item clicks
-        });
-
-        $('#searchDropdown').on('mousedown', function () {
+            // Use Bootstrap's hide method to hide the dropdown
+            $('#searchDropdown').dropdown('hide');
         });
 
         $('#searchInput').on('input', _.throttle(function () {
@@ -29,6 +24,7 @@
 
             if (query.length === 0) {
                 $('#searchDropdown').empty();
+                $('#searchDropdown').dropdown('hide');
                 return;
             }
 
@@ -37,7 +33,6 @@
             } else {
                 $(this).removeClass('is-invalid');
             }
-
 
             $.ajax({
                 url: "/api/Common/GetFilteredClients",
@@ -63,10 +58,11 @@
                         //$('.input-group-append .dropdown-toggle').dropdown('show');
                     } else {
                         $('#searchDropdown').dropdown('hide');
-                       //$('.input-group-append .dropdown-toggle').dropdown('hide');
+                        //$('.input-group-append .dropdown-toggle').dropdown('hide');
                     }
                 },
                 error: function (error) {
+                    $('#searchDropdown').dropdown('hide');
                     console.error("There was an error fetching the autofill results", error);
                 }
             });
