@@ -348,7 +348,8 @@ namespace CAT.Areas.BackOffice.Controllers
             {
                 try
                 {
-                    BackgroundJob.Enqueue(() => _jobService.ProcessJob((int)id));
+                    //BackgroundJob.Enqueue(() => _jobService.ProcessJob((int)id));
+                    _jobService.ProcessJob((int)id);
                 }
                 catch (Exception ex)
                 {

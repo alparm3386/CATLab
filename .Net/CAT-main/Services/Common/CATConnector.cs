@@ -23,6 +23,7 @@ using TMType = CAT.Enums.TMType;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.IdentityModel.Protocols.WsTrust;
 using Newtonsoft.Json;
+using CAT.Models.Entities.Main;
 
 namespace CAT.Services.Common
 {
@@ -276,22 +277,12 @@ namespace CAT.Services.Common
                         .Include(j => j.Order).ThenInclude(c => c!.Client).FirstOrDefault(j => j.Id == jobId);
                     //document
                     var document = _dbContextContainer.MainContext.Documents.Find(job!.SourceDocumentId);
-                    //job process
-                    var jobProcess = _dbContextContainer.MainContext.JobProcesses.Where(jp => jp.JobId == jobId).FirstOrDefault();
-
-                    //check if it is parsed already
-                    if (jobProcess?.ProcessEnded != null)
-                        throw new Exception("Already processed.");
 
                     //check the translation units
                     var tuNum = _dbContextContainer.TranslationUnitsContext.TranslationUnit
                                      .Where(tu => tu.idJob == jobId).OrderBy(tu => tu.tuid).Count();
                     if (tuNum > 0)
-                    {
-                        jobProcess!.ProcessEnded = DateTime.Now;
-                        _dbContextContainer.MainContext.SaveChanges();
                         return;
-                    }
 
                     //Get the document
                     var sourceFilesFolder = Path.Combine(_configuration["SourceFilesFolder"]!);
@@ -442,9 +433,6 @@ namespace CAT.Services.Common
                     _dbContextContainer.TranslationUnitsContext.TranslationUnit.AddRange(lstTus);
                     // Save changes in the context to the database
                     _dbContextContainer.TranslationUnitsContext.SaveChanges();
-
-                    jobProcess!.ProcessEnded = DateTime.Now;
-                    _dbContextContainer.MainContext.SaveChanges();
                 }
             }
             catch (Exception)
