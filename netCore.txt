@@ -1,0 +1,50 @@
+Add-Migration -Name InitialCreate -Context MainDbContext -OutputDir Migrations/MainDb
+Update-Database -Context MainDbContext
+
+dotnet ef database drop --context MainDbContext
+dotnet ef migrations add InitialCreate --context MainDbContext --output-dir Migrations/MainDb
+dotnet ef database update --context MainDbContext
+dotnet ef migrations add AddUserTypeToUser --context IdentityDbContext
+dotnet ef database drop --context IdentityDbContext
+dotnet ef migrations add InitialCreate --context IdentityDbContext --output-dir Areas/Identity/Data/Migrations
+
+dotnet ef database drop --context TranslationUnitsDbContext
+dotnet ef migrations add InitialCreate --context TranslationUnitsDbContext--output-dir Migrations/TranslationUnitsDb
+dotnet ef database update --context TranslationUnitsDbContext
+
+
+dotnet ef migrations add MakeEmailUnique --context IdentityDbContext --output-dir Areas/Identity/Data/Migrations
+dotnet ef database update --context IdentityDbContext
+
+
+https://localhost:7096/Identity/Account/Manage/
+
+TempData, ViewBag or ViewData
+immediate window
+ModelState.Where(m => m.Value.Errors.Count > 0) 
+
+EF core
+https://learn.microsoft.com/en-us/ef/ef6/modeling/designer/workflows/database-first
+EF Core Razor
+https://learn.microsoft.com/en-us/aspnet/core/data/ef-rp/intro?view=aspnetcore-7.0&tabs=visual-studio
+
+EF Core scaffolding
+https://learn.microsoft.com/en-us/ef/core/managing-schemas/scaffolding/?tabs=dotnet-core-cli
+
+UnitOfWork transactions
+
+https://learn.microsoft.com/en-us/ef/core/modeling/#debug-view
+Shared-type entity types
+shadow properties
+indexer properties
+Property bag entity types
+Value Conversions
+Spatial Data
+Potential memory leak in client evaluation
+Split queries
+Global Query Filters
+Handling Concurrency Conflicts
+Disconnected entities
+
+
+https://learn.microsoft.com/en-us/archive/msdn-magazine/2009/february/best-practice-an-introduction-to-domain-driven-design
