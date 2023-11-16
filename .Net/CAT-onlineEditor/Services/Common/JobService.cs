@@ -36,8 +36,11 @@ namespace CAT.Services.Common
         {
             var job = await _dbContextContainer.MainContext.Jobs.Include(j => j.Quote).Where(j => j.Id == jobId).FirstOrDefaultAsync();
 
+            //job process
+            var jobProcess = await _dbContextContainer.MainContext.JobProcesses.Where(jp => jp.JobId == jobId).FirstOrDefaultAsync();
+
             //check if the job was processed
-            if (job?.DateProcessed == null)
+            if (jobProcess?.ProcessEnded == null)
                 throw new Exception("The job has not been processed.");
 
             //load the translation units

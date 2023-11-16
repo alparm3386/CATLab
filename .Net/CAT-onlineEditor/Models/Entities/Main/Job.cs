@@ -24,8 +24,6 @@ namespace CAT.Models.Entities.Main
 
         public int FinalDocumentId { get; set; }
 
-        public DateTime? DateProcessed { get; set; }
-
         [System.Diagnostics.CodeAnalysis.MaybeNull]
         public ICollection<WorkflowStep> WorkflowSteps { get; set; }
     }

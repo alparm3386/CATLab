@@ -1,3 +1,5 @@
+dotnet ef migrations --context MainDbContext list
+
 Add-Migration -Name InitialCreate -Context MainDbContext -OutputDir Migrations/MainDb
 Update-Database -Context MainDbContext
 

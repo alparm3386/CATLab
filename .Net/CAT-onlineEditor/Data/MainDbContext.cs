@@ -21,7 +21,9 @@ namespace CAT.Data
         public DbSet<Address> Addresses { get; set; } = default!;
 
         public DbSet<Job> Jobs { get; set; } = default!;
-        
+
+        public DbSet<JobProcess> JobProcesses { get; set; } = default!;
+
         public DbSet<Document> Documents { get; set; } = default!;
         
         public DbSet<DocumentFilter> DocumentFilters { get; set; } = default!;
