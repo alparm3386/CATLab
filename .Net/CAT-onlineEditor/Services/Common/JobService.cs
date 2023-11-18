@@ -11,6 +11,7 @@ using System.Diagnostics;
 using static ICSharpCode.SharpZipLib.Zip.ZipEntryFactory;
 using CAT.Models.Entities.TranslationUnits;
 using CAT.Models.Common;
+using System.Net.Http;
 
 namespace CAT.Services.Common
 {
@@ -21,13 +22,15 @@ namespace CAT.Services.Common
         private readonly CATConnector _catConnector;
         private readonly IMapper _mapper;
         private readonly ILogger _logger;
+        private readonly IHttpClientFactory _httpClientFactory;
 
-        public JobService(DbContextContainer dbContextContainer, IConfiguration configuration, CATConnector catConnector, 
+        public JobService(DbContextContainer dbContextContainer, IConfiguration configuration, CATConnector catConnector, IHttpClientFactory httpClientFactory,
             IMapper mapper, ILogger<JobService> logger)
         {
             _dbContextContainer = dbContextContainer;
             _configuration = configuration;
             _catConnector = catConnector;
+            _httpClientFactory = httpClientFactory,
             _logger = logger;
             _mapper = mapper;
         }
@@ -41,7 +44,21 @@ namespace CAT.Services.Common
 
             //check if the job was processed
             if (jobProcess?.ProcessEnded == null)
-                throw new Exception("The job has not been processed.");
+            {
+                //process the job in the main application
+                var httpClient = _httpClientFactory.CreateClient();
+                var catMainBaseUrl = _configuration["CATMainBaseUrl"];
+                var response = await httpClient.GetAsync($"{catMainBaseUrl}/api/EditorApi/DownloadDocument/{jobId}");
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var fileByteArray = await response.Content.ReadAsByteArrayAsync();
+                    var contentDispositionHeader = response.Content.Headers.ContentDisposition;
+                    var fileName = contentDispositionHeader?.FileName!.Trim('"') ?? "defaultFileName.ext";
+
+                    return File(fileByteArray, "application/octet-stream", fileName);
+                }
+            }
 
             //load the translation units
             var translationUnits = await _dbContextContainer.TranslationUnitsContext.TranslationUnit

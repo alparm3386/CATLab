@@ -101,7 +101,7 @@ namespace CAT.Controllers.Api
             {
                 // Log the exception if necessary
                 Console.WriteLine(ex.Message);
-                return Problem("An error occurred while processing your request.", null, 500);
+                return Problem("An error occurred while processing your request.\n\n" + ex.Message, null, 500);
             }
         }
 
@@ -222,7 +222,7 @@ namespace CAT.Controllers.Api
 
             var httpClient = _httpClientFactory.CreateClient();
             var catMainBaseUrl = _configuration["CATMainBaseUrl"];
-            var response = await httpClient.GetAsync($"{catMainBaseUrl}/{idJob}");
+            var response = await httpClient.GetAsync($"{catMainBaseUrl}/api/EditorApi/DownloadDocument/{idJob}");
 
             if (response.IsSuccessStatusCode)
             {

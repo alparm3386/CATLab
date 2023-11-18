@@ -1,4 +1,5 @@
 webpack.config.js -> filename: 'static/js/[name].[contenthash:8].js'
 package.json -> "homepage": "/onlineeditor/"
 
+npm start
 npm run build

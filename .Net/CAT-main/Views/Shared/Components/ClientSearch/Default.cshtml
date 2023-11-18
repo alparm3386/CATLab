@@ -15,7 +15,7 @@
         $('#searchInput').on('focus', function () {
         }).on('blur', function () {
             // Use Bootstrap's hide method to hide the dropdown
-            $('#searchDropdown').dropdown('hide');
+            setTimeout(() => { $('#searchDropdown').dropdown('hide'); }, 300); //wait a bit for the click
         });
 
         $('#searchInput').on('input', _.throttle(function () {

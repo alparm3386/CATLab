@@ -103,13 +103,15 @@ namespace CAT.Services.Common
             //Process the jobs
             foreach (var job in jobs)
             {
-                var processId = BackgroundJob.Enqueue(() => _jobService.ProcessJob(job.Id));
                 var jobProcess = new JobProcess();
                 jobProcess.JobId = job.Id;
+                _dbContextContainer.MainContext.JobProcesses.Add(jobProcess);
+                await _dbContextContainer.MainContext.SaveChangesAsync();
+
+                var processId = BackgroundJob.Enqueue(() => _jobService.ProcessJob(job.Id));
                 jobProcess.ProcessId = processId;
 
                 // Add jobProcess to the context
-                _dbContextContainer.MainContext.JobProcesses.Add(jobProcess);
                 await _dbContextContainer.MainContext.SaveChangesAsync();
             }
         }

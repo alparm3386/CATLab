@@ -28,21 +28,39 @@ namespace CAT.Areas.API.Internal.Controllers
             _mapper = mapper;
         }
 
-        [HttpGet("DownloadDocument/{idJob}")]
-        public IActionResult DownloadDocument(int idJob)
+        [HttpGet("ProcessJob/{jobId}")]
+        public IActionResult ProcessJob(int jobId)
         {
             // Offload the execution of CreateDocument to a separate thread.
-            //var fileData = await Task.Run(() => _jobService.CreateDocument(idJob));
+            //var fileData = await Task.Run(() => _jobService.CreateDocument(jobId));
+            try
+            {
+                _jobService.ProcessJob(jobId);
+
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("ProcessJob error -> jobId: " + jobId + " " + ex.Message);
+                return BadRequest(new { message = ex.Message });
+            }
+        }
+
+        [HttpGet("DownloadDocument/{jobId}")]
+        public IActionResult DownloadDocument(int jobId)
+        {
+            // Offload the execution of CreateDocument to a separate thread.
+            //var fileData = await Task.Run(() => _jobService.CreateDocument(jobId));
             try
             {
                 var userId = "tmp001";
-                var fileData = _jobService.CreateDocument(idJob, userId, false);
+                var fileData = _jobService.CreateDocument(jobId, userId, false);
 
                 return File(fileData.Content!, "application/octet-stream", fileData.FileName);  // Change the MIME type if you know the specific type for the file
             }
             catch (Exception ex)
             {
-                _logger.LogError("DownloadDocument error -> idJob: " + idJob + " " + ex.Message);
+                _logger.LogError("DownloadDocument error -> jobId: " + jobId + " " + ex.Message);
                 return BadRequest(new { message = ex.Message });
             }
         }

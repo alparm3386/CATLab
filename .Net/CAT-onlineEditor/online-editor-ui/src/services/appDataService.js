@@ -1,6 +1,6 @@
 ﻿// appDataService.js
 import editorApi from 'services/editorApi';
-import { showLoading } from 'store/appUiSlice';
+import { showLoading, showAlert } from 'store/appUiSlice';
 import { setTranslationUnits } from 'store/appDataSlice';
 
 const appDataService = (() => {
@@ -14,6 +14,10 @@ const appDataService = (() => {
                 service.jobData = result.data;
                 dispatch(setTranslationUnits(service.jobData.translationUnits));
             } catch (error) {
+                let msg = error.message;
+                if (error?.response?.data?.detail)
+                    msg = error?.response?.data?.detail;
+                dispatch(showAlert({ title: 'Error', message: msg }));
                 console.log(error);
             } finally {
                 dispatch(showLoading(false));
