@@ -4,7 +4,7 @@
     {
         public int Id { get; set; }
 
-        public int idJob { get; set; }
+        public int documentId { get; set; }
 
         public int tuid { get; set; }
 
