@@ -44,7 +44,7 @@ else
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
         <input type="hidden" name="StoredQuoteId" value="@Model.StoredQuoteId" />
 
-        <h2 name="client"class="mt-3 mb-3">@(Model.Client?.Company.Name + " - " + Model.Client?.User.FullName)</h2>
+        <h2 name="client" class="mt-3 mb-3">@(Model.Client?.Company.Name + " - " + Model.Client?.User.FullName)</h2>
 
         <div class="form-group">
             <label for="SourceLanguage">Source Language:</label>
@@ -96,7 +96,13 @@ else
 @section Scripts {
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/bbbootstrap/libraries@main/choices.min.css">
     <script src="https://cdn.jsdelivr.net/gh/bbbootstrap/libraries@main/choices.min.js"></script>
-
+    <style>
+        /* Custom styles for choices */
+        .choices__list--multiple .choices__item {
+            background-color: #ffd75f !important;
+            border: 1px solid #ffd75f !important;
+        }
+    </style>
     <script type="text/javascript">
 
         $(document).ready(function () {
@@ -104,7 +110,10 @@ else
             var multipleCancelButton = new Choices('[name="TargetLanguages"]', {
                 removeItemButton: true,
                 //searchResultLimit: 5,
-                //renderChoiceLimit: 5
+                //renderChoiceLimit: 5,
+                //classNames: {
+                //    item: 'custom-choices-item'
+                //}
             });
         });
     </script>

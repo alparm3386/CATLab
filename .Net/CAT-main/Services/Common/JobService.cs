@@ -36,7 +36,9 @@ namespace CAT.Services.Common
                 jobProcess = new JobProcess();
                 jobProcess.JobId = jobId;
                 jobProcess.ProcessStarted = DateTime.Now;
-                jobProcess.ProcessId = "_m_" + Guid.NewGuid().ToString();
+                jobProcess.ProcessId = "n/a";
+                _dbContextContainer.MainContext.JobProcesses.Add(jobProcess);
+                _dbContextContainer.MainContext.SaveChanges();
             }
             else
             {
@@ -46,10 +48,8 @@ namespace CAT.Services.Common
             }
 
             _catConnector.ParseDoc(jobId);
-
             jobProcess!.ProcessEnded = DateTime.Now;
-            _dbContextContainer.MainContext.JobProcesses.Add(jobProcess);
-            _dbContextContainer.MainContext.SaveChanges();
+                _dbContextContainer.MainContext.SaveChanges();
         }
 
         public FileData CreateDocument(int idJob, string userId, bool updateTM)
