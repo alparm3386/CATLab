@@ -30,7 +30,7 @@ namespace CAT.Services.Common
             _dbContextContainer = dbContextContainer;
             _configuration = configuration;
             _catConnector = catConnector;
-            _httpClientFactory = httpClientFactory,
+            _httpClientFactory = httpClientFactory;
             _logger = logger;
             _mapper = mapper;
         }
@@ -48,16 +48,10 @@ namespace CAT.Services.Common
                 //process the job in the main application
                 var httpClient = _httpClientFactory.CreateClient();
                 var catMainBaseUrl = _configuration["CATMainBaseUrl"];
-                var response = await httpClient.GetAsync($"{catMainBaseUrl}/api/EditorApi/DownloadDocument/{jobId}");
+                var response = await httpClient.GetAsync($"{catMainBaseUrl}/api/EditorApi/ProcessJob/{jobId}");
 
-                if (response.IsSuccessStatusCode)
-                {
-                    var fileByteArray = await response.Content.ReadAsByteArrayAsync();
-                    var contentDispositionHeader = response.Content.Headers.ContentDisposition;
-                    var fileName = contentDispositionHeader?.FileName!.Trim('"') ?? "defaultFileName.ext";
-
-                    return File(fileByteArray, "application/octet-stream", fileName);
-                }
+                if (!response.IsSuccessStatusCode)
+                    throw new Exception("Sorry, we encountered an unexpected internal error.");
             }
 
             //load the translation units
