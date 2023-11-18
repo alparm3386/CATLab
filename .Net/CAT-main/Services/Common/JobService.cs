@@ -25,7 +25,7 @@ namespace CAT.Services.Common
             _mapper = mapper;
         }
 
-        [AutomaticRetry(Attempts = 3, DelaysInSeconds = new[] { 60, 60, 60 })]
+        //[AutomaticRetry(Attempts = 3, DelaysInSeconds = new[] { 60, 60, 60 })]
         public void ProcessJob(int jobId)
         {
             //job process

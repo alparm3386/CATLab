@@ -280,7 +280,7 @@ namespace CAT.Services.Common
 
                     //check the translation units
                     var tuNum = _dbContextContainer.TranslationUnitsContext.TranslationUnit
-                                     .Where(tu => tu.idJob == jobId).OrderBy(tu => tu.tuid).Count();
+                                     .Where(tu => tu.documentId == document.Id).OrderBy(tu => tu.tuid).Count();
                     if (tuNum > 0)
                         return;
 
@@ -305,7 +305,7 @@ namespace CAT.Services.Common
                     String sXlifFilePath = CATUtils.CreateXlfFilePath(jobId, DocumentType.Original, _configuration["JobDataBaseFolder"]!, true); //we do a backup of the original xliff
 
                     //pre-process the document
-                    String tmpFilePath = _documentProcessor.PreProcessDocument(filePath, filterPath);
+                    String tmpFilePath = _documentProcessor.PreProcessDocument(filePath, filterPath!);
                     if (tmpFilePath != null)
                     {
                         filePath = tmpFilePath;
@@ -352,7 +352,7 @@ namespace CAT.Services.Common
                         {
                             var translationUnit = new TranslationUnit();
                             translationUnit.tuid = nIdx;
-                            translationUnit.idJob = jobId;
+                            translationUnit.documentId = document.Id;
 
                             if (CATUtils.IsSegmentEmptyOrWhiteSpaceOnly(sourceSegment.InnerXml.Trim()))
                                 continue;
@@ -506,7 +506,7 @@ namespace CAT.Services.Common
 
                 //get the translated texts
                 var translationUnits = _dbContextContainer.TranslationUnitsContext.TranslationUnit
-                                 .Where(tu => tu.idJob == idJob).OrderBy(tu => tu.tuid).ToList();
+                                 .Where(tu => tu.documentId == document.Id).OrderBy(tu => tu.tuid).ToList();
 
                 //fill the xliff file with the translations
                 XmlDocument xlfFile = new XmlDocument();

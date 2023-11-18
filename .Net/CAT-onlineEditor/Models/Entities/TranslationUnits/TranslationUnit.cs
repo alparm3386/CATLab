@@ -5,7 +5,7 @@ using System.Security.Policy;
 
 namespace CAT.Models.Entities.TranslationUnits
 {
-    [Index(nameof(idJob))]
+    [Index(nameof(documentId))]
     [Table("TranslationUnits")]
     public class TranslationUnit
     {
@@ -13,7 +13,7 @@ namespace CAT.Models.Entities.TranslationUnits
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
-        public int idJob { get; set; }
+        public int documentId { get; set; }
 
         public int tuid { get; set; }
 

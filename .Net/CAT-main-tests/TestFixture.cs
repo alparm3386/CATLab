@@ -156,7 +156,7 @@ public class TestFixture
             var tuFields = tuLine.Split('\t');
             tus.Add(new TranslationUnit()
             {
-                idJob = 1,
+                documentId = 1,
                 source = tuFields[1],
                 target = tuFields[4],
                 tuid = i + 1

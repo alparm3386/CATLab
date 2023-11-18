@@ -54,9 +54,12 @@ namespace CAT.Services.Common
                     throw new Exception("Sorry, we encountered an unexpected internal error.");
             }
 
+            //document
+            var document = _dbContextContainer.MainContext.Documents.Find(job!.SourceDocumentId);
+
             //load the translation units
             var translationUnits = await _dbContextContainer.TranslationUnitsContext.TranslationUnit
-                             .Where(tu => tu.idJob == jobId).OrderBy(tu => tu.tuid).ToListAsync();
+                             .Where(tu => tu.documentId == document!.Id).OrderBy(tu => tu.tuid).ToListAsync();
 
             var translationUnitDTOs = _mapper.Map<TranslationUnitDTO[]>(translationUnits);
             foreach (var tu in translationUnitDTOs)
