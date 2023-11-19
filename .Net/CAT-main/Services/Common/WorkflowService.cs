@@ -39,8 +39,12 @@ namespace CAT.Services.Common
                 var service = job.Quote!.Service;
                 if (service == (int)Service.AI)
                 {
+                    //new job
+                    var workflowStep = CreateWorkflowStep(job, null!, Task.NewJob);
+                    workflowSteps.Add(workflowStep);
+
                     //AI process
-                    var workflowStep = CreateWorkflowStep(job, null!, Task.AIProcess);
+                    workflowStep = CreateWorkflowStep(job, workflowStep, Task.AIProcess);
                     workflowSteps.Add(workflowStep);
 
                     //client review
@@ -72,9 +76,18 @@ namespace CAT.Services.Common
                 }
                 else if (service == (int)Service.AIWithRevision)
                 {
-                    //AI process
-                    var workflowStep = CreateWorkflowStep(job, null!, Task.AIProcess);
+                    //new job
+                    var workflowStep = CreateWorkflowStep(job, null!, Task.NewJob);
                     workflowSteps.Add(workflowStep);
+
+                    //AI process
+                    workflowStep = CreateWorkflowStep(job, workflowStep, Task.AIProcess);
+                    workflowSteps.Add(workflowStep);
+
+                    //job board
+                    workflowStep = CreateWorkflowStep(job, workflowStep, Task.Jobboard);
+                    workflowSteps.Add(workflowStep);
+
                     //revision
                     workflowStep = CreateWorkflowStep(job, workflowStep, Task.Revision);
                     workflowSteps.Add(workflowStep);
@@ -108,12 +121,24 @@ namespace CAT.Services.Common
                 }
                 else if (service == (int)Service.AIWithTranslationAndRevision)
                 {
+                    //new job
+                    var workflowStep = CreateWorkflowStep(job, null!, Task.NewJob);
+                    workflowSteps.Add(workflowStep);
+
                     //AI process
-                    var workflowStep = CreateWorkflowStep(job, null!, Task.AIProcess);
+                    workflowStep = CreateWorkflowStep(job, workflowStep, Task.AIProcess);
+                    workflowSteps.Add(workflowStep);
+
+                    //job board
+                    workflowStep = CreateWorkflowStep(job, workflowStep, Task.Jobboard);
                     workflowSteps.Add(workflowStep);
 
                     //translation
                     workflowStep = CreateWorkflowStep(job, workflowStep, Task.Translation);
+                    workflowSteps.Add(workflowStep);
+
+                    //job board
+                    workflowStep = CreateWorkflowStep(job, workflowStep, Task.Jobboard);
                     workflowSteps.Add(workflowStep);
 
                     //revision
@@ -149,8 +174,20 @@ namespace CAT.Services.Common
                 }
                 else if (service == (int)Service.TranslationWithRevision)
                 {
+                    //new job
+                    var workflowStep = CreateWorkflowStep(job, null!, Task.NewJob);
+                    workflowSteps.Add(workflowStep);
+
+                    //job board
+                    workflowStep = CreateWorkflowStep(job, workflowStep, Task.Jobboard);
+                    workflowSteps.Add(workflowStep);
+
                     //translation
-                    var workflowStep = CreateWorkflowStep(job, null!, Task.Translation);
+                    workflowStep = CreateWorkflowStep(job, workflowStep!, Task.Translation);
+                    workflowSteps.Add(workflowStep);
+
+                    //job board
+                    workflowStep = CreateWorkflowStep(job, workflowStep, Task.Jobboard);
                     workflowSteps.Add(workflowStep);
 
                     //revision
@@ -191,6 +228,17 @@ namespace CAT.Services.Common
             }
 
             await _dbContextContainer.MainContext.SaveChangesAsync();
+        }
+
+        public async void StartNextStep(int jobId)
+        {
+            //get the workflow steps
+            var workflowSteps  = await _dbContextContainer.MainContext.WorkflowSteps.Where(ws => ws.JobId == jobId).ToListAsync();
+            var currentStep = workflowSteps.Select(ws => ws.Status == (int)WorkflowStatus.InProgress).FirstOrDefault();
+            if (workflowSteps.All(ws => ws.Status == (int)WorkflowStatus.NotStarted))
+            { 
+            }
+
         }
 
         private WorkflowStep CreateWorkflowStep(Job job, WorkflowStep previousStep, Task task) 
