@@ -36,7 +36,7 @@ namespace CAT.Services.Common
                 jobProcess = new JobProcess();
                 jobProcess.JobId = jobId;
                 jobProcess.ProcessStarted = DateTime.Now;
-                jobProcess.ProcessId = "n/a";
+                //jobProcess.ProcessId = "n/a";
                 _dbContextContainer.MainContext.JobProcesses.Add(jobProcess);
                 _dbContextContainer.MainContext.SaveChanges();
             }

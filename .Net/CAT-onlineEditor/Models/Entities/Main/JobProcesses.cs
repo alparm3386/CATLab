@@ -14,12 +14,12 @@ namespace CAT.Models.Entities.Main
 
         [MaxLength(50)]
         [System.Diagnostics.CodeAnalysis.MaybeNull]
-        public string ProcessId { get; set; }
+        public string? ProcessId { get; set; }
 
         [System.Diagnostics.CodeAnalysis.MaybeNull]
         public DateTime ProcessStarted { get; set; }
 
         [System.Diagnostics.CodeAnalysis.MaybeNull]
-        public DateTime ProcessEnded { get; set; }
+        public DateTime? ProcessEnded { get; set; }
     }
 }
