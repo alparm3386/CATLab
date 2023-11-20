@@ -22,8 +22,6 @@ namespace CAT.Data
 
         public DbSet<Job> Jobs { get; set; } = default!;
 
-        public DbSet<JobProcess> JobProcesses { get; set; } = default!;
-
         public DbSet<Document> Documents { get; set; } = default!;
         
         public DbSet<DocumentFilter> DocumentFilters { get; set; } = default!;

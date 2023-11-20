@@ -11,6 +11,7 @@ namespace CAT.Services.Common
         private readonly DbContextContainer _dbContextContainer;
         private readonly IConfiguration _configuration;
         private readonly IQuoteService _quoteService;
+        private readonly IServiceProvider _serviceProvider;
         private readonly IDocumentService _documentService;
         private readonly IWorkflowService _workflowService;
         private readonly IJobService _jobService;
@@ -19,11 +20,12 @@ namespace CAT.Services.Common
 
         public OrderService(DbContextContainer dbContextContainer, IConfiguration configuration,
             IDocumentService documentService, IWorkflowService workflowService, IQuoteService quoteService,
-            IJobService jobService, IMapper mapper, ILogger<OrderService> logger) 
+            IServiceProvider serviceProvider, IJobService jobService, IMapper mapper, ILogger<OrderService> logger) 
         {
             _dbContextContainer = dbContextContainer;
             _configuration = configuration;
             _quoteService = quoteService;
+            _serviceProvider = serviceProvider;
             _jobService = jobService;
             _documentService = documentService;
             _workflowService = workflowService;
@@ -102,7 +104,27 @@ namespace CAT.Services.Common
 
             //Process the jobs
             foreach (var job in jobs)
-                await _workflowService.StartWorkflowAsync(job.Id);
+            {
+                //await _workflowService.StartWorkflowAsync(job.Id);
+                var processId = BackgroundJob.Enqueue(() => StartWorkflow(job.Id));
+            }
+        }
+
+        [AutomaticRetry(Attempts = 3, DelaysInSeconds = new[] { 0, 120, 240 })]
+        public void StartWorkflow(int jobId)
+        {
+            try
+            {
+                using (var scope = _serviceProvider.CreateScope())
+                {
+                    var workflowService = scope.ServiceProvider.GetRequiredService<IWorkflowService>();
+                    workflowService.StartWorkflowAsync(jobId).Wait(); // Wait for the async operation to complete
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("StartWorkflow -> Error: " + ex.ToString());
+            }
         }
     }
 }

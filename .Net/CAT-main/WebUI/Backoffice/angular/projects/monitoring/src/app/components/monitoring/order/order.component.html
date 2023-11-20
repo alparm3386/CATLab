@@ -4,7 +4,7 @@
     <div class="col-3">
       <b>Client:</b>
       <a href="{{'/BackOffice/Companies/Details/' + order.companyId }}" target="_blank"> {{ order.companyName }}</a>  -
-      <a href="{{'/BackOffice/Clients/Details/' + order.clientId }}"> {{ order.clientName }}</a>
+      <a href="{{'/BackOffice/Clients/Details/' + order.clientId }}" target="_blank"> {{ order.clientName }}</a>
     </div>
     <div class="col-3"><b>Date created:</b> {{ order.dateCreated | date:'dd/MM/yyyy HH:mm'}}</div>
     <div class="col-3"><b>Words:</b> {{ order.words }}</div>

@@ -33,6 +33,8 @@ namespace CAT.Enums
     {
         [Display(Name = "Unknown task")]
         Unknown = -1,
+        [Display(Name = "New job")]
+        NewJob = 0,
         [Display(Name = "Job board")]
         Jobboard = 1,
         [Display(Name = "AI process")]

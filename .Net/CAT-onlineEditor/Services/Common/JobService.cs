@@ -12,6 +12,7 @@ using static ICSharpCode.SharpZipLib.Zip.ZipEntryFactory;
 using CAT.Models.Entities.TranslationUnits;
 using CAT.Models.Common;
 using System.Net.Http;
+using CAT.Models.Entities.Main;
 
 namespace CAT.Services.Common
 {
@@ -37,22 +38,16 @@ namespace CAT.Services.Common
 
         public async Task<JobData> GetJobData(int jobId)
         {
-            var job = await _dbContextContainer.MainContext.Jobs.Include(j => j.Quote).Where(j => j.Id == jobId).FirstOrDefaultAsync();
+            //get the job
+            var job = await _dbContextContainer.MainContext.Jobs.AsNoTracking().Include(j => j.Quote).Where(j => j.Id == jobId).FirstOrDefaultAsync();
 
-            //job process
-            var jobProcess = await _dbContextContainer.MainContext.JobProcesses.Where(jp => jp.JobId == jobId).FirstOrDefaultAsync();
+            //get the workflow
+            var newJobStep = await _dbContextContainer.MainContext.WorkflowSteps.AsNoTracking()
+                .FirstOrDefaultAsync(ws => ws.JobId == jobId && ws.TaskId == (int)CAT.Enums.Task.NewJob);
 
             //check if the job was processed
-            if (jobProcess?.ProcessEnded == null)
-            {
-                //process the job in the main application
-                var httpClient = _httpClientFactory.CreateClient();
-                var catMainBaseUrl = _configuration["CATMainBaseUrl"];
-                var response = await httpClient.GetAsync($"{catMainBaseUrl}/api/EditorApi/ProcessJob/{jobId}");
-
-                if (!response.IsSuccessStatusCode)
-                    throw new Exception("Sorry, we encountered an unexpected internal error.");
-            }
+            if (newJobStep?.Status < 2)
+                throw new Exception("The job has not been processed yet.");
 
             //document
             var document = _dbContextContainer.MainContext.Documents.Find(job!.SourceDocumentId);
