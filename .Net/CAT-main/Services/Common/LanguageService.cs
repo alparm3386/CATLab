@@ -19,7 +19,7 @@ namespace CAT.Services.Common
             _logger = logger;
         }
 
-        public async Task<String> GetLanguageCodeIso639_1(int languageId) 
+        public async Task<String> GetLanguageCodeIso639_1Async(int languageId) 
         {
             //caching
             if (_languageIdCache.Count == 0)
@@ -30,7 +30,7 @@ namespace CAT.Services.Common
             return _languageIdCache[languageId].ISO639_1;
         }
 
-        public async Task<int> GetLanguageIdFromIso639_1Code(string laguageCode)
+        public async Task<int> GetLanguageIdFromIso639_1CodeAsync(string laguageCode)
         {
             //caching
             if (_languageCodeIso639_1Cache.Count == 0)
@@ -41,7 +41,7 @@ namespace CAT.Services.Common
             return _languageCodeIso639_1Cache[laguageCode].Id;
         }
 
-        public async Task<Dictionary<int, Language>> GetLanguages()
+        public async Task<Dictionary<int, Language>> GetLanguagesAsync()
         {
             //caching
             if (_languageIdCache.Count == 0)

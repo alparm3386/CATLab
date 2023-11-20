@@ -22,7 +22,7 @@ namespace CAT.Models.Entities.Main
 
         public int SourceDocumentId { get; set; }
 
-        public int FinalDocumentId { get; set; }
+        public int CompletedDocumentId { get; set; }
 
         [System.Diagnostics.CodeAnalysis.MaybeNull]
         public ICollection<WorkflowStep> WorkflowSteps { get; set; }

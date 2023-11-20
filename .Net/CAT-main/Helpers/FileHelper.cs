@@ -32,5 +32,15 @@ namespace CAT.Helpers
                 }
             }
         }
+
+        public static string CreateFileNameForTask(String directory, String fileName, string language, CAT.Enums.Task task)
+        {
+            var fileNameWithoutExtension = Path.GetFileNameWithoutExtension(fileName);
+            var fileExtension = Path.GetExtension(fileName);
+
+            var newFileName = GetUniqueFileName(Path.Combine(directory, fileNameWithoutExtension + "_" + language + "_" + task.ToString() + fileExtension));
+
+            return Path.Combine(directory, newFileName);
+        }
     }
 }

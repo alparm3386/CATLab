@@ -99,6 +99,7 @@ namespace CAT.Areas.BackOffice.Controllers
             try
             {
                 ModelState.Remove("UserId");
+                ModelState.Remove("LinguistRates");
                 if (ModelState.IsValid)
                 {
                     if (linguist.User.PasswordHash != linguist.User.SecurityStamp)

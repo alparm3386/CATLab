@@ -90,7 +90,7 @@ namespace CAT.Areas.BackOffice.Controllers
             }
 
             //dropdown lists
-            var languages = (await _languageService.GetLanguages()).ToDictionary(l => l.Key, l => l.Value.Name);
+            var languages = (await _languageService.GetLanguagesAsync()).ToDictionary(l => l.Key, l => l.Value.Name);
             createQuoteViewModel.SourceLanguage = 1; //English as selected
             ViewData["SourceLanguages"] = new SelectList(languages, "Key", "Value");
             createQuoteViewModel.TargetLanguages = new List<int> { 2 }; //French as selected
@@ -159,7 +159,7 @@ namespace CAT.Areas.BackOffice.Controllers
                     ViewData["ErrorMessage"] = "There was an error processing your request. Please try again later.";
                 // Optionally log the error: _logger.LogError(ex, "Error message here");
 
-                var languages = (await _languageService.GetLanguages()).ToDictionary(l => l.Key, l => l.Value.Name);
+                var languages = (await _languageService.GetLanguagesAsync()).ToDictionary(l => l.Key, l => l.Value.Name);
                 ViewData["SourceLanguages"] = new SelectList(languages, "Key", "Value");
                 model!.TargetLanguages = model!.TargetLanguages ?? new List<int>();
                 ViewData["TargetLanguages"] = new SelectList(languages, "Key", "Value");
@@ -184,7 +184,7 @@ namespace CAT.Areas.BackOffice.Controllers
                     throw new Exception("Temporary quote not found.");
 
                 //set the ViewData
-                var languages = await _languageService.GetLanguages();
+                var languages = await _languageService.GetLanguagesAsync();
                 ViewData["Languages"] = languages.ToDictionary(l => l.Key, l => l.Value.Name);
                 ViewData["Specialities"] = EnumHelper.EnumToDisplayNamesDictionary<Speciality>();
 
@@ -214,7 +214,7 @@ namespace CAT.Areas.BackOffice.Controllers
                     throw new Exception("Stored quote not found.");
 
                 //set the ViewData
-                var languages = await _languageService.GetLanguages();
+                var languages = await _languageService.GetLanguagesAsync();
                 ViewData["Languages"] = languages.ToDictionary(l => l.Key, l => l.Value.Name);
                 ViewData["Specialities"] = EnumHelper.EnumToDisplayNamesDictionary<Speciality>();
                 ViewData["Services"] = EnumHelper.EnumToDisplayNamesDictionary<Service>();
@@ -252,7 +252,7 @@ namespace CAT.Areas.BackOffice.Controllers
                 var storedQuote = await _quoteService.GetStoredQuoteAsync(storedQuoteId, true);
 
                 //set the lists
-                var languages = await _languageService.GetLanguages();
+                var languages = await _languageService.GetLanguagesAsync();
                 ViewData["Languages"] = languages.ToDictionary(l => l.Key, l => l.Value.Name);
                 ViewData["Specialities"] = EnumHelper.EnumToDisplayNamesDictionary<Speciality>();
 

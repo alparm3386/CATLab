@@ -4,10 +4,13 @@ using CAT.Enums;
 using CAT.Helpers;
 using CAT.Models.Common;
 using CAT.Models.Entities.Main;
+using Microsoft.AspNetCore.Http;
+using Microsoft.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 using Newtonsoft.Json;
 using System.IO;
+using Document = CAT.Models.Entities.Main.Document;
 using Task = System.Threading.Tasks.Task;
 
 namespace CAT.Services.Common
@@ -28,6 +31,42 @@ namespace CAT.Services.Common
             _logger = logger;
             _mapper = mapper;
             _languageService = languageService;
+        }
+
+        public async Task<Document> CreateDocumentAsync(byte[] fileContent, string originalFileName, DocumentType documentType)
+        {
+            try
+            {
+                //save the file into the temp folder
+                var outputFilesFolder = _configuration["OutputFilesFolder"]!;
+                var filePath = Path.Combine(outputFilesFolder, originalFileName);
+                var fileName = FileHelper.GetUniqueFileName(filePath);
+                filePath = Path.Combine(outputFilesFolder, fileName);
+                //save the file
+                File.WriteAllBytes(filePath, fileContent);
+
+                //get the md5 hash
+                var md5Hash = "";
+                md5Hash = FileHelper.CalculateMD5(filePath);
+
+                //create the document
+                var document = new Document()
+                {
+                    FileName = fileName,
+                    OriginalFileName = originalFileName,
+                    DocumentType = (int)documentType,
+                    MD5Hash = md5Hash
+                };
+                _dbContextContainer.MainContext.Documents.Add(document);
+                await _dbContextContainer.MainContext.SaveChangesAsync();
+
+                return document;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("CreateDocument ERROR: " + ex.Message);
+                throw;
+            }
         }
 
         public async Task<TempDocument> CreateTempDocumentAsync(IFormFile formFile, DocumentType documentType, int filterId)

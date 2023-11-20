@@ -139,8 +139,8 @@ namespace CAT.Services.Common
                 var aRet = new List<Statistics>();
                 foreach (int targetLang in aTargetLangs)
                 {
-                    var targetLanguageIso639_1 = await _languageService.GetLanguageCodeIso639_1(targetLang);
-                    var sourceLanguageIso639_1 = await _languageService.GetLanguageCodeIso639_1(sourceLang);
+                    var targetLanguageIso639_1 = await _languageService.GetLanguageCodeIso639_1Async(targetLang);
+                    var sourceLanguageIso639_1 = await _languageService.GetLanguageCodeIso639_1Async(sourceLang);
                     var catClient = GetCatClient();
                     var request = new GetStatisticsForDocumentRequest
                     {
@@ -323,8 +323,8 @@ namespace CAT.Services.Common
                         new int[] { job!.Quote!.TargetLanguage }, job.Quote.Speciality, true);
 
                     CreateXliffFromDocument(jobDataFolder, Path.GetFileName(sXlifFilePath), filePath, filterPath!,
-                        _languageService.GetLanguageCodeIso639_1(job!.Quote!.SourceLanguage!).Result,
-                        _languageService.GetLanguageCodeIso639_1(job!.Quote!.TargetLanguage!).Result, iThreshold, aTMAssignments);
+                        _languageService.GetLanguageCodeIso639_1Async(job!.Quote!.SourceLanguage!).Result,
+                        _languageService.GetLanguageCodeIso639_1Async(job!.Quote!.TargetLanguage!).Result, iThreshold, aTMAssignments);
 
                     //parse the xliff file
                     var xliff = new XmlDocument();
@@ -413,8 +413,8 @@ namespace CAT.Services.Common
                     }).ToList();
 
                     //do the machine translation
-                    mmt.Translate(translatables, _languageService.GetLanguageCodeIso639_1(job!.Quote!.SourceLanguage!).Result,
-                        _languageService.GetLanguageCodeIso639_1(job!.Quote!.TargetLanguage!).Result, null);
+                    mmt.Translate(translatables, _languageService.GetLanguageCodeIso639_1Async(job!.Quote!.SourceLanguage!).Result,
+                        _languageService.GetLanguageCodeIso639_1Async(job!.Quote!.TargetLanguage!).Result, null);
 
                     //populate the translation units with the machine translation
                     Dictionary<int, Translatable> translatableDictionary = translatables.ToDictionary(t => t.id);
@@ -488,8 +488,8 @@ namespace CAT.Services.Common
 
                 var sourceLanguage = job!.Quote!.SourceLanguage!;
                 var targetLanguage = job!.Quote!.TargetLanguage!;
-                var sourceLangIso639_1 = _languageService.GetLanguageCodeIso639_1(sourceLanguage).Result;
-                var targetLangIso639_1 = _languageService.GetLanguageCodeIso639_1(targetLanguage).Result;
+                var sourceLangIso639_1 = _languageService.GetLanguageCodeIso639_1Async(sourceLanguage).Result;
+                var targetLangIso639_1 = _languageService.GetLanguageCodeIso639_1Async(targetLanguage).Result;
                 var xlifFilePath = CATUtils.CreateXlfFilePath(idJob, DocumentType.Original, _configuration["JobDataBaseFolder"]!, false);
                 if (!File.Exists(xlifFilePath))
                 {
@@ -802,8 +802,8 @@ namespace CAT.Services.Common
 
         private String CreateTMId(int groupId, int companyId, int sourceLang, int targetLang, TMType type)
         {
-            var sourceLangIso639_1 = _languageService.GetLanguageCodeIso639_1(sourceLang).Result;
-            var targetLangIso639_1 = _languageService.GetLanguageCodeIso639_1(targetLang).Result;
+            var sourceLangIso639_1 = _languageService.GetLanguageCodeIso639_1Async(sourceLang).Result;
+            var targetLangIso639_1 = _languageService.GetLanguageCodeIso639_1Async(targetLang).Result;
             var tmPrefix = "";
             if (type == TMType.Global)
                 tmPrefix = "$_";
