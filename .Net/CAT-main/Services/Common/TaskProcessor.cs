@@ -1,4 +1,8 @@
-﻿namespace CAT.Services.Common
+﻿using CAT.Models.Entities.Main;
+using CAT.Enums;
+using Task = CAT.Enums.Task;
+
+namespace CAT.Services.Common
 {
     public class TaskProcessor : ITaskProcessor
     {
@@ -9,8 +13,16 @@
             _catconnector = catconnector;
         }
 
-        public void ProcessTaks(int jobId, CAT.Enums.Task task)
+        public bool ProcessTask(WorkflowStep workflowStep)
         {
+            //parse and pre-translate the document
+            if (workflowStep.TaskId == (int)Task.NewJob)
+            {
+                _catconnector.ParseDoc(workflowStep.JobId);
+                return true;
+            }
+
+            return false;
         }
     }
 }

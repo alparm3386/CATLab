@@ -240,7 +240,13 @@ namespace CAT.Services.Common
             if (newJobStep == null || newJobStep.Status != (int)WorkflowStatus.NotStarted)
                 throw new Exception("Invalid workflow or the workflow already started.");
 
-            await StartNextStepAsync(jobId);
+            newJobStep.CompletionDate = DateTime.Now;
+            newJobStep.Status = (int)WorkflowStatus.InProgress;
+            var completed = _taskProcessor.ProcessTask(newJobStep);
+            await _dbContextContainer.MainContext.SaveChangesAsync();
+
+            if (completed)
+                await StartNextStepAsync(jobId);
         }
 
         public async System.Threading.Tasks.Task StartNextStepAsync(int jobId)
@@ -251,27 +257,18 @@ namespace CAT.Services.Common
             if (currentStep == null)
                 throw new Exception("Invalid operation.");
 
-            currentStep.CompletionDate = DateTime.Now;
-            currentStep.Status = (int)WorkflowStatus.Completed;
-
             //get the next step
             var nextStep = workflowSteps.FirstOrDefault(ws => ws.StepOrder == currentStep.StepOrder + 1);
-            ProcessStep(nextStep);
+            var completed = _taskProcessor.ProcessTask(nextStep!);
 
+            currentStep.CompletionDate = DateTime.Now;
+            currentStep.Status = (int)WorkflowStatus.Completed;
+            nextStep!.StartDate = DateTime.Now;
+            nextStep.Status = (int)WorkflowStatus.InProgress;
             await _dbContextContainer.MainContext.SaveChangesAsync();
-        }
-
-        private void ProcessStep(WorkflowStep? currentStep)
-        {
-            if (currentStep == null)
-                throw new ArgumentNullException(nameof(WorkflowStep));
-
-            //we should implement a task processor
-            if (currentStep.TaskId == (int)Task.AIProcess)
-                _taskProcessor.ProcessTaks(currentStep.JobId, (Task)currentStep.TaskId);
-
-            currentStep.StartDate = DateTime.Now;
-            currentStep.Status = (int)WorkflowStatus.InProgress;
+            
+            if (completed)
+                await StartNextStepAsync(jobId);
         }
 
         private WorkflowStep CreateWorkflowStep(Job job, WorkflowStep previousStep, Task task) 

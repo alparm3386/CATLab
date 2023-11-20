@@ -14,7 +14,7 @@ namespace CAT.Pages
         }
         public void OnGet()
         {
-            _workflowServie.StartNextStepAsync(1017).GetAwaiter().GetResult(); ;
+            _workflowServie.StartWorkflowAsync(1017).GetAwaiter().GetResult(); ;
         }
     }
 }

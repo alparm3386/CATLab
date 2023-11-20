@@ -1,7 +1,9 @@
-﻿namespace CAT.Services.Common
+﻿using CAT.Models.Entities.Main;
+
+namespace CAT.Services.Common
 {
     public interface ITaskProcessor
     {
-        void ProcessTaks(int jobId, CAT.Enums.Task task);
+        bool ProcessTask(WorkflowStep workflowStep);
     }
 }
