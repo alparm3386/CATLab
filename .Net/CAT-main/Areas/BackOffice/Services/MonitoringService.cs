@@ -49,24 +49,43 @@ namespace CAT.Areas.BackOffice.Services
                     .Include(o => o.Jobs)
                         .ThenInclude(j => j.Quote)
                     .Include(o => o.Jobs)
-                        .ThenInclude(j => j.WorkflowSteps).Where(o => o.DateCreated >= dateFrom && o.DateCreated < dateTo).ToListAsync();
+                        .ThenInclude(j => j.WorkflowSteps).Where(o => o.DateCreated >= dateFrom && o.DateCreated < dateTo)
+                    .Include(o => o.Client)
+                        .ThenInclude(o => o.Company)
+                    .ToListAsync();
+
+            //orders with clients
+            var ordersWithClients = (from order in orders
+                                     join user in _dbContextContainer.IdentityContext.Users on order.Client.UserId equals user.Id
+                                     select new {
+                                         order.Id,
+                                         order.ClientId,
+                                         order.Client,
+                                         order.DateCreated,
+                                         order.Fee,
+                                         order.Jobs,
+                                         order.Words,
+                                         ClientName = user.FirstName + " " + user.LastName
+                                     }).ToList();
 
             //process orders
-            foreach (var dsOrder in orders)
+            foreach (var orderEx in ordersWithClients)
             {
                 //the order object
                 var order = new
                 {
-                    id = dsOrder.Id,
-                    client = dsOrder.ClientId,
-                    dateCreated = dsOrder.DateCreated,
-                    words = dsOrder.Words,
-                    fee = dsOrder.Fee,
+                    id = orderEx.Id,
+                    clientId = orderEx.ClientId,
+                    companyName = orderEx.Client.Company.Name,
+                    clientName = orderEx.ClientName,
+                    dateCreated = orderEx.DateCreated,
+                    words = orderEx.Words,
+                    fee = orderEx.Fee,
                     jobs = new List<dynamic>()
                 };
 
                 //join into the documents and languages tables
-                var jobsWithDocuments = (from job in dsOrder.Jobs
+                var jobsWithDocuments = (from job in orderEx.Jobs
                                          join doc in _dbContextContainer.MainContext.Documents on job.SourceDocumentId equals doc.Id
                                          join sourceLang in _dbContextContainer.MainContext.Languages on job.Quote!.SourceLanguage equals sourceLang.Id
                                          join targetLang in _dbContextContainer.MainContext.Languages on job.Quote!.TargetLanguage equals targetLang.Id
