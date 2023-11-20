@@ -111,6 +111,7 @@ namespace CAT.Areas.BackOffice.Services
                     {
                         var workflowStep = new
                         {
+                            taskId = dsWorkflowStep.TaskId,
                             task = ((Task)dsWorkflowStep.TaskId).GetDisplayName(),
                             status = dsWorkflowStep.Status,
                             startDate = dsWorkflowStep.StartDate,
