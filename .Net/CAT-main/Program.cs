@@ -70,6 +70,9 @@ var dataProtectionBuilder = builder.Services.AddDataProtection().PersistKeysToFi
 builder.Services.AddHangfire(config => config
     .UseStorage(new MySqlStorage(builder.Configuration.GetConnectionString("HangfireConnection"), new MySqlStorageOptions()
     {
+        QueuePollInterval = TimeSpan.FromSeconds(15), // Adjust as needed
+        InvisibilityTimeout = TimeSpan.FromMinutes(5), // Adjust as needed
+        JobExpirationCheckInterval = TimeSpan.FromDays(7) // Set expiration time
     })));
 
 
@@ -77,7 +80,7 @@ builder.Services.TryAddEnumerable(new[]
     {
         // Type-based services
         ServiceDescriptor.Singleton<IMachineTranslator, MMT>(),
-    //ServiceDescriptor.Singleton<IMachineTranslator, MachineTranslator2>(),
+        //ServiceDescriptor.Singleton<IMachineTranslator, MachineTranslator2>(),
     });
 
 builder.Services.AddDefaultIdentity<ApplicationUser>(options =>
