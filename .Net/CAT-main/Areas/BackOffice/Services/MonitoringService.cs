@@ -76,8 +76,9 @@ namespace CAT.Areas.BackOffice.Services
                 {
                     id = orderEx.Id,
                     clientId = orderEx.ClientId,
-                    companyName = orderEx.Client.Company.Name,
                     clientName = orderEx.ClientName,
+                    companyId = orderEx.Client.Company.Id,
+                    companyName = orderEx.Client.Company.Name,
                     dateCreated = orderEx.DateCreated,
                     words = orderEx.Words,
                     fee = orderEx.Fee,
