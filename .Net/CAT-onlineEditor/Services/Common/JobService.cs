@@ -38,44 +38,51 @@ namespace CAT.Services.Common
 
         public async Task<JobData> GetJobData(int jobId)
         {
-            //get the job
-            var job = await _dbContextContainer.MainContext.Jobs.AsNoTracking().Include(j => j.Quote).Where(j => j.Id == jobId).FirstOrDefaultAsync();
-
-            //get the workflow
-            var newJobStep = await _dbContextContainer.MainContext.WorkflowSteps.AsNoTracking()
-                .FirstOrDefaultAsync(ws => ws.JobId == jobId && ws.TaskId == (int)CAT.Enums.Task.NewJob);
-
-            //check if the job was processed
-            if (newJobStep?.Status < 2)
-                throw new Exception("The job has not been processed yet.");
-
-            //document
-            var document = _dbContextContainer.MainContext.Documents.Find(job!.SourceDocumentId);
-
-            //load the translation units
-            var translationUnits = await _dbContextContainer.TranslationUnitsContext.TranslationUnit
-                             .Where(tu => tu.documentId == document!.Id).OrderBy(tu => tu.tuid).ToListAsync();
-
-            var translationUnitDTOs = _mapper.Map<TranslationUnitDTO[]>(translationUnits);
-            foreach (var tu in translationUnitDTOs)
+            try
             {
-                tu.isEditAllowed = true;
+                //get the job
+                var job = await _dbContextContainer.MainContext.Jobs.AsNoTracking().Include(j => j.Quote).Where(j => j.Id == jobId).FirstOrDefaultAsync();
+
+                //get the workflow
+                var newJobStep = await _dbContextContainer.MainContext.WorkflowSteps.AsNoTracking()
+                    .FirstOrDefaultAsync(ws => ws.JobId == jobId && ws.TaskId == (int)CAT.Enums.Task.NewJob);
+
+                //check if the job was processed
+                if (newJobStep?.Status < 2)
+                    throw new Exception("The job has not been processed yet.");
+
+                //document
+                var document = _dbContextContainer.MainContext.Documents.Find(job!.SourceDocumentId);
+
+                //load the translation units
+                var translationUnits = await _dbContextContainer.TranslationUnitsContext.TranslationUnit
+                                 .Where(tu => tu.documentId == document!.Id).OrderBy(tu => tu.tuid).ToListAsync();
+
+                var translationUnitDTOs = _mapper.Map<TranslationUnitDTO[]>(translationUnits);
+                foreach (var tu in translationUnitDTOs)
+                {
+                    tu.isEditAllowed = true;
+                }
+
+                //get the TMs
+                var order = await _dbContextContainer.MainContext.Orders.Include(o => o.Client).AsNoTracking().Where(o => o.Id == job.OrderId).FirstAsync();
+                var tmAssignments = _catConnector.GetTMAssignments(order.Client.CompanyId, job.Quote!.SourceLanguage, job.Quote!.TargetLanguage,
+                    job.Quote!.Speciality, true);
+
+                var jobData = new JobData
+                {
+                    idJob = jobId,
+                    translationUnits = translationUnitDTOs.ToList(),
+                    tmAssignments = new List<TMAssignment>(tmAssignments),
+                    tbAssignments = null!
+                };
+
+                return jobData;
             }
-
-            //get the TMs
-            var order = await _dbContextContainer.MainContext.Orders.Include(o => o.Client).AsNoTracking().Where(o => o.Id == job.OrderId).FirstAsync();
-            var tmAssignments = _catConnector.GetTMAssignments(order.Client.CompanyId, job.Quote!.SourceLanguage, job.Quote!.TargetLanguage,
-                job.Quote!.Speciality, true);
-
-            var jobData = new JobData
+            catch (Exception ex)
             {
-                idJob = jobId,
-                translationUnits = translationUnitDTOs.ToList(),
-                tmAssignments = new List<TMAssignment>(tmAssignments),
-                tbAssignments = null!
-            };
-
-            return jobData;
+                throw;
+            }
         }
 
         private static long GetMaskForTask(JobData jobDataData)

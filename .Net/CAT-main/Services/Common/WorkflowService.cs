@@ -242,7 +242,7 @@ namespace CAT.Services.Common
 
             newJobStep.CompletionDate = DateTime.Now;
             newJobStep.Status = (int)WorkflowStatus.InProgress;
-            var completed = _taskProcessor.ProcessTask(newJobStep);
+            var completed = await _taskProcessor.ProcessTaskAsync(newJobStep);
             await _dbContextContainer.MainContext.SaveChangesAsync();
 
             if (completed)
@@ -259,7 +259,7 @@ namespace CAT.Services.Common
 
             //get the next step
             var nextStep = workflowSteps.FirstOrDefault(ws => ws.StepOrder == currentStep.StepOrder + 1);
-            var completed = _taskProcessor.ProcessTask(nextStep!);
+            var completed = await _taskProcessor.ProcessTaskAsync(nextStep!);
 
             currentStep.CompletionDate = DateTime.Now;
             currentStep.Status = (int)WorkflowStatus.Completed;

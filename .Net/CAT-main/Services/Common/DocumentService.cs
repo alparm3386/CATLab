@@ -33,7 +33,7 @@ namespace CAT.Services.Common
             _languageService = languageService;
         }
 
-        public async Task<Document> CreateDocumentAsync(byte[] fileContent, string originalFileName, DocumentType documentType)
+        public async Task<Document> CreateDocumentAsync(int jobId, byte[] fileContent, string originalFileName, DocumentType documentType)
         {
             try
             {
@@ -52,6 +52,7 @@ namespace CAT.Services.Common
                 //create the document
                 var document = new Document()
                 {
+                    JobId = jobId,
                     FileName = fileName,
                     OriginalFileName = originalFileName,
                     DocumentType = (int)documentType,

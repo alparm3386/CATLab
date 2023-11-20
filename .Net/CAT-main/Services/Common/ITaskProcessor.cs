@@ -4,6 +4,6 @@ namespace CAT.Services.Common
 {
     public interface ITaskProcessor
     {
-        bool ProcessTask(WorkflowStep workflowStep);
+        Task<bool> ProcessTaskAsync(WorkflowStep workflowStep);
     }
 }

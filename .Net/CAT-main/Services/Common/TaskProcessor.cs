@@ -25,7 +25,7 @@ namespace CAT.Services.Common
             _languageService = languageService;
         }
 
-        public async Task<bool> ProcessTask(WorkflowStep workflowStep)
+        public async Task<bool> ProcessTaskAsync(WorkflowStep workflowStep)
         {
             //parse and pre-translate the document
             if (workflowStep.TaskId == (int)Task.NewJob)
@@ -47,7 +47,11 @@ namespace CAT.Services.Common
                 //save the document
                 var outDirectory = _configuration["OutputFilesFolder"];
                 var filePath = FileHelper.CreateFileNameForTask(outDirectory!, document!.OriginalFileName, targetLanguage, Task.AIProcess);
-                var document = await _documentService.CreateDocumentAsync(outFile!.Content!, filePath, DocumentType.AI);
+                document = await _documentService.CreateDocumentAsync(workflowStep.JobId, outFile!.Content!, filePath, DocumentType.AI);
+
+                //update the completed document
+                job.CompletedDocumentId = document.Id;
+
                 return true;
             }
 

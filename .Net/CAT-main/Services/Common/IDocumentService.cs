@@ -8,6 +8,7 @@ namespace CAT.Services.Common
         public Task<TempDocument> CreateTempDocumentAsync(IFormFile formFile, DocumentType documentType, int filterId);
 
         public Task<Document> CreateDocumentFromTempDocumentAsync(int tempDocumentId);
-        Task<Document> CreateDocumentAsync(byte[] fileContent, string originalFileName, DocumentType documentType);
+
+        Task<Document> CreateDocumentAsync(int jobId, byte[] fileContent, string originalFileName, DocumentType documentType);
     }
 }
