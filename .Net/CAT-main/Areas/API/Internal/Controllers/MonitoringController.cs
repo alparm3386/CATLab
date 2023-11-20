@@ -89,5 +89,29 @@ namespace CAT.Areas.API.Internal.Controllers
                 return Problem("Server error");
             }
         }
+
+        [HttpGet("GetJobData")]
+        public IActionResult DownloadDocument(int id)
+        {
+            // Define the file path and name on the server
+            string filePath = _monitoringService.
+
+            // Check if the file exists
+            if (!System.IO.File.Exists(filePath))
+            {
+                return NotFound(); // Return a 404 Not Found response if the file does not exist
+            }
+
+            // Get the file's content type
+            string contentType = "application/octet-stream"; // Set the appropriate content type for your file
+
+            // Define the file download response
+            var fileContentResult = new FileContentResult(System.IO.File.ReadAllBytes(filePath), contentType)
+            {
+                FileDownloadName = "YourFile.txt" // Set the desired name for the downloaded file
+            };
+
+            return fileContentResult;
+        }
     }
 }

@@ -21,23 +21,8 @@ import { ModalService } from '../../../cat-common/services/modal.service';
 export class AppComponent {
   title = 'monitoring details';
 
-  public jobData = {
-    jobId: {},
-    orderId: {},
-    dateProcessed: {},
-    sourceLanguage: '',
-    targetLanguage: '',
-    speciality: {},
-    specialityName: '',
-    speed: '',
-    service: '',
-    serviceName: '',
-    documents: [],
-    words: {},
-    fee: {},
-    workflowSteps: [],
-    companyName: '',
-    companyId: '',
+  public jobData: any = {
+    // initial properties here
   };
 
   constructor(private location: Location, private dataService: DataService, private spinnerService: SpinnerService,

@@ -164,6 +164,10 @@ namespace CAT.Areas.BackOffice.Services
                         .ThenInclude(c => c.Company)
                         .Where(j => j.Id == jobId).FirstOrDefaultAsync();
 
+            //client user
+            var clientUser = await _dbContextContainer.IdentityContext.Users.Where(user => user.Id == job!.Order!.Client.UserId).FirstOrDefaultAsync();
+            job!.Order!.Client.User = clientUser!;
+
             //PM
             var pmUser = await _dbContextContainer.IdentityContext.Users.Where(user => user.Id == job!.Order!.Client.Company.PMId).FirstOrDefaultAsync();
             job!.Order!.Client.Company.ProjectManager = pmUser!;
@@ -258,6 +262,8 @@ namespace CAT.Areas.BackOffice.Services
                 workflowSteps,
                 companyName = job.Order!.Client.Company.Name,
                 companyId = job.Order!.Client.Company.Id,
+                clientId = job!.Order!.Client.Id,
+                clientName = job!.Order!.Client.User.FullName,
                 projectManager = pmUser!.FullName,
                 pmId = job!.Order!.Client.Company.PMId,
                 allocations = allocations

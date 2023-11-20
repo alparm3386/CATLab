@@ -4,19 +4,20 @@
       <div class="card-body">
         <div class="d-flex">
           <div class="me-auto">
-            <b>Service:</b> {{ jobData.serviceName }}
+            <b>#</b> {{ jobData.orderId }} / {{ jobData.jobId }}
           </div>
           <div class="me-auto">
-            {{ jobData.orderId }} / {{ jobData.jobId }}
+            <b>Service: </b> {{ jobData.serviceName }}
           </div>
           <div class="me-auto">
-            {{ jobData.sourceLanguage }} To {{ jobData.targetLanguage }} {{ jobData.specialityName }}
+            <b>Job: </b> {{ jobData.sourceLanguage }} To {{ jobData.targetLanguage }} {{ jobData.specialityName }}
           </div>
           <div class="me-auto">
-            {{ jobData.words }} words
+            <b>Words: </b> {{ jobData.words }}
           </div>
           <div class="ms-auto">
-            <a href="/BackOffice/Companies/Details?id={{ jobData.companyId }}" target="_blank"> {{ jobData.companyName }} </a>
+            <b>Client: </b> <a href="/BackOffice/Companies/Details?id={{ jobData.companyId }}" target="_blank"> {{ jobData.companyName }} </a> - 
+            <a href="/BackOffice/Clients/Details?id={{ jobData.clientId }}" target="_blank"> {{ jobData.clientName }} </a>
           </div>
         </div>
       </div>
