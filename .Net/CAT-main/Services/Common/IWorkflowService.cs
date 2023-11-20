@@ -2,7 +2,8 @@
 {
     public interface IWorkflowService
     {
-        public Task CreateWorkflowAsync(int orderId);
-        void StartNextStep(int jobId);
+        System.Threading.Tasks.Task CreateWorkflowAsync(int orderId);
+        System.Threading.Tasks.Task StartNextStepAsync(int jobId);
+        Task StartWorkflowAsync(int jobId);
     }
 }

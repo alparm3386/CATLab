@@ -102,10 +102,7 @@ namespace CAT.Services.Common
 
             //Process the jobs
             foreach (var job in jobs)
-            {
-                var processId = BackgroundJob.Enqueue(() => _workflowService.StartNextStep(job.Id));
-                //_jobService.ProcessJob(job.Id);
-            }
+                await _workflowService.StartWorkflowAsync(job.Id);
         }
     }
 }

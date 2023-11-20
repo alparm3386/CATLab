@@ -70,12 +70,9 @@ namespace CAT.Areas.BackOffice.Services
                                          join doc in _dbContextContainer.MainContext.Documents on job.SourceDocumentId equals doc.Id
                                          join sourceLang in _dbContextContainer.MainContext.Languages on job.Quote!.SourceLanguage equals sourceLang.Id
                                          join targetLang in _dbContextContainer.MainContext.Languages on job.Quote!.TargetLanguage equals targetLang.Id
-                                         join jobProcess in _dbContextContainer.MainContext.JobProcesses on job.Id equals jobProcess.JobId
-                                         into jobProcessesGroup from jobProcess in jobProcessesGroup.DefaultIfEmpty()
                                          select new
                                          {
                                              jobId = job.Id,
-                                             dateProcessed = jobProcess != null ? jobProcess.ProcessEnded : (DateTime?)null,
                                              sourceLanguage = sourceLang.Name,
                                              targetLanguage = targetLang.Name,
                                              speciality = job.Quote!.Speciality,
@@ -95,7 +92,6 @@ namespace CAT.Areas.BackOffice.Services
                     var job = new
                     {
                         dsJob.jobId,
-                        dsJob.dateProcessed,
                         dsJob.sourceLanguage,
                         dsJob.targetLanguage,
                         dsJob.speciality,
@@ -146,9 +142,6 @@ namespace CAT.Areas.BackOffice.Services
                         .ThenInclude(o => o!.Client)
                         .ThenInclude(c => c.Company)
                         .Where(j => j.Id == jobId).FirstOrDefaultAsync();
-
-            //job process
-            var jobProcess = await _dbContextContainer.MainContext.JobProcesses.Where(jp => jp.JobId == jobId).FirstOrDefaultAsync();
 
             //PM
             var pmUser = await _dbContextContainer.IdentityContext.Users.Where(user => user.Id == job!.Order!.Client.Company.PMId).FirstOrDefaultAsync();
@@ -227,7 +220,6 @@ namespace CAT.Areas.BackOffice.Services
             {
                 jobId = job.Id,
                 orderId = job.OrderId,
-                dateProcessed = jobProcess?.ProcessEnded,
                 sourceLanguage = languages!.sourceLang,
                 targetLanguage = languages.targetLang,
                 sourceLangId = job.Quote!.SourceLanguage,

@@ -5,6 +5,5 @@ namespace CAT.Services.Common
     public interface IJobService
     {
         FileData CreateDocument(int idJob, string userId, bool updateTM);
-        void ProcessJob(int idJob);
     }
 }

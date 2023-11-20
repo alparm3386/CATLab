@@ -58,14 +58,11 @@ namespace CAT.Areas.BackOffice.Controllers
 
                 var jobsViewModels = await (from job in _dbContextContainer.MainContext.Jobs
                                             join document in _dbContextContainer.MainContext.Documents on job.SourceDocumentId equals document.Id
-                                            join jobProcess in _dbContextContainer.MainContext.JobProcesses on job.Id equals jobProcess.JobId 
-                                            into jobProcessesGroup from jobProcess in jobProcessesGroup.DefaultIfEmpty()
                                             select new JobViewModel
                                             {
                                                 Id = job.Id,
                                                 Analysis = "",
                                                 DateCreated = job.Order!.DateCreated,
-                                                DateProcessed = jobProcess != null ? jobProcess.ProcessEnded : (DateTime?)null,
                                                 Fee = job.Quote!.Fee,
                                                 OriginalFileName = document.OriginalFileName
                                             }).ToListAsync();
@@ -88,15 +85,12 @@ namespace CAT.Areas.BackOffice.Controllers
 
             var jobsViewModels = await (from job in _dbContextContainer.MainContext.Jobs
                                         join document in _dbContextContainer.MainContext.Documents on job.SourceDocumentId equals document.Id
-                                        join jobProcess in _dbContextContainer.MainContext.JobProcesses on job.Id equals jobProcess.JobId 
-                                        into jobProcessesGroup from jobProcess in jobProcessesGroup.DefaultIfEmpty()
                                         where job.Id == id
                                         select new JobViewModel
                                         {
                                             Id = job.Id,
                                             Analysis = "",
                                             DateCreated = job.Order!.DateCreated,
-                                            DateProcessed = jobProcess != null ? jobProcess.ProcessEnded : (DateTime?)null,
                                             Fee = job.Quote!.Fee,
                                             OriginalFileName = document.OriginalFileName
                                         }).FirstOrDefaultAsync();
@@ -334,34 +328,5 @@ namespace CAT.Areas.BackOffice.Controllers
                 return RedirectToAction(nameof(Index));
             }
         }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        [Route("Jobs/ProcessJob")] // explicit routing
-        public async Task<IActionResult> ProcessJob(int? id)
-        {
-            if (id == null)
-                return Problem("Invalid job ID.");
-
-            var error = "";
-            await System.Threading.Tasks.Task.Run(() =>
-            {
-                try
-                {
-                    //BackgroundJob.Enqueue(() => _jobService.ProcessJob((int)id));
-                    _jobService.ProcessJob((int)id);
-                }
-                catch (Exception ex)
-                {
-                    error = "An error occurred while processing the job." + ex.Message;
-                }
-            });
-
-            if (String.IsNullOrEmpty(error))
-                return Json(new { success = true, message = "Job processed successfully." });
-            else
-                return Problem(title: "An error occurred while processing the job." + error);
-        }
-
     }
 }

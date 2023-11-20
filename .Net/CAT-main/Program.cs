@@ -49,6 +49,7 @@ builder.Services.AddScoped<IMonitoringService, MonitoringService>();
 builder.Services.AddScoped<IAdminService, AdminService>();
 builder.Services.AddScoped<IWorkflowService, WorkflowService>();
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<ITaskProcessor, TaskProcessor>();
 //builder.Services.AddSingleton<MainDbContextFactory>();
 builder.Services.AddSingleton<CatClientFactory>();
 

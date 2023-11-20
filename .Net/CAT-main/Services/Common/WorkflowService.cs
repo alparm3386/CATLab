@@ -4,6 +4,7 @@ using CAT.Enums;
 using CAT.Models.Entities.Main;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
+using Xunit.Sdk;
 using Task = CAT.Enums.Task;
 
 namespace CAT.Services.Common
@@ -14,16 +15,18 @@ namespace CAT.Services.Common
         private readonly IConfiguration _configuration;
         private readonly IQuoteService _quoteService;
         private readonly IDocumentService _documentService;
+        private readonly ITaskProcessor _taskProcessor;
         private readonly IMapper _mapper;
         private readonly ILogger _logger;
 
         public WorkflowService(DbContextContainer dbContextContainer, IConfiguration configuration, IDocumentService documentService,
-            IQuoteService quoteService, IMapper mapper, ILogger<WorkflowService> logger)
+            ITaskProcessor taskProcessor, IQuoteService quoteService, IMapper mapper, ILogger<WorkflowService> logger)
         {
             _dbContextContainer = dbContextContainer;
             _configuration = configuration;
             _quoteService = quoteService;
             _documentService = documentService;
+            _taskProcessor = taskProcessor;
             _logger = logger;
             _mapper = mapper;
         }
@@ -230,21 +233,51 @@ namespace CAT.Services.Common
             await _dbContextContainer.MainContext.SaveChangesAsync();
         }
 
-        public async void StartNextStep(int jobId)
+        public async System.Threading.Tasks.Task StartWorkflowAsync(int jobId)
+        {
+            var workflowSteps = await _dbContextContainer.MainContext.WorkflowSteps.Where(ws => ws.JobId == jobId).ToListAsync();
+            var newJobStep = workflowSteps.FirstOrDefault(ws => ws.TaskId == (int)Task.NewJob);
+            if (newJobStep == null || newJobStep.Status != (int)WorkflowStatus.NotStarted)
+                throw new Exception("Invalid workflow or the workflow already started.");
+
+            await StartNextStepAsync(jobId);
+        }
+
+        public async System.Threading.Tasks.Task StartNextStepAsync(int jobId)
         {
             //get the workflow steps
             var workflowSteps  = await _dbContextContainer.MainContext.WorkflowSteps.Where(ws => ws.JobId == jobId).ToListAsync();
-            var currentStep = workflowSteps.Select(ws => ws.Status == (int)WorkflowStatus.InProgress).FirstOrDefault();
-            if (workflowSteps.All(ws => ws.Status == (int)WorkflowStatus.NotStarted))
-            { 
-            }
+            var currentStep = workflowSteps.FirstOrDefault(ws => ws.Status == (int)WorkflowStatus.InProgress);
+            if (currentStep == null)
+                throw new Exception("Invalid operation.");
 
+            currentStep.CompletionDate = DateTime.Now;
+            currentStep.Status = (int)WorkflowStatus.Completed;
+
+            //get the next step
+            var nextStep = workflowSteps.FirstOrDefault(ws => ws.StepOrder == currentStep.StepOrder + 1);
+            ProcessStep(nextStep);
+
+            await _dbContextContainer.MainContext.SaveChangesAsync();
+        }
+
+        private void ProcessStep(WorkflowStep? currentStep)
+        {
+            if (currentStep == null)
+                throw new ArgumentNullException(nameof(WorkflowStep));
+
+            //we should implement a task processor
+            if (currentStep.TaskId == (int)Task.AIProcess)
+                _taskProcessor.ProcessTaks(currentStep.JobId, (Task)currentStep.TaskId);
+
+            currentStep.StartDate = DateTime.Now;
+            currentStep.Status = (int)WorkflowStatus.InProgress;
         }
 
         private WorkflowStep CreateWorkflowStep(Job job, WorkflowStep previousStep, Task task) 
-        { 
+        {
             //calculate fields for the workflow step
-            var workflowStep = new WorkflowStep() 
+            var workflowStep = new WorkflowStep()
             {
                 JobId = job.Id,
                 StepOrder = previousStep != null ? previousStep.StepOrder + 1 : 0,

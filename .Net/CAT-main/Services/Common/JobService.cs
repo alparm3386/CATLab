@@ -25,33 +25,6 @@ namespace CAT.Services.Common
             _mapper = mapper;
         }
 
-        //[AutomaticRetry(Attempts = 3, DelaysInSeconds = new[] { 60, 60, 60 })]
-        public void ProcessJob(int jobId)
-        {
-            //job process
-            var jobProcess = _dbContextContainer.MainContext.JobProcesses.Where(jp => jp.JobId == jobId).FirstOrDefault();
-
-            if (jobProcess == null)
-            {
-                jobProcess = new JobProcess();
-                jobProcess.JobId = jobId;
-                jobProcess.ProcessStarted = DateTime.Now;
-                //jobProcess.ProcessId = "n/a";
-                _dbContextContainer.MainContext.JobProcesses.Add(jobProcess);
-                _dbContextContainer.MainContext.SaveChanges();
-            }
-            else
-            {
-                //check if it is parsed already
-                if (jobProcess?.ProcessEnded != null)
-                    throw new Exception("Already processed.");
-            }
-
-            _catConnector.ParseDoc(jobId);
-            jobProcess!.ProcessEnded = DateTime.Now;
-                _dbContextContainer.MainContext.SaveChanges();
-        }
-
         public FileData CreateDocument(int idJob, string userId, bool updateTM)
         {
             return _catConnector.CreateDoc(idJob, userId, updateTM);

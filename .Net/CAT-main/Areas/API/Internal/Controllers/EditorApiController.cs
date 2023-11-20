@@ -28,24 +28,6 @@ namespace CAT.Areas.API.Internal.Controllers
             _mapper = mapper;
         }
 
-        [HttpGet("ProcessJob/{jobId}")]
-        public IActionResult ProcessJob(int jobId)
-        {
-            // Offload the execution of CreateDocument to a separate thread.
-            //var fileData = await Task.Run(() => _jobService.CreateDocument(jobId));
-            try
-            {
-                _jobService.ProcessJob(jobId);
-
-                return Ok();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError("ProcessJob error -> jobId: " + jobId + " " + ex.Message);
-                return BadRequest(new { message = ex.Message });
-            }
-        }
-
         [HttpGet("DownloadDocument/{jobId}")]
         public IActionResult DownloadDocument(int jobId)
         {
