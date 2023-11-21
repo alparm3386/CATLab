@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using CAT.Data;
+using CAT.Infrastructure;
 using CAT.Models.Entities.Main;
 using Hangfire;
 using Microsoft.EntityFrameworkCore;
@@ -11,7 +12,6 @@ namespace CAT.Services.Common
         private readonly DbContextContainer _dbContextContainer;
         private readonly IConfiguration _configuration;
         private readonly IQuoteService _quoteService;
-        private readonly IServiceProvider _serviceProvider;
         private readonly IDocumentService _documentService;
         private readonly IWorkflowService _workflowService;
         private readonly IJobService _jobService;
@@ -20,12 +20,11 @@ namespace CAT.Services.Common
 
         public OrderService(DbContextContainer dbContextContainer, IConfiguration configuration,
             IDocumentService documentService, IWorkflowService workflowService, IQuoteService quoteService,
-            IServiceProvider serviceProvider, IJobService jobService, IMapper mapper, ILogger<OrderService> logger) 
+            IJobService jobService, IMapper mapper, ILogger<OrderService> logger)
         {
             _dbContextContainer = dbContextContainer;
             _configuration = configuration;
             _quoteService = quoteService;
-            _serviceProvider = serviceProvider;
             _jobService = jobService;
             _documentService = documentService;
             _workflowService = workflowService;
@@ -60,7 +59,7 @@ namespace CAT.Services.Common
             {
                 //create document from temp document
                 var document = await _documentService.CreateDocumentFromTempDocumentAsync(tempQuote.TempDocumentId);
-                
+
                 //create quote
                 var quote = await _quoteService.CreateQuoteFromTempQuoteAsync(tempQuote.Id);
 
@@ -105,25 +104,40 @@ namespace CAT.Services.Common
             //Process the jobs
             foreach (var job in jobs)
             {
+                new Thread(() =>
+                {
+                    try
+                    {
+                        StartWorkflow(job.Id);
+                    }
+                    catch (Exception ex)
+                    {
+                    }
+                }).Start();
                 //await _workflowService.StartWorkflowAsync(job.Id);
-                var processId = BackgroundJob.Enqueue(() => StartWorkflow(job.Id));
+                //var processId = BackgroundJob.Enqueue(() => OrderService.StartWorkflow(job.Id));
+                //var processId = BackgroundJob.Enqueue<IOrderService>(x => x.StartWorkflow(job.Id));
             }
         }
 
         [AutomaticRetry(Attempts = 3, DelaysInSeconds = new[] { 0, 120, 240 })]
-        public void StartWorkflow(int jobId)
+        public static void StartWorkflow(int jobId)
         {
-            try
+            using (var scope = ServiceLocator.ServiceProvider.CreateScope())
             {
-                using (var scope = _serviceProvider.CreateScope())
+                ILogger logger = default!;
+                try
                 {
                     var workflowService = scope.ServiceProvider.GetRequiredService<IWorkflowService>();
+                    logger = scope.ServiceProvider.GetRequiredService<ILogger<OrderService>>();
+
                     workflowService.StartWorkflowAsync(jobId).Wait(); // Wait for the async operation to complete
                 }
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError("StartWorkflow -> Error: " + ex.ToString());
+                catch (Exception ex)
+                {
+                    //logger!.LogError("StartWorkflow -> Error: " + ex.ToString());
+                    throw;
+                }
             }
         }
     }

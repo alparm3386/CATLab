@@ -6,6 +6,7 @@ namespace CAT.Services.Common
     {
         Task<Job> AddJobToOrderAsync(int orderId, int quoteId, int documentId);
         Task<Order> CreateOrderAsync(int clientId);
+        Task FinalizeOrderAsync(int orderId);
         public Task LaunchStoredQuotesAsync(int idStoredQuote);
     }
 }

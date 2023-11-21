@@ -26,6 +26,7 @@ using System.Configuration;
 using Microsoft.Extensions.Configuration;
 using Microsoft.AspNetCore.DataProtection;
 using NuGet.Protocol;
+using CAT.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -128,7 +129,10 @@ builder.Services.AddTransient<IEmailSender, SmtpEmailSender>();
 builder.Services.AddHangfireServer();
 var app = builder.Build();
 
+ServiceLocator.ServiceProvider = app.Services;
+
 //hangfire
+GlobalConfiguration.Configuration.UseActivator(new HangfireActivator(app.Services));
 app.UseHangfireDashboard();
 
 //EnsureRoleCreated(app).Wait();
@@ -304,15 +308,15 @@ void AddMySqlContext(WebApplicationBuilder builder)
     });
 }
 
-void AddSQLServerContext(WebApplicationBuilder builder)
-{
-    builder.Services.AddDbContext<IdentityDbContext>(options =>
-        options.UseSqlServer(builder.Configuration.GetConnectionString("IdentityDbConnection") ?? throw new InvalidOperationException("Connection string 'IdentityDbConnection' not found.")));
-    builder.Services.AddDbContext<MainDbContext>(options =>
-        options.UseSqlServer(builder.Configuration.GetConnectionString("MainDbConnection") ?? throw new InvalidOperationException("Connection string 'MainDbConnection' not found.")));
-    builder.Services.AddDbContext<TranslationUnitsDbContext>(options =>
-        options.UseSqlServer(builder.Configuration.GetConnectionString("TranslationUnitsDbConnection") ?? throw new InvalidOperationException("Connection string 'TranslationUnitsDbConnection' not found.")));
-}
+//void AddSQLServerContext(WebApplicationBuilder builder)
+//{
+//    builder.Services.AddDbContext<IdentityDbContext>(options =>
+//        options.UseSqlServer(builder.Configuration.GetConnectionString("IdentityDbConnection") ?? throw new InvalidOperationException("Connection string 'IdentityDbConnection' not found.")));
+//    builder.Services.AddDbContext<MainDbContext>(options =>
+//        options.UseSqlServer(builder.Configuration.GetConnectionString("MainDbConnection") ?? throw new InvalidOperationException("Connection string 'MainDbConnection' not found.")));
+//    builder.Services.AddDbContext<TranslationUnitsDbContext>(options =>
+//        options.UseSqlServer(builder.Configuration.GetConnectionString("TranslationUnitsDbConnection") ?? throw new InvalidOperationException("Connection string 'TranslationUnitsDbConnection' not found.")));
+//}
 
 //async System.Threading.Tasks.Task EnsureRoleCreated(WebApplication app)
 //{

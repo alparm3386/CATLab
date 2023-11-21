@@ -194,14 +194,14 @@ namespace CAT.Services.Common
         {
             //get the document
             var document = await _dbContextContainer.MainContext.Documents.FirstOrDefaultAsync(d => d.Id == documentId);
-            var documentFolder = GetDocumentFolder((DocumentType)document!.DocumentType);
+            var documentFolder = GetDocumentFolderForDocumentType((DocumentType)document!.DocumentType);
 
             var filePath = Path.Combine(documentFolder, document!.FileName);
 
             return filePath;
         }
 
-        private string GetDocumentFolder(DocumentType documentType)
+        public string GetDocumentFolderForDocumentType(DocumentType documentType)
         {
             switch (documentType)
             {
