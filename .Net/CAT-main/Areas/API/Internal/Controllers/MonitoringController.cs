@@ -1,6 +1,7 @@
 ﻿using CAT.Areas.BackOffice.Services;
 using CAT.Infrastructure;
 using CAT.Models.Entities.Main;
+using CAT.Services.Common;
 using Hangfire;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -17,10 +18,12 @@ namespace CAT.Areas.API.Internal.Controllers
     public class MonitoringController : ControllerBase
     {
         private IMonitoringService _monitoringService;
+        private readonly IDocumentService _documentService;
 
-        public MonitoringController(IMonitoringService monitoringService)
+        public MonitoringController(IMonitoringService monitoringService, IDocumentService documentService)
         {
             _monitoringService = monitoringService;
+            _documentService = documentService;
         }
 
         [HttpGet("GetMonitoringData")]
@@ -90,17 +93,15 @@ namespace CAT.Areas.API.Internal.Controllers
             }
         }
 
-        [HttpGet("GetJobData")]
-        public IActionResult DownloadDocument(int id)
+        [HttpGet("DownloadDocument/{id}")]
+        public async Task<IActionResult> DownloadDocument(int id)
         {
             // Define the file path and name on the server
-            string filePath = _monitoringService.
+            string filePath = await _documentService.GetDocumentFolderAsync(id);
 
             // Check if the file exists
             if (!System.IO.File.Exists(filePath))
-            {
                 return NotFound(); // Return a 404 Not Found response if the file does not exist
-            }
 
             // Get the file's content type
             string contentType = "application/octet-stream"; // Set the appropriate content type for your file
@@ -108,7 +109,7 @@ namespace CAT.Areas.API.Internal.Controllers
             // Define the file download response
             var fileContentResult = new FileContentResult(System.IO.File.ReadAllBytes(filePath), contentType)
             {
-                FileDownloadName = "YourFile.txt" // Set the desired name for the downloaded file
+                FileDownloadName = Path.GetFileName(filePath)
             };
 
             return fileContentResult;

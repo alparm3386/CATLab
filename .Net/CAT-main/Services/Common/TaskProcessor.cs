@@ -15,8 +15,8 @@ namespace CAT.Services.Common
         private readonly ICATConnector _catconnector;
         private readonly ILanguageService _languageService;
 
-        public TaskProcessor(IConfiguration configuration, IDocumentService documentService, DbContextContainer dbContextContainer, ICATConnector catconnector,
-            ILanguageService languageService)
+        public TaskProcessor(IConfiguration configuration, IDocumentService documentService, DbContextContainer dbContextContainer, 
+            ICATConnector catconnector, ILanguageService languageService)
         {
             _configuration = configuration;
             _documentService = documentService;
@@ -45,9 +45,9 @@ namespace CAT.Services.Common
                 var targetLanguage = await _languageService.GetLanguageCodeIso639_1Async(job!.Quote!.TargetLanguage);
 
                 //save the document
-                var outDirectory = _configuration["OutputFilesFolder"];
+                var outDirectory = await _documentService.GetDocumentFolderAsync(document!.DocumentType);
                 var filePath = FileHelper.CreateFileNameForTask(outDirectory!, document!.OriginalFileName, targetLanguage, Task.AIProcess);
-                document = await _documentService.CreateDocumentAsync(workflowStep.JobId, outFile!.Content!, filePath, DocumentType.AI);
+                document = await _documentService.CreateDocumentAsync(workflowStep.JobId, outFile!.Content!, Path.GetFileName(filePath), DocumentType.AI);
 
                 //update the completed document
                 job.CompletedDocumentId = document.Id;

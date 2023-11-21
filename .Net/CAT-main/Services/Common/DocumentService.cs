@@ -190,81 +190,26 @@ namespace CAT.Services.Common
             return document;
         }
 
-        public async Task<string> GetDocumentPath(int documentId)
+        public async Task<string> GetDocumentFolderAsync(int documentId)
         {
-            var tempDocument = await _dbContextContainer.MainContext.Documents.FirstOrDefaultAsync(d => d.Id == documentId);
+            //get the document
+            var document = await _dbContextContainer.MainContext.Documents.FirstOrDefaultAsync(d => d.Id == documentId);
+            var documentFolder = GetDocumentFolder((DocumentType)document!.DocumentType);
 
-            //check if the file exists in the source files folder
-            var tempFolder = _configuration["TempFolder"]!;
-            var sourceFolder = _configuration["SourceFilesFolder"]!;
-            var tempDocPath = Path.Combine(tempFolder, tempDocument!.FileName);
-            var docCandidate = await _dbContextContainer.MainContext.Documents.FirstOrDefaultAsync(d => d.MD5Hash == tempDocument.MD5Hash);
-            var fileName = tempDocument!.OriginalFileName;
-            var bCopy = false;
-            if (docCandidate == null)
-                bCopy = true;
-            else
+            var filePath = Path.Combine(documentFolder, document!.FileName);
+
+            return filePath;
+        }
+
+        private string GetDocumentFolder(DocumentType documentType)
+        {
+            switch (documentType)
             {
-                var docCandidatePath = Path.Combine(sourceFolder, docCandidate.FileName);
-                var fiDocCandidate = new FileInfo(docCandidatePath);
-                var fiTempDoc = new FileInfo(tempDocPath);
-                if (fiTempDoc.Length != fiDocCandidate.Length)
-                    bCopy = true;
-                else
-                    fileName = docCandidate.FileName;
+                case DocumentType.Original:
+                    return _configuration["SourceFilesFolder"]!;
+                default:
+                    return _configuration["OutputFilesFolder"]!;
             }
-
-            //copy the file 
-            if (bCopy)
-            {
-                var filePath = Path.Combine(sourceFolder, tempDocument.OriginalFileName);
-                fileName = FileHelper.GetUniqueFileName(filePath);
-                filePath = Path.Combine(sourceFolder, fileName);
-                File.Copy(tempDocPath, filePath);
-            }
-
-            //create the document
-            var document = new Document()
-            {
-                FileName = fileName,
-                OriginalFileName = tempDocument.OriginalFileName,
-                DocumentType = (int)DocumentType.Original,
-                MD5Hash = tempDocument.MD5Hash
-            };
-            _dbContextContainer.MainContext.Documents.Add(document);
-            await _dbContextContainer.MainContext.SaveChangesAsync();
-
-            //save the analysis
-            var tempQuote = await _dbContextContainer.MainContext.TempQuotes.FirstOrDefaultAsync(q => q.TempDocumentId == tempDocumentId);
-            if (tempQuote != null)
-            {
-                if (tempQuote.Analysis != null)
-                {
-                    var stat = JsonConvert.DeserializeObject<Statistics>(tempQuote.Analysis);
-                    var analysis = new Analysis()
-                    {
-                        DocumentId = document.Id,
-                        Match_101 = stat!.match_101,
-                        Match_100 = stat!.match_100,
-                        Match_95_99 = stat!.match_95_99,
-                        Match_85_94 = stat!.match_85_94,
-                        Match_75_84 = stat!.match_75_84,
-                        Match_50_74 = stat!.match_50_74,
-                        No_match = stat!.no_match,
-                        Repetitions = stat!.repetitions,
-                        SourceLanguage = tempQuote.SourceLanguage,
-                        TargetLanguage = tempQuote.TargetLanguage,
-                        Speciality = tempQuote.SpecialityId,
-                        Type = AnalysisType.Normal
-                    };
-                    _dbContextContainer.MainContext.Analisys.Add(analysis);
-                }
-            }
-
-            //save all the changes
-            await _dbContextContainer.MainContext.SaveChangesAsync();
-
-            return document;
         }
     }
 }

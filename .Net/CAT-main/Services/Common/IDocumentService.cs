@@ -10,5 +10,6 @@ namespace CAT.Services.Common
         public Task<Document> CreateDocumentFromTempDocumentAsync(int tempDocumentId);
 
         Task<Document> CreateDocumentAsync(int jobId, byte[] fileContent, string originalFileName, DocumentType documentType);
+        Task<string> GetDocumentFolderAsync(int documentId);
     }
 }
