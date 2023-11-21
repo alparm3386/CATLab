@@ -21,14 +21,16 @@ namespace CAT.Areas.BackOffice.Services
     {
         private readonly DbContextContainer _dbContextContainer;
         private readonly IConfiguration _configuration;
+        private readonly IWorkflowService _workflowService;
         private readonly IMapper _mapper;
         private readonly ILogger _logger;
 
-        public MonitoringService(DbContextContainer dbContextContainer, IConfiguration configuration,
+        public MonitoringService(DbContextContainer dbContextContainer, IConfiguration configuration, IWorkflowService workflowService,
             IMapper mapper, ILogger<MonitoringService> logger)
         {
             _dbContextContainer = dbContextContainer;
             _configuration = configuration;
+            _workflowService = workflowService;
             _logger = logger;
             _mapper = mapper;
         }
@@ -283,6 +285,11 @@ namespace CAT.Areas.BackOffice.Services
                 if (allocatedTask != null)
                     throw new CATException("The job is already allocated.");
 
+                var nextStep = await _workflowService.GetNextStepAsync(jobId);
+                if (nextStep.TaskId != (int)task)
+                    throw new CATException("The task cannot be allocated.");
+
+
                 //create the allocation
                 var allocation = new Allocation()
                 {
@@ -298,6 +305,11 @@ namespace CAT.Areas.BackOffice.Services
 
                 //save the allocation
                 _dbContextContainer.MainContext.Allocations.Add(allocation);
+
+                //start the  next step
+                await _workflowService.StartNextStepAsync(jobId);
+
+                //save
                 await _dbContextContainer.MainContext.SaveChangesAsync();
             }
             catch (Exception ex)
@@ -322,6 +334,9 @@ namespace CAT.Areas.BackOffice.Services
                 allocation.DeallocatedBy = userId;
                 allocation.DeallocationDate = DateTime.Now;
                 allocation.ReturnUnsatisfactory = true;
+
+                //roll back the job
+                await _workflowService.StepBackAsync(jobId);
 
                 //save the allocation
                 await _dbContextContainer.MainContext.SaveChangesAsync();

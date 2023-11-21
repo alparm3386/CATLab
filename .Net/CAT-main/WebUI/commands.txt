@@ -8,7 +8,6 @@ ng build monitoring --base-href /Monitoring/dist/monitoring/ --output-hashing=no
 
 ng generate component Analysis --standalone --inline-template
 
-ng build --base-href /Monitoring/dist/monitoring/ --output-hashing=none
 ng build monitoringDetails --base-href /MonitoringDetails/dist/monitoring-details/ --output-hashing=none
 
 

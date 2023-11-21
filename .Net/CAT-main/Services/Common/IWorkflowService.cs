@@ -1,9 +1,18 @@
-﻿namespace CAT.Services.Common
+﻿using CAT.Models.Entities.Main;
+
+namespace CAT.Services.Common
 {
     public interface IWorkflowService
     {
-        System.Threading.Tasks.Task CreateWorkflowAsync(int orderId);
-        System.Threading.Tasks.Task StartNextStepAsync(int jobId);
+        Task CreateWorkflowAsync(int orderId);
+
+        Task<WorkflowStep> GetCurrentStepAsync(int jobId);
+
+        Task<WorkflowStep> GetNextStepAsync(int jobId);
+
+        Task StartNextStepAsync(int jobId);
+
         Task StartWorkflowAsync(int jobId);
+        Task StepBackAsync(int jobId);
     }
 }

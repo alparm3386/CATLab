@@ -271,7 +271,47 @@ namespace CAT.Services.Common
                 await StartNextStepAsync(jobId);
         }
 
-        private WorkflowStep CreateWorkflowStep(Job job, WorkflowStep previousStep, Task task) 
+        public async System.Threading.Tasks.Task StepBackAsync(int jobId)
+        {
+            //get the workflow steps
+            var workflowSteps = await _dbContextContainer.MainContext.WorkflowSteps.Where(ws => ws.JobId == jobId).ToListAsync();
+            var currentStep = workflowSteps.FirstOrDefault(ws => ws.Status == (int)WorkflowStatus.InProgress);
+            if (currentStep == null)
+                throw new Exception("Invalid operation.");
+
+            //get the previous step
+            var prevStep = workflowSteps.FirstOrDefault(ws => ws.StepOrder == currentStep.StepOrder - 1);
+
+            currentStep.CompletionDate = DateTime.MinValue;
+            currentStep.Status = (int)WorkflowStatus.NotStarted;
+            prevStep!.StartDate = DateTime.Now;
+            prevStep.Status = (int)WorkflowStatus.InProgress;
+            await _dbContextContainer.MainContext.SaveChangesAsync();
+        }
+
+        public async Task<WorkflowStep> GetNextStepAsync(int jobId)
+        {
+            //get the workflow steps
+            var workflowSteps = await _dbContextContainer.MainContext.WorkflowSteps.Where(ws => ws.JobId == jobId).ToListAsync();
+            var currentStep = workflowSteps.FirstOrDefault(ws => ws.Status == (int)WorkflowStatus.InProgress);
+            if (currentStep == null)
+                throw new Exception("Invalid workflow.");
+
+            var nextStep = workflowSteps.FirstOrDefault(ws => ws.StepOrder == currentStep.StepOrder + 1);
+
+            return nextStep!;
+        }
+
+        public async Task<WorkflowStep> GetCurrentStepAsync(int jobId)
+        {
+            //get the workflow steps
+            var workflowSteps = await _dbContextContainer.MainContext.WorkflowSteps.Where(ws => ws.JobId == jobId).ToListAsync();
+            var currentStep = workflowSteps.FirstOrDefault(ws => ws.Status == (int)WorkflowStatus.InProgress);
+
+            return currentStep!;
+        }
+
+        private WorkflowStep CreateWorkflowStep(Job job, WorkflowStep previousStep, Task task)
         {
             //calculate fields for the workflow step
             var workflowStep = new WorkflowStep()
@@ -282,7 +322,7 @@ namespace CAT.Services.Common
                 Status = 0,
                 StartDate = DateTime.Now,
                 ScheduledDate = DateTime.Now.AddMinutes(15),
-                Fee = task == Task.Revision ?  (decimal?)(job.Quote!.Words * 0.1) : 0
+                Fee = task == Task.Revision ? (decimal?)(job.Quote!.Words * 0.1) : 0
             };
 
             return workflowStep;
