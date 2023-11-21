@@ -10,16 +10,16 @@
     <h4>Order</h4>
     <hr />
     <dl class="row">
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             Document
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Model.TempDocument.OriginalFileName
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             Source language
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @ViewBag.Languages[@Model.SourceLanguage]
         </dd>
         <dt class="col-sm-2">
@@ -58,9 +58,50 @@
         <dd class="col-sm-10">
             £@Model.Fee
         </dd>
+        <dt class="col-sm-2">
+            Analysis
+        </dt>
+        <dd class="col-sm-10">
+            <a href="#" id="openPopupLink">View Analysis</a>
+        </dd>
     </dl>
 </div>
 <div>
     <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
     <a asp-action="Index">Back to List</a>
 </div>
+
+@{
+    ViewBag.ModalTitle = "Analysis";
+
+    // Parse the JSON string into a dynamic object
+    var analysisData = Newtonsoft.Json.JsonConvert.DeserializeObject<dynamic>(Model!.Analysis!);
+
+    // Create an HTML table from the dynamic object
+    var tableHtml = "<table class='table table-bordered'>";
+    foreach (var property in analysisData)
+    {
+        tableHtml += "<tr><td>" + property.Name + "</td><td>" + property.Value + "</td></tr>";
+    }
+    tableHtml += "</table>";
+
+    ViewBag.ModalContent = tableHtml;
+}
+
+
+@await Html.PartialAsync("_ModalPartial")
+
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $("#openPopupLink").click(function () {
+                // Modify modal content and show the modal as needed
+                // Example: $("#genericModal .modal-title").text("Custom Title");
+                // Example: $("#genericModal .modal-body").html("Custom content goes here");
+                $("#genericModal").modal('show');
+            });
+        });
+    </script>
+}
+

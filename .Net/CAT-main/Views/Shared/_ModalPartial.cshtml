@@ -1,0 +1,33 @@
+﻿@{
+}
+
+<!-- Modal HTML and JavaScript -->
+<div class="modal fade" id="genericModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">@ViewBag.ModalTitle</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="closeModal()">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- Content of the modal goes here -->
+                <pre>@Html.Raw(ViewBag.ModalContent)</pre>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="closeModal()">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function closeModal() {
+        $("#genericModal").modal("hide");
+    }
+
+    $(document).ready(function () {
+    });
+</script>
+
