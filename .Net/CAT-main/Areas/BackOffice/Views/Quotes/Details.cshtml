@@ -74,18 +74,24 @@
 @{
     ViewBag.ModalTitle = "Analysis";
 
-    // Parse the JSON string into a dynamic object
-    var analysisData = Newtonsoft.Json.JsonConvert.DeserializeObject<dynamic>(Model!.Analysis!);
-
-    // Create an HTML table from the dynamic object
-    var tableHtml = "<table class='table table-bordered'>";
-    foreach (var property in analysisData)
+    if (Model?.Analysis != null)
     {
-        tableHtml += "<tr><td>" + property.Name + "</td><td>" + property.Value + "</td></tr>";
-    }
-    tableHtml += "</table>";
+        // Parse the JSON string into a dynamic object
+        var analysisData = Newtonsoft.Json.JsonConvert.DeserializeObject<dynamic>(Model.Analysis);
 
-    ViewBag.ModalContent = tableHtml;
+        // Create an HTML table from the dynamic object
+        var tableHtml = "<table class='table table-bordered'>";
+        foreach (var property in analysisData!)
+        {
+            if (property.Name == "sourceLang" || property.Name == "targetLang")
+                tableHtml += "<tr><td><b>" + property.Name + "</b></td><td>" + @ViewBag.Languages[(int)property.Value] + "</td></tr>";
+            else
+                tableHtml += "<tr><td><b>" + property.Name + "</b></td><td>" + property.Value + "</td></tr>";
+        }
+        tableHtml += "</table>";
+
+        ViewBag.ModalContent = tableHtml;
+    }
 }
 
 
