@@ -2,7 +2,7 @@
 <div class="row">
   <!-- Iterate over each workflow step and display its data -->
   <ng-container *ngFor="let workflowStep of workflowSteps">
-    <div class="m-workflow-step mr-1 mb-3" *ngIf="workflowStep.taskId !== 0">
+    <div class="m-workflow-step mr-1 mb-3">
       <div class="bg-warning bg-gradient rounded-4 small text-center" [ngClass]="{
            'bg-opacity-75': workflowStep.status === 2,
            'bg-opacity-50': workflowStep.status === 1,

@@ -17,8 +17,14 @@ export class WorkflowComponent {
     this._workflowSteps = steps.sort((a: any, b: any) => {
       return a.stepOrder - b.stepOrder;
     });
+
+    //filter the steps
+    this._workflowSteps = this._workflowSteps.filter((step: { taskId: any; }) =>
+      step.taskId !== 0 && step.taskId !== 100
+    );
   }
 
+ 
   get workflowSteps(): any[] {
     return this._workflowSteps;
   }
