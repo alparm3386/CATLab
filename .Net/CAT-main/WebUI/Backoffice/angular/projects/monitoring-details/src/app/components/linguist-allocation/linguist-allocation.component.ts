@@ -9,6 +9,7 @@ import { DataService } from '../../services/data.service';
 import { TaskDisplayName } from '../../../../../cat-common/enums/task.enum';
 
 
+
 @Component({
   selector: 'app-linguist-allocation',
   standalone: true,
@@ -67,16 +68,16 @@ export class LinguistAllocationComponent {
     });
   }
 
-  allocateLinguist(linguist: any): void {
-    this.modalService.confirm(`Are you sure that you want to allocate ${linguist.user.fullName}?`,
+  allocateLinguist(user: any): void {
+    this.modalService.confirm(`Are you sure that you want to allocate ${user.fullName}?`,
       `Allocate ${this.taskName}`)
       .result.then((result) => {
         if (result) {
           this.isLoading = true; // Start the loader before the async operation.
-          this.dataService.allocateJob(this.jobData.jobId, this.task, linguist.user.id).subscribe({
+          this.dataService.allocateJob(this.jobData.jobId, this.task, user.id).subscribe({
             next: data => {
               this.isLoading = false;
-              this.modalService.alert(`${linguist.user.fullName} is allocated to the job #${this.jobData.jobId}`, "Allocation").result.then(() => {
+              this.modalService.alert(`${user.fullName} is allocated to the job #${this.jobData.jobId}`, "Allocation").result.then(() => {
                 // Refresh the whole page
                 window.location.reload();
               });
@@ -84,7 +85,7 @@ export class LinguistAllocationComponent {
             },
             error: error => {
               this.isLoading = false;
-              this.modalService.alert(`There was an error allocating ${linguist.user.fullName} to the job #${this.jobData.jobId}`, "Error");
+              this.modalService.alert(`There was an error allocating ${user.fullName} to the job #${this.jobData.jobId}`, "Error");
             }
           });
         }

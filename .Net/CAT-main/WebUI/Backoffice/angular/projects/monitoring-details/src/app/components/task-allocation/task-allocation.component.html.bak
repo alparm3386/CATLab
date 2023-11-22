@@ -1,0 +1,33 @@
+
+<div class="d-flex">
+  <label> {{ getDisplayNameForTask(task) }}:</label>
+  <!-- Dropdown Menu -->
+  <div class="dropdown ms-auto">
+    <button class="btn dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+      ☰
+    </button>
+    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+      <li *ngIf="!allocation"><a class="dropdown-item" href="#" (click)=allocateLinguist($event)>Allocate linguist</a></li>
+      <li *ngIf="!allocation"><a class="dropdown-item" href="#" (click)=allocateToYorself($event)>Allocate to yourself</a></li>
+      <li *ngIf="allocation"><a class="dropdown-item" href="#" (click)=deallocateLinguist($event)>Dellocate linguist</a></li>
+      <li><a class="dropdown-item" href="#" (click)=modifyFee($event)>Modify fee</a></li>
+    </ul>
+  </div>
+</div>
+<div class="text-primary ms-2 d-flex" *ngIf="allocation">
+  <!-- Profile Image -->
+  <div class="profile-image-container">
+    <img [src]="'/api/common/GetProfilePicture/' + allocation?.user.id" alt="Profile Image">
+  </div>
+
+  <!-- Content: Linguist name and aggregates -->
+  <div class="content-left">
+    <div><a href="{{'/backoffice/linguists/details/' + allocation?.linguist.id}}" target="_blank">{{ allocation?.user.fullName }}</a></div>
+    <div class="small text-secondary-emphasis">
+      <b>total jobs:</b> 112
+      <b>total words:</b> 32
+      <b>roles:</b> translator, reviser
+    </div>
+  </div>
+
+</div>

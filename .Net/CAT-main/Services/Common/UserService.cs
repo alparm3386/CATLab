@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Identity.Client;
+using System.Security.Claims;
 
 namespace CAT.Services.Common
 {
@@ -15,18 +16,20 @@ namespace CAT.Services.Common
         private readonly IdentityDbContext _identityDbContext;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IConfiguration _configuration;
         private readonly IMapper _mapper;
         private readonly ILogger _logger;
 
         public UserService(DbContextContainer dbContextContainer, IdentityDbContext identityDbContext, 
-            UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, 
+            UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, IHttpContextAccessor httpContextAccessor,
             IConfiguration configuration, IMapper mapper, ILogger<UserService> logger)
         {
             _dbContextContainer = dbContextContainer;
             _identityDbContext = identityDbContext;
             _userManager = userManager;
             _roleManager = roleManager;
+            _httpContextAccessor = httpContextAccessor;
             _configuration = configuration;
             _mapper = mapper;
             _logger = logger;
@@ -47,6 +50,11 @@ namespace CAT.Services.Common
         public async Task<IList<ApplicationUser>> GetUsersInRoleAsync(string roleName)
         {
             return await _userManager.GetUsersInRoleAsync(roleName);
+        }
+
+        public string GetCurrentUserId()
+        {
+            return _httpContextAccessor.HttpContext!.User.FindFirst(ClaimTypes.NameIdentifier)?.Value!;
         }
     }
 }

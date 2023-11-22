@@ -57,7 +57,11 @@ namespace CAT.Areas.API.Internal.Controllers
             {
                 var allocatorUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
                 if (allocatorUserId == null)
-                    allocatorUserId = new Guid().ToString();
+                    throw new Exception("Invalid user.");
+
+                if (userId == "0")
+                    userId = allocatorUserId;
+
                 await _monitoringService.AllocateJob(jobId, (Enums.Task)task, userId, allocatorUserId);
 
                 return Ok(new { Message = "Allocated" });

@@ -1,17 +1,22 @@
 import { Component, Input } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { LinguistAllocationComponent } from '../linguist-allocation/linguist-allocation.component';
 import { ModalService } from '../../../../../cat-common/services/modal.service';
 import { TaskDisplayName } from '../../../../../cat-common/enums/task.enum';
 import { DataService } from '../../services/data.service';
 import * as _ from 'underscore';
 import { LinguistDeallocationComponent } from '../linguist-deallocation/linguist-deallocation.component';
+import { SpinnerService } from '../../../../../cat-common/services/spinner.service';
+import { timeout } from 'rxjs';
 
 
 @Component({
   selector: 'app-task-allocation',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
+  providers: [ NgbActiveModal ],
   templateUrl: `./task-allocation.component.html`,
   styleUrls: ['./task-allocation.component.scss']
 })
@@ -22,7 +27,8 @@ export class TaskAllocationComponent {
 
   public allocation: any;
 
-  constructor(private dataService: DataService, private modalService: ModalService) {
+  constructor(private dataService: DataService, public activeModal: NgbActiveModal, private modalService: ModalService,
+    private spinnerService: SpinnerService) {
   }
 
   ngOnInit(): void {
@@ -35,17 +41,22 @@ export class TaskAllocationComponent {
     event.preventDefault();
     this.modalService.confirm("Are you sure that you want to allocate this job to yourself?", "Confirm").result.then((result) => {
       if (result) {
-      //  this.dataService.allocateJob(this.jobData.jobId, this.task, linguist.user.id).subscribe({
-      //    next: data => {
-      //      this.isLoading = false;
-      //      this.modalService.alert(`${linguist.user.fullName} is allocated to the job #${this.jobData.jobId}`, "Allocation");
-      //      this.activeModal.close();
-      //    },
-      //    error: error => {
-      //      this.isLoading = false;
-      //      this.modalService.alert(`There was an error allocating ${linguist.user.fullName} to the job #${this.jobData.jobId}`, "Error");
-      //    }
-      //  });
+        this.spinnerService.show();
+        //setTimeout((param: string) => { alert(param); this.spinnerService.hide(); }, 1000, "John");
+        this.dataService.allocateJob(this.jobData.jobId, this.task, '0').subscribe({
+          next: data => {
+            this.spinnerService.hide();
+            this.modalService.alert(`The job #${this.jobData.jobId} is allocated to you.`, "Allocation").result.then(() => {
+              // Refresh the whole page
+              window.location.reload();
+            });
+            this.activeModal.close();
+          },
+          error: error => {
+            this.spinnerService.hide();
+            this.modalService.alert(`There was an error allocating the job #${this.jobData.jobId} to you.`, "Error");
+          }
+        });
       }
     });
   }

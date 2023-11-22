@@ -1,10 +1,12 @@
 ﻿using AutoMapper;
+using CAT.Areas.Identity.Data;
 using CAT.Data;
 using CAT.Enums;
 using CAT.Helpers;
 using CAT.Infrastructure;
 using CAT.Models.Entities.Main;
 using CAT.Services.Common;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.CodeAnalysis;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
@@ -22,15 +24,17 @@ namespace CAT.Areas.BackOffice.Services
         private readonly DbContextContainer _dbContextContainer;
         private readonly IConfiguration _configuration;
         private readonly IWorkflowService _workflowService;
+        private readonly IUserService _userService;
         private readonly IMapper _mapper;
         private readonly ILogger _logger;
 
         public MonitoringService(DbContextContainer dbContextContainer, IConfiguration configuration, IWorkflowService workflowService,
-            IMapper mapper, ILogger<MonitoringService> logger)
+            IUserService userService, IMapper mapper, ILogger<MonitoringService> logger)
         {
             _dbContextContainer = dbContextContainer;
             _configuration = configuration;
             _workflowService = workflowService;
+            _userService = userService;
             _logger = logger;
             _mapper = mapper;
         }
@@ -59,7 +63,8 @@ namespace CAT.Areas.BackOffice.Services
             //orders with clients
             var ordersWithClients = (from order in orders
                                      join user in _dbContextContainer.IdentityContext.Users on order.Client.UserId equals user.Id
-                                     select new {
+                                     select new
+                                     {
                                          order.Id,
                                          order.ClientId,
                                          order.Client,
@@ -214,19 +219,23 @@ namespace CAT.Areas.BackOffice.Services
 
             //get the allocations
             var allocations = await _dbContextContainer.MainContext.Allocations.AsNoTracking()
-                .Include(a => a.Linguist)
                 .Where(a => a.JobId == jobId).ToListAsync();
-
 
             //join into the users table 
             var joinedAllocations = (from allocation in allocations
+                                     join linguist in _dbContextContainer.MainContext.Linguists
+                                     on allocation.UserId equals linguist.UserId into linguistGroup
+                                     from linguist in linguistGroup.DefaultIfEmpty()
                                      join user in _dbContextContainer.IdentityContext.Users
                                      on allocation.UserId equals user.Id
-                                     select new { Allocation = allocation, User = user })
+                                     select new { Allocation = allocation, Linguist = linguist, User = user })
                                          .ToList();
+
+
             //update the allocations with the user
             allocations = joinedAllocations.Select(j =>
             {
+                j.Allocation.Linguist = j.Linguist ?? new Linguist() { Id = -1 };
                 j.Allocation.Linguist.User = j.User;
                 return j.Allocation;
             }).ToList();
@@ -234,17 +243,19 @@ namespace CAT.Areas.BackOffice.Services
 
             //get the language names
             var languages = await (from sourceLang in _dbContextContainer.MainContext.Languages
-                            join targetLang in _dbContextContainer.MainContext.Languages on job.Quote!.TargetLanguage equals targetLang.Id
-                            where sourceLang.Id == job.Quote!.SourceLanguage
-                            select new
-                            {
-                                sourceLang = sourceLang.Name,
-                                targetLang = targetLang.Name
-                            }).FirstOrDefaultAsync();
+                                   join targetLang in _dbContextContainer.MainContext.Languages on job.Quote!.TargetLanguage equals targetLang.Id
+                                   where sourceLang.Id == job.Quote!.SourceLanguage
+                                   select new
+                                   {
+                                       sourceLang = sourceLang.Name,
+                                       targetLang = targetLang.Name
+                                   }).FirstOrDefaultAsync();
 
+            var currentUser = _userService.GetCurrentUserId();
 
             var jobData = new
             {
+                currentUser,
                 jobId = job.Id,
                 orderId = job.OrderId,
                 sourceLanguage = languages!.sourceLang,
@@ -268,7 +279,7 @@ namespace CAT.Areas.BackOffice.Services
                 clientName = job!.Order!.Client.User.FullName,
                 projectManager = pmUser!.FullName,
                 pmId = job!.Order!.Client.Company.PMId,
-                allocations = allocations
+                allocations
             };
 
             return jobData;
@@ -288,7 +299,6 @@ namespace CAT.Areas.BackOffice.Services
                 var nextStep = await _workflowService.GetNextStepAsync(jobId);
                 if (nextStep.TaskId != (int)task)
                     throw new CATException("The task cannot be allocated.");
-
 
                 //create the allocation
                 var allocation = new Allocation()

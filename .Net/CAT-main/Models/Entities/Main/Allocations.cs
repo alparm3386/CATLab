@@ -18,6 +18,7 @@ namespace CAT.Models.Entities.Main
 
         public string UserId { get; set; } = default!;
 
+        [NotMapped]
         public Linguist Linguist { get; set; } = default!;
 
         public int TaskId { get; set; }
