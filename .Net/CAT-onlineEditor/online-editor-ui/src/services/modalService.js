@@ -1,5 +1,5 @@
 ﻿// modalService.js
-import { showAlert } from 'store/appUiSlice';
+import { showAlert, showConfirm } from 'store/appUiSlice';
 
 const modalService = (() => {
     const service = {
@@ -13,6 +13,14 @@ const modalService = (() => {
             return new Promise((resolve) => {
                 this.dispatchFunction(
                     showAlert({ title: title, message: message, callback: resolve })
+                );
+            });
+        },
+
+        showConfirm: function (title, message) {
+            return new Promise((resolve) => {
+                this.dispatchFunction(
+                    showConfirm({ title: title, message: message, callback: resolve })
                 );
             });
         },

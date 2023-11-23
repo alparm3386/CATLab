@@ -47,17 +47,18 @@ const TopMenu = () => {
 
     const handleSubmitJob = async () => {
         try {
-            dispatch(showLoading(true));
-            editorApi.submitJob().then((response) => {
-                dispatch(showLoading(false));
-                modalService.showAlert("Success", "Job submitted").then((result) => {
-                    window.location.href = "/";
-                });
-            }).catch((error) => {
-                dispatch(showLoading(false));
-                modalService.showAlert("Error", "Unable to submit job")
+            modalService.showConfirm("Confirm", "Are you sure").then((result) => {
+                dispatch(showLoading(true));
+                editorApi.submitJob().then((response) => {
+                    dispatch(showLoading(false));
+                    modalService.showAlert("Success", "Job submitted").then((result) => {
+                        window.location.href = "/";
+                    });
+                }).catch((error) => {
+                    dispatch(showLoading(false));
+                    modalService.showAlert("Error", "Unable to submit job")
+                })
             });
-
         } catch (error) {
             dispatch(showAlert({ title: 'Error', message: error.message }));
             console.error('There was a problem with the fetch operation:', error);
