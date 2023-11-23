@@ -3,6 +3,14 @@ using System.Reflection;
 
 namespace CAT.Enums
 {
+    public enum UserType
+    {
+        Unknown = -1,
+        Admin = 0,
+        Linguist = 1,
+        Client = 2
+    }
+
     public enum OEMode
     {
         Admin,

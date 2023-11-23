@@ -22,7 +22,7 @@ using System.Configuration;
 
 namespace CAT.Controllers.Api
 {
-    //[Authorize]
+    [Authorize]
     [ApiController]
     [Route("onlineeditor/api/[controller]")]
     public class EditorApiController : ControllerBase
@@ -33,15 +33,17 @@ namespace CAT.Controllers.Api
         private readonly IConfiguration _configuration;
         private readonly IMapper _mapper;
         private readonly IHttpClientFactory _httpClientFactory;
+        private readonly IUserService _userService;
 
         public EditorApiController(CATConnector catClientService, JobService jobService, IConfiguration configuration, IMapper mapper, 
-            ILogger<EditorApiController> logger, IHttpClientFactory httpClientFactory)
+            ILogger<EditorApiController> logger, IHttpClientFactory httpClientFactory, IUserService userService)
         {
             _catClientService = catClientService;
             _jobService = jobService;
             _mapper = mapper;
             _logger = logger;
             _httpClientFactory = httpClientFactory;
+            _userService = userService;
             _configuration = configuration;
         }
 
@@ -79,11 +81,13 @@ namespace CAT.Controllers.Api
         {
             try
             {
+                var currentUser = await _userService.GetCurrentUserAsync();
+
                 var decryptedDarams = EncryptionHelper.DecryptString(urlParams);
                 var queryParams = HttpUtility.ParseQueryString(decryptedDarams);
                 //load the job
                 var idJob = int.Parse(queryParams["idJob"]!);
-                var jobData = await _jobService.GetJobData(idJob);
+                var jobData = await _jobService.GetJobData(idJob, currentUser);
                 //save the job data into the session
                 SaveJobDataToSession(jobData);
 

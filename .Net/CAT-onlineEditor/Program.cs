@@ -36,11 +36,13 @@ builder.Services.AddScoped<JobService>();
 builder.Services.AddScoped<ILanguageService, LanguageService>();
 builder.Services.AddScoped<CATConnector>();
 builder.Services.AddSingleton<CatClientFactory>();
+builder.Services.AddScoped<IUserService, UserService>();
 
 builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
 builder.Services.AddHttpClient();
 
 builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
+    .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<IdentityDbContext>();
 // Add Razor Pages (needed for Identity)
 builder.Services.AddRazorPages();

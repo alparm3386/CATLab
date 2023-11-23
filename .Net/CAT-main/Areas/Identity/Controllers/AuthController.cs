@@ -24,14 +24,14 @@ namespace CAT.Areas.Identity.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login(LoginModel model)
         {
-            var result = await _signInManager.PasswordSignInAsync(model.Input.Email, model.Input.Password, false, false);
+            var result = await _signInManager.PasswordSignInAsync(model.Input.Username, model.Input.Password, false, false);
 
             if (!result.Succeeded)
             {
                 return Unauthorized(); // or however you want to handle failed login attempts
             }
 
-            var user = await _signInManager.UserManager.FindByEmailAsync(model.Input.Email);
+            var user = await _signInManager.UserManager.FindByEmailAsync(model.Input.Username);
             var token = _jwtService.GenerateJWT(user!);
 
             return Ok(new { Token = token });

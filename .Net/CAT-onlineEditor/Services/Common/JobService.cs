@@ -13,6 +13,7 @@ using CAT.Models.Entities.TranslationUnits;
 using CAT.Models.Common;
 using System.Net.Http;
 using CAT.Models.Entities.Main;
+using CAT.Areas.Identity.Data;
 
 namespace CAT.Services.Common
 {
@@ -25,8 +26,8 @@ namespace CAT.Services.Common
         private readonly ILogger _logger;
         private readonly IHttpClientFactory _httpClientFactory;
 
-        public JobService(DbContextContainer dbContextContainer, IConfiguration configuration, CATConnector catConnector, IHttpClientFactory httpClientFactory,
-            IMapper mapper, ILogger<JobService> logger)
+        public JobService(DbContextContainer dbContextContainer, IConfiguration configuration, CATConnector catConnector, 
+            IHttpClientFactory httpClientFactory, IMapper mapper, ILogger<JobService> logger)
         {
             _dbContextContainer = dbContextContainer;
             _configuration = configuration;
@@ -36,7 +37,7 @@ namespace CAT.Services.Common
             _mapper = mapper;
         }
 
-        public async Task<JobData> GetJobData(int jobId)
+        public async Task<JobData> GetJobData(int jobId, ApplicationUser user)
         {
             try
             {
@@ -44,12 +45,24 @@ namespace CAT.Services.Common
                 var job = await _dbContextContainer.MainContext.Jobs.AsNoTracking().Include(j => j.Quote).Where(j => j.Id == jobId).FirstOrDefaultAsync();
 
                 //get the workflow
-                var newJobStep = await _dbContextContainer.MainContext.WorkflowSteps.AsNoTracking()
-                    .FirstOrDefaultAsync(ws => ws.JobId == jobId && ws.TaskId == (int)CAT.Enums.Task.NewJob);
+                var workflowSteps = await _dbContextContainer.MainContext.WorkflowSteps.Where(ws => ws.JobId == jobId).AsNoTracking().ToListAsync();
 
                 //check if the job was processed
+                var newJobStep = workflowSteps.FirstOrDefault(ws => ws.TaskId == (int)Enums.Task.NewJob);
                 if (newJobStep?.Status < 2)
                     throw new Exception("The job has not been processed yet.");
+
+                //get the current task
+                var currentStep = workflowSteps.FirstOrDefault(ws => ws.Status == (int)Enums.WorkflowStatus.InProgress);
+
+                //check the allocation
+                if (user.UserType != UserType.Admin)
+                {
+                    var allocation = await _dbContextContainer.MainContext.Allocations
+                        .FirstOrDefaultAsync(allocation => allocation.JobId == jobId && allocation.UserId == user.Id);
+                    if (allocation == null)
+                        throw new Exception("The job is not allocated.");
+                }
 
                 //document
                 var document = _dbContextContainer.MainContext.Documents.Find(job!.SourceDocumentId);
@@ -69,17 +82,21 @@ namespace CAT.Services.Common
                 var tmAssignments = _catConnector.GetTMAssignments(order.Client.CompanyId, job.Quote!.SourceLanguage, job.Quote!.TargetLanguage,
                     job.Quote!.Speciality, true);
 
+
                 var jobData = new JobData
                 {
                     idJob = jobId,
                     translationUnits = translationUnitDTOs.ToList(),
                     tmAssignments = new List<TMAssignment>(tmAssignments),
-                    tbAssignments = null!
+                    tbAssignments = null!,
+                    task = currentStep!.TaskId,
+                    user = new { user.FullName, user.UserType },
+                    pmUser = new { FullName = "Christina von der Leyen", UserType.Admin }
                 };
 
                 return jobData;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 throw;
             }

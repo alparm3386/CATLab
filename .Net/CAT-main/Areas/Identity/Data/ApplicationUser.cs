@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using CAT.Enums;
+using Microsoft.AspNetCore.Identity;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CAT.Areas.Identity.Data
@@ -11,5 +12,8 @@ namespace CAT.Areas.Identity.Data
 
         [NotMapped]
         public String FullName { get { return FirstName + " " + LastName; } }
+
+        [NotMapped]
+        public UserType UserType { get; set; } = UserType.Unknown;
     }
 }

@@ -1,5 +1,6 @@
 ﻿// editorApi.js
 import axios from 'axios';
+import OEError from 'utils/OEError';
 
 const editorApi = (function () {
     let _apiClient = null;
@@ -36,7 +37,7 @@ const editorApi = (function () {
         },
 
         login: (username, password) => {
-            return _apiClient.post(_baseUrl + '/auth/login', { Email: username, Password: password });
+            return _apiClient.post(_baseUrl + '/auth/login', { Username: username, Password: password });
         },
 
         getJobData: () => {

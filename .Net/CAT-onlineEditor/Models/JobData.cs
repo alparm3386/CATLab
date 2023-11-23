@@ -8,5 +8,8 @@ namespace CAT.Models
         public List<TranslationUnitDTO> translationUnits = default!;
         public List<TMAssignment> tmAssignments = default!;
         public List<TBAssignment> tbAssignments = default!;
+        public int task;
+        public object user;
+        public object pmUser;
     }
 }

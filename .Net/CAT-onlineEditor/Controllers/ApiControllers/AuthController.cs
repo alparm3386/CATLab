@@ -26,14 +26,14 @@ namespace CAT.Controllers.Api
         {
             try
             {
-                var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, false, false);
+                var result = await _signInManager.PasswordSignInAsync(model.Username, model.Password, false, false);
 
                 if (!result.Succeeded)
                 {
                     return Unauthorized(); // or however you want to handle failed login attempts
                 }
 
-                var user = await _signInManager.UserManager.FindByEmailAsync(model.Email);
+                var user = await _signInManager.UserManager.FindByNameAsync(model.Username);
                 var token = _jwtService.GenerateJWT(user!);
 
                 return Ok(new { Token = token });

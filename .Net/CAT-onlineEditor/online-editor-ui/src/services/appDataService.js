@@ -14,6 +14,8 @@ const appDataService = (() => {
                 service.jobData = result.data;
                 dispatch(setTranslationUnits(service.jobData.translationUnits));
             } catch (error) {
+                if (error?.response?.status === 401) //Unauthorized
+                    return;
                 let msg = error.message;
                 if (error?.response?.data?.detail)
                     msg = error?.response?.data?.detail;

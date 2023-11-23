@@ -15,7 +15,8 @@ const TopMenu = () => {
             const response = await editorApi.downloadJob();
 
             if (response.status !== 200) {
-                throw new Error('Network response was not ok');
+                dispatch(showAlert({ title: 'Error', message: "Unable to download document." }));
+                return;
             }
 
             const contentDisposition = response.headers['content-disposition'];
@@ -38,6 +39,27 @@ const TopMenu = () => {
         }
     };
 
+    const handleSubmitJob = async () => {
+        try {
+            dispatch(showAlert({ title: 'Error', message: "Job submitted" }));
+            return;
+            const response = await editorApi.submitJob();
+
+            if (response.status !== 200) {
+                throw new Error('Unable to submit job');
+            }
+
+        } catch (error) {
+            dispatch(showAlert({ title: 'Error', message: error.message }));
+            console.error('There was a problem with the fetch operation:', error);
+        }
+    };
+
+    const isJobSubmit = () => {
+        return true;
+    };
+
+
     return (
         <Navbar bg="light" expand="lg">
             <Navbar.Brand>Logo</Navbar.Brand>
@@ -45,6 +67,7 @@ const TopMenu = () => {
             <Navbar.Collapse id="navbarNav">
                 <Nav>
                     <NavDropdown title="Job" id="navbarDropdown">
+                        {isJobSubmit() ? (<NavDropdown.Item onClick={handleSubmitJob}>Submit job</NavDropdown.Item>) : null}
                         <NavDropdown.Item onClick={handleDownloadJob}>Download job</NavDropdown.Item>
                     </NavDropdown>
                     <Nav.Link href="#">Features</Nav.Link>
