@@ -6,6 +6,7 @@ import { showAlert } from 'store/appUiSlice';
 import { useDispatch } from 'react-redux';
 import editorApi from 'services/editorApi';
 import utils from 'utils/utils';
+import modalService from 'services/modalService';
 
 const TopMenu = () => {
     const dispatch = useDispatch();
@@ -41,7 +42,8 @@ const TopMenu = () => {
 
     const handleSubmitJob = async () => {
         try {
-            dispatch(showAlert({ title: 'Error', message: "Job submitted" }));
+            //dispatch(showAlert({ title: 'Error', message: "Job submitted" }));
+            modalService.showAlert("Success", "Job submitted");
             return;
             const response = await editorApi.submitJob();
 

@@ -5,7 +5,7 @@ export const appUiSlice = createSlice({
     name: 'appUi',
     initialState: {
         login: { isOpen: false },
-        alert: { title: 'Alert', message: '', show: false },
+        alert: { title: 'Alert', message: '', show: false, callback: null },
         isLoading: false,
         statusBar: { message: '' },
 

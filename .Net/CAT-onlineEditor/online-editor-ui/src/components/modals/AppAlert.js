@@ -9,7 +9,10 @@ export const AppAlert = () => {
 
     const onClose = React.useCallback(event => {
         dispatch(showAlert({ title: '', message: '', show: false }));
-
+        if (alert.callback)
+        {
+            //call the function here 
+        }
     }, [dispatch]);
 
     return (

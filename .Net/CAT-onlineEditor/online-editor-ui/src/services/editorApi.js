@@ -1,6 +1,5 @@
 ﻿// editorApi.js
 import axios from 'axios';
-import OEError from 'utils/OEError';
 
 const editorApi = (function () {
     let _apiClient = null;

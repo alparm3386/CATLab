@@ -16,12 +16,15 @@ import TopMenu from 'components/navigation/TopMenu';
 import StatusBar from 'components/statusBar/StatusBar';
 import ModalContainer from 'components/modals/ModalContainer';
 import Spinner from 'components/common/Spinner';
+import modalService from 'services/modalService';
+
 
 //misc.
 import cookieHelper from 'utils/cookieHelper';
 
 function AppInit() {
     const dispatch = useDispatch();
+    modalService.initialize(dispatch);
     let ignore = false;
     console.log("App init ...");
 
