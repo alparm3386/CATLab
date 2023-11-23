@@ -85,7 +85,7 @@ namespace CAT.Services.Common
 
                 var jobData = new JobData
                 {
-                    idJob = jobId,
+                    jobId = jobId,
                     translationUnits = translationUnitDTOs.ToList(),
                     tmAssignments = new List<TMAssignment>(tmAssignments),
                     tbAssignments = null!,
@@ -207,7 +207,7 @@ namespace CAT.Services.Common
             if (sw.ElapsedMilliseconds > 1000)
             {
                 _logger.LogInformation("SaveSegment completed in " + sw.ElapsedMilliseconds +
-                    " idJob: " + jobData.idJob.ToString());
+                    " jobId: " + jobData.jobId.ToString());
             }
 
             return aRet.ToArray();
@@ -253,14 +253,14 @@ namespace CAT.Services.Common
                             var user = "0_2104";
                             var idSpeciality = 1;
                             var metadata = new Dictionary<String, String>() { { "user", user },
-                            { "jobId", jobData.idJob.ToString() }, { "speciality", idSpeciality.ToString() } };
+                            { "jobId", jobData.jobId.ToString() }, { "speciality", idSpeciality.ToString() } };
                             _catConnector.AddTMEntry(tmAssignment, sourceXml, targetXml, precedingXml!, followingXml!, metadata);
                         }
                     }
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogError("idJob: " + jobData.idJob + " " + ex.ToString());
+                    _logger.LogError("jobId: " + jobData.jobId + " " + ex.ToString());
                 }
             });
         }

@@ -12,16 +12,16 @@ namespace CAT.Services.Common
         private readonly IConfiguration _configuration;
         private readonly IDocumentService _documentService;
         private readonly DbContextContainer _dbContextContainer;
-        private readonly ICATConnector _catconnector;
+        private readonly ICATConnector _catConnector;
         private readonly ILanguageService _languageService;
 
         public TaskProcessor(IConfiguration configuration, IDocumentService documentService, DbContextContainer dbContextContainer, 
-            ICATConnector catconnector, ILanguageService languageService)
+            ICATConnector catConnector, ILanguageService languageService)
         {
             _configuration = configuration;
             _documentService = documentService;
             _dbContextContainer = dbContextContainer;
-            _catconnector = catconnector;
+            _catConnector = catConnector;
             _languageService = languageService;
         }
 
@@ -30,14 +30,14 @@ namespace CAT.Services.Common
             //parse and pre-translate the document
             if (workflowStep.TaskId == (int)Task.NewJob)
             {
-                _catconnector.ParseDoc(workflowStep.JobId);
+                _catConnector.ParseDoc(workflowStep.JobId);
                 return true;
             }
 
             if (workflowStep.TaskId == (int)Task.AIProcess)
             {
                 //assemble the document
-                var outFile = _catconnector.CreateDoc(workflowStep.JobId, "6fa6c2c7-14b1-44c1-9806-c76dac688078", false);
+                var outFile = _catConnector.CreateDoc(workflowStep.JobId, "6fa6c2c7-14b1-44c1-9806-c76dac688078", false);
 
                 //get the job details
                 var job = await _dbContextContainer.MainContext.Jobs.Include(j => j.Quote).FirstOrDefaultAsync(j => j.Id == workflowStep.JobId);

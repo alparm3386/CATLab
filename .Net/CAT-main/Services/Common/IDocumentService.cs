@@ -12,5 +12,6 @@ namespace CAT.Services.Common
         Task<Document> CreateDocumentAsync(int jobId, byte[] fileContent, string originalFileName, DocumentType documentType);
         Task<string> GetDocumentFolderAsync(int documentId);
         string GetDocumentFolderForDocumentType(DocumentType documentType);
+        DocumentType GetDocumentTypeForTask(Enums.Task taskId);
     }
 }

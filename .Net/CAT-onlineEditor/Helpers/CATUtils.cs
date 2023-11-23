@@ -69,9 +69,9 @@ namespace CAT.Helpers
             }
         }
 
-        public static String GetJobDataFolder(int idJob, String jobDataBaseFolder)
+        public static String GetJobDataFolder(int jobId, String jobDataBaseFolder)
         {
-            var jobDataFolder = Path.Combine(jobDataBaseFolder, idJob.ToString());
+            var jobDataFolder = Path.Combine(jobDataBaseFolder, jobId.ToString());
 
             //create the folder if it doesn't exists
             if (!Directory.Exists(jobDataFolder))
@@ -80,9 +80,9 @@ namespace CAT.Helpers
             return jobDataFolder;
         }
 
-        public static String CreateXlfFilePath(int idJob, DocumentType documentType, String jobDataBaseFolder)
+        public static String CreateXlfFilePath(int jobId, DocumentType documentType, String jobDataBaseFolder)
         {
-            var jobDataFolder = GetJobDataFolder(idJob, jobDataBaseFolder);
+            var jobDataFolder = GetJobDataFolder(jobId, jobDataBaseFolder);
             var xliffPath = Path.Combine(jobDataFolder, documentType.ToString() + ".xliff");
             if (File.Exists(xliffPath))
             {

@@ -254,9 +254,9 @@ namespace CAT.Services.Common
             }
         }
 
-        public static String GetParseDocLockString(int idJob)
+        public static String GetParseDocLockString(int jobId)
         {
-            return "ParseDoc_" + idJob.ToString();
+            return "ParseDoc_" + jobId.ToString();
         }
 
         public void ParseDoc(int jobId)
@@ -447,17 +447,17 @@ namespace CAT.Services.Common
             }
         }
 
-        public FileData CreateDoc(int idJob, string userId, bool updateTM)
+        public FileData CreateDoc(int jobId, string userId, bool updateTM)
         {
             var lstFilesToDelete = new List<String>();
             try
             {
                 //get the service
-                var jobDataFolder = CATUtils.GetJobDataFolder(idJob, _configuration["JobDataBaseFolder"]!);
+                var jobDataFolder = CATUtils.GetJobDataFolder(jobId, _configuration["JobDataBaseFolder"]!);
                 int iThreshold = 100;
 
                 //get the job details
-                var job = _dbContextContainer.MainContext.Jobs.Include(j => j.Quote).FirstOrDefault(j => j.Id == idJob);
+                var job = _dbContextContainer.MainContext.Jobs.Include(j => j.Quote).FirstOrDefault(j => j.Id == jobId);
 
                 //get the document
                 var document = _dbContextContainer.MainContext.Documents.Find(job!.SourceDocumentId);
@@ -490,7 +490,7 @@ namespace CAT.Services.Common
                 var targetLanguage = job!.Quote!.TargetLanguage!;
                 var sourceLangIso639_1 = _languageService.GetLanguageCodeIso639_1Async(sourceLanguage).Result;
                 var targetLangIso639_1 = _languageService.GetLanguageCodeIso639_1Async(targetLanguage).Result;
-                var xlifFilePath = CATUtils.CreateXlfFilePath(idJob, DocumentType.Original, _configuration["JobDataBaseFolder"]!, false);
+                var xlifFilePath = CATUtils.CreateXlfFilePath(jobId, DocumentType.Original, _configuration["JobDataBaseFolder"]!, false);
                 if (!File.Exists(xlifFilePath))
                 {
                     if (CATUtils.IsCompressedMemoQXliff(filePath))
@@ -650,7 +650,7 @@ namespace CAT.Services.Common
                 else if (intermediateFileType == IntermediateFileType.reconciliation)
                     docType = DATA.DataTypes.documentType.reconciledDocument;*/
 
-                String sXlfFilePath = CATUtils.CreateXlfFilePath(idJob, docType, _configuration["JobDataBaseFolder"]!, true);
+                String sXlfFilePath = CATUtils.CreateXlfFilePath(jobId, docType, _configuration["JobDataBaseFolder"]!, true);
                 xlfFile.Save(sXlfFilePath);
 
                 //create the document
@@ -744,19 +744,19 @@ namespace CAT.Services.Common
                     }
                 }
                 //post-process document
-                //sOutFilePath = DocumentProcessor.PostProcessDocument(idJob, tmpFilePath);
+                //sOutFilePath = DocumentProcessor.PostProcessDocument(jobId, tmpFilePath);
 
                 var fileData = new FileData()
                 {
                     Content = aOutFileBytes,
-                    FileName = "tmp" + idJob.ToString() + fileExtension
+                    FileName = "tmp" + jobId.ToString() + fileExtension
                 };
 
                 return fileData;
             }
             catch (Exception ex)
             {
-                _logger.LogError("CreateDoc Error -> idJob: " + idJob + " " + ex.Message);
+                _logger.LogError("CreateDoc Error -> jobId: " + jobId + " " + ex.Message);
                 throw;
             }
             finally

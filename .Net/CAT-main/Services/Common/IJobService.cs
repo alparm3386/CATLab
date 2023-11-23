@@ -4,6 +4,8 @@ namespace CAT.Services.Common
 {
     public interface IJobService
     {
-        FileData CreateDocument(int idJob, string userId, bool updateTM);
+        FileData CreateDocument(int jobId, string userId, bool updateTM);
+
+        Task SubmitJobAsync(int jobId, string userId);
     }
 }

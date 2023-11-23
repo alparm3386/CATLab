@@ -4,6 +4,7 @@ import { createSlice } from '@reduxjs/toolkit';
 export const appDataSlice = createSlice({
     name: 'appData',
     initialState: {
+        jobData: {},
         currentTuid: -1,
         targetEditbBoxContent: '',
         translationUnits: []
@@ -15,6 +16,9 @@ export const appDataSlice = createSlice({
         //setTargetEditbBoxContent: (state, action) => {
         //    state.targetEditbBoxContent = action.payload
         //},
+        setJobData: (state, action) => {
+            state.jobData = action.payload
+        },
         setTranslationUnits: (state, action) => {
             state.translationUnits = action.payload
         },
@@ -25,6 +29,6 @@ export const appDataSlice = createSlice({
     }
 });
 
-export const { setCurrentTuid, /*setTargetEditbBoxContent,*/ setTranslationUnits, updateTranslationUnitTarget } = appDataSlice.actions;
+export const { setCurrentTuid, setJobData, /*setTargetEditbBoxContent,*/ setTranslationUnits, updateTranslationUnitTarget } = appDataSlice.actions;
 
 export default appDataSlice.reducer;

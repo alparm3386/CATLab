@@ -1,7 +1,6 @@
 ﻿import React, { } from 'react';
-import { Modal, Alert } from 'react-bootstrap'
 import LoginForm from 'components/modals/LoginForm';
-import AppAlert from 'components/modals/AppAlert';
+import Alert from 'components/modals/Alert';
 
 export const ModalContainer = () => {
     //const message = useSelector((state) => state.appUi.statusBar.message);
@@ -9,7 +8,7 @@ export const ModalContainer = () => {
     return (
         <>
             <LoginForm />
-            <AppAlert />
+            <Alert />
         </>
     );
 };

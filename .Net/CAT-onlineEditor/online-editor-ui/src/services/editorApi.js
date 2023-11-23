@@ -108,6 +108,16 @@ const editorApi = (function () {
                 responseType: 'arraybuffer'
             });
         },
+
+        submitJob: () => {
+            // Ensure _jwt is a string (or handle other cases as needed)
+            return _apiClient.get(_baseUrl + '/EditorApi/SubmitJob?urlParams=' + encodeURIComponent(_urlParams), {
+                headers: {
+                    'Authorization': `Bearer ${_jwt}`
+                },
+                responseType: 'arraybuffer'
+            });
+        },
     }
 })();
 

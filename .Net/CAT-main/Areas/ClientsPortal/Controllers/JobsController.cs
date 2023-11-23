@@ -90,7 +90,6 @@ namespace CAT.Areas.ClientsPortal.Controllers
                 }
 
                 // Generate the URL
-                //string onlineEditorUrl = "/online-editor?" + UrlHelper.CreateOnlineEditorUrl((int)idJob, OEMode.Admin);
                 string onlineEditorUrl = UrlHelper.CreateOnlineEditorUrl(_configuration!["OnlineEditorBaseUrl"]!, (int)jobId, OEMode.Admin);
 
 

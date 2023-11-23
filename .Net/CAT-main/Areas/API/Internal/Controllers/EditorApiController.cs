@@ -46,5 +46,22 @@ namespace CAT.Areas.API.Internal.Controllers
                 return BadRequest(new { message = ex.Message });
             }
         }
+
+        [HttpGet("SubmitJob")]
+        public async Task<IActionResult> SubmitJob(int jobId, string userId)
+        {
+            //var fileData = await Task.Run(() => _jobService.CreateDocument(jobId));
+            try
+            {
+                await _jobService.SubmitJobAsync(jobId, userId);
+
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("DownloadDocument error -> jobId: " + jobId + " " + ex.Message);
+                return BadRequest(new { message = ex.Message });
+            }
+        }
     }
 }

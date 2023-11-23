@@ -211,5 +211,16 @@ namespace CAT.Services.Common
                     return _configuration["OutputFilesFolder"]!;
             }
         }
+
+        public DocumentType GetDocumentTypeForTask(Enums.Task taskId)
+        {
+            switch (taskId)
+            {
+                case Enums.Task.Translation: return DocumentType.Translated;
+                case Enums.Task.Revision: return DocumentType.Revised;
+                case Enums.Task.AIProcess: return DocumentType.AI;
+                default: return DocumentType.Unspecified;
+            }
+        }
     }
 }

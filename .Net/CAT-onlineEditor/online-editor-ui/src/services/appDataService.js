@@ -1,7 +1,7 @@
 ﻿// appDataService.js
 import editorApi from 'services/editorApi';
 import { showLoading, showAlert } from 'store/appUiSlice';
-import { setTranslationUnits } from 'store/appDataSlice';
+import { setTranslationUnits, setJobData } from 'store/appDataSlice';
 
 const appDataService = (() => {
     const service = {
@@ -12,6 +12,7 @@ const appDataService = (() => {
             try {
                 const result = await editorApi.getJobData();
                 service.jobData = result.data;
+                dispatch(setJobData(service.jobData));
                 dispatch(setTranslationUnits(service.jobData.translationUnits));
             } catch (error) {
                 if (error?.response?.status === 401) //Unauthorized

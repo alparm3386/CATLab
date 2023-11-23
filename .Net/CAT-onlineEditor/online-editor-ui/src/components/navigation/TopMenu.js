@@ -3,17 +3,21 @@ import 'styles/navbar.scss';
 import React from 'react';
 import { Navbar, Nav, NavDropdown } from 'react-bootstrap';
 import { showAlert } from 'store/appUiSlice';
-import { useDispatch } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import editorApi from 'services/editorApi';
 import utils from 'utils/utils';
 import modalService from 'services/modalService';
+import { showLoading } from 'store/appUiSlice';
 
 const TopMenu = () => {
     const dispatch = useDispatch();
+    const jobData = useSelector((state) => state.appData.jobData);
 
     const handleDownloadJob = async () => {
         try {
+            dispatch(showLoading(true));
             const response = await editorApi.downloadJob();
+            dispatch(showLoading(false));
 
             if (response.status !== 200) {
                 dispatch(showAlert({ title: 'Error', message: "Unable to download document." }));
@@ -35,6 +39,7 @@ const TopMenu = () => {
             document.body.removeChild(downloadAnchor);
             window.URL.revokeObjectURL(url);
         } catch (error) {
+            dispatch(showLoading(false));
             dispatch(showAlert({ title: 'Error', message: error.message }));
             console.error('There was a problem with the fetch operation:', error);
         }
@@ -42,16 +47,16 @@ const TopMenu = () => {
 
     const handleSubmitJob = async () => {
         try {
-            //dispatch(showAlert({ title: 'Error', message: "Job submitted" }));
-            modalService.showAlert("Success", "Job submitted").then((result) => {
-                alert(result);
+            dispatch(showLoading(true));
+            editorApi.submitJob().then((response) => {
+                dispatch(showLoading(false));
+                modalService.showAlert("Success", "Job submitted").then((result) => {
+                    window.location.href = "/";
+                });
+            }).catch((error) => {
+                dispatch(showLoading(false));
+                modalService.showAlert("Error", "Unable to submit job")
             });
-            return;
-            const response = await editorApi.submitJob();
-
-            if (response.status !== 200) {
-                throw new Error('Unable to submit job');
-            }
 
         } catch (error) {
             dispatch(showAlert({ title: 'Error', message: error.message }));
@@ -60,7 +65,10 @@ const TopMenu = () => {
     };
 
     const isJobSubmit = () => {
-        return true;
+        if (jobData.task === 2 || jobData.task === 3 || jobData.task === 4 || jobData.task === 5)
+            return true;
+        else
+            return false;
     };
 
 

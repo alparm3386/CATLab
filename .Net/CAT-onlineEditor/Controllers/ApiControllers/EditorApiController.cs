@@ -59,20 +59,20 @@ namespace CAT.Controllers.Api
             }
             else
             {
-                int idx = OEJobs.FindIndex(o => o.idJob == jobData.idJob);
+                int idx = OEJobs.FindIndex(o => o.jobId == jobData.jobId);
                 if (idx >= 0)
                     OEJobs[idx] = jobData; //the job is reloaded
                 else
                     OEJobs.Add(jobData);
             }
 
-            _logger.LogInformation("session saved: " + jobData.idJob);
+            _logger.LogInformation("session saved: " + jobData.jobId);
         }
 
-        private JobData GetJobDataFromSession(int idJob)
+        private JobData GetJobDataFromSession(int jobId)
         {
             var OEJobs = HttpContext.Session.Get<List<JobData>>("jobData");
-            int idx = OEJobs.FindIndex(o => o.idJob == idJob);
+            int idx = OEJobs.FindIndex(o => o.jobId == jobId);
             return OEJobs[idx];
         }
 
@@ -86,13 +86,17 @@ namespace CAT.Controllers.Api
                 var decryptedDarams = EncryptionHelper.DecryptString(urlParams);
                 var queryParams = HttpUtility.ParseQueryString(decryptedDarams);
                 //load the job
-                var idJob = int.Parse(queryParams["idJob"]!);
-                var jobData = await _jobService.GetJobData(idJob, currentUser);
+                var jobId = int.Parse(queryParams["jobId"]!);
+                var jobData = await _jobService.GetJobData(jobId, currentUser);
                 //save the job data into the session
                 SaveJobDataToSession(jobData);
 
                 var editorData = new
                 {
+                    jobData.jobId,
+                    jobData.task,
+                    jobData.user,
+                    jobData.pmUser,
                     translationUnits = jobData!.translationUnits!.Select(tu => new {
                         source = CATUtils.CodedTextToGoogleTags(tu.source!),
                         tu.target
@@ -124,8 +128,8 @@ namespace CAT.Controllers.Api
                 var propagate = model.GetProperty("propagate").GetInt32();
 
                 //the job data
-                var idJob = QueryHelper.GetQuerystringIntParameter(urlParams, "idJob");
-                var jobData = GetJobDataFromSession(idJob);
+                var jobId = QueryHelper.GetQuerystringIntParameter(urlParams, "jobId");
+                var jobData = GetJobDataFromSession(jobId);
 
                 _jobService.SaveSegment(jobData, tuid, target, confirmed, propagate);
                 return Ok("Saved");
@@ -151,8 +155,8 @@ namespace CAT.Controllers.Api
 
                 var ix = tuid - 1;
                 //the job data
-                var idJob = QueryHelper.GetQuerystringIntParameter(urlParams, "idJob");
-                var jobData = GetJobDataFromSession(idJob);
+                var jobId = QueryHelper.GetQuerystringIntParameter(urlParams, "jobId");
+                var jobData = GetJobDataFromSession(jobId);
 
                 //Convert google tags to xliff tags
                 var tu = jobData.translationUnits![ix];
@@ -192,8 +196,8 @@ namespace CAT.Controllers.Api
                 {
                     //the job data
                     string urlParams = model.GetProperty("urlParams").GetString();
-                    var idJob = QueryHelper.GetQuerystringIntParameter(urlParams, "idJob");
-                    var jobData = GetJobDataFromSession(idJob);
+                    var jobId = QueryHelper.GetQuerystringIntParameter(urlParams, "jobId");
+                    var jobData = GetJobDataFromSession(jobId);
 
                     var searchText = model.GetProperty("searchText").GetString();
                     bool caseSensitive = model.GetProperty("caseSensitive").GetBoolean();
@@ -222,11 +226,11 @@ namespace CAT.Controllers.Api
             var decryptedDarams = EncryptionHelper.DecryptString(urlParams);
             var queryParams = HttpUtility.ParseQueryString(decryptedDarams);
             //load the job
-            var idJob = int.Parse(queryParams["idJob"]!);
+            var jobId = int.Parse(queryParams["jobId"]!);
 
             var httpClient = _httpClientFactory.CreateClient();
             var catMainBaseUrl = _configuration["CATMainBaseUrl"];
-            var response = await httpClient.GetAsync($"{catMainBaseUrl}/api/EditorApi/DownloadDocument/{idJob}");
+            var response = await httpClient.GetAsync($"{catMainBaseUrl}/api/EditorApi/DownloadDocument/{jobId}");
 
             if (response.IsSuccessStatusCode)
             {
@@ -238,6 +242,27 @@ namespace CAT.Controllers.Api
             }
 
             return BadRequest("Could not download the file.");            
+        }
+
+        [HttpGet("SubmitJob")]
+        public async Task<IActionResult> SubmitJob(string urlParams)
+        {
+            var decryptedDarams = EncryptionHelper.DecryptString(urlParams);
+            var queryParams = HttpUtility.ParseQueryString(decryptedDarams);
+            //load the job
+            var jobId = int.Parse(queryParams["jobId"]!);
+
+            //get the user
+            var currentUser = await _userService.GetCurrentUserAsync();
+
+            var httpClient = _httpClientFactory.CreateClient();
+            var catMainBaseUrl = _configuration["CATMainBaseUrl"];
+            var response = await httpClient.GetAsync($"{catMainBaseUrl}/api/EditorApi/SubmitJob?jobId={jobId}&userId={currentUser.Id}");
+
+            if (response.IsSuccessStatusCode)
+                return Ok();
+
+            return BadRequest("Unable to submit job.");
         }
     }
 }

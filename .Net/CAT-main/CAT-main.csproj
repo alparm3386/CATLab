@@ -58,7 +58,7 @@
     <Folder Include="Connected Services\" />
     <Folder Include="Controllers\" />
     <Folder Include="Migrations\MainDb\" />
-    <Folder Include="Migrations\TranslationUnitsDb\" />
+    <Folder Include="Migrations\TranslationUnits\" />
     <Folder Include="Models\DTOs\" />
     <Folder Include="Protos\" />
   </ItemGroup>
