@@ -43,7 +43,9 @@ const TopMenu = () => {
     const handleSubmitJob = async () => {
         try {
             //dispatch(showAlert({ title: 'Error', message: "Job submitted" }));
-            modalService.showAlert("Success", "Job submitted");
+            modalService.showAlert("Success", "Job submitted").then((result) => {
+                alert(result);
+            });
             return;
             const response = await editorApi.submitJob();
 

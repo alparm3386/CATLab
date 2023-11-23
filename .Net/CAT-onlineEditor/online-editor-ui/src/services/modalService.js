@@ -10,8 +10,12 @@ const modalService = (() => {
         },
 
         showAlert: function (title, message) {
-            this.dispatchFunction(showAlert({ title: title, message: message }));
-        }
+            return new Promise((resolve) => {
+                this.dispatchFunction(
+                    showAlert({ title: title, message: message, callback: resolve })
+                );
+            });
+        },
 
         // Add more application-wide functions here
     };
