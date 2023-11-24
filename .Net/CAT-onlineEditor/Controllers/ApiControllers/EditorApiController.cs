@@ -27,6 +27,7 @@ namespace CAT.Controllers.Api
     [Route("onlineeditor/api/[controller]")]
     public class EditorApiController : ControllerBase
     {
+        public static string CATMainBaseUrl = "";
         private readonly CATConnector _catClientService;
         private readonly ILogger _logger;
         private readonly JobService _jobService;
@@ -229,7 +230,7 @@ namespace CAT.Controllers.Api
             var jobId = int.Parse(queryParams["jobId"]!);
 
             var httpClient = _httpClientFactory.CreateClient();
-            var catMainBaseUrl = _configuration["CATMainBaseUrl"];
+            var catMainBaseUrl = String.IsNullOrEmpty(CATMainBaseUrl) ? _configuration["CATMainBaseUrl"] : CATMainBaseUrl;
             var response = await httpClient.GetAsync($"{catMainBaseUrl}/api/EditorApi/DownloadDocument/{jobId}");
 
             if (response.IsSuccessStatusCode)
@@ -256,13 +257,42 @@ namespace CAT.Controllers.Api
             var currentUser = await _userService.GetCurrentUserAsync();
 
             var httpClient = _httpClientFactory.CreateClient();
-            var catMainBaseUrl = _configuration["CATMainBaseUrl"];
+            var catMainBaseUrl = String.IsNullOrEmpty(CATMainBaseUrl) ? _configuration["CATMainBaseUrl"] : CATMainBaseUrl;
             var response = await httpClient.GetAsync($"{catMainBaseUrl}/api/EditorApi/SubmitJob?jobId={jobId}&userId={currentUser.Id}");
 
             if (response.IsSuccessStatusCode)
                 return Ok();
 
             return BadRequest("Unable to submit job.");
+        }
+
+        [Route("GetOnlineEditorIP")]
+        [HttpGet]
+        public IActionResult GetOnlineEditorIP()
+        {
+            try
+            {
+                return Ok(CATMainBaseUrl);
+            }
+            catch (Exception)
+            {
+                return Problem("System error");
+            }
+        }
+
+        [Route("SetOnlineEditorIP")]
+        [HttpPut]
+        public IActionResult SetOnlineEditorIP(String ip)
+        {
+            try
+            {
+                CATMainBaseUrl = ip;
+                return Ok();
+            }
+            catch (Exception)
+            {
+                return Problem("System error");
+            }
         }
     }
 }
