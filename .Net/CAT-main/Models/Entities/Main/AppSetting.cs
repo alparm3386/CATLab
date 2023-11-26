@@ -15,7 +15,7 @@ namespace CAT.Models.Entities.Main
         [MaxLength(255)]
         public string Key { get; set; } = default!;
 
-        [Column(TypeName = "nvarchar(max)")]
+        [MaxLength(512)]
         public string Value { get; set; } = default!;
     }
 }

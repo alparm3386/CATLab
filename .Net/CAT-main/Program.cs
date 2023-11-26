@@ -32,6 +32,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 //AddSQLServerContext(builder);
 AddMySqlContext(builder);
+AddConfiguration(builder);
 
 
 builder.Services.AddTransient<DbContextContainer>();
@@ -53,9 +54,7 @@ builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<ITaskProcessor, TaskProcessor>();
 //builder.Services.AddSingleton<MainDbContextFactory>();
 builder.Services.AddSingleton<CatClientFactory>();
-
 builder.Services.AddScoped<ILanguageService, LanguageService>();
-
 builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
 
 //builder.Services.AddSingleton<ConstantRepository>();
@@ -278,6 +277,28 @@ app.UseMiddleware<AuthDebugMiddleware>();
 app.UseMiddleware<OnlineEditorMiddleware>();
 
 app.Run();
+
+void AddConfiguration(WebApplicationBuilder builder)
+{
+    // Create a new ConfigurationBuilder
+    var configBuilder = new ConfigurationBuilder();
+
+    // Add the appsettings.json configuration as the first source
+    configBuilder.AddJsonFile("appsettings.json");
+
+    // Create a custom configuration source for database settings
+    var dbContext = builder.Services.BuildServiceProvider().GetService<MainDbContext>();
+    var databaseConfigSource = new DatabaseConfigurationSource(dbContext);
+
+    // Add the database configuration source
+    configBuilder.Add(databaseConfigSource);
+
+    // Build the final configuration
+    var finalConfiguration = configBuilder.Build();
+
+    // Register the IConfiguration instance
+    builder.Services.AddSingleton<IConfiguration>(finalConfiguration);
+}
 
 void AddMySqlContext(WebApplicationBuilder builder)
 {

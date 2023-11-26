@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CAT.Migrations.MainDb
 {
     [DbContext(typeof(MainDbContext))]
-    [Migration("20231126115959_Appsettings")]
+    [Migration("20231126123546_Appsettings")]
     partial class Appsettings
     {
         /// <inheritdoc />
@@ -174,7 +174,8 @@ namespace CAT.Migrations.MainDb
 
                     b.Property<string>("Value")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(512)
+                        .HasColumnType("varchar(512)");
 
                     b.HasKey("Id");
 

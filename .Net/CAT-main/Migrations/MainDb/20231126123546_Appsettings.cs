@@ -19,7 +19,8 @@ namespace CAT.Migrations.MainDb
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     Key = table.Column<string>(type: "varchar(255)", maxLength: 255, nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    Value = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Value = table.Column<string>(type: "varchar(512)", maxLength: 512, nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4")
                 },
                 constraints: table =>
                 {

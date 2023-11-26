@@ -171,7 +171,8 @@ namespace CAT.Migrations.MainDb
 
                     b.Property<string>("Value")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(512)
+                        .HasColumnType("varchar(512)");
 
                     b.HasKey("Id");
 
