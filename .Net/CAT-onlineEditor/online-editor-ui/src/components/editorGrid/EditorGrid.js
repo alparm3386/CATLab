@@ -90,6 +90,7 @@ const EditorGrid = //React.memo(
         };
 
         function onTargetClick(tuid) {
+            console.log("onTargetClick: " + tuid);
             dispatch(setCurrentTuid(tuid));
         }
 

@@ -268,6 +268,7 @@ namespace CAT.Controllers.Api
 
         [Route("GetOnlineEditorIP")]
         [HttpGet]
+        [AllowAnonymous]
         public IActionResult GetOnlineEditorIP()
         {
             try
@@ -282,6 +283,7 @@ namespace CAT.Controllers.Api
 
         [Route("SetOnlineEditorIP")]
         [HttpPut]
+        [AllowAnonymous]
         public IActionResult SetOnlineEditorIP(String ip)
         {
             try

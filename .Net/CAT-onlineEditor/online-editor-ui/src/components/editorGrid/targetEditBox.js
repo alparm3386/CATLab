@@ -38,7 +38,7 @@ const TargetEditbBox = ({ className }) => {
     }, []);
 
     const onContentBlur = React.useCallback(event => {
-        //console.log("onContentBlur: " + cntr++);
+        console.log("onContentBlur: " + currentTuid);
         const sanitizeConf = {
             allowedTags: ["span"],
             allowedAttributes: {}
@@ -46,10 +46,20 @@ const TargetEditbBox = ({ className }) => {
 
         //update the stored content
         const sHtml = sanitizeHtml(event.currentTarget.innerHTML, sanitizeConf);
-        //dispatch(setTargetEditbBoxContent(sHtml));
-        //content = sHtml;
+        if (content === sHtml)
+            return;
         //update the translationUnits
         dispatch(updateTranslationUnitTarget({ index: currentTuid - 1, target: utils.extractTextFromHTML(sHtml) }));
+
+        dispatch(showLoading(true));
+        const target = utils.extractTextFromHTML(sHtml);
+        editorApi.saveSegment(currentTuid, target, false, 0).then(() => {
+            dispatch(showStatusBarMessage('Segment saved ...'));
+        }).catch((error) => {
+            dispatch(showStatusBarMessage('Error:' + error.toString()));
+        }).finally(() => {
+            dispatch(showLoading(false));
+        });
 
     }, [dispatch, currentTuid]);
 

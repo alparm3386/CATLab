@@ -14,6 +14,8 @@ namespace CAT.Data
         {
         }
 
+        public DbSet<AppSetting> AppSettings { get; set; } = default!;
+
         public DbSet<Company> Companies { get; set; } = default!;
 
         public DbSet<Client> Clients { get; set; } = default!;
