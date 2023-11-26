@@ -61,8 +61,8 @@ builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
 builder.Services.AddControllersWithViews().AddRazorRuntimeCompilation();
 builder.Services.AddAntiforgery(options => options.HeaderName = "XSRF-TOKEN");
 
-var keyLocation = builder.Configuration.GetValue<string>("KeyStoragePath");
-var dataProtectionBuilder = builder.Services.AddDataProtection().PersistKeysToFileSystem(new DirectoryInfo(keyLocation!));
+//var keyLocation = builder.Configuration.GetValue<string>("KeyStoragePath");
+//var dataProtectionBuilder = builder.Services.AddDataProtection().PersistKeysToFileSystem(new DirectoryInfo(keyLocation!));
 
 
 
@@ -288,7 +288,7 @@ void AddConfiguration(WebApplicationBuilder builder)
 
     // Create a custom configuration source for database settings
     var dbContext = builder.Services.BuildServiceProvider().GetService<MainDbContext>();
-    var databaseConfigSource = new DatabaseConfigurationSource(dbContext);
+    var databaseConfigSource = new DatabaseConfigurationSource(dbContext!);
 
     // Add the database configuration source
     configBuilder.Add(databaseConfigSource);

@@ -30,21 +30,43 @@ namespace CAT.Configuration
             // You can also implement a change notification mechanism if needed
             // For example, use a timer to periodically check for updates in the database
         }
+
+        public void Reload()
+        {
+            Data.Clear(); // Clear the existing data
+
+            // Retrieve settings from the database
+            var settings = _dbContext.AppSettings.ToList();
+
+            foreach (var setting in settings)
+            {
+                Data[setting.Key] = setting.Value;
+            }
+
+            // Trigger a change notification
+            OnReload();
+        }
     }
 
     public class DatabaseConfigurationSource : IConfigurationSource
     {
         private readonly MainDbContext _dbContext;
+        private IConfigurationProvider _databaseConfigurationProvider = default!;
 
         public DatabaseConfigurationSource(MainDbContext dbContext)
         {
             _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
         }
 
+        public IConfigurationProvider GetConfigurationProvider()
+        {
+            return _databaseConfigurationProvider;
+        }
+
         public IConfigurationProvider Build(IConfigurationBuilder builder)
         {
-            return new DatabaseConfigurationProvider(_dbContext);
+            _databaseConfigurationProvider = new DatabaseConfigurationProvider(_dbContext);
+            return _databaseConfigurationProvider;
         }
     }
-
 }
