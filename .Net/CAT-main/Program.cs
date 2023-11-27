@@ -27,6 +27,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.AspNetCore.DataProtection;
 using NuGet.Protocol;
 using CAT.Infrastructure;
+using Microsoft.Extensions.Configuration.Json;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -286,6 +287,29 @@ void AddConfiguration(WebApplicationBuilder builder)
     // Add the appsettings.json configuration as the first source
     configBuilder.AddJsonFile("appsettings.json");
 
+
+
+    // Register the database configuration provider
+    //builder.Services.AddSingleton<DatabaseConfigurationSource>();
+    builder.Services.AddSingleton<IServiceProvider>(ServiceProviderFactory);
+
+    builder.Services.AddSingleton<IConfiguration>(provider =>
+    {
+        var dbConfigSource = provider.GetRequiredService<DatabaseConfigurationSource>();
+        return new ConfigurationRoot(new List<Microsoft.Extensions.Configuration.IConfigurationProvider>
+        {
+            new JsonConfigurationProvider(new JsonConfigurationSource
+            {
+                Optional = true, // Make the appsettings.json file optional
+                FileProvider = new PhysicalFileProvider(Directory.GetCurrentDirectory()),
+                Path = "appsettings.json"
+            }),
+            dbConfigSource.GetConfigurationProvider() // Include the database configuration source
+        });
+    });
+
+    return;
+
     // Create a custom configuration source for database settings
     var dbContext = builder.Services.BuildServiceProvider().GetService<MainDbContext>();
     var databaseConfigSource = new DatabaseConfigurationSource(dbContext!);
@@ -327,6 +351,13 @@ void AddMySqlContext(WebApplicationBuilder builder)
             mySqlOptions.EnableRetryOnFailure();
         });
     });
+}
+
+// Create a factory method
+IServiceProvider ServiceProviderFactory(IServiceProvider provider)
+{
+    var dbContext = provider.GetRequiredService<MainDbContext>();
+    return new DatabaseConfigurationSource(dbContext);
 }
 
 //void AddSQLServerContext(WebApplicationBuilder builder)
