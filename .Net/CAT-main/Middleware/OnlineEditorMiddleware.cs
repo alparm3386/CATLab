@@ -8,12 +8,13 @@ namespace CAT.Middleware
     {
         private readonly RequestDelegate _next;
         private readonly HttpClient _httpClient;
-        public static string TargetServerBaseUrl = "https://localhost:7155";
+        private readonly IConfiguration _configuration;
 
-        public OnlineEditorMiddleware(RequestDelegate next)
+        public OnlineEditorMiddleware(RequestDelegate next, IConfiguration configuration)
         {
             _next = next;
             _httpClient = new HttpClient();
+            _configuration = configuration; // Injected IConfiguration
         }
 
         public async Task InvokeAsync(HttpContext context)
@@ -23,7 +24,9 @@ namespace CAT.Middleware
             {
                 try
                 {
-                    var targetUrl = TargetServerBaseUrl + context.Request.Path.ToString();
+                    var targetServerBaseUrl = _configuration["TargetServerBaseUrl"];
+                    var targetUrl = targetServerBaseUrl + context.Request.Path.ToString();
+
                     // Add the query string to the target URL, if it exists
                     if (!string.IsNullOrEmpty(context.Request.QueryString.Value))
                     {
@@ -65,23 +68,6 @@ namespace CAT.Middleware
 
                     await targetResponse.Content.CopyToAsync(context.Response.Body);
                     return;
-
-                    //context.Response.StatusCode = 500;
-                    //context.Response.Headers["Content-Type"] = "text/html";
-
-                    //// Manually read and write the response content
-                    //using (var targetResponseStream = await targetResponse.Content.ReadAsStreamAsync())
-                    //using (var streamReader = new StreamReader(targetResponseStream))
-                    //{
-                    //    while (!streamReader.EndOfStream)
-                    //    {
-                    //        var line = await streamReader.ReadLineAsync();
-                    //        line = "status: " + (int)targetResponse.StatusCode + "\ncontent type: " + sHeader + 
-                    //            "\n" + line;
-                    //        await context.Response.WriteAsync(line!);
-                    //    }
-                    //}
-                    //return;
                 }
                 catch (Exception ex)
                 {
@@ -105,5 +91,4 @@ namespace CAT.Middleware
             }
         }
     }
-
 }
