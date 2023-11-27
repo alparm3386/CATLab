@@ -98,32 +98,25 @@ namespace CAT.Areas.API.Internal.Controllers
             }
         }
 
-        [Route("GetOnlineEditorIP")]
+        [Route("ReloadConfig")]
         [HttpGet]
-        public IActionResult GetOnlineEditorIP()
+        public IActionResult ReloadConfig()
         {
             try
             {
-                return Ok(Middleware.OnlineEditorMiddleware.TargetServerBaseUrl);
-            }
-            catch (Exception)
-            {
-                return Problem("System error");
-            }
-        }
+                // Retrieve the DatabaseConfigurationProvider instance from the IConfiguration
+                var configurationRoot = _configuration as IConfigurationRoot;
+                var databaseConfigProvider = (Configuration.DatabaseConfigurationProvider)configurationRoot!.Providers
+                    .First(provider => provider is Configuration.DatabaseConfigurationProvider);
 
-        [Route("SetOnlineEditorIP")]
-        [HttpPut]
-        public IActionResult SetOnlineEditorIP(String ip)
-        {
-            try
-            {
-                Middleware.OnlineEditorMiddleware.TargetServerBaseUrl = ip;
-                return Ok();
+                // Reload configuration from the database
+                databaseConfigProvider.Reload();
+
+                return Ok("Reloaded");
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return Problem("System error");
+                return Problem("System error -> " + ex.Message);
             }
         }
     }

@@ -281,17 +281,11 @@ app.Run();
 
 void AddConfiguration(WebApplicationBuilder builder)
 {
-    // Create a new ConfigurationBuilder
-    var configBuilder = new ConfigurationBuilder();
-
-    // Add the appsettings.json configuration as the first source
-    configBuilder.AddJsonFile("appsettings.json");
-
-
-
     // Register the database configuration provider
-    //builder.Services.AddSingleton<DatabaseConfigurationSource>();
-    builder.Services.AddSingleton<IServiceProvider>(ServiceProviderFactory);
+    builder.Services.AddSingleton<DatabaseConfigurationSource>(provider =>
+    {
+        return new DatabaseConfigurationSource(provider);
+    });
 
     builder.Services.AddSingleton<IConfiguration>(provider =>
     {
@@ -309,19 +303,6 @@ void AddConfiguration(WebApplicationBuilder builder)
     });
 
     return;
-
-    // Create a custom configuration source for database settings
-    var dbContext = builder.Services.BuildServiceProvider().GetService<MainDbContext>();
-    var databaseConfigSource = new DatabaseConfigurationSource(dbContext!);
-
-    // Add the database configuration source
-    configBuilder.Add(databaseConfigSource);
-
-    // Build the final configuration
-    var finalConfiguration = configBuilder.Build();
-
-    // Register the IConfiguration instance
-    builder.Services.AddSingleton<IConfiguration>(finalConfiguration);
 }
 
 void AddMySqlContext(WebApplicationBuilder builder)
@@ -351,13 +332,6 @@ void AddMySqlContext(WebApplicationBuilder builder)
             mySqlOptions.EnableRetryOnFailure();
         });
     });
-}
-
-// Create a factory method
-IServiceProvider ServiceProviderFactory(IServiceProvider provider)
-{
-    var dbContext = provider.GetRequiredService<MainDbContext>();
-    return new DatabaseConfigurationSource(dbContext);
 }
 
 //void AddSQLServerContext(WebApplicationBuilder builder)

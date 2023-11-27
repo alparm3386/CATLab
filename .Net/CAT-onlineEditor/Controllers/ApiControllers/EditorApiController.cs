@@ -265,36 +265,5 @@ namespace CAT.Controllers.Api
 
             return BadRequest("Unable to submit job.");
         }
-
-        [Route("GetOnlineEditorIP")]
-        [HttpGet]
-        [AllowAnonymous]
-        public IActionResult GetOnlineEditorIP()
-        {
-            try
-            {
-                return Ok(CATMainBaseUrl);
-            }
-            catch (Exception)
-            {
-                return Problem("System error");
-            }
-        }
-
-        [Route("SetOnlineEditorIP")]
-        [HttpPut]
-        [AllowAnonymous]
-        public IActionResult SetOnlineEditorIP(String ip)
-        {
-            try
-            {
-                CATMainBaseUrl = ip;
-                return Ok();
-            }
-            catch (Exception)
-            {
-                return Problem("System error");
-            }
-        }
     }
 }

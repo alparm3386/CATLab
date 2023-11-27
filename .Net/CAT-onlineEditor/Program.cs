@@ -21,11 +21,13 @@ using CAT.Infrastructure.Logging;
 using CAT.Areas.Identity.Data;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.FileProviders;
+using Microsoft.Extensions.Configuration.Json;
 
 var builder = WebApplication.CreateBuilder(args);
 
 //AddSQLServerContext(builder);
 AddMySqlContext(builder);
+AddConfiguration(builder);
 
 builder.Services.AddTransient<DbContextContainer>();
 
@@ -152,6 +154,32 @@ app.Use(async (context, next) =>
 });
 
 app.Run();
+
+void AddConfiguration(WebApplicationBuilder builder)
+{
+    // Register the database configuration provider
+    builder.Services.AddSingleton<DatabaseConfigurationSource>(provider =>
+    {
+        return new DatabaseConfigurationSource(provider);
+    });
+
+    builder.Services.AddSingleton<IConfiguration>(provider =>
+    {
+        var dbConfigSource = provider.GetRequiredService<DatabaseConfigurationSource>();
+        return new ConfigurationRoot(new List<Microsoft.Extensions.Configuration.IConfigurationProvider>
+        {
+            new JsonConfigurationProvider(new JsonConfigurationSource
+            {
+                Optional = true, // Make the appsettings.json file optional
+                FileProvider = new PhysicalFileProvider(Directory.GetCurrentDirectory()),
+                Path = "appsettings.json"
+            }),
+            dbConfigSource.GetConfigurationProvider() // Include the database configuration source
+        });
+    });
+
+    return;
+}
 
 void AddMySqlContext(WebApplicationBuilder builder)
 {

@@ -42,17 +42,6 @@ namespace CAT.Areas.BackOffice.Services
 
         public async Task<object> GetMonitoringData(DateTime dateFrom, DateTime dateTo)
         {
-            var filters = _configuration["FileFiltersFolder"];
-
-            // Retrieve the DatabaseConfigurationProvider instance from the IConfiguration
-            var configurationRoot = _configuration as IConfigurationRoot;
-            var databaseConfigProvider = (Configuration.DatabaseConfigurationProvider)configurationRoot!.Providers
-                .First(provider => provider is Configuration.DatabaseConfigurationProvider);
-
-            // Reload configuration from the database
-            databaseConfigProvider.Reload();
-            filters = _configuration["FileFiltersFolder"];
-
             //the return object
             //dynamic monitoringData = new ExpandoObject();
             var monitoringData = new
