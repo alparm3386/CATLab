@@ -14,7 +14,8 @@ namespace CAT.Services
 
         public async Task SendEmailAsync(string email, string subject, string message)
         {
-            using (var client = new SmtpClient(_smtpSettings.Server, _smtpSettings.Port))
+            var client = new SmtpClient(_smtpSettings.Server, _smtpSettings.Port);
+            using (client)
             {
                 client.UseDefaultCredentials = false;
                 client.Credentials = new NetworkCredential(_smtpSettings.Username, _smtpSettings.Password);

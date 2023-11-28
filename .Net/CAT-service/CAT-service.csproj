@@ -7,6 +7,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="BusinessServices\DataStorage.cs" />
+    <Compile Remove="Utils\SimpleWordcountEx.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Remove="C:\Users\Alpar\.nuget\packages\icu.net\2.8.1\contentFiles\any\any\icu.net.dll.config" />
     <None Remove="C:\Users\Alpar\.nuget\packages\icu.net\2.9.0\contentFiles\any\any\icu.net.dll.config" />
   </ItemGroup>

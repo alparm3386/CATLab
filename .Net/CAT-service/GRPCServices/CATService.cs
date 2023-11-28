@@ -10,20 +10,18 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace CAT.GRPCServices
 {
-    public class CATService : Proto.CAT.CATBase
+    public class CatService : Proto.CAT.CATBase
     {
         private readonly ITMService _tmService;
         private readonly ITBService _tbService;
         private readonly IOkapiService _okapiService;
-        private readonly IMapper _mapper;
-        private readonly ILogger<CATService> _logger;
+        private readonly ILogger<CatService> _logger;
 
-        public CATService(ITMService tmService, ITBService tbService, IOkapiService okapiService, IMapper mapper, ILogger<CATService> logger)
+        public CatService(ITMService tmService, ITBService tbService, IOkapiService okapiService, ILogger<CatService> logger)
         {
             _okapiService = okapiService;
             _tmService = tmService;
             _tbService = tbService;
-            _mapper = mapper;
             _logger = logger;
         }
 
@@ -144,7 +142,6 @@ namespace CAT.GRPCServices
         {
             try
             {
-                //var tmAssignments = _mapper.Map<Models.TMAssignment[]>(request.TMAssignments);
                 var tmAssignments = request.TMAssignments.Select(tmAssignment => new Models.TMAssignment
                 {
                     tmId = tmAssignment.TmId,
@@ -156,7 +153,6 @@ namespace CAT.GRPCServices
                     request.FilterContent.ToByteArray(), request.SourceLangISO6391, request.TargetLangsISO6391.ToArray(), tmAssignments);
 
                 var response = new GetStatisticsForDocumentResponse();
-                //Array.ForEach(stats, stat => response.Statistics.Add(_mapper.Map<Proto.Statistics>(stat)));
                 Array.ForEach(stats, stat => response.Statistics.Add(new Proto.Statistics()
                 {
                     SourceLang = stat.sourceLang,
@@ -185,7 +181,6 @@ namespace CAT.GRPCServices
         {
             try
             {
-                //var tmAssignments = _mapper.Map<Models.TMAssignment[]>(request.TMAssignments);
                 var tmAssignments = request.TmAssignments.Select(tmAssignment => new Models.TMAssignment
                 {
                     tmId = tmAssignment.TmId,
@@ -196,8 +191,7 @@ namespace CAT.GRPCServices
                 var xliffContent = _okapiService.PreTranslateXliff(request.XliffContent, request.LangFromISO6391,
                     request.LangToISO6391, tmAssignments, request.MatchThreshold);
 
-                var response = new PreTranslateXliffResponse();
-                response.XliffContent = xliffContent;
+                var response = new PreTranslateXliffResponse() { XliffContent = xliffContent };
 
                 return Task.FromResult(response);
             }
@@ -212,7 +206,6 @@ namespace CAT.GRPCServices
         {
             try
             {
-                //var tmAssignments = _mapper.Map<Models.TMAssignment[]>(request.TMAssignments);
                 var tmAssignments = request.TMAssignments.Select(tmAssignment => new Models.TMAssignment
                 {
                     tmId = tmAssignment.TmId,
@@ -235,14 +228,16 @@ namespace CAT.GRPCServices
                 }));
 
                 var settings = new JsonSerializerSettings { Formatting = Formatting.Indented };
-                _logger.LogDebug("GetTMMatches -> request: " + JsonConvert.SerializeObject(request, settings) +
-                    " \nresponse: " + JsonConvert.SerializeObject(response, settings) + "\n");
+                _logger.LogDebug("GetTMMatches -> request: {Request}\nresponse: {Response}\n",
+                    JsonConvert.SerializeObject(request, settings),
+                    JsonConvert.SerializeObject(response, settings));
+
                 return Task.FromResult(response);
             }
             catch (Exception ex) // Catching general exception
             {
                 // Log the exception
-                _logger.LogDebug(ex.ToString());
+                _logger.LogError(ex, "An error occurred while performing an operation.");
                 throw new RpcException(new Status(StatusCode.Internal, "An internal error occurred. " + ex.Message), ex.Message);
             }
         }
@@ -251,7 +246,6 @@ namespace CAT.GRPCServices
         {
             try
             {
-                //var tmAssignments = _mapper.Map<Models.TMAssignment[]>(request.TMAssignments);
                 var tmAssignments = request.TMAssignments.Select(tmAssignment => new Models.TMAssignment
                 {
                     tmId = tmAssignment.TmId,
@@ -612,12 +606,11 @@ namespace CAT.GRPCServices
 
                 return Task.FromResult(response);
             }
-            catch (Exception) // Catching general exception
+            catch (Exception ex) // Catching general exception
             {
                 // Log the exception
-                var response = new TestResponse() { Result = "Test error" };
+                var response = new TestResponse() { Result = "Test error " + ex.Message };
                 return Task.FromResult(response);
-                //throw new RpcException(new Status(StatusCode.Internal, "An internal error occurred."), ex.Message);
             }
         }
 

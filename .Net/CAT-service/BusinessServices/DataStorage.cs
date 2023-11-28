@@ -16,16 +16,16 @@ namespace CAT.BusinessServices
     public class DataStorage : IDataStorage
     {
         private String _termbasesConnectionString;
-        private String _translationMemoriesConnectionString;
-        private String _mainDbConnectionString;
+        private readonly String _translationMemoriesConnectionString;
+        private readonly String _mainDbConnectionString;
 
-        public String _tmRepository;
-        private ILogger _logger;
+        private readonly string _tmRepository;
+        private readonly ILogger _logger;
         private readonly Dictionary<String, String> _sqlCommands = new Dictionary<String, String>();
 
-        private IConfiguration _configuration;
+        private readonly IConfiguration _configuration;
 
-        private class DBParams
+        private sealed class DBParams
         {
             public String dbName = default!;
             public String tmTableName = default!;

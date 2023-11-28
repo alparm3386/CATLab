@@ -25,9 +25,8 @@ namespace CAT.TM
     public class TMWriter
     {
         private readonly String IdField = "ID";
-        //private readonly String SourceField = "SOURCE";
         private readonly int NGramLength = 4;
-        private IndexWriter indexWriter;
+        private readonly IndexWriter indexWriter;
 
         /**
          * Creates a TMWriter
@@ -37,9 +36,11 @@ namespace CAT.TM
          */
         public TMWriter(Directory indexDirectory, bool createNewTmIndex)
         {
-            IndexWriterConfig conf = new IndexWriterConfig(Lucene.Net.Util.LuceneVersion.LUCENE_48, new NgramAnalyzer(NGramLength));
-            conf.OpenMode = createNewTmIndex ? OpenMode.CREATE : OpenMode.APPEND;
-            conf.Similarity = new DefaultSimilarity(); //new BooleanSimilarity();
+            var conf = new IndexWriterConfig(LuceneVersion.LUCENE_48, new NgramAnalyzer(NGramLength))
+            {
+                OpenMode = createNewTmIndex ? OpenMode.CREATE : OpenMode.APPEND,
+                Similarity = new DefaultSimilarity() //could be also BooleanSimilarity
+            };
             indexWriter = new IndexWriter(indexDirectory, conf);
         }
 
@@ -54,18 +55,15 @@ namespace CAT.TM
             {
                 indexWriter.Commit();
             }
-            catch (Exception)
-            {
-                throw; // To change body of catch statement use File | Settings | File Templates.
-            }
             finally
             {
                 try
                 {
                     indexWriter.Dispose();
                 }
-                catch (IOException ignored)
+                catch (Exception)
                 {
+                    //swallow the exception
                 }
             }
         }
@@ -75,14 +73,7 @@ namespace CAT.TM
          */
         public void Commit()
         {
-            try
-            {
-                indexWriter.Commit();
-            }
-            catch (Exception)
-            {
-                throw;
-            }
+            indexWriter.Commit();
         }
 
         /**
@@ -122,13 +113,8 @@ namespace CAT.TM
         {
             try
             {
-                //BytesRef bytes = new BytesRef(NumericUtils.BUF_SIZE_INT32);
-                //NumericUtils.Int32ToPrefixCoded(tuid, 0, bytes);
-                //indexWriter.DeleteDocuments(new Term(ID_FIELD, bytes));
-
                 var term = new Term(IdField, tuid.ToString());
                 indexWriter.DeleteDocuments(term);
-                //indexWriter.Commit();
             }
             catch (CorruptIndexException e)
             {
@@ -149,31 +135,35 @@ namespace CAT.TM
         Document CreateDocument(int id, TextFragment source, String specialities)
         {
             if (source == null)
-                throw new NullReferenceException("The text cannot be null");
+                throw new ArgumentNullException(nameof(source));
 
             //delete the entry
             if (id <= 0) // the auto-increment id cannot be zero or negative number
-                throw new NullReferenceException("Invalid id.");
+                throw new InvalidOperationException("Invalid id.");
 
-            Document doc = new Document();
+            var doc = new Document();
             //id
-            FieldType fieldType = new FieldType();
-            fieldType.IndexOptions = IndexOptions.DOCS_ONLY;
-            fieldType.IsStored = true;
-            //fieldType.NumericType = NumericType.INT32;
-            fieldType.OmitNorms = true;
-            fieldType.IsIndexed = true;
-            fieldType.StoreTermVectors = false;
-            fieldType.IsTokenized = false;
+            var fieldType = new FieldType
+            {
+                IndexOptions = IndexOptions.DOCS_ONLY,
+                IsStored = true,
+                //fieldType.NumericType = NumericType.INT32
+                OmitNorms = true,
+                IsIndexed = true,
+                StoreTermVectors = false,
+                IsTokenized = false
+            };
             doc.Add(new Field(IdField, id.ToString(), fieldType)); //it tokenizes the Int32Field for some reason
 
             //source
-            fieldType = new FieldType();
-            fieldType.IndexOptions = IndexOptions.DOCS_ONLY;
-            fieldType.StoreTermVectors = false;
-            fieldType.IsStored = false;
-            fieldType.OmitNorms = true;
-            fieldType.IsIndexed = true;
+            fieldType = new FieldType
+            {
+                IndexOptions = IndexOptions.DOCS_ONLY,
+                StoreTermVectors = false,
+                IsStored = false,
+                OmitNorms = true,
+                IsIndexed = true
+            };
             var text = source.GetText(); //index the plain text only
 
             //we index the short texts too
@@ -186,13 +176,8 @@ namespace CAT.TM
             var stringTerms = CATUtils.GetTermsFromText(text);
 
             //TermsNum
-            //var terms = stringTerms.ConvertAll(term => new Term(TranslationUnitField.SOURCE.ToString(), term));
             var uniqeTerms = new HashSet<String>(stringTerms);
             doc.Add(new NumericDocValuesField("TermsNum", uniqeTerms.Count));
-            //if (uniqeTerms.Count == 0)
-            //{
-            //    System.Console.WriteLine("Should never happen.");
-            //}
 
             //specialities
             doc.Add(new BinaryDocValuesField("Specialities", new BytesRef(specialities)));
