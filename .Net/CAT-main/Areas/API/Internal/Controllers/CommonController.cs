@@ -1,5 +1,6 @@
 ﻿using CAT.Data;
 using CAT.Models.Entities.Main;
+using CAT.Services.Common;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -15,11 +16,13 @@ namespace CAT.Areas.API.Internal.Controllers
         private const int AUTOCOMPLETE_LIMIT = 15;
         private readonly DbContextContainer _dbContextContainer;
         private readonly IConfiguration _configuration;
+        private readonly ICatClientFactory _catClientFactory;
 
-        public CommonController(DbContextContainer dbContextContainer, IConfiguration configuration)
+        public CommonController(DbContextContainer dbContextContainer, IConfiguration configuration, ICatClientFactory catClientFactory)
         {
             _dbContextContainer = dbContextContainer;
             _configuration = configuration;
+            _catClientFactory = catClientFactory;
         }
 
         [HttpGet("GetFilteredClients")]
@@ -111,6 +114,9 @@ namespace CAT.Areas.API.Internal.Controllers
 
                 // Reload configuration from the database
                 databaseConfigProvider.Reload();
+
+                //force recreating the grpc channel
+                _catClientFactory.ResetChannel();
 
                 return Ok("Reloaded");
             }

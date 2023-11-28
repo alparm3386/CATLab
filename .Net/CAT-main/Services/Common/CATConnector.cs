@@ -36,7 +36,7 @@ namespace CAT.Services.Common
         private readonly ILogger _logger;
         private readonly IDocumentProcessor _documentProcessor;
         private readonly ILanguageService _languageService;
-        private readonly CatClientFactory _catClientFactory;
+        private readonly ICatClientFactory _catClientFactory;
 
         //private static int MATCH_THRESHOLD = 50;
 
@@ -44,7 +44,7 @@ namespace CAT.Services.Common
         /// CATClientService
         /// </summary>
         public CATConnector(DbContextContainer dbContextContainer, IConfiguration configuration, IEnumerable<IMachineTranslator> machineTranslators,
-            ILanguageService languageService, CatClientFactory catClientFactory, IMapper mapper, ILogger<CATConnector> logger, 
+            ILanguageService languageService, ICatClientFactory catClientFactory, IMapper mapper, ILogger<CATConnector> logger, 
             IDocumentProcessor documentProcessor)
         {
             _dbContextContainer = dbContextContainer;

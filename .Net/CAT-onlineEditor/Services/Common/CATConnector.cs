@@ -39,7 +39,7 @@ namespace CAT.Services.Common
         private readonly DbContextContainer _dbContextContainer;
         private readonly ILanguageService _languageService;
         private readonly IConfiguration _configuration;
-        private readonly CatClientFactory _catClientFactory;
+        private readonly ICatClientFactory _catClientFactory;
         private readonly IMapper _mapper;
         private readonly ILogger _logger;
 
@@ -49,7 +49,7 @@ namespace CAT.Services.Common
         /// CATClientService
         /// </summary>
         public CATConnector(DbContextContainer dbContextContainer, ILanguageService languageService,
-            IConfiguration configuration, CatClientFactory catClientFactory, IMapper mapper, ILogger<CATConnector> logger)
+            IConfiguration configuration, ICatClientFactory catClientFactory, IMapper mapper, ILogger<CATConnector> logger)
         {
             _dbContextContainer = dbContextContainer;
             _languageService = languageService;

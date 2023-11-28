@@ -744,7 +744,7 @@ namespace CAT.TM
                 //remove the duplicates
                 //lstTMMatches = from tmMatch in lstTMMatches group tmMatch by tmMatch.target into g select   
                 lstTMMatches = lstTMMatches.GroupBy(tmMatch => tmMatch.target).Select(g => g.OrderByDescending(tmMatch => tmMatch.quality).First()).ToList();
-                lstTMMatches.Take(maxHits);
+                lstTMMatches = lstTMMatches.Take(maxHits).ToList();
 
                 //System.Diagnostics.Debug.WriteLine("Loops:" + loopCntr + " scores: " + scoreCntr);
 
@@ -826,7 +826,7 @@ namespace CAT.TM
                     var maxDoc = reader.MaxDoc;
                     var scoredDocs = new short[maxDoc];
                     var docValues = new short[maxDoc];
-                    var docPointers = new List<int>(); // new FixedBitSet(maxDoc);
+                    var docPointers = new List<int>(); // new FixedBitSet(maxDoc) can be used.
 
                     string searchFieldName = TranslationUnitField.SOURCE.ToString();
                     var leafReaderContexts = reader.Leaves;

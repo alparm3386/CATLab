@@ -1,2 +1,3 @@
-dotnet ef migrations add modelUpdate --context MainDbContext
-dotnet ef database update --context MainDbContext
+http://localhost:7096/api/EditorApi/DownloadDocument/1025
+
+http://localhost:7096/api/Common/ReloadConfig
