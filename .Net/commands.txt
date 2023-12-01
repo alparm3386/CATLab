@@ -1,3 +1,8 @@
+http://localhost:9000/tutorials?id=CAT-service&selectedTutorial=local
+dotnet sonarscanner begin /k:"CAT-service" /d:sonar.host.url="http://localhost:9000"  /d:sonar.token="sqp_7c78030a1cfa4b3a6dcd091f24551bf9a637e65c"
+dotnet build
+dotnet sonarscanner end /d:sonar.token="sqp_7c78030a1cfa4b3a6dcd091f24551bf9a637e65c"
+
 http://localhost:7096/api/EditorApi/DownloadDocument/1025
 
 http://localhost:7096/api/Common/ReloadConfig
