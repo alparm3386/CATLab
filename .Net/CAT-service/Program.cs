@@ -8,6 +8,7 @@ using CAT.Infrastructure.Logging;
 using CAT.Services;
 using CAT.TB;
 using CAT.TM;
+using CAT.Utils;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using System.Net;
 using System.Reflection;
@@ -33,6 +34,7 @@ builder.Services.AddSingleton<IDataStorage, SQLiteStorage>();
 builder.Services.AddSingleton<IOkapiService, OkapiService>();
 builder.Services.AddSingleton<ITMService, TMService>();
 builder.Services.AddSingleton<ITBService, TBService>();
+builder.Services.AddSingleton<IFileSystem, FileSystem>();
 builder.Services.AddTransient<IEmailService, SmtpEmailService>();
 
 //the logger

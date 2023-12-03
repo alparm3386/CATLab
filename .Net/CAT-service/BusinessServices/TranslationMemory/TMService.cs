@@ -20,6 +20,7 @@ using System.Threading;
 using System.Transactions;
 using System.Xml;
 using System.Text.RegularExpressions;
+using CAT.Infrastructure;
 
 namespace CAT.TM
 {
@@ -32,12 +33,14 @@ namespace CAT.TM
         private readonly string RepositoryFolder;
         private readonly ILogger _logger;
         private readonly IDataStorage _dataStorage;
+        private readonly IFileSystem _fileSystem;
         private readonly int NGramLength = 4;
         private readonly Dictionary<int, string> _specialities;
 
-        public TMService(IDataStorage dataStorage, IConfiguration configuration, ILogger<TMService> logger)
+        public TMService(IDataStorage dataStorage, IConfiguration configuration, IFileSystem fileSystem, ILogger<ITMService> logger)
         {
             _dataStorage = dataStorage;
+            _fileSystem = fileSystem;
             _logger = logger;
 
             //initialization
@@ -47,34 +50,54 @@ namespace CAT.TM
             RepositoryFolder = configuration["TMPath"]!;
         }
 
-        private string GetSourceIndexDirectory(string tmId)
+        /// <summary>
+        /// TMExists
+        /// </summary>
+        /// <param name="sTMName"></param>
+        /// <returns></returns>
+        public bool TMExists(string tmId)
         {
-            var tmName = tmId.Split('/')[1];
+            ValidateTMId(tmId);
+
+            //the TM directory
             var tmDir = GetTMDirectory(tmId);
-            var sourceIndexDir = Path.Combine(tmDir, "source indexes/" + tmName);
+            if (!_fileSystem.DirectoryExists(tmDir))
+                return false;
 
-            return sourceIndexDir;
+            //the TM table
+            if (!_dataStorage.TMExists(tmId))
+                return false;
+
+            //the source index directory
+            var sourceIndexDirectory = GetSourceIndexDirectory(tmId);
+            if (!_fileSystem.DirectoryExists(sourceIndexDirectory))
+                return false;
+
+            return true;
         }
 
-        private string GetTMName(string tmId)
+        /// <summary>
+        /// CreateTM
+        /// </summary>
+        /// <param name="tmId"></param>
+        /// <returns></returns>
+        public void CreateTM(string tmId)
         {
-            var tmName = tmId.Split('/')[1];
-            return tmName;
+            try
+            {
+                if (CheckIfTMExists(tmId))
+                    return;
+
+                CreateTMDirectory(tmId);
+                CreateSQLRepository(tmId);
+                CreateLuceneRepository(tmId);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("ERROR: CreateTM -> TM name: {TmId}\n{Exception}", tmId, ex.ToString());
+                throw;
+            }
         }
-
-        private string GetTMDirectory(string tmId)
-        {
-            var parent = tmId.Split('/')[0];
-            var tmDir = Path.Combine(RepositoryFolder, parent);
-
-            return tmDir;
-        }
-
-        private static string GetDatabaseName(string tmId)
-        {
-            return tmId.Split('/')[0];
-        }
-
 
         /// <summary>
         /// GetStatisticsForTranslationUnits
@@ -368,68 +391,6 @@ namespace CAT.TM
                 Debug.WriteLine(ex.ToString());
                 throw;
             }
-        }
-
-        /// <summary>
-        /// CreateTM
-        /// </summary>
-        /// <param name="tmId"></param>
-        /// <returns></returns>
-        public void CreateTM(string tmId)
-        {
-            try
-            {
-                //check if the TM Exists
-                if (TMExists(tmId))
-                    return;
-
-                //check the TM directory
-                var tmDir = GetTMDirectory(tmId);
-                if (!System.IO.Directory.Exists(tmDir))
-                    System.IO.Directory.CreateDirectory(tmDir);
-
-                //create the SQL repository
-                _dataStorage.CreateTranslationMemory(tmId);
-
-                //create the lucene repository
-                var sourceIndexDirectory = GetSourceIndexDirectory(tmId);
-                if (!System.IO.Directory.Exists(sourceIndexDirectory))
-                {
-                    System.IO.Directory.CreateDirectory(sourceIndexDirectory);
-                    var tmWriter = TmWriterFactory.CreateFileBasedTmWriter(sourceIndexDirectory, true);
-                    tmWriter.Commit();
-                    tmWriter.Close();
-                }
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError("ERROR: CreateTM -> TM name: {TmId}\n{Exception}", tmId, ex.ToString());
-                throw;
-            }
-        }
-
-        /// <summary>
-        /// TMExists
-        /// </summary>
-        /// <param name="sTMName"></param>
-        /// <returns></returns>
-        public bool TMExists(string tmId)
-        {
-            //the TM directory
-            var tmDir = GetTMDirectory(tmId);
-            if (!System.IO.Directory.Exists(tmDir))
-                return false;
-
-            //the TM table
-            if (!_dataStorage.TMExists(tmId))
-                return false;
-
-            //the source index directory
-            var sourceIndexDirectory = GetSourceIndexDirectory(tmId);
-            if (!System.IO.Directory.Exists(sourceIndexDirectory))
-                return false;
-
-            return true;
         }
 
         /// <summary>
@@ -870,47 +831,6 @@ namespace CAT.TM
                 Debug.WriteLine(ex.ToString());
                 throw;
             }
-        }
-
-        /// <summary>
-        /// CalculateContextHashFromMetadata
-        /// </summary>
-        /// <param name="metadata"></param>
-        /// <returns></returns>
-        private int CalculateContextHashFromMetadata(Dictionary<string, string> metadata)
-        {
-            if (metadata.ContainsKey("contextHash"))
-            {
-                _ = int.TryParse(metadata["contextHash"], out int contextHash);
-                return contextHash;
-            }
-
-            TextFragment prev = default!;
-            TextFragment next = default!;
-            if (metadata.ContainsKey("prevSegment"))
-                prev = CATUtils.TmxSegmentToTextFragmentSimple(metadata["prevSegment"]);
-            if (metadata.ContainsKey("nextSegment"))
-                next = CATUtils.TmxSegmentToTextFragmentSimple(metadata["nextSegment"]);
-
-            return CalculateContextHash(prev!, next!);
-        }
-
-        /// <summary>
-        /// CalculateContextHash
-        /// </summary>
-        /// <param name="prev"></param>
-        /// <param name="next"></param>
-        /// <returns></returns>
-        private int CalculateContextHash(TextFragment prev, TextFragment next)
-        {
-            string sContext = "";
-            if (prev != null)
-                sContext += prev.GetCodedText().Trim();
-
-            if (next != null)
-                sContext += next.GetCodedText().Trim();
-
-            return CATUtils.djb2hash(sContext);
         }
 
         /// <summary>
@@ -1638,7 +1558,103 @@ namespace CAT.TM
             }
         }
 
-        #region Misc.
+        #region private methods
+
+        private void ValidateTMId(string tmId)
+        {
+            if (tmId.Split("/").Length != 2)
+                throw new CATException("Invalid TM id.");
+        }
+
+        private int CalculateContextHashFromMetadata(Dictionary<string, string> metadata)
+        {
+            if (metadata.ContainsKey("contextHash"))
+            {
+                _ = int.TryParse(metadata["contextHash"], out int contextHash);
+                return contextHash;
+            }
+
+            TextFragment prev = default!;
+            TextFragment next = default!;
+            if (metadata.ContainsKey("prevSegment"))
+                prev = CATUtils.TmxSegmentToTextFragmentSimple(metadata["prevSegment"]);
+            if (metadata.ContainsKey("nextSegment"))
+                next = CATUtils.TmxSegmentToTextFragmentSimple(metadata["nextSegment"]);
+
+            return CalculateContextHash(prev!, next!);
+        }
+
+        private int CalculateContextHash(TextFragment prev, TextFragment next)
+        {
+            string sContext = "";
+            if (prev != null)
+                sContext += prev.GetCodedText().Trim();
+
+            if (next != null)
+                sContext += next.GetCodedText().Trim();
+
+            return CATUtils.djb2hash(sContext);
+        }
+
+        private bool CheckIfTMExists(string tmId)
+        {
+            return TMExists(tmId);
+        }
+
+        private void CreateTMDirectory(string tmId)
+        {
+            var tmDir = GetTMDirectory(tmId);
+            if (!System.IO.Directory.Exists(tmDir))
+            {
+                System.IO.Directory.CreateDirectory(tmDir);
+            }
+        }
+
+        private void CreateSQLRepository(string tmId)
+        {
+            _dataStorage.CreateTranslationMemory(tmId);
+        }
+
+        private void CreateLuceneRepository(string tmId)
+        {
+            var sourceIndexDirectory = GetSourceIndexDirectory(tmId);
+            if (!System.IO.Directory.Exists(sourceIndexDirectory))
+            {
+                System.IO.Directory.CreateDirectory(sourceIndexDirectory);
+                var tmWriter = TmWriterFactory.CreateFileBasedTmWriter(sourceIndexDirectory, true);
+                tmWriter.Commit();
+                tmWriter.Close();
+            }
+        }
+
+        private string GetSourceIndexDirectory(string tmId)
+        {
+            var tmName = tmId.Split('/')[1];
+            var tmDir = GetTMDirectory(tmId);
+            var sourceIndexDir = Path.Combine(tmDir, "source indexes/" + tmName);
+
+            return sourceIndexDir;
+        }
+
+        private string GetTMName(string tmId)
+        {
+            var tmName = tmId.Split('/')[1];
+            return tmName;
+        }
+
+        private string GetTMDirectory(string tmId)
+        {
+            var parent = tmId.Split('/')[0];
+            var tmDir = Path.Combine(RepositoryFolder, parent);
+
+            return tmDir;
+        }
+
+        private static string GetDatabaseName(string tmId)
+        {
+            return tmId.Split('/')[0];
+        }
+
         private string GetMetaData(DataRow tmEntry, string tmId)
         {
             try
