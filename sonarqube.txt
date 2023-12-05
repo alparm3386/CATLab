@@ -1,0 +1,7 @@
+http://localhost:9000/tutorials?id=CAT-service&selectedTutorial=local
+
+dotnet test /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
+dotnet sonarscanner begin /k:"CAT-service" /d:sonar.cs.opencover.reportsPaths="../CAT-service.UnitTests/TestResults/coverage.opencover.xml" /d:sonar.host.url="http://localhost:9000" /d:sonar.login="sqp_7c78030a1cfa4b3a6dcd091f24551bf9a637e65c"
+dotnet sonarscanner begin /k:"CAT-service" /d:sonar.host.url="http://localhost:9000"  /d:sonar.token="sqp_7c78030a1cfa4b3a6dcd091f24551bf9a637e65c"
+dotnet build
+dotnet sonarscanner end /d:sonar.token="sqp_7c78030a1cfa4b3a6dcd091f24551bf9a637e65c"

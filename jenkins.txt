@@ -1,0 +1,35 @@
+----------install--------------
+https://medium.com/@nestor.panu/building-an-asp-net-6-application-on-docker-based-jenkins-d6c8aaf94756
+docker run -e JAVA_OPTS="-Dhudson.plugins.git.GitSCM.ALLOW_LOCAL_CHECKOUT=true" jenkins/jenkins:lts
+
+# Install the .NET 7 SDK
+RUN apt-get update \
+    && apt-get install -y dotnet-sdk-7.0
+
+# Download and install SonarScanner   
+wget https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-5.0.1.3006-linux.zip \
+    && unzip sonar-scanner-cli-5.0.1.3006-linux.zip \
+    && mv sonar-scanner-5.0.1.3006-linux /opt/sonar-scanner \
+    && ln -s /opt/sonar-scanner/bin/sonar-scanner /usr/bin/sonar-scanner
+    
+dotnet tool install --global dotnet-sonarscanner
+export PATH="$PATH:/root/.dotnet/tools"
+
+dotnet add package coverlet.msbuild
+dotnet tool install --global coverlet.console
+
+----------------------
+
+
+----------run--------------
+
+cd /var/jenkins_home/repo/.Net/CAT-service.UnitTests
+dotnet test /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput=./TestResults/
+cd /var/jenkins_home/repo/.Net/CAT-service
+dotnet sonarscanner begin /k:"CAT-service" /d:sonar.cs.opencover.reportsPaths="../CAT-service.UnitTests/TestResults/coverage.opencover.xml" /d:sonar.host.url="http://localhost:9000" /d:sonar.login="sqp_7c78030a1cfa4b3a6dcd091f24551bf9a637e65c"
+dotnet build 
+dotnet sonarscanner end /d:sonar.token="sqp_7c78030a1cfa4b3a6dcd091f24551bf9a637e65c"
+
+coverlet bin/Debug/net7.0/CAT-service.dll --target "dotnet" --targetargs "test CAT-service.csproj --no-build"
+
+----------------------

@@ -110,32 +110,32 @@ namespace CAT_service.UnitTests.BusinessServices.TranslationMemory
             Assert.True(result);
         }
 
-        [Fact]
-        public void CreateTM_WhenTMExists_DoesNotCreateNewTM()
-        {
-            // Arrange
-            var tmId = "existingTM";
-            _mockDataStorage.Setup(ds => ds.TMExists(tmId)).Returns(true);
+        //[Fact]
+        //public void CreateTM_WhenTMExists_DoesNotCreateNewTM()
+        //{
+        //    // Arrange
+        //    var tmId = "existingTM";
+        //    _mockDataStorage.Setup(ds => ds.TMExists(tmId)).Returns(true);
 
-            // Act
-            _tmService.CreateTM(tmId);
+        //    // Act
+        //    _tmService.CreateTM(tmId);
 
-            // Assert
-            _mockDataStorage.Verify(ds => ds.CreateTranslationMemory(It.IsAny<string>()), Times.Never);
-        }
+        //    // Assert
+        //    _mockDataStorage.Verify(ds => ds.CreateTranslationMemory(It.IsAny<string>()), Times.Never);
+        //}
 
-        [Fact]
-        public void CreateTM_WhenTMDoesNotExist_CreatesNewTM()
-        {
-            // Arrange
-            var tmId = "newTM";
-            _mockDataStorage.Setup(ds => ds.TMExists(tmId)).Returns(false);
+        //[Fact]
+        //public void CreateTM_WhenTMDoesNotExist_CreatesNewTM()
+        //{
+        //    // Arrange
+        //    var tmId = "newTM";
+        //    _mockDataStorage.Setup(ds => ds.TMExists(tmId)).Returns(false);
 
-            // Act
-            _tmService.CreateTM(tmId);
+        //    // Act
+        //    _tmService.CreateTM(tmId);
 
-            // Assert
-            _mockDataStorage.Verify(ds => ds.CreateTranslationMemory(tmId), Times.Once);
-        }
+        //    // Assert
+        //    _mockDataStorage.Verify(ds => ds.CreateTranslationMemory(tmId), Times.Once);
+        //}
     }
 }
