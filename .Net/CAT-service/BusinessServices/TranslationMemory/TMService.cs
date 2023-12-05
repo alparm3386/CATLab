@@ -1560,7 +1560,7 @@ namespace CAT.TM
 
         #region private methods
 
-        private void ValidateTMId(string tmId)
+        private static void ValidateTMId(string tmId)
         {
             if (tmId.Split("/").Length != 2)
                 throw new CATException("Invalid TM id.");

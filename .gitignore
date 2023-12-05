@@ -1,6 +1,7 @@
 /CAT-web/wwwroot/lib/bootstrap/dist/css/*.map
 *.vsidx
 *.props
+.sonarqube
 bin
 obj
 /CAT-web/wwwroot/lib
@@ -29,4 +30,4 @@ obj
 /Archive
 /Docker/Okapi service/okapi-grpc-service-1.0-jar-with-dependencies.jar
 /Java/okapi-grpc-service/*.log
-/.Net/CAT-service/.sonarqube
+coverage.opencover.xml
