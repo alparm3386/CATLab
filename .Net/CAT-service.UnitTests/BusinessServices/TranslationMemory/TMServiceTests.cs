@@ -60,10 +60,25 @@ namespace CAT_service.UnitTests.BusinessServices.TranslationMemory
         }
 
         [Fact]
+        public void TMExists_ShouldReturnTrue_WhenTMDirectoryExists()
+        {
+            // Arrange
+            var tmId = "1/_1_en_fr";
+            _mockFileSystem.Setup(fs => fs.DirectoryExists(It.IsAny<string>())).Returns(true);
+
+            // Act
+            var result = _tmService.TMExists(tmId);
+
+            // Assert
+            Assert.True(result);
+        }
+
+        [Fact]
         public void TMExists_ShouldReturnFalse_WhenTMDirectoryDoesNotExistInDb()
         {
             // Arrange
             var tmId = "1/_1_en_fr";
+            _mockFileSystem.Setup(fs => fs.DirectoryExists(It.IsAny<string>())).Returns(true);
             _mockDataStorage.Setup(ds => ds.TMExists(It.IsAny<string>())).Returns(false);
 
             // Act
@@ -74,11 +89,27 @@ namespace CAT_service.UnitTests.BusinessServices.TranslationMemory
         }
 
         [Fact]
+        public void TMExists_ShouldReturnTrue_WhenTMDirectoryExistsInDb()
+        {
+            // Arrange
+            var tmId = "1/_1_en_fr";
+            _mockFileSystem.Setup(fs => fs.DirectoryExists(It.IsAny<string>())).Returns(true);
+            _mockDataStorage.Setup(ds => ds.TMExists(It.IsAny<string>())).Returns(true);
+
+            // Act
+            var result = _tmService.TMExists(tmId);
+
+            // Assert
+            Assert.True(result);
+        }
+
+        [Fact]
         public void TMExists_ShouldReturnFalse_WhenTMIndexDirectoryDoesNotExist()
         {
             // Arrange
             var tmId = "1/_1_en_fr";
-            _mockFileSystem.Setup(fs => fs.DirectoryExists(It.IsAny<string>())).Returns(false);
+            _mockFileSystem.Setup(fs => fs.DirectoryExists(It.IsAny<string>())).Returns(true);
+            _mockDataStorage.Setup(ds => ds.TMExists(It.IsAny<string>())).Returns(true);
 
             // Act
             var result = _tmService.TMExists(tmId);
