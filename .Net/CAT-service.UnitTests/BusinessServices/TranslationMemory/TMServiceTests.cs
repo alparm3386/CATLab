@@ -65,6 +65,7 @@ namespace CAT_service.UnitTests.BusinessServices.TranslationMemory
             // Arrange
             var tmId = "1/_1_en_fr";
             _mockFileSystem.Setup(fs => fs.DirectoryExists(It.IsAny<string>())).Returns(true);
+            _mockDataStorage.Setup(ds => ds.TMExists(It.IsAny<string>())).Returns(true);
 
             // Act
             var result = _tmService.TMExists(tmId);
@@ -92,7 +93,7 @@ namespace CAT_service.UnitTests.BusinessServices.TranslationMemory
         public void TMExists_ShouldReturnTrue_WhenTMDirectoryExistsInDb()
         {
             // Arrange
-            var tmId = "1/_1_en_fr";
+            var tmId = "1/_1_en_fr_";
             _mockFileSystem.Setup(fs => fs.DirectoryExists(It.IsAny<string>())).Returns(true);
             _mockDataStorage.Setup(ds => ds.TMExists(It.IsAny<string>())).Returns(true);
 
@@ -110,6 +111,9 @@ namespace CAT_service.UnitTests.BusinessServices.TranslationMemory
             var tmId = "1/_1_en_fr";
             _mockFileSystem.Setup(fs => fs.DirectoryExists(It.IsAny<string>())).Returns(true);
             _mockDataStorage.Setup(ds => ds.TMExists(It.IsAny<string>())).Returns(true);
+            _mockFileSystem
+                .Setup(fs => fs.DirectoryExists(Path.Combine(_tmPath, "1\\source indexes/_1_en_fr")))
+                .Returns(false);
 
             // Act
             var result = _tmService.TMExists(tmId);
