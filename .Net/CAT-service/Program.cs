@@ -10,6 +10,7 @@ using CAT.TB;
 using CAT.TM;
 using CAT.Utils;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
+using System.Diagnostics.CodeAnalysis;
 using System.Net;
 using System.Reflection;
 
@@ -49,16 +50,7 @@ app.MapGet("/", () => "Communication with gRPC endpoints must be made through a 
 app.Run();
 
 // Additional part for testing
+[SuppressMessage("CodeQuality", "S1118:Utility classes should not have public constructors", Justification = "Required by framework")]
 public partial class Program
 {
-    public static void ConfigureTestServices(WebApplicationBuilder builder)
-    {
-        // Configure test-specific services
-        int a = 0;
-    }
-    public static void ConfigureDevelopment(???)
-    {
-        // Configure test-specific services
-        int a = 0;
-    }
 }
