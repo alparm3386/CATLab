@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>net7.0</TargetFramework>
-    <RootNamespace>CAT_online_editor_test</RootNamespace>
+    <RootNamespace>CAT_onlineEditor.UnitTests</RootNamespace>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
 

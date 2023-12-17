@@ -1,4 +1,4 @@
-namespace CAT_online_editor_test
+namespace CAT_onlineEditor.UnitTests
 {
     public class UnitTest1
     {
