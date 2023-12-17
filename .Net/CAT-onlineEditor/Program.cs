@@ -25,7 +25,7 @@ using Microsoft.Extensions.Configuration.Json;
 
 var builder = WebApplication.CreateBuilder(args);
 
-//AddSQLServerContext(builder);
+//AddSQLServerContext(builder)
 AddMySqlContext(builder);
 AddConfiguration(builder);
 
@@ -91,9 +91,9 @@ var logger = app.Services.GetRequiredService<ILogger<Program>>();
 
 using (var scope = app.Services.CreateScope())
 {
-    //var services = scope.ServiceProvider;
+    //var services = scope.ServiceProvider
 
-    //SeedData.Initialize(services);
+    //SeedData.Initialize(services)
 }
 
 // Configure the HTTP request pipeline.
@@ -210,6 +210,7 @@ void AddMySqlContext(WebApplicationBuilder builder)
     });
 }
 
+#pragma warning disable CS8321 // Disable warning CS8321
 void AddSQLServerContext(WebApplicationBuilder builder)
 {
     builder.Services.AddDbContext<IdentityDbContext>(options =>
@@ -219,3 +220,4 @@ void AddSQLServerContext(WebApplicationBuilder builder)
     builder.Services.AddDbContext<TranslationUnitsDbContext>(options =>
         options.UseSqlServer(builder.Configuration.GetConnectionString("TranslationUnitsDbConnection") ?? throw new InvalidOperationException("Connection string 'TranslationUnitsDbConnection' not found.")));
 }
+#pragma warning restore CS8321 // Re-enable warning CS8321

@@ -9,7 +9,7 @@ namespace CAT.Models
         public List<TMAssignment> tmAssignments = default!;
         public List<TBAssignment> tbAssignments = default!;
         public int task;
-        public object user;
-        public object pmUser;
+        public object user = default!;
+        public object pmUser = default!;
     }
 }

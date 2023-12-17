@@ -13,34 +13,26 @@ namespace CAT.Infrastructure.Logging
             _log = log;
         }
 
-        public IDisposable BeginScope<TState>(TState state)
+        public IDisposable BeginScope<TState>(TState state) where TState : notnull
         {
             return null!;
         }
 
         public bool IsEnabled(LogLevel logLevel)
         {
-            switch (logLevel)
+            return logLevel switch
             {
-                case LogLevel.None:
-                    return false;
-                case LogLevel.Trace:
-                case LogLevel.Debug:
-                    return _log.IsDebugEnabled;
-                case LogLevel.Information:
-                    return _log.IsInfoEnabled;
-                case LogLevel.Warning:
-                    return _log.IsWarnEnabled;
-                case LogLevel.Error:
-                    return _log.IsErrorEnabled;
-                case LogLevel.Critical:
-                    return _log.IsFatalEnabled;
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(logLevel));
-            }
+                LogLevel.None => false,
+                LogLevel.Trace or LogLevel.Debug => _log.IsDebugEnabled,
+                LogLevel.Information => _log.IsInfoEnabled,
+                LogLevel.Warning => _log.IsWarnEnabled,
+                LogLevel.Error => _log.IsErrorEnabled,
+                LogLevel.Critical => _log.IsFatalEnabled,
+                _ => throw new ArgumentOutOfRangeException(nameof(logLevel)),
+            };
         }
 
-        public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception exception, Func<TState, Exception, string> formatter)
+        public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception? exception, Func<TState, Exception, string> formatter)
         {
             if (!IsEnabled(logLevel))
             {
@@ -52,7 +44,7 @@ namespace CAT.Infrastructure.Logging
                 throw new ArgumentNullException(nameof(formatter));
             }
 
-            var message = formatter(state, exception);
+            var message = formatter(state, exception!);
 
             if (!string.IsNullOrEmpty(message) || exception != null)
             {

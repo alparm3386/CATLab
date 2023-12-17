@@ -63,9 +63,9 @@ namespace CAT.Helpers
 
                 return sNewXlfPath;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                throw ex;
+                throw;
             }
         }
 
@@ -101,7 +101,7 @@ namespace CAT.Helpers
             if (!sXml.StartsWith("<seg>"))
                 sXml = "<seg>" + sXml + "</seg>";
             xmlDoc.LoadXml(sXml);
-            XmlNodeList nodeList = xmlDoc.ChildNodes[0].ChildNodes;
+            XmlNodeList nodeList = xmlDoc.ChildNodes?[0]!.ChildNodes!;
 
             try
             {
@@ -118,8 +118,9 @@ namespace CAT.Helpers
                 var matces = Regex.Match(sbTextContent.ToString(), @"\A\s*\z");
                 return matces.Length > 0;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
+                //clean-up
             }
 
             return false;
@@ -157,7 +158,7 @@ namespace CAT.Helpers
             if (!sXml.StartsWith("<seg>"))
                 sXml = "<seg>" + sXml + "</seg>";
             xmlDoc.LoadXml(sXml);
-            XmlNodeList nodeList = xmlDoc.ChildNodes[0].ChildNodes;
+            XmlNodeList nodeList = xmlDoc?.ChildNodes?[0]?.ChildNodes!;
             var openTags = new Dictionary<String, String>();
             int id = 1;
             String outerXml = "";
@@ -181,11 +182,11 @@ namespace CAT.Helpers
                                 break;
                             case "bpt":
                                 sRet.Append("{" + id + "}");
-                                openTags.Add(node.Attributes[sIdAttr].Value, id.ToString());
+                                openTags?.Add(node?.Attributes?[sIdAttr]?.Value!, id.ToString());
                                 id++;
                                 break;
                             case "ept":
-                                sRet.Append("{/" + openTags[node.Attributes[sIdAttr].Value] + "}");
+                                sRet.Append("{/" + openTags?[node?.Attributes?[sIdAttr]?.Value!]! + "}");
                                 break;
                             case "it":
                                 sRet.Append("{" + id + "/}");
@@ -197,7 +198,7 @@ namespace CAT.Helpers
                     }
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 throw new Exception("id=" + id);
             }
@@ -265,6 +266,7 @@ namespace CAT.Helpers
             }
             finally
             {
+                //clean-up
             }
         }
 
@@ -290,7 +292,7 @@ namespace CAT.Helpers
                         case '<': tmp.Append("&lt;"); break;
                         case '\r': tmp.Append("&#13;"); break; // Not a line-break in the XML context, but a literal
                         case '&': tmp.Append("&amp;"); break;
-                        //case '"': tmp.Append("&quot;";
+                        //case '"': tmp.Append("&quot;"
                         //case '\'': tmp.Append("&apos;"; //"&#39;"
                         default:
                             tmp.Append(charCode); break;
@@ -323,7 +325,7 @@ namespace CAT.Helpers
                         case '<': tmp.Append("&lt;"); break;
                         case '\r': tmp.Append("&#13;"); break; // Not a line-break in the XML context, but a literal
                         case '&': tmp.Append("&amp;"); break;
-                        //case '"': tmp.Append("&quot;";
+                        //case '"': tmp.Append("&quot;"
                         //case '\'': tmp.Append("&apos;"; //"&#39;"
                         default:
                             tmp.Append(charCode); break;
@@ -386,6 +388,7 @@ namespace CAT.Helpers
             }
             finally
             {
+                //clean-up
             }
         }
 

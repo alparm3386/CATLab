@@ -59,4 +59,9 @@
   <ItemGroup>
     <Protobuf Include="Protos\CAT.proto" GrpcServices="Client" />
   </ItemGroup>
+  
+  <PropertyGroup>
+    <TypeScriptCompileBlocked>true</TypeScriptCompileBlocked>
+  </PropertyGroup>
+
 </Project>

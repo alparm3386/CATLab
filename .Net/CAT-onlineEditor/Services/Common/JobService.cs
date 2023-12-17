@@ -20,19 +20,15 @@ namespace CAT.Services.Common
     public class JobService
     {
         private readonly DbContextContainer _dbContextContainer;
-        private readonly IConfiguration _configuration;
         private readonly CATConnector _catConnector;
         private readonly IMapper _mapper;
         private readonly ILogger _logger;
-        private readonly IHttpClientFactory _httpClientFactory;
 
-        public JobService(DbContextContainer dbContextContainer, IConfiguration configuration, CATConnector catConnector, 
-            IHttpClientFactory httpClientFactory, IMapper mapper, ILogger<JobService> logger)
+        public JobService(DbContextContainer dbContextContainer, CATConnector catConnector, 
+            IMapper mapper, ILogger<JobService> logger)
         {
             _dbContextContainer = dbContextContainer;
-            _configuration = configuration;
             _catConnector = catConnector;
-            _httpClientFactory = httpClientFactory;
             _logger = logger;
             _mapper = mapper;
         }
@@ -48,20 +44,19 @@ namespace CAT.Services.Common
                 var workflowSteps = await _dbContextContainer.MainContext.WorkflowSteps.Where(ws => ws.JobId == jobId).AsNoTracking().ToListAsync();
 
                 //check if the job was processed
-                var newJobStep = workflowSteps.FirstOrDefault(ws => ws.TaskId == (int)Enums.Task.NewJob);
+                var newJobStep = workflowSteps.Find(ws => ws.TaskId == (int)Enums.Task.NewJob);
                 if (newJobStep?.Status < 2)
                     throw new Exception("The job has not been processed yet.");
 
                 //get the current task
-                var currentStep = workflowSteps.FirstOrDefault(ws => ws.Status == (int)Enums.WorkflowStatus.InProgress);
+                var currentStep = workflowSteps.Find(ws => ws.Status == (int)WorkflowStatus.InProgress);
 
                 //check the allocation
                 if (user.UserType != UserType.Admin)
                 {
                     var allocation = await _dbContextContainer.MainContext.Allocations
                         .FirstOrDefaultAsync(allocation => allocation.JobId == jobId && allocation.UserId == user.Id);
-                    if (allocation == null)
-                        throw new Exception("The job is not allocated.");
+                    _ = allocation ?? throw new Exception("The job is not allocated.");
                 }
 
                 //document
@@ -102,60 +97,14 @@ namespace CAT.Services.Common
             }
         }
 
-        private static long GetMaskForTask(JobData jobDataData)
+        private static long GetMaskForTask(JobData jobData)
         {
-            //var task = jobDataData.task;
-            ////if the user is admin then we need the latest task done by the linguists or the client reviewer
-            //if (editorData.userType == userType.administrator)
-            //{
-            //    if (editorData.task == Task.Delivery || editorData.task == Task.CreditTranslators
-            //        || editorData.task == Task.Payment || editorData.task == Task.End || editorData.task == Task.SpecialReview
-            //        || editorData.task == Task.SpecialReview2 || editorData.task == Task.CheckAfterReview)
-            //    {
-            //        if (editorData.withClientReview)
-            //            task = Task.SpecialReview;
-            //        else if (editorData.withRevision)
-            //            task = Task.Proofread;
-            //        else
-            //            task = Task.Translate;
-            //    }
-            //    else if (editorData.task == Task.Proofread || editorData.task == Task.ReceiveCompletedJob
-            //        || editorData.task == Task.Completed)
-            //    {
-            //        if (editorData.withRevision)
-            //            task = Task.Proofread;
-            //        else
-            //            task = Task.Translate;
-            //    }
-            //    else if (editorData.task == Task.Translate || editorData.task == Task.ProofreaderJB)
-            //        task = Task.Translate;
-            //}
-            //var mask = 0x0;
-
-            //switch (task)
-            //{
-            //    case Task.Translate:
-            //    case Task.Transcreation:
-            //    case Task.MTRevise:
-            //        mask = 1; break;
-            //    case Task.Proofread:
-            //    case Task.TranscreationRevision:
-            //    case Task.RevisionOfCopyRevision:
-            //        mask = 2; break;
-            //    case Task.SpecialReview:
-            //    case Task.SpecialReview2:
-            //        mask = 4; break;
-            //    case Task.Reworking:
-            //        mask = 8; break;
-            //}
-
-            //return mask;
-            return 0xfL;
+            return jobData.jobId | 0xfL; // dummy return
         }
 
         public int[] SaveSegment(JobData jobData, int tuid, String sTarget, bool bConfirmed, int propagate)
         {
-            Stopwatch sw = new Stopwatch();
+            Stopwatch sw = new();
             sw.Start();
 
             var ix = tuid - 1;
@@ -169,7 +118,7 @@ namespace CAT.Services.Common
             tuDto.status = bConfirmed ? tuDto.status | mask : tuDto.status & ~mask;
 
             tuDto.target = sTarget;
-            List<int> aRet = new List<int>();
+            var aRet = new List<int>();
             //save the translated segment
             using (var dbContext = _dbContextContainer.TranslationUnitsContext)
             {
@@ -188,7 +137,7 @@ namespace CAT.Services.Common
 
                         var tmpTu = _mapper.Map<TranslationUnit>(tu);
                         //update the segment
-                        tmpTu.status = bConfirmed ? tu.status | mask : tu.status & ~mask;
+                        tmpTu.status = tu.status | mask;
                         _dbContextContainer.TranslationUnitsContext.TranslationUnit.Update(tmpTu);
                     }
                 }
@@ -197,7 +146,7 @@ namespace CAT.Services.Common
             }
 
             //update the progress
-            // UpdateJobProgress(jobData);
+            // UpdateJobProgress(jobData)
 
             //Add the translation to the TMs
             if (bConfirmed)
@@ -206,8 +155,7 @@ namespace CAT.Services.Common
             sw.Stop();
             if (sw.ElapsedMilliseconds > 1000)
             {
-                _logger.LogInformation("SaveSegment completed in " + sw.ElapsedMilliseconds +
-                    " jobId: " + jobData.jobId.ToString());
+                _logger.LogInformation("SaveSegment completed in {ElapsedMilliseconds} ms for jobId: {JobId}", sw.ElapsedMilliseconds, jobData.jobId);
             }
 
             return aRet.ToArray();
@@ -234,18 +182,15 @@ namespace CAT.Services.Common
                     if (ix > 0)
                     {
                         tu = jobData.translationUnits[ix - 1];
-                        tagsMap = CATUtils.GetTagsMap(tu.source!);
                         precedingXml = CATUtils.CodedTextToTmx(tu.source!);
                     }
                     String followingXml = null!;
                     if (ix < jobData.translationUnits.Count - 1)
                     {
                         tu = jobData.translationUnits[ix + 1];
-                        tagsMap = CATUtils.GetTagsMap(tu.source!);
                         followingXml = CATUtils.CodedTextToTmx(tu.source!);
                     }
 
-                    //var catConnector = CATConnectorFactory.CreateCATConnector(editorData.iServer);
                     foreach (var tmAssignment in jobData.tmAssignments!)
                     {
                         if (!tmAssignment.isReadonly && !tmAssignment.isGlobal)
@@ -260,7 +205,7 @@ namespace CAT.Services.Common
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogError("jobId: " + jobData.jobId + " " + ex.ToString());
+                    _logger.LogError("jobId: {jobId} {exception}", jobData.jobId, ex.ToString());
                 }
             });
         }

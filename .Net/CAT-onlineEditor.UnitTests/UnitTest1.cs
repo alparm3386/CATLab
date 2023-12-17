@@ -5,7 +5,7 @@ namespace CAT_onlineEditor.UnitTests
         [Fact]
         public void Test1()
         {
-
+            Assert.False(false);
         }
     }
 }

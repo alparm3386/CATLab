@@ -21,34 +21,31 @@ namespace CAT.Helpers
 		public bool ZipFiles(string[] FilenamesToPack, System.Collections.Specialized.StringCollection? asNamesInThePack, string sZipName,
 			bool bKeepDirectoryStructure)
 		{
-			//string[] filenames = Directory.GetFiles(args[0]);
-
 			bool bRet = true;
 			Crc32 crc = new Crc32();
 			ZipOutputStream s = new ZipOutputStream(File.Create(sZipName));
 		
 			s.SetLevel(6); // 0 - store only to 9 - means best compression
 			int i = -1;
-			string sNameInPack;
+			string sNameInPack = default!;
 		
 			foreach (string file in FilenamesToPack) 
 			{
 				i++;
-				FileStream fs;
+				FileStream fs = default!;
 				try
 				{
 					fs= File.OpenRead(file);
 				}
 				catch
 				{
-					//return false;
 					bRet = false;
 					continue;
 				}
-				sNameInPack = asNamesInThePack == null ? file : asNamesInThePack[i];
+				sNameInPack = asNamesInThePack == null ? file : asNamesInThePack[i]!;
 				byte[] buffer = new byte[fs.Length];
 				fs.Read(buffer, 0, buffer.Length);
-                ZipEntry entry = null;
+                ZipEntry entry = null!;
                 if(bKeepDirectoryStructure)
 					entry = new ZipEntry(sNameInPack);
 			    else
@@ -142,7 +139,7 @@ namespace CAT.Helpers
 
                     using (var fs = File.OpenRead(file))
                     {
-                        int sourceBytes;
+                        int sourceBytes = 0;
                         do
                         {
                             sourceBytes = fs.Read(buffer, 0, buffer.Length);
@@ -155,52 +152,34 @@ namespace CAT.Helpers
             }
         }
 
-        public static void UnZipFiles(string zipPathAndFile, string outputFolder, string? password/*, bool deleteZipFile*/)
+        public static void UnZipFiles(string zipPathAndFile, string outputFolder, string? password)
         {
-            ZipInputStream s = new ZipInputStream(File.OpenRead(zipPathAndFile));
-            if (password != null && password != String.Empty)
-                s.Password = password;
-            ZipEntry theEntry;
-            string tmpEntry = String.Empty;
-            while ((theEntry = s.GetNextEntry()) != null)
+            using (ZipInputStream zipInputStream = new ZipInputStream(File.OpenRead(zipPathAndFile)))
             {
-                string directoryName = outputFolder;
-                string fileName = Path.GetFileName(theEntry.Name);
-                // create directory 
-                if (directoryName != "")
+                if (!string.IsNullOrEmpty(password))
+                    zipInputStream.Password = password;
+
+                ZipEntry entry;
+                while ((entry = zipInputStream.GetNextEntry()) != null)
                 {
-                    Directory.CreateDirectory(directoryName);
-                }
-                if (fileName != String.Empty)
-                {
-                    if (theEntry.Name.IndexOf(".ini") < 0)
+                    if (!string.IsNullOrEmpty(entry.Name) && !entry.Name.EndsWith(".ini"))
                     {
-                        string fullPath = directoryName + "\\" + theEntry.Name;
-                        fullPath = fullPath.Replace("\\ ", "\\");
-                        string fullDirPath = Path.GetDirectoryName(fullPath);
-                        if (!Directory.Exists(fullDirPath)) Directory.CreateDirectory(fullDirPath);
-                        FileStream streamWriter = File.Create(fullPath);
-                        int size = 2048;
-                        byte[] data = new byte[2048];
-                        while (true)
+                        string fullPath = Path.Combine(outputFolder, entry.Name);
+                        string directoryPath = Path.GetDirectoryName(fullPath!)!;
+
+                        if (!string.IsNullOrWhiteSpace(directoryPath) && !Directory.Exists(directoryPath))
+                            Directory.CreateDirectory(directoryPath);
+
+                        if (Path.GetFileName(fullPath) != string.Empty)
                         {
-                            size = s.Read(data, 0, data.Length);
-                            if (size > 0)
+                            using (FileStream fileStream = File.Create(fullPath))
                             {
-                                streamWriter.Write(data, 0, size);
-                            }
-                            else
-                            {
-                                break;
+                                zipInputStream.CopyTo(fileStream);
                             }
                         }
-                        streamWriter.Close();
                     }
                 }
             }
-            s.Close();
-//            if (deleteZipFile)
-//                File.Delete(zipPathAndFile);
         }
     }
 }

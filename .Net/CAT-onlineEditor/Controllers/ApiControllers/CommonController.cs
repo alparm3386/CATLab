@@ -12,8 +12,12 @@ namespace CAT.Areas.API.Internal.Controllers
     //[Authorize(Policy = "AdminsOnly")]
     public class CommonController : ControllerBase
     {
-        private readonly DbContextContainer _dbContextContainer;
         private readonly IConfiguration _configuration;
+
+        public CommonController(IConfiguration configuration )
+        {
+            _configuration = configuration;
+        }
 
         [Route("GetProfilePicture/{userId}")]
         [HttpGet]

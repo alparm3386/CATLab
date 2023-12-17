@@ -36,11 +36,8 @@ namespace CAT.Services.Common
 {
     public class CATConnector
     {
-        private readonly DbContextContainer _dbContextContainer;
         private readonly ILanguageService _languageService;
-        private readonly IConfiguration _configuration;
         private readonly ICatClientFactory _catClientFactory;
-        private readonly IMapper _mapper;
         private readonly ILogger _logger;
 
         private static int MATCH_THRESHOLD = 50;
@@ -48,14 +45,11 @@ namespace CAT.Services.Common
         /// <summary>
         /// CATClientService
         /// </summary>
-        public CATConnector(DbContextContainer dbContextContainer, ILanguageService languageService,
-            IConfiguration configuration, ICatClientFactory catClientFactory, IMapper mapper, ILogger<CATConnector> logger)
+        public CATConnector(ILanguageService languageService,
+            ICatClientFactory catClientFactory, ILogger<CATConnector> logger)
         {
-            _dbContextContainer = dbContextContainer;
             _languageService = languageService;
-            _configuration = configuration;
             _catClientFactory = catClientFactory;
-            _mapper = mapper;
             _logger = logger;
         }
 
@@ -67,8 +61,6 @@ namespace CAT.Services.Common
 
         public TMMatch[] GetTMMatches(TMAssignment[] tmAssignments, string sourceXml, string prevXml, string nextXml, string contextID)
         {
-            //we can't send over null value
-            //var aTms = _mapper.Map<Proto.TMAssignment[]>(tmAssignments);
             var tms = Array.ConvertAll(tmAssignments, tma => new Proto.TMAssignment()
             {
                 TmId = tma.tmId,
@@ -155,26 +147,7 @@ namespace CAT.Services.Common
 
         public TBEntry[] ListTBEntries(TBAssignment tBAssignment, String[] languages)
         {
-            //var client = GetCATService();
-            ////get the TB id from guid
-            //var tbEntries = client.ListTBEntries(tBAssignment.idTermbase, languages);
-
-            ////convert the list
-            //var lstRet = new List<TBEntry>();
-            //foreach (var tbEntry in tbEntries)
-            //{
-            //    lstRet.Add(new TBEntry()
-            //    {
-            //        id = tbEntry.id,
-            //        terms = tbEntry.terms,
-            //        comment = tbEntry.comment,
-            //        metadata = tbEntry.metadata
-            //    });
-            //}
-
-            //return lstRet.ToArray();
-
-            return null;
+            throw new NotFiniteNumberException();
         }
 
         public void AddTMEntry(TMAssignment tmAssignment, String sourceXml, String targetXml, String prevXml, String nextXml,
