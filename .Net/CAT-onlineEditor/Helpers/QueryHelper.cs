@@ -2,7 +2,7 @@
 
 namespace CAT.Helpers
 {
-    public class QueryHelper
+    public static class QueryHelper
     {
         public static string? GetQuerystringParameter(String queryString, String key)
         {

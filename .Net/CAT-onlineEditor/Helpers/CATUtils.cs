@@ -16,37 +16,37 @@ using System.Xml;
 
 namespace CAT.Helpers
 {
-    public class CATUtils
+    public partial class CATUtils
     {
         /// <summary>
         /// IsCompressedMemoQXliff
         /// </summary>
         /// <param name="sFilePath"></param>
         /// <returns></returns>
-        public static bool IsCompressedMemoQXliff(String sFilePath)
+        public static bool IsCompressedMemoQXliff(string sFilePath)
         {
-            String sExt = Path.GetExtension(sFilePath).ToLower();
+            string sExt = Path.GetExtension(sFilePath).ToLower();
             if (sExt == ".mqxlz" || sExt == ".xlz")
                 return true;
 
             return false;
         }
 
-        public static String ExtractMQXlz(String sFilePath, String tempFolder)
+        public static string ExtractMQXlz(string sFilePath, string tempFolder)
         {
-            String sNewXlfPath = Path.Combine(tempFolder, Guid.NewGuid().ToString() + ".xlf");
+            string sNewXlfPath = Path.Combine(tempFolder, Guid.NewGuid().ToString() + ".xlf");
             try
             {
-                String sExt = Path.GetExtension(sFilePath).ToLower();
+                string sExt = Path.GetExtension(sFilePath).ToLower();
                 //unzip the file if it is zipped
                 if (sExt == ".xlz" || sExt == ".mqxlz")
                 {
-                    String sTmpDir = Path.Combine(tempFolder, Guid.NewGuid().ToString());
+                    string sTmpDir = Path.Combine(tempFolder, Guid.NewGuid().ToString());
                     ZipHelper.UnZipFiles(sFilePath, sTmpDir, null);
                     //copy the file into the out dir
                     if (sExt == ".xlz")
                     {
-                        String[] aFiles = Directory.GetFiles(sTmpDir, "*.xlf");
+                        string[] aFiles = Directory.GetFiles(sTmpDir, "*.xlf");
                         File.Copy(aFiles[0], sNewXlfPath);
                     }
                     else
@@ -69,7 +69,7 @@ namespace CAT.Helpers
             }
         }
 
-        public static String GetJobDataFolder(int jobId, String jobDataBaseFolder)
+        public static string GetJobDataFolder(int jobId, string jobDataBaseFolder)
         {
             var jobDataFolder = Path.Combine(jobDataBaseFolder, jobId.ToString());
 
@@ -80,7 +80,7 @@ namespace CAT.Helpers
             return jobDataFolder;
         }
 
-        public static String CreateXlfFilePath(int jobId, DocumentType documentType, String jobDataBaseFolder)
+        public static string CreateXlfFilePath(int jobId, DocumentType documentType, string jobDataBaseFolder)
         {
             var jobDataFolder = GetJobDataFolder(jobId, jobDataBaseFolder);
             var xliffPath = Path.Combine(jobDataFolder, documentType.ToString() + ".xliff");
@@ -94,10 +94,9 @@ namespace CAT.Helpers
             return xliffPath;
         }
 
-        public static bool IsSegmentEmptyOrWhiteSpaceOnly(String sXml)
+        public static bool IsSegmentEmptyOrWhiteSpaceOnly(string sXml)
         {
-            XmlDocument xmlDoc = new XmlDocument();
-            xmlDoc.PreserveWhitespace = true;
+            var xmlDoc = new XmlDocument { PreserveWhitespace = true };
             if (!sXml.StartsWith("<seg>"))
                 sXml = "<seg>" + sXml + "</seg>";
             xmlDoc.LoadXml(sXml);
@@ -115,7 +114,7 @@ namespace CAT.Helpers
                 if (sbTextContent.Length == 0)
                     return true;
 
-                var matces = Regex.Match(sbTextContent.ToString(), @"\A\s*\z");
+                var matces = WhiteSpaceOrEmptyRegex().Match(sbTextContent.ToString());
                 return matces.Length > 0;
             }
             catch (Exception)
@@ -126,13 +125,13 @@ namespace CAT.Helpers
             return false;
         }
 
-        public static String XliffTags2TMXTags(String sXliffContent)
+        public static string XliffTags2TMXTags(string sXliffContent)
         {
-            String sConverted = sXliffContent;
-            sConverted = Regex.Replace(sConverted, "<x id=['\"].*?['\"].*?/>", "<ph type='fmt'>{}</ph>"); //no x element in TMX 
-            sConverted = Regex.Replace(sConverted, "(?<=<[^>]*?)(id)", "i"); //regex seems to be faster than xslt
-            sConverted = Regex.Replace(sConverted, "(?<=<[^>]*?)(ctype)", "type");
-            sConverted = Regex.Replace(sConverted, "(?<=<[^>]*?)(type=\"underlined\")", "type=\"ulined\"");
+            string sConverted = sXliffContent;
+            sConverted = XPlaceholderRegex().Replace(sConverted, "<ph type='fmt'>{}</ph>"); //no x element in TMX 
+            sConverted = IdRegex().Replace(sConverted, "i"); //regex seems to be faster than xslt
+            sConverted = CTypeRegex().Replace(sConverted, "type");
+            sConverted = TypeUnderlinedRegex().Replace(sConverted, "type=\"ulined\"");
             sConverted = sConverted.Replace(" xmlns=\"urn:oasis:names:tc:xliff:document:1.2\"", ""); //is there better solution?
 
             return sConverted;
@@ -140,33 +139,30 @@ namespace CAT.Helpers
 
         public enum TagType { Xliff, Tmx };
 
-        public static String XmlTags2GoogleTags(String sXml, TagType tagType)
+        public static string XmlTags2GoogleTags(string sXml, TagType tagType)
         {
             //collect the ids to skip
-            StringBuilder sRet = new StringBuilder();
-            MatchCollection matches = Regex.Matches(sXml, @"{\s*(?<id>\d+)\s*}|{\s*/\s*(?<id>\d+)\s*}|{\s*(?<id>\d+)\s*/\s*}");
-            HashSet<String> idsToSkip = new HashSet<String>();
-            foreach (Match match in matches)
+            var sRet = new StringBuilder();
+            MatchCollection matches = GoogleTagsRegex().Matches(sXml);
+            var idsToSkip = new HashSet<string>();
+            foreach (Match match in matches.Cast<Match>())
                 idsToSkip.Add(match.Groups["id"].Value);
 
-            String sIdAttr = "id";
+            string sIdAttr = "id";
             if (tagType == TagType.Tmx)
                 sIdAttr = "i";
 
-            XmlDocument xmlDoc = new XmlDocument();
-            xmlDoc.PreserveWhitespace = true;
+            var xmlDoc = new XmlDocument { PreserveWhitespace = true };
             if (!sXml.StartsWith("<seg>"))
                 sXml = "<seg>" + sXml + "</seg>";
             xmlDoc.LoadXml(sXml);
             XmlNodeList nodeList = xmlDoc?.ChildNodes?[0]?.ChildNodes!;
-            var openTags = new Dictionary<String, String>();
+            var openTags = new Dictionary<string, string>();
             int id = 1;
-            String outerXml = "";
             try
             {
                 foreach (XmlNode node in nodeList)
                 {
-                    outerXml = node.OuterXml;
                     while (idsToSkip.Contains(id.ToString()))
                         id++;
                     if (node.NodeType == XmlNodeType.Text || node.NodeType == XmlNodeType.Whitespace)
@@ -212,49 +208,48 @@ namespace CAT.Helpers
         public static readonly int CHARBASE = 0xE110;
 
         //regex for all TextFragment markers
-        public static readonly String MARKERS_REGEX = "[\uE101\uE102\uE103\uE104].";
+        public static readonly string MARKERS_REGEX = "[\uE101\uE102\uE103\uE104].";
 
-        public static string XliffSegmentToCodedText(String sXliffSegment)
+        public static string XliffSegmentToCodedText(string sXliffSegment)
         {
             try
             {
-                if (sXliffSegment == null)
-                    sXliffSegment = "";
+                sXliffSegment ??= "";
 
                 // remove the outer tag
-                StringBuilder sbOut = new StringBuilder();
+                var sbOut = new StringBuilder();
 
                 // matcher for the tmx tags
-                var matches = Regex.Matches(sXliffSegment, "<[^>]*>[^>]*>");
+                var matches = TmxTagsRegex().Matches(sXliffSegment);
                 int id = 1;
                 int prevEnd = 0;
                 var idStack = new Stack<int>();
-                String sText = "";
-                foreach (Match match in matches)
+                string sText = "";
+                foreach (var match in matches.Cast<Match>())
                 {
-                    String sTag = match.Value.ToLower();
-                    sText = sXliffSegment.Substring(prevEnd, match.Index - prevEnd);
+                    string sTag = match.Value.ToLower();
+                    sText = sXliffSegment[prevEnd..match.Index];
                     sText = HttpUtility.HtmlDecode(sText); //xml decode
                     prevEnd = match.Index + match.Length;
                     sbOut.Append(sText);
                     if (sTag.StartsWith("<bpt"))
                     {
-                        sbOut.Append("" + ((char)MARKER_OPENING) + (char)(CHARBASE + id));
+                        sbOut.Append("" + (char)MARKER_OPENING + (char)(CHARBASE + id));
                         idStack.Push(id);
                         id++;
                     }
                     else if (sTag.StartsWith("<ept"))
                     {
-                        sbOut.Append("" + ((char)MARKER_CLOSING) + (char)(CHARBASE + idStack.Pop()));
+                        sbOut.Append("" + (char)MARKER_CLOSING + (char)(CHARBASE + idStack.Pop()));
                     }
                     else if (sTag.StartsWith("<ph") || sTag.StartsWith("<x"))
                     {
-                        sbOut.Append("" + ((char)MARKER_ISOLATED) + (char)(CHARBASE + id));
+                        sbOut.Append("" + (char)MARKER_ISOLATED + (char)(CHARBASE + id));
                         id++;
                     }
                 }
 
-                sText = sXliffSegment.Substring(prevEnd, sXliffSegment.Length - prevEnd);
+                sText = sXliffSegment[prevEnd..];
                 sText = HttpUtility.HtmlDecode(sText); //xml decode
                 sbOut.Append(sText);
 
@@ -273,16 +268,16 @@ namespace CAT.Helpers
         public static string CodedTextToXliff(string codedText)
         {
             //create simple codes
-            StringBuilder tmp = new StringBuilder();
+            var tmp = new StringBuilder();
             for (int i = 0; i < codedText.Length; i++)
             {
                 var charCode = codedText[i];
                 if (charCode == MARKER_OPENING)
-                    tmp.Append("<bpt id=\"" + ((int)codedText[++i] - CHARBASE).ToString() + "\">{}</bpt>");
+                    tmp.Append("<bpt id=\"" + (codedText[++i] - CHARBASE).ToString() + "\">{}</bpt>");
                 else if (charCode == MARKER_CLOSING)
-                    tmp.Append("<ept id=\"" + ((int)codedText[++i] - CHARBASE).ToString() + "\">{}</ept>");
+                    tmp.Append("<ept id=\"" + (codedText[++i] - CHARBASE).ToString() + "\">{}</ept>");
                 else if (charCode == MARKER_ISOLATED)
-                    tmp.Append("<ph id=\"" + ((int)codedText[++i] - CHARBASE).ToString() + "\">{}</ph>");
+                    tmp.Append("<ph id=\"" + (codedText[++i] - CHARBASE).ToString() + "\">{}</ph>");
                 else
                 {
                     //xml escape 
@@ -303,19 +298,19 @@ namespace CAT.Helpers
             return tmp.ToString();
         }
 
-        public static String CodedTextToTmx(string codedText)
+        public static string CodedTextToTmx(string codedText)
         {
             //create simple codes
-            StringBuilder tmp = new StringBuilder();
+            var tmp = new StringBuilder();
             for (int i = 0; i < codedText.Length; i++)
             {
                 var charCode = codedText[i];
                 if (charCode == MARKER_OPENING)
-                    tmp.Append("<bpt i=\"" + ((int)codedText[++i] - CHARBASE).ToString() + "\">{}</bpt>");
+                    tmp.Append("<bpt i=\"" + (codedText[++i] - CHARBASE).ToString() + "\">{}</bpt>");
                 else if (charCode == MARKER_CLOSING)
-                    tmp.Append("<ept i=\"" + ((int)codedText[++i] - CHARBASE).ToString() + "\">{}</ept>");
+                    tmp.Append("<ept i=\"" + (codedText[++i] - CHARBASE).ToString() + "\">{}</ept>");
                 else if (charCode == MARKER_ISOLATED)
-                    tmp.Append("<ph i=\"" + ((int)codedText[++i] - CHARBASE).ToString() + "\">{}</ph>");
+                    tmp.Append("<ph i=\"" + (codedText[++i] - CHARBASE).ToString() + "\">{}</ph>");
                 else
                 {
                     //xml escape 
@@ -336,47 +331,47 @@ namespace CAT.Helpers
             return tmp.ToString();
         }
 
-        public static string TmxSegmentToCodedText(String sTmxSeg)
+        public static string TmxSegmentToCodedText(string sTmxSeg)
         {
             try
             {
-                if (String.IsNullOrEmpty(sTmxSeg))
+                if (string.IsNullOrEmpty(sTmxSeg))
                     return "";
 
                 // remove the outer tag
-                StringBuilder sbOut = new StringBuilder();
+                var sbOut = new StringBuilder();
 
                 // matcher for the tmx tags
-                var matches = Regex.Matches(sTmxSeg, "<[^>]*>[^>]*>");
+                var matches = XmlTagsRegex().Matches(sTmxSeg);
                 int id = 1;
                 int prevEnd = 0;
                 var idStack = new Stack<int>();
-                String sText = "";
-                foreach (Match match in matches)
+                string sText = "";
+                foreach (Match match in matches.Cast<Match>())
                 {
-                    String sTag = match.Value.ToLower();
-                    sText = sTmxSeg.Substring(prevEnd, match.Index - prevEnd);
+                    string sTag = match.Value.ToLower();
+                    sText = sTmxSeg[prevEnd..match.Index];
                     sText = HttpUtility.HtmlDecode(sText); //xml decode
                     prevEnd = match.Index + match.Length;
                     sbOut.Append(sText);
                     if (sTag.StartsWith("<bpt"))
                     {
-                        sbOut.Append("" + ((char)MARKER_OPENING) + (char)(CHARBASE + id));
+                        sbOut.Append("" + (char)MARKER_OPENING + (char)(CHARBASE + id));
                         idStack.Push(id);
                         id++;
                     }
                     else if (sTag.StartsWith("<ept"))
                     {
-                        sbOut.Append("" + ((char)MARKER_CLOSING) + (char)(CHARBASE + idStack.Pop()));
+                        sbOut.Append("" + (char)MARKER_CLOSING + (char)(CHARBASE + idStack.Pop()));
                     }
                     else if (sTag.StartsWith("<ph") || sTag.StartsWith("<x") || sTag.StartsWith("<it"))
                     {
-                        sbOut.Append("" + ((char)MARKER_ISOLATED) + (char)(CHARBASE + id));
+                        sbOut.Append("" + (char)MARKER_ISOLATED + (char)(CHARBASE + id));
                         id++;
                     }
                 }
 
-                sText = sTmxSeg.Substring(prevEnd, sTmxSeg.Length - prevEnd);
+                sText = sTmxSeg[prevEnd..];
                 sText = HttpUtility.HtmlDecode(sText); //xml decode
                 sbOut.Append(sText);
 
@@ -392,13 +387,13 @@ namespace CAT.Helpers
             }
         }
 
-        public static String CodedTextToGoogleTags(string codedText)
+        public static string CodedTextToGoogleTags(string codedText)
         {
             var tagsMap = GetTagsMap(codedText);
             var reversedTagsMap = tagsMap.ToDictionary(x => x.Value, x => x.Key);
 
             //create simple codes
-            StringBuilder tmp = new StringBuilder();
+            var tmp = new StringBuilder();
             for (int i = 0; i < codedText.Length; i++)
             {
                 var charCode = codedText[i];
@@ -421,17 +416,16 @@ namespace CAT.Helpers
             return tmp.ToString();
         }
 
-        public static Dictionary<int, int> GetTagsMap(String codedText)
+        public static Dictionary<int, int> GetTagsMap(string codedText)
         {
             var tagsMap = new Dictionary<int, int>();
-            MatchCollection matches = Regex.Matches(codedText, @"{\s*(?<id>\d+)\s*}|{\s*/\s*(?<id>\d+)\s*}|{\s*(?<id>\d+)\s*/\s*}");
-            HashSet<String> idsToSkip = new HashSet<String>();
-            foreach (Match match in matches)
+            MatchCollection matches = GoogleTagsRegex().Matches(codedText);
+            var idsToSkip = new HashSet<string>();
+            foreach (Match match in matches.Cast<Match>())
                 idsToSkip.Add(match.Groups["id"].Value);
 
             var id = 1;
             //create simple codes
-            StringBuilder tmp = new StringBuilder();
             for (int i = 0; i < codedText.Length; i++)
             {
                 while (idsToSkip.Contains(id.ToString()))
@@ -448,18 +442,18 @@ namespace CAT.Helpers
             return tagsMap;
         }
 
-        public static String GoogleTagsToTmx(string googleText, Dictionary<int, int> tagsMap)
+        public static string GoogleTagsToTmx(string googleText, Dictionary<int, int> tagsMap)
         {
             //create simple codes
-            String sTmx = googleText;
-            MatchCollection matches = Regex.Matches(googleText, @"{\s*(?<id>\d+)\s*}|{\s*/\s*(?<id>\d+)\s*}|{\s*(?<id>\d+)\s*/\s*}");
-            foreach (Match match in matches)
+            string sTmx = googleText;
+            MatchCollection matches = GoogleTagsRegex().Matches(googleText);
+            foreach (Match match in matches.Cast<Match>())
             {
                 int id = int.Parse(match.Groups["id"].Value);
 
-                if (match.Value.Contains("\\")) //closing tag
+                if (match.Value.Contains('\\')) //closing tag
                     sTmx = sTmx.Replace(match.Value, "<ept i=\"" + tagsMap[id].ToString() + "\">{}</ept>");
-                else if (match.Value.Contains("/")) //isolated tag
+                else if (match.Value.Contains('/')) //isolated tag
                     sTmx = sTmx.Replace(match.Value, "<ph i=\"" + tagsMap[id].ToString() + "\">{}</ph>");
                 else //opening tag
                     sTmx = sTmx.Replace(match.Value, "<bpt i=\"" + tagsMap[id].ToString() + "\">{}</bpt>");
@@ -467,5 +461,29 @@ namespace CAT.Helpers
 
             return sTmx;
         }
+
+        [GeneratedRegex("\\A\\s*\\z")]
+        private static partial Regex WhiteSpaceOrEmptyRegex();
+
+        [GeneratedRegex("<x id=['\"].*?['\"].*?/>")]
+        private static partial Regex XPlaceholderRegex();
+
+        [GeneratedRegex("(?<=<[^>]*?)(id)")]
+        private static partial Regex IdRegex();
+
+        [GeneratedRegex("(?<=<[^>]*?)(ctype)")]
+        private static partial Regex CTypeRegex();
+
+        [GeneratedRegex("(?<=<[^>]*?)(type=\"underlined\")")]
+        private static partial Regex TypeUnderlinedRegex();
+
+        [GeneratedRegex("<[^>]*>[^>]*>")]
+        private static partial Regex XmlTagsRegex();
+
+        [GeneratedRegex("{\\s*(?<id>\\d+)\\s*}|{\\s*/\\s*(?<id>\\d+)\\s*}|{\\s*(?<id>\\d+)\\s*/\\s*}")]
+        private static partial Regex GoogleTagsRegex();
+
+        [GeneratedRegex("<[^>]*>[^>]*>")]
+        private static partial Regex TmxTagsRegex();
     }
 }

@@ -53,14 +53,11 @@ namespace CAT.Configuration
 
     public class DatabaseConfigurationSource : IConfigurationSource
     {
-        private IConfigurationProvider _databaseConfigurationProvider = default!;
-
-        private readonly IServiceProvider _serviceProvider;
+        private readonly IConfigurationProvider _databaseConfigurationProvider;
 
         public DatabaseConfigurationSource(IServiceProvider serviceProvider)
         {
-            _serviceProvider = serviceProvider;
-            _databaseConfigurationProvider = new DatabaseConfigurationProvider(_serviceProvider);
+            _databaseConfigurationProvider = new DatabaseConfigurationProvider(serviceProvider);
         }
 
         public IConfigurationProvider GetConfigurationProvider()

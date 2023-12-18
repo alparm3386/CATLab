@@ -27,21 +27,18 @@ namespace CAT.Controllers.Api
     [Route("onlineeditor/api/[controller]")]
     public class EditorApiController : ControllerBase
     {
-        public static string CATMainBaseUrl = "";
-        private readonly CATConnector _catClientService;
+        private readonly CatConnector _catClientService;
         private readonly ILogger _logger;
         private readonly JobService _jobService;
         private readonly IConfiguration _configuration;
-        private readonly IMapper _mapper;
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly IUserService _userService;
 
-        public EditorApiController(CATConnector catClientService, JobService jobService, IConfiguration configuration, IMapper mapper, 
+        public EditorApiController(CatConnector catClientService, JobService jobService, IConfiguration configuration, 
             ILogger<EditorApiController> logger, IHttpClientFactory httpClientFactory, IUserService userService)
         {
             _catClientService = catClientService;
             _jobService = jobService;
-            _mapper = mapper;
             _logger = logger;
             _httpClientFactory = httpClientFactory;
             _userService = userService;
@@ -54,8 +51,7 @@ namespace CAT.Controllers.Api
             var OEJobs = HttpContext.Session.Get<List<JobData>>("OEJobs");
             if (OEJobs == null)
             {
-                OEJobs = new List<JobData>();
-                OEJobs.Add(jobData);
+                OEJobs = new List<JobData> { jobData };
                 HttpContext.Session.Set<List<JobData>>("jobData", OEJobs);
             }
             else
@@ -67,7 +63,7 @@ namespace CAT.Controllers.Api
                     OEJobs.Add(jobData);
             }
 
-            _logger.LogInformation("session saved: " + jobData.jobId);
+            _logger.LogInformation("session saved: {jobId}", jobData.jobId);
         }
 
         private JobData GetJobDataFromSession(int jobId)
@@ -161,7 +157,6 @@ namespace CAT.Controllers.Api
 
                 //Convert google tags to xliff tags
                 var tu = jobData.translationUnits![ix];
-                String sSource = tu.source!;
                 String sourceXml = CATUtils.CodedTextToTmx(tu.source!);
                 String? precedingXml = null;
                 if (ix > 0)
@@ -176,7 +171,7 @@ namespace CAT.Controllers.Api
                     followingXml = CATUtils.CodedTextToTmx(tu.source!);
                 }
 
-                var tmMatches = _catClientService.GetTMMatches(jobData.tmAssignments!.ToArray(), sourceXml, precedingXml!, followingXml!, null!);
+                var tmMatches = _catClientService.GetTMMatches(jobData.tmAssignments!.ToArray(), sourceXml, precedingXml!, followingXml!);
 
                 return Ok(tmMatches);
             }
@@ -230,7 +225,7 @@ namespace CAT.Controllers.Api
             var jobId = int.Parse(queryParams["jobId"]!);
 
             var httpClient = _httpClientFactory.CreateClient();
-            var catMainBaseUrl = String.IsNullOrEmpty(CATMainBaseUrl) ? _configuration["CATMainBaseUrl"] : CATMainBaseUrl;
+            var catMainBaseUrl = _configuration["CATMainBaseUrl"];
             var response = await httpClient.GetAsync($"{catMainBaseUrl}/api/EditorApi/DownloadDocument/{jobId}");
 
             if (response.IsSuccessStatusCode)
@@ -257,7 +252,7 @@ namespace CAT.Controllers.Api
             var currentUser = await _userService.GetCurrentUserAsync();
 
             var httpClient = _httpClientFactory.CreateClient();
-            var catMainBaseUrl = String.IsNullOrEmpty(CATMainBaseUrl) ? _configuration["CATMainBaseUrl"] : CATMainBaseUrl;
+            var catMainBaseUrl = _configuration["CATMainBaseUrl"];
             var response = await httpClient.GetAsync($"{catMainBaseUrl}/api/EditorApi/SubmitJob?jobId={jobId}&userId={currentUser.Id}");
 
             if (response.IsSuccessStatusCode)

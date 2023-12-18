@@ -35,7 +35,7 @@ namespace CAT.Services
             }
             catch (Exception ex)
             {
-                _logger.LogDebug("GenerateJWT -> " + ex.ToString());
+                _logger.LogDebug("GenerateJWT -> {exception}", ex.ToString());
                 throw;
             }
         }

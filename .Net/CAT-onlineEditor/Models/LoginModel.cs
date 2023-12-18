@@ -1,5 +1,8 @@
-﻿public class LoginModel
+﻿namespace CAT.Models
 {
-    public string Username { get; set; } = default!;
-    public string Password { get; set; } = default!;
+    public class LoginModel
+    {
+        public string Username { get; set; } = default!;
+        public string Password { get; set; } = default!;
+    }
 }

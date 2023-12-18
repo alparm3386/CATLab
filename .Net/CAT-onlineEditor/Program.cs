@@ -36,7 +36,7 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<JwtService>();
 builder.Services.AddScoped<JobService>();
 builder.Services.AddScoped<ILanguageService, LanguageService>();
-builder.Services.AddScoped<CATConnector>();
+builder.Services.AddScoped<CatConnector>();
 builder.Services.AddSingleton<ICatClientFactory, CatClientFactory>();
 builder.Services.AddScoped<IUserService, UserService>();
 
@@ -144,13 +144,13 @@ app.MapRazorPages();
 
 app.Use(async (context, next) =>
 {
-    logger.LogInformation($"Incoming request: {context.Request.Method} {context.Request.Path}");
+    logger.LogInformation("Incoming request: {RequestMethod} {RequestPath}", context.Request.Method, context.Request.Path);
 
     // Continue processing
     await next.Invoke();
 
     // After the response
-    logger.LogInformation($"Response: {context.Response.StatusCode}");
+    logger.LogInformation("Response: {StatusCode}", context.Response.StatusCode);
 });
 
 app.Run();
@@ -177,8 +177,6 @@ void AddConfiguration(WebApplicationBuilder builder)
             dbConfigSource.GetConfigurationProvider() // Include the database configuration source
         });
     });
-
-    return;
 }
 
 void AddMySqlContext(WebApplicationBuilder builder)
@@ -213,11 +211,13 @@ void AddMySqlContext(WebApplicationBuilder builder)
 #pragma warning disable CS8321 // Disable warning CS8321
 void AddSQLServerContext(WebApplicationBuilder builder)
 {
-    builder.Services.AddDbContext<IdentityDbContext>(options =>
-        options.UseSqlServer(builder.Configuration.GetConnectionString("IdentityDbConnection") ?? throw new InvalidOperationException("Connection string 'IdentityDbConnection' not found.")));
-    builder.Services.AddDbContext<MainDbContext>(options =>
-        options.UseSqlServer(builder.Configuration.GetConnectionString("MainDbConnection") ?? throw new InvalidOperationException("Connection string 'MainDbConnection' not found.")));
-    builder.Services.AddDbContext<TranslationUnitsDbContext>(options =>
-        options.UseSqlServer(builder.Configuration.GetConnectionString("TranslationUnitsDbConnection") ?? throw new InvalidOperationException("Connection string 'TranslationUnitsDbConnection' not found.")));
+    //string dbPassword = Environment.GetEnvironmentVariable("IDENTITY_DB_PASSWORD")
+    var dbPassword = "AVNS_F-W_2EL1ueOt82f8wQY";
+    var identityConnectionString = builder.Configuration.GetConnectionString("IdentityDbConnection") + $"Password={dbPassword};";
+    builder.Services.AddDbContext<IdentityDbContext>(options => options.UseSqlServer(identityConnectionString));
+    var mainConnectionString = builder.Configuration.GetConnectionString("MainDbConnection") + $"Password={dbPassword};";
+    builder.Services.AddDbContext<MainDbContext>(options => options.UseSqlServer(mainConnectionString));
+    var translationUnitsConnectionString = builder.Configuration.GetConnectionString("TranslationUnitsDbConnection") + $"Password={dbPassword};";
+    builder.Services.AddDbContext<TranslationUnitsDbContext>(options => options.UseSqlServer(translationUnitsConnectionString));
 }
 #pragma warning restore CS8321 // Re-enable warning CS8321

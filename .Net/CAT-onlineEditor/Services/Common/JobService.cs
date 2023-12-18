@@ -20,11 +20,11 @@ namespace CAT.Services.Common
     public class JobService
     {
         private readonly DbContextContainer _dbContextContainer;
-        private readonly CATConnector _catConnector;
+        private readonly CatConnector _catConnector;
         private readonly IMapper _mapper;
         private readonly ILogger _logger;
 
-        public JobService(DbContextContainer dbContextContainer, CATConnector catConnector, 
+        public JobService(DbContextContainer dbContextContainer, CatConnector catConnector, 
             IMapper mapper, ILogger<JobService> logger)
         {
             _dbContextContainer = dbContextContainer;

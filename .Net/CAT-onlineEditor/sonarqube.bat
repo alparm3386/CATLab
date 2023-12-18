@@ -1,5 +1,5 @@
 REM unit test
-cd CAT-onlineEditor.UnitTests
+cd ../CAT-onlineEditor.UnitTests
 dotnet test /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput=./TestResults/
 REM sonarscanner
 cd ../CAT-OnlineEditor

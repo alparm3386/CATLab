@@ -102,35 +102,10 @@ namespace CAT.Data
                 .HasForeignKey(a => a.UserId) // This specifies which property in the Allocation entity is the foreign key for this relationship.
                 .HasPrincipalKey(l => l.UserId);  // This targets the alternate key you just set up
 
-            ////TempQuote Fee
-            //modelBuilder.Entity<TempQuote>()
-            //   .Property(e => e.Fee)
-            //   .HasPrecision(10, 2); //example: max 10 digits in total, with 2 digits after the decimal point
-
-            ////Quote Fee
-            //modelBuilder.Entity<Quote>()
-            //   .Property(e => e.Fee)
-            //   .HasPrecision(10, 2);
-
-            ////WorkFlowStep Fee
-            //modelBuilder.Entity<WorkFlowStep>()
-            //   .Property(e => e.Fee)
-            //   .HasPrecision(10, 2);
-
             //Rate composite unique index
             modelBuilder.Entity<Rate>()
                 .HasIndex(r => new { r.SourceLanguageId, r.TargetLanguageId, r.Speciality, r.Task })
                 .IsUnique();
-
-            //ClientRate
-            //modelBuilder.Entity<ClientRate>()
-            //    .HasIndex(cr => cr.RateId)
-            //    .IsUnique();
-
-            //LinguistRate
-            //modelBuilder.Entity<LinguistRate>()
-            //    .HasIndex(cr => cr.RateId)
-            //    .IsUnique();
 
             //Language
             modelBuilder.Entity<Language>()

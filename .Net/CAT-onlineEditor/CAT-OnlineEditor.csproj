@@ -64,4 +64,7 @@
     <TypeScriptCompileBlocked>true</TypeScriptCompileBlocked>
   </PropertyGroup>
 
+  <PropertyGroup>  
+    <SonarQubeTestProject>false</SonarQubeTestProject>
+  </PropertyGroup>
 </Project>

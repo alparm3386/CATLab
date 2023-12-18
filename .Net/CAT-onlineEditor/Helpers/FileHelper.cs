@@ -5,7 +5,7 @@ namespace CAT.Helpers
 {
     public class FileHelper
     {
-        public static string GetUniqueFileName(string originalFileName)
+        public string GetUniqueFileName(string originalFileName)
         {
             string fileNameWithoutExtension = Path.GetFileNameWithoutExtension(originalFileName);
             string fileExtension = Path.GetExtension(originalFileName);

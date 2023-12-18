@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using CAT.Services;
 using CAT.Areas.Identity.Data;
 using NuGet.Common;
+using CAT.Models;
 
 namespace CAT.Controllers.Api
 {
@@ -42,21 +43,6 @@ namespace CAT.Controllers.Api
             {
                 return Problem(ex.Message);
             }
-
-            //// create the cookie
-            //var cookieOptions = new CookieOptions
-            //{
-            //    HttpOnly = true, // make the cookie inaccessible to javascript
-            //    Expires = DateTime.UtcNow.AddHours(1), // set cookie expiration date
-            //    Secure = true, // transmit the cookie only over HTTPS
-            //    SameSite = SameSiteMode.Strict, // prevents the browser from sending the cookie along with cross-site requests
-            //};
-
-            //// set the cookie
-            //Response.Cookies.Append("jwt", token, cookieOptions);
-
-            //// redirect to home or return a success message
-            //return Ok(new { Message = "Successfully logged in" });
         }
     }
 }

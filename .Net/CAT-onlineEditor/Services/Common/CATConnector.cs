@@ -34,19 +34,19 @@ using TMType = CAT.Enums.TMType;
 
 namespace CAT.Services.Common
 {
-    public class CATConnector
+    public class CatConnector
     {
         private readonly ILanguageService _languageService;
         private readonly ICatClientFactory _catClientFactory;
         private readonly ILogger _logger;
 
-        private static int MATCH_THRESHOLD = 50;
+        private static readonly int MATCH_THRESHOLD = 50;
 
         /// <summary>
         /// CATClientService
         /// </summary>
-        public CATConnector(ILanguageService languageService,
-            ICatClientFactory catClientFactory, ILogger<CATConnector> logger)
+        public CatConnector(ILanguageService languageService,
+            ICatClientFactory catClientFactory, ILogger<CatConnector> logger)
         {
             _languageService = languageService;
             _catClientFactory = catClientFactory;
@@ -59,7 +59,7 @@ namespace CAT.Services.Common
         }
 
 
-        public TMMatch[] GetTMMatches(TMAssignment[] tmAssignments, string sourceXml, string prevXml, string nextXml, string contextID)
+        public TMMatch[] GetTMMatches(TMAssignment[] tmAssignments, string sourceXml, string prevXml, string nextXml)
         {
             var tms = Array.ConvertAll(tmAssignments, tma => new Proto.TMAssignment()
             {
@@ -156,8 +156,7 @@ namespace CAT.Services.Common
             try
             {
                 //the metadata
-                if (metadata == null)
-                    metadata = new Dictionary<String, String>();
+                metadata ??= new Dictionary<String, String>();
                 if (!String.IsNullOrEmpty(prevXml))
                     metadata.Add("prevSegment", prevXml);
                 if (!String.IsNullOrEmpty(nextXml))
@@ -180,7 +179,7 @@ namespace CAT.Services.Common
             }
             catch (Exception ex)
             {
-                _logger.LogInformation("TM name: " + tmAssignment.tmId + " AddTMEntry Error: " + ex.ToString());
+                _logger.LogInformation("TM name: {tmId} AddTMEntry Error: {ex}", tmAssignment.tmId, ex.ToString());
             }
         }
 
@@ -211,7 +210,7 @@ namespace CAT.Services.Common
                     tmId = tmId
                 };
                 tmAssignments.Add(tmAssignment);
-            };
+            }
 
             return tmAssignments.ToArray();
         }
