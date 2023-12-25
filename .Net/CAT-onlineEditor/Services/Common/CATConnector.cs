@@ -83,24 +83,24 @@ namespace CAT.Services.Common
             var response = catClient.GetTMMatches(request);
             var tmMatches = Array.ConvertAll(response.TMMatches.ToArray(), match => new TMMatch()
             {
-                id = int.Parse(match.Id),
-                source = match.Source,
-                target = match.Target,
-                origin = match.Origin,
-                quality = match.Quality,
-                metadata = match.Metadata
+                Id = int.Parse(match.Id),
+                Source = match.Source,
+                Target = match.Target,
+                Origin = match.Origin,
+                Quality = match.Quality,
+                Metadata = match.Metadata
             });
 
             //convert and remove duplicates
             var finalTMMatches = new Dictionary<String, TMMatch>();
             foreach (var tmMatch in tmMatches)
             {
-                String key = tmMatch.source + tmMatch.target;
+                String key = tmMatch.Source + tmMatch.Target;
                 if (finalTMMatches.ContainsKey(key))
                     continue;
 
-                tmMatch.source = CATUtils.XmlTags2GoogleTags(tmMatch.source!, CATUtils.TagType.Tmx);
-                tmMatch.target = CATUtils.XmlTags2GoogleTags(tmMatch.target!, CATUtils.TagType.Tmx);
+                tmMatch.Source = CatUtils.XmlTags2GoogleTags(tmMatch.Source!, CatUtils.TagType.Tmx);
+                tmMatch.Target = CatUtils.XmlTags2GoogleTags(tmMatch.Target!, CatUtils.TagType.Tmx);
 
                 finalTMMatches.Add(key, tmMatch);
             }
@@ -133,10 +133,10 @@ namespace CAT.Services.Common
 
                 var tmMatch = new TMMatch()
                 {
-                    id = tmEntry.Id,
-                    source = CATUtils.XmlTags2GoogleTags(tmEntry.Source, CATUtils.TagType.Tmx),
-                    target = CATUtils.XmlTags2GoogleTags(tmEntry.Target, CATUtils.TagType.Tmx),
-                    metadata = tmEntry.Metadata
+                    Id = tmEntry.Id,
+                    Source = CatUtils.XmlTags2GoogleTags(tmEntry.Source, CatUtils.TagType.Tmx),
+                    Target = CatUtils.XmlTags2GoogleTags(tmEntry.Target, CatUtils.TagType.Tmx),
+                    Metadata = tmEntry.Metadata
                 };
 
                 finalTMMatches.Add(key, tmMatch);

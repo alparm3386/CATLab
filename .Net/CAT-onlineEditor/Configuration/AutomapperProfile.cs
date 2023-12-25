@@ -9,7 +9,7 @@ namespace CAT.Configuration
         public AutoMapperProfile()
         {
             //CAT service
-            CreateMap<TranslationUnit, TranslationUnitDTO>().ReverseMap();
+            CreateMap<TranslationUnit, TranslationUnitDto>().ReverseMap();
         }
     }
 

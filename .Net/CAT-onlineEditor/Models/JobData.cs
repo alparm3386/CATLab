@@ -5,7 +5,7 @@ namespace CAT.Models
     public class JobData
     {
         public int jobId;
-        public List<TranslationUnitDTO> translationUnits = default!;
+        public List<TranslationUnitDto> translationUnits = default!;
         public List<TMAssignment> tmAssignments = default!;
         public List<TBAssignment> tbAssignments = default!;
         public int task;

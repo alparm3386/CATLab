@@ -13,10 +13,11 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web;
 using System.Xml;
+using CAT.Infrastructure;
 
 namespace CAT.Helpers
 {
-    public partial class CATUtils
+    public partial class CatUtils
     {
         /// <summary>
         /// IsCompressedMemoQXliff
@@ -65,6 +66,7 @@ namespace CAT.Helpers
             }
             catch (Exception)
             {
+                //rethrow exception
                 throw;
             }
         }
@@ -173,6 +175,7 @@ namespace CAT.Helpers
                         {
                             case "ph":
                             case "x":
+                            case "it":
                                 sRet.Append("{" + id + "/}");
                                 id++;
                                 break;
@@ -184,10 +187,6 @@ namespace CAT.Helpers
                             case "ept":
                                 sRet.Append("{/" + openTags?[node?.Attributes?[sIdAttr]?.Value!]! + "}");
                                 break;
-                            case "it":
-                                sRet.Append("{" + id + "/}");
-                                id++;
-                                break;
                             default:
                                 break;
                         }
@@ -196,7 +195,7 @@ namespace CAT.Helpers
             }
             catch (Exception)
             {
-                throw new Exception("id=" + id);
+                throw new CatException("id=" + id);
             }
 
             return sRet.ToString();
@@ -257,7 +256,7 @@ namespace CAT.Helpers
             }
             catch (Exception ex)
             {
-                throw new Exception("XliffSegmentToTextFragmentSimple: " + ex.Message);
+                throw new CatException($"XliffSegmentToTextFragmentSimple: {ex.Message}");
             }
             finally
             {

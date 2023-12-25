@@ -8,7 +8,7 @@ namespace CAT.Services.Common
     public class CatClientFactory : ICatClientFactory
     {
         private Lazy<GrpcChannel> _channel = default!;
-        private readonly IConfiguration _configuration = default!;
+        private readonly IConfiguration _configuration;
 
         public CatClientFactory(IConfiguration configuration)
         {

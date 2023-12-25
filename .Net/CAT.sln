@@ -19,7 +19,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CAT-service.UnitTests", "CA
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CAT-main.UnitTests", "CAT-main.UnitTests\CAT-main.UnitTests.csproj", "{7966416B-362E-42AF-A934-12C30065E4BF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CAT-onlineEditor.UnitTests", "CAT-onlineEditor.UnitTests\CAT-onlineEditor.UnitTests.csproj", "{9E00DB98-9B48-4330-B19F-8DEE540CFF66}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CAT-onlineEditor.UnitTests", "CAT-onlineEditor.UnitTests\CAT-onlineEditor.UnitTests.csproj", "{9E00DB98-9B48-4330-B19F-8DEE540CFF66}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharedInfrastructure", "SharedInfrastructure\SharedInfrastructure.csproj", "{59DAF9AC-166E-411D-B733-718A13201E98}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -63,6 +65,10 @@ Global
 		{9E00DB98-9B48-4330-B19F-8DEE540CFF66}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9E00DB98-9B48-4330-B19F-8DEE540CFF66}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9E00DB98-9B48-4330-B19F-8DEE540CFF66}.Release|Any CPU.Build.0 = Release|Any CPU
+		{59DAF9AC-166E-411D-B733-718A13201E98}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{59DAF9AC-166E-411D-B733-718A13201E98}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{59DAF9AC-166E-411D-B733-718A13201E98}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{59DAF9AC-166E-411D-B733-718A13201E98}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

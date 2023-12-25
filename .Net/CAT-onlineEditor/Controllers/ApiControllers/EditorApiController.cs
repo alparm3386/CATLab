@@ -95,7 +95,7 @@ namespace CAT.Controllers.Api
                     jobData.user,
                     jobData.pmUser,
                     translationUnits = jobData!.translationUnits!.Select(tu => new {
-                        source = CATUtils.CodedTextToGoogleTags(tu.source!),
+                        source = CatUtils.CodedTextToGoogleTags(tu.source!),
                         tu.target
                     }).ToList<object>()
                 };
@@ -157,18 +157,18 @@ namespace CAT.Controllers.Api
 
                 //Convert google tags to xliff tags
                 var tu = jobData.translationUnits![ix];
-                String sourceXml = CATUtils.CodedTextToTmx(tu.source!);
+                String sourceXml = CatUtils.CodedTextToTmx(tu.source!);
                 String? precedingXml = null;
                 if (ix > 0)
                 {
                     tu = jobData.translationUnits[ix - 1];
-                    precedingXml = CATUtils.CodedTextToTmx(tu.source!);
+                    precedingXml = CatUtils.CodedTextToTmx(tu.source!);
                 }
                 String? followingXml = null;
                 if (ix < jobData.translationUnits.Count - 1)
                 {
                     tu = jobData.translationUnits[ix + 1];
-                    followingXml = CATUtils.CodedTextToTmx(tu.source!);
+                    followingXml = CatUtils.CodedTextToTmx(tu.source!);
                 }
 
                 var tmMatches = _catClientService.GetTMMatches(jobData.tmAssignments!.ToArray(), sourceXml, precedingXml!, followingXml!);

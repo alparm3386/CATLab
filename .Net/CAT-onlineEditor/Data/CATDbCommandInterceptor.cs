@@ -3,7 +3,7 @@ using System.Data.Common;
 
 namespace CAT.Data
 {
-    public class CATDbCommandInterceptor : DbCommandInterceptor
+    public class CatDbCommandInterceptor : DbCommandInterceptor
     {
         public override InterceptionResult<DbDataReader> ReaderExecuting(
             DbCommand command,

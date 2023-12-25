@@ -2,11 +2,11 @@
 {
     public class TMMatch
     {
-        public int id { get; set; }
-        public string? source { get; set; }
-        public string? target { get; set; }
-        public string? origin { get; set; }
-        public int quality { get; set; }
-        public string? metadata { get; set; }
+        public int Id { get; set; }
+        public string? Source { get; set; }
+        public string? Target { get; set; }
+        public string? Origin { get; set; }
+        public int Quality { get; set; }
+        public string? Metadata { get; set; }
     }
 }

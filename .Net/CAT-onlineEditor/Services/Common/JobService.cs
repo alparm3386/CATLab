@@ -64,9 +64,9 @@ namespace CAT.Services.Common
 
                 //load the translation units
                 var translationUnits = await _dbContextContainer.TranslationUnitsContext.TranslationUnit
-                                 .Where(tu => tu.documentId == document!.Id).OrderBy(tu => tu.tuid).ToListAsync();
+                                 .Where(tu => tu.DocumentId == document!.Id).OrderBy(tu => tu.Tuid).ToListAsync();
 
-                var translationUnitDTOs = _mapper.Map<TranslationUnitDTO[]>(translationUnits);
+                var translationUnitDTOs = _mapper.Map<TranslationUnitDto[]>(translationUnits);
                 foreach (var tu in translationUnitDTOs)
                 {
                     tu.isEditAllowed = true;
@@ -132,12 +132,12 @@ namespace CAT.Services.Common
                     for (int i = from; i < jobData.translationUnits.Count; i++)
                     {
                         var tmpTuDto = jobData.translationUnits[i];
-                        if (i == ix || tmpTuDto.source != tu.source)
+                        if (i == ix || tmpTuDto.source != tu.Source)
                             continue;
 
                         var tmpTu = _mapper.Map<TranslationUnit>(tu);
                         //update the segment
-                        tmpTu.status = tu.status | mask;
+                        tmpTu.Status = tu.Status | mask;
                         _dbContextContainer.TranslationUnitsContext.TranslationUnit.Update(tmpTu);
                     }
                 }
@@ -175,20 +175,20 @@ namespace CAT.Services.Common
                     var tu = jobData.translationUnits![ix];
 
                     //Convert google tags to xliff tags
-                    String sourceXml = CATUtils.CodedTextToTmx(tu.source!);
-                    var tagsMap = CATUtils.GetTagsMap(tu.source!);
-                    String targetXml = CATUtils.GoogleTagsToTmx(sTarget, tagsMap);
+                    String sourceXml = CatUtils.CodedTextToTmx(tu.source!);
+                    var tagsMap = CatUtils.GetTagsMap(tu.source!);
+                    String targetXml = CatUtils.GoogleTagsToTmx(sTarget, tagsMap);
                     String? precedingXml = null;
                     if (ix > 0)
                     {
                         tu = jobData.translationUnits[ix - 1];
-                        precedingXml = CATUtils.CodedTextToTmx(tu.source!);
+                        precedingXml = CatUtils.CodedTextToTmx(tu.source!);
                     }
                     String followingXml = null!;
                     if (ix < jobData.translationUnits.Count - 1)
                     {
                         tu = jobData.translationUnits[ix + 1];
-                        followingXml = CATUtils.CodedTextToTmx(tu.source!);
+                        followingXml = CatUtils.CodedTextToTmx(tu.source!);
                     }
 
                     foreach (var tmAssignment in jobData.tmAssignments!)

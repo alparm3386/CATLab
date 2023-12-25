@@ -1,6 +1,6 @@
 ﻿namespace CAT.Models
 {
-    public class TranslationUnitDTO
+    public class TranslationUnitDto
     {
         public int Id { get; set; }
 
