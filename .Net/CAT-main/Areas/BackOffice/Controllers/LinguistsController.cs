@@ -259,7 +259,7 @@ namespace CAT.Areas.BackOffice.Controllers
             }
             catch (Exception ex)
             {
-                //_logger.LogError(ex, "LinguistsController->Index");
+                _logger.LogError(ex, "LinguistsController->Delete {id}", id);
                 ModelState.AddModelError(string.Empty, ex.Message);
 
                 return View(new Linguist());

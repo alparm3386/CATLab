@@ -15,12 +15,11 @@ namespace CAT.Services.Common
         private readonly IDocumentService _documentService;
         private readonly IWorkflowService _workflowService;
         private readonly IJobService _jobService;
-        private readonly IMapper _mapper;
         private readonly ILogger _logger;
 
         public OrderService(DbContextContainer dbContextContainer, IConfiguration configuration,
             IDocumentService documentService, IWorkflowService workflowService, IQuoteService quoteService,
-            IJobService jobService, IMapper mapper, ILogger<OrderService> logger)
+            IJobService jobService, ILogger<OrderService> logger)
         {
             _dbContextContainer = dbContextContainer;
             _configuration = configuration;
@@ -29,7 +28,6 @@ namespace CAT.Services.Common
             _documentService = documentService;
             _workflowService = workflowService;
             _logger = logger;
-            _mapper = mapper;
         }
 
         public async Task<Order> CreateOrderAsync(int clientId)
@@ -112,11 +110,9 @@ namespace CAT.Services.Common
                     }
                     catch (Exception ex)
                     {
+                        _logger.LogError(ex, "OrderService->FinalizeOrderAsync {orderId}", orderId);
                     }
                 }).Start();
-                //await _workflowService.StartWorkflowAsync(job.Id);
-                //var processId = BackgroundJob.Enqueue(() => OrderService.StartWorkflow(job.Id));
-                //var processId = BackgroundJob.Enqueue<IOrderService>(x => x.StartWorkflow(job.Id));
             }
         }
 
@@ -126,18 +122,10 @@ namespace CAT.Services.Common
             using (var scope = ServiceLocator.ServiceProvider.CreateScope())
             {
                 ILogger logger = default!;
-                try
-                {
-                    var workflowService = scope.ServiceProvider.GetRequiredService<IWorkflowService>();
-                    logger = scope.ServiceProvider.GetRequiredService<ILogger<OrderService>>();
+                var workflowService = scope.ServiceProvider.GetRequiredService<IWorkflowService>();
+                logger = scope.ServiceProvider.GetRequiredService<ILogger<OrderService>>();
 
-                    workflowService.StartWorkflowAsync(jobId).Wait(); // Wait for the async operation to complete
-                }
-                catch (Exception ex)
-                {
-                    //logger!.LogError("StartWorkflow -> Error: " + ex.ToString());
-                    throw;
-                }
+                workflowService.StartWorkflowAsync(jobId).Wait(); // Wait for the async operation to complete
             }
         }
     }

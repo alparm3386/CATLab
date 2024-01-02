@@ -14,7 +14,7 @@ namespace CAT.Areas.API.Internal.Controllers
     [Area("API")]
     [Route("api/[controller]")]
     [ApiController]
-    //[Authorize(Policy = "AdminsOnly")]
+    [Authorize(Policy = "AdminsOnly")]
     public class MonitoringController : ControllerBase
     {
         private IMonitoringService _monitoringService;
@@ -81,10 +81,8 @@ namespace CAT.Areas.API.Internal.Controllers
             try
             {
                 var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-                if (userId == null)
-                    userId = new Guid().ToString();
 
-                await _monitoringService.DeallocateJob(jobId, userId, (Enums.Task)task, deallocationReason);
+                await _monitoringService.DeallocateJob(jobId, userId!, (Enums.Task)task, deallocationReason);
 
                 return Ok(new { Message = "Allocated" });
             }

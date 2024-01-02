@@ -50,7 +50,6 @@ namespace CAT.Areas.BackOffice.Controllers
             }
             catch (Exception ex)
             {
-                //_logger.LogError(ex, "LinguistsController->Index");
                 ViewData["ErrorMessage"] = ex.Message;
                 return View(new List<Linguist>());
             }
@@ -71,7 +70,6 @@ namespace CAT.Areas.BackOffice.Controllers
         {
             try
             {
-                //ModelState.Remove("Company");
                 if (ModelState.IsValid)
                 {
                     if (user.PasswordHash != user.SecurityStamp)
@@ -108,7 +106,6 @@ namespace CAT.Areas.BackOffice.Controllers
             {
                 // set error message here that is displayed in the view
                 ViewData["ErrorMessage"] = ex.Message;
-                // Optionally log the error: _logger.LogError(ex, "Error message here");
                 return View(user);
             }
 
@@ -128,7 +125,6 @@ namespace CAT.Areas.BackOffice.Controllers
             {
                 // set error message here that is displayed in the view
                 ViewData["ErrorMessage"] = ex.Message;
-                // Optionally log the error: _logger.LogError(ex, "Error message here");
                 return View(new ApplicationUser());
             }
         }
@@ -167,7 +163,6 @@ namespace CAT.Areas.BackOffice.Controllers
             {
                 // set error message here that is displayed in the view
                 ViewData["ErrorMessage"] = ex.Message;
-                // Optionally log the error: _logger.LogError(ex, "Error message here");
 
                 user.Id = id;
                 return View(user);
@@ -189,8 +184,6 @@ namespace CAT.Areas.BackOffice.Controllers
             {
                 // set error message here that is displayed in the view
                 ViewData["ErrorMessage"] = ex.Message;
-                // Optionally log the error: _logger.LogError(ex, "Error message here");
-
                 return View(new ApplicationUser());
             }
         }
@@ -213,12 +206,6 @@ namespace CAT.Areas.BackOffice.Controllers
 
             //await _identityDbContext.SaveChangesAsync();
             return View(new ApplicationUser());
-        }
-
-        private bool ClientExists(int id)
-        {
-            return false;
-            //            return (_identityDbContext.Clients?.Any(e => e.Id == id)).GetValueOrDefault();
         }
     }
 }

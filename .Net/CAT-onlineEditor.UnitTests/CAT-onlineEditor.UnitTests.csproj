@@ -28,6 +28,6 @@
   </ItemGroup>
 
   <PropertyGroup>  
-    <SonarQubeTestProject>false</SonarQubeTestProject>
+    <SonarQubeTestProject>true</SonarQubeTestProject>
   </PropertyGroup>
 </Project>
