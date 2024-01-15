@@ -294,6 +294,15 @@ namespace CAT.Areas.BackOffice.Services
                 var allocatedTask = await _dbContextContainer.MainContext.Allocations
                     .Where(a => a.JobId == jobId && a.TaskId == (int)task && !a.ReturnUnsatisfactory).FirstOrDefaultAsync();
 
+                using (var context = _dbContextContainer.MainContext)
+                {
+                    var query = from alloc in context.Allocations
+                            join job in context.Jobs on alloc.Id equals job.Id
+                                select new { StudentName = alloc.Fee, CourseName = job.QuoteId };
+                    var result = query.First();
+
+                }
+
                 if (allocatedTask != null)
                     throw new CATException("The job is already allocated.");
 

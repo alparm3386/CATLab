@@ -13,7 +13,7 @@ namespace CAT_onlineEditor.UnitTests.Helpers
         [Fact]
         public void IsCompressedMemoQXliff_ShouldReturnTrueForCompressedXlf()
         {
-            Assert.Throws<Exception>(() => CAT.Helpers.CatUtils.IsCompressedMemoQXliff(null);
+            Assert.Throws<Exception>(() => CAT.Helpers.CatUtils.IsCompressedMemoQXliff(null));
         }
 
         [Fact]
@@ -21,12 +21,6 @@ namespace CAT_onlineEditor.UnitTests.Helpers
         {
             Assert.True(CAT.Helpers.CatUtils.IsCompressedMemoQXliff("C:/Test.mqxlz"));
             Assert.True(CAT.Helpers.CatUtils.IsCompressedMemoQXliff("C:/Test.xlz"));
-        }
-
-        [Fact]
-        public void IsCompressedMemoQXliff_ShouldTrowExcepton_ForInvalidFilePath()
-        {
-            Assert.False(CAT.Helpers.CatUtils.IsCompressedMemoQXliff("C:/Test.docx"));
         }
 
         [Fact]

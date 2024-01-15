@@ -97,35 +97,15 @@ namespace CAT.Services.Common
             //create workflow
             await _workflowService.CreateWorkflowAsync(orderId);
 
-            var jobs = await _dbContextContainer.MainContext.Jobs.Where(j => j.OrderId == orderId).Include(j => j.Quote).ToListAsync();
+            var jobs = await _dbContextContainer.MainContext.Jobs
+                .Where(j => j.OrderId == orderId)
+                .Include(j => j.Quote)
+                .ToListAsync();
 
-            //Process the jobs
+            // Process the jobs asynchronously
             foreach (var job in jobs)
             {
-                new Thread(() =>
-                {
-                    try
-                    {
-                        StartWorkflow(job.Id);
-                    }
-                    catch (Exception ex)
-                    {
-                        _logger.LogError(ex, "OrderService->FinalizeOrderAsync {orderId}", orderId);
-                    }
-                }).Start();
-            }
-        }
-
-        [AutomaticRetry(Attempts = 3, DelaysInSeconds = new[] { 0, 120, 240 })]
-        public static void StartWorkflow(int jobId)
-        {
-            using (var scope = ServiceLocator.ServiceProvider.CreateScope())
-            {
-                ILogger logger = default!;
-                var workflowService = scope.ServiceProvider.GetRequiredService<IWorkflowService>();
-                logger = scope.ServiceProvider.GetRequiredService<ILogger<OrderService>>();
-
-                workflowService.StartWorkflowAsync(jobId).Wait(); // Wait for the async operation to complete
+                await _workflowService.StartWorkflowAsync(job.Id);
             }
         }
     }

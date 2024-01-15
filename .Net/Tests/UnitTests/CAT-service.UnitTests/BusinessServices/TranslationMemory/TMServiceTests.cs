@@ -37,7 +37,6 @@ namespace CAT_service.UnitTests.BusinessServices.TranslationMemory
             // Arrange
             var tmId = "test-tm-id";
 
-            // Act
             // Act and Assert
             var exception = Assert.Throws<CATException>(() => _tmService.TMExists(tmId));
 

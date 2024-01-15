@@ -128,8 +128,6 @@ builder.Services.AddTransient<IEmailSender, SmtpEmailSender>();
 builder.Services.AddHangfireServer();
 var app = builder.Build();
 
-ServiceLocator.ServiceProvider = app.Services;
-
 //hangfire
 GlobalConfiguration.Configuration.UseActivator(new HangfireActivator(app.Services));
 app.UseHangfireDashboard();

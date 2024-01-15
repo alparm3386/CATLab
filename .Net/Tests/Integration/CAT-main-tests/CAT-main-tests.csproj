@@ -26,7 +26,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\CAT-main\CAT-main.csproj" />
+    <ProjectReference Include="..\..\..\CAT-main\CAT-main.csproj" />
   </ItemGroup>
 
   <ItemGroup>
