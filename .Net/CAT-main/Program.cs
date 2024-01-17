@@ -28,6 +28,9 @@ using Microsoft.AspNetCore.DataProtection;
 using NuGet.Protocol;
 using CAT.Infrastructure;
 using Microsoft.Extensions.Configuration.Json;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -107,6 +110,27 @@ builder.Services.AddCors(options =>
     });
 });
 
+// Configure JWT auth
+//builder.Services.AddAuthentication(options =>
+//{
+//    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+//    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+//})
+//.AddJwtBearer(options =>
+//{
+//    options.TokenValidationParameters = new TokenValidationParameters
+//    {
+//        ValidateIssuer = true,
+//        ValidateAudience = true,
+//        ValidateLifetime = true,
+//        ValidateIssuerSigningKey = true,
+//        ValidIssuer = builder.Configuration["Jwt:Issuer"],
+//        ValidAudience = builder.Configuration["Jwt:Audience"],
+//        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder!.Configuration["Jwt:Key"]!))
+//    };
+//});
+
+
 builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy("AdminsOnly", policy => policy.RequireRole("Admin"));
@@ -183,16 +207,16 @@ app.MapAreaControllerRoute(
     areaName: "BackOffice",
     pattern: "BackOffice/{controller=Home}/{action=Index}/{id?}")
 .RequireAuthorization("AdminsOnly");  // Apply the policy
-//app.MapAreaControllerRoute(
-//    name: "ClientsRoute",
-//    areaName: "ClientsPortal",
-//    pattern: "ClientsPortal")
-//.RequireAuthorization("ClientsOnly"); ;  // Apply the policy
-//app.MapAreaControllerRoute(
-//    name: "LinguistsRoute",
-//    areaName: "LinguistsPortal",
-//    pattern: "LinguistsPortal")
-//.RequireAuthorization("LinguistsOnly");  // Apply the policy
+app.MapAreaControllerRoute(
+    name: "ClientsRoute",
+    areaName: "ClientsPortal",
+    pattern: "ClientsPortal")
+.RequireAuthorization("ClientsOnly"); ;  // Apply the policy
+app.MapAreaControllerRoute(
+    name: "LinguistsRoute",
+    areaName: "LinguistsPortal",
+    pattern: "LinguistsPortal")
+.RequireAuthorization("LinguistsOnly");  // Apply the policy
 
 //areas
 app.MapControllerRoute(

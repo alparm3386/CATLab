@@ -10,7 +10,7 @@ namespace CAT.Areas.API.Internal.Controllers
     [Area("API")]
     [Route("api/[controller]")]
     [ApiController]
-    //[Authorize(Policy = "AdminsOnly")]
+    [Authorize(Policy = "AdminsOnly")]
     public class CommonController : ControllerBase
     {
         private const int AUTOCOMPLETE_LIMIT = 15;
